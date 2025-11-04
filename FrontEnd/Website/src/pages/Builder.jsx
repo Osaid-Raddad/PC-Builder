@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import colors from '../config/colors';
@@ -14,12 +15,16 @@ import {
   FaTv,
   FaNetworkWired,
   FaKeyboard,
-  FaPlus
+  FaPlus,
+  FaCheckCircle,
+  FaExclamationTriangle,
+  FaTimesCircle
 } from 'react-icons/fa';
 import { HiCog } from 'react-icons/hi';
 import { BsCpuFill, BsMotherboard } from 'react-icons/bs';
 
 const Builder = () => {
+  const navigate = useNavigate();
   const [selectedComponents, setSelectedComponents] = useState({});
 
   const components = [
@@ -40,13 +45,51 @@ const Builder = () => {
 
   const handleComponentClick = (componentId) => {
     console.log(`Selecting component: ${componentId}`);
-    // TODO: Open component selection modal
+    // Navigate to component selection page
+    navigate(`/builder/${componentId}`);
   };
 
   const calculateTotal = () => {
     // TODO: Calculate total price from selected components
     return 0;
   };
+
+  const checkCompatibility = () => {
+    // TODO: Implement actual compatibility checking logic
+    const selectedCount = Object.keys(selectedComponents).length;
+    
+    if (selectedCount === 0) {
+      return { status: 'none', message: 'No components selected', icon: null };
+    } else if (selectedCount < 5) {
+      return { 
+        status: 'incomplete', 
+        message: 'Build Incomplete', 
+        icon: <FaExclamationTriangle size={20} />,
+        color: '#FF9800'
+      };
+    }
+    
+    // Simulate compatibility check
+    const isCompatible = true; // Replace with actual logic
+    
+    if (isCompatible) {
+      return { 
+        status: 'compatible', 
+        message: 'All Compatible', 
+        icon: <FaCheckCircle size={20} />,
+        color: '#4CAF50'
+      };
+    } else {
+      return { 
+        status: 'incompatible', 
+        message: 'Issues Found', 
+        icon: <FaTimesCircle size={20} />,
+        color: '#F44336'
+      };
+    }
+  };
+
+  const compatibility = checkCompatibility();
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.mainBeige }}>
@@ -72,7 +115,7 @@ const Builder = () => {
           className="rounded-lg shadow-lg p-6 mb-8 "
           style={{ backgroundColor: 'white', border: `2px solid ${colors.mainYellow}` }}
         >
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
               <h2 className="text-2xl font-bold" style={{ color: colors.mainBlack }}>
                 Your Build
@@ -81,11 +124,30 @@ const Builder = () => {
                 {Object.keys(selectedComponents).length} of {components.length} components selected
               </p>
             </div>
-            <div className="text-right">
-              <p className="text-sm" style={{ color: colors.jet }}>Estimated Total</p>
-              <p className="text-3xl font-bold" style={{ color: colors.mainYellow }}>
-                ${calculateTotal().toFixed(2)}
-              </p>
+            
+            <div className="flex flex-col sm:flex-row gap-6">
+              {/* Compatibility Status */}
+              <div className="text-center sm:text-left">
+                <p className="text-sm mb-1" style={{ color: colors.jet }}>Compatibility</p>
+                <div className="flex items-center gap-2 justify-center sm:justify-start">
+                  {compatibility.icon && (
+                    <span style={{ color: compatibility.color }}>
+                      {compatibility.icon}
+                    </span>
+                  )}
+                  <p className="text-lg font-semibold" style={{ color: compatibility.color || colors.jet }}>
+                    {compatibility.message}
+                  </p>
+                </div>
+              </div>
+              
+              {/* Total Price */}
+              <div className="text-center sm:text-right">
+                <p className="text-sm" style={{ color: colors.jet }}>Estimated Total</p>
+                <p className="text-3xl font-bold" style={{ color: colors.mainYellow }}>
+                  ${calculateTotal().toFixed(2)}
+                </p>
+              </div>
             </div>
           </div>
         </div>
