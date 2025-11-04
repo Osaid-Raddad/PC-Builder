@@ -3,6 +3,7 @@ import { FaEnvelope, FaLock, FaEye, FaEyeSlash, FaUser, FaPhone } from 'react-ic
 import { FcGoogle } from 'react-icons/fc';
 import { FaSquareFacebook, FaApple } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
+import colors from '../config/colors';
 
 const SignUp = ({ onSwitchToSignIn }) => {
   const [showPassword, setShowPassword] = useState(false);
