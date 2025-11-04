@@ -11,7 +11,6 @@ import Memory from './pages/components/Memory';
 import Storage from './pages/components/Storage';
 import Case from './pages/components/Case';
 import PowerSupply from './pages/components/PowerSupply';
-import OperatingSystem from './pages/components/OperatingSystem';
 import Monitor from './pages/components/Monitor';
 import Expansion from './pages/components/Expansion';
 import Peripherals from './pages/components/Peripherals';
@@ -48,7 +47,6 @@ function App() {
         <Route path="/builder/gpu" element={<GPU />} />
         <Route path="/builder/case" element={<Case />} />
         <Route path="/builder/psu" element={<PowerSupply />} />
-        <Route path="/builder/os" element={<OperatingSystem />} />
         <Route path="/builder/monitor" element={<Monitor />} />
         <Route path="/builder/expansion" element={<Expansion />} />
         <Route path="/builder/peripherals" element={<Peripherals />} />
