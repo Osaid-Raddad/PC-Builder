@@ -92,26 +92,7 @@ const SignUp = ({ onSwitchToSignIn }) => {
             />
           </div>
         </div>
-
-        <div>
-          <label htmlFor="phone" className="block text-sm font-medium mb-2" style={{ color: '#242423' }}>
-            Phone Number
-          </label>
-          <div className="relative">
-            <FaPhone className="absolute left-3 top-1/2 transform -translate-y-1/2" style={{ color: '#F5CB5C' }} />
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              className="w-full pl-10 pr-4 py-2 sm:py-3 border-2 rounded-lg focus:outline-none focus:border-[#F5CB5C] transition-colors text-sm sm:text-base"
-              style={{ borderColor: '#CFDBD5', backgroundColor: '#E8EDDF' }}
-              placeholder="Enter your phone number"
-            />
-          </div>
-        </div>
-
+        
         <div>
           <label htmlFor="password" className="block text-sm font-medium mb-2" style={{ color: '#242423' }}>
             Password
