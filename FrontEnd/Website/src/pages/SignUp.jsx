@@ -46,7 +46,7 @@ const SignUp = ({ onSwitchToSignIn }) => {
   };
 
   return (
-    <div className="w-full max-w-md bg-white rounded-lg shadow-xl p-4 sm:p-6 md:p-8">
+    <div className="w-full max-w-lg bg-white rounded-lg shadow-xl p-4 sm:p-6 md:p-8">
       <h2 className="text-2xl sm:text-3xl font-bold text-center mb-2" style={{ color: '#242423' }}>
         Create Account
       </h2>
@@ -54,7 +54,7 @@ const SignUp = ({ onSwitchToSignIn }) => {
         Sign up to get started
       </p>
 
-      <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-3">
+      <form onSubmit={handleSubmit} className="space-y-2 sm:space-y-5">
         <div>
           <label htmlFor="name" className="block text-sm font-medium mb-2" style={{ color: '#242423' }}>
             Full Name
@@ -157,7 +157,7 @@ const SignUp = ({ onSwitchToSignIn }) => {
               className="w-4 h-4 mt-1 rounded focus:ring-2 focus:ring-[#F5CB5C]"
               style={{ accentColor: '#F5CB5C' }}
             />
-            <span className="ml-2 text-sm" style={{ color: '#333533' }}>
+            <span className="mt-1 ml-2 text-sm" style={{ color: '#333533' }}>
               I agree to the{' '}
               <a href="#" className="hover:underline" style={{ color: '#F5CB5C' }}>
                 Terms and Conditions
