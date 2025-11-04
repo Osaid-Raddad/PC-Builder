@@ -36,7 +36,6 @@ const Builder = () => {
     { id: 'gpu', name: 'GPU', icon: <FaMicrochip size={24} />, description: 'Graphics card for gaming' },
     { id: 'case', name: 'Case', icon: <FaDesktop size={24} />, description: 'House your components' },
     { id: 'psu', name: 'Power Supply', icon: <FaBolt size={24} />, description: 'Power your build' },
-    { id: 'os', name: 'Operating System', icon: <FaWindows size={24} />, description: 'Windows, Linux, etc.' },
     { id: 'monitor', name: 'Monitor', icon: <FaTv size={24} />, description: 'Display your visuals' },
     { id: 'expansion', name: 'Expansion Cards / Networking', icon: <FaNetworkWired size={24} />, description: 'Wi-Fi, sound cards, etc.' },
     { id: 'peripherals', name: 'Peripherals', icon: <FaKeyboard size={24} />, description: 'Keyboard, mouse, etc.' },
