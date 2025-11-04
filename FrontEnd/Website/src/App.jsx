@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import AuthLayout from './layouts/AuthLayout';
+import Home from './pages/Home';
 
 function App() {
   return (
@@ -23,9 +24,9 @@ function App() {
       />
       
       <Routes>
+        <Route path="/" element={<Home />} />
         <Route path="/signin" element={<AuthLayout />} />
         <Route path="/signup" element={<AuthLayout />} />
-        <Route path="/" element={<AuthLayout />} />
       </Routes>
     </Router>
   );

@@ -1,10 +1,12 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { FaSquareFacebook, FaApple } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
 
 const SignIn = ({ onSwitchToSignUp }) => {
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
@@ -19,6 +21,10 @@ const SignIn = ({ onSwitchToSignUp }) => {
       return;
     }
     toast.success('Signed in successfully!');
+    // Navigate to home page after successful sign in
+    setTimeout(() => {
+      navigate('/');
+    }, 1000);
   };
 
   const handleChange = (e) => {
