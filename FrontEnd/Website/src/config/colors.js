@@ -4,7 +4,7 @@ export const colors = {
   mainBlack: "#242423",
   mainBeige: "#efece1",
 
-  // Additional colors from your palette
+  // Additional colors
   alabaster: "#E8EDDF",
   platinum: "#CFDBD5",
   jet: "#333533",
