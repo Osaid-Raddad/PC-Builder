@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiSearch, FiMenu, FiX, FiUser, FiChevronDown } from 'react-icons/fi';
 import { FaTools, FaBoxOpen, FaNewspaper, FaEdit } from 'react-icons/fa';
-import { PiDesktopTowerDuotone } from 'react-icons/pi';
+import { PiDesktopTowerFill } from 'react-icons/pi';
 import { HiCog } from 'react-icons/hi';
 import colors from '../config/colors';
 
@@ -14,7 +14,7 @@ export default function Navbar() {
   const menuItems = [
     { label: 'Builder', path: '/builder', icon: <FaTools size={18} /> },
     { label: 'Products', path: '/products', icon: <FaBoxOpen size={18} /> },
-    { label: 'Completed Builds', path: '/completed-builds', icon: <PiDesktopTowerDuotone size={22} /> },
+    { label: 'Completed Builds', path: '/completed-builds', icon: <PiDesktopTowerFill size={20} /> },
     { label: 'Posts', path: '/posts', icon: <FaEdit size={18} /> },
     { label: 'News', path: '/news', icon: <FaNewspaper size={18} /> },
   ];
