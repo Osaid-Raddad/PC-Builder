@@ -44,7 +44,7 @@ export default function Navbar() {
               <div key={index} className="relative group">
                 <button
                   onClick={() => handleNavigation(item.path)}
-                  className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200"
+                  className="flex items-center space-x-2 px-2 py-2 rounded-md text-sm font-medium transition-all duration-200"
                   style={{ 
                     color: '#FFFFFF',
                   }}
