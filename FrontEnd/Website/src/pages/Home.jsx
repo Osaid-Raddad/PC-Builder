@@ -4,7 +4,7 @@ import colors from '../config/colors';
 
 const Home = () => {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: colors.mainBeige }}>
+    <div className="min-h-screen">
       <Navbar />
       
       <div className="container mx-auto px-4 py-8">

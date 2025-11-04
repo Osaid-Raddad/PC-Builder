@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiSearch, FiMenu, FiX, FiUser, FiChevronDown } from 'react-icons/fi';
+import { FaTools, FaBoxOpen, FaDesktop, FaNewspaper, FaEdit } from 'react-icons/fa';
+import { HiCog } from 'react-icons/hi';
 import colors from '../config/colors';
 
 export default function Navbar() {
@@ -9,18 +11,11 @@ export default function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   const menuItems = [
-    { label: 'Home', path: '/' },
-    { label: 'Features', path: '/features' },
-    { 
-      label: 'Projects', 
-      path: '/projects',
-      dropdown: [
-        { label: 'Core', path: '/projects/core' },
-        { label: 'Blocks', path: '/projects/blocks' },
-        { label: 'UI Kit', path: '/projects/ui-kit' },
-      ]
-    },
-    { label: 'Contact', path: '/contact' },
+    { label: 'Builder', path: '/builder', icon: <FaTools size={18} /> },
+    { label: 'Products', path: '/products', icon: <FaBoxOpen size={18} /> },
+    { label: 'Completed Builds', path: '/completed-builds', icon: <FaDesktop size={18} /> },
+    { label: 'Posts', path: '/posts', icon: <FaEdit size={18} /> },
+    { label: 'News', path: '/news', icon: <FaNewspaper size={18} /> },
   ];
 
   const handleNavigation = (path) => {
@@ -39,7 +34,7 @@ export default function Navbar() {
             <img 
               src="/src/assets/Images/LogoIcon.png" 
               alt="PC Builder Logo" 
-              style={{ height: '40px', width: 'auto', objectFit: 'contain' }}
+              style={{ height: '50px', width: 'auto', objectFit: 'contain' }}
             />
           </div>
 
@@ -48,44 +43,17 @@ export default function Navbar() {
             {menuItems.map((item, index) => (
               <div key={index} className="relative group">
                 <button
-                  onClick={() => item.dropdown ? setActiveDropdown(activeDropdown === index ? null : index) : handleNavigation(item.path)}
-                  className="flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200"
+                  onClick={() => handleNavigation(item.path)}
+                  className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-all duration-200"
                   style={{ 
                     color: '#FFFFFF',
                   }}
                   onMouseEnter={(e) => e.currentTarget.style.color = colors.mainYellow}
                   onMouseLeave={(e) => e.currentTarget.style.color = '#FFFFFF'}
                 >
+                  <span style={{ color: colors.mainYellow }}>{item.icon}</span>
                   <span>{item.label}</span>
-                  {item.dropdown && <FiChevronDown size={16} />}
                 </button>
-
-                {/* Dropdown */}
-                {item.dropdown && activeDropdown === index && (
-                  <div 
-                    className="absolute top-full left-0 mt-2 w-48 rounded-md shadow-lg py-1"
-                    style={{ backgroundColor: colors.jet, border: `1px solid ${colors.mainYellow}` }}
-                  >
-                    {item.dropdown.map((dropItem, dropIndex) => (
-                      <button
-                        key={dropIndex}
-                        onClick={() => handleNavigation(dropItem.path)}
-                        className="block w-full text-left px-4 py-2 text-sm transition-colors duration-200"
-                        style={{ color: '#FFFFFF' }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.mainBlack;
-                          e.currentTarget.style.color = colors.mainYellow;
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                          e.currentTarget.style.color = '#FFFFFF';
-                        }}
-                      >
-                        {dropItem.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
               </div>
             ))}
           </div>
@@ -150,26 +118,13 @@ export default function Navbar() {
             {menuItems.map((item, index) => (
               <div key={index}>
                 <button
-                  onClick={() => item.dropdown ? setActiveDropdown(activeDropdown === index ? null : index) : handleNavigation(item.path)}
-                  className="w-full text-left px-3 py-2 rounded-md text-base font-medium"
+                  onClick={() => handleNavigation(item.path)}
+                  className="w-full text-left px-3 py-2 rounded-md text-base font-medium flex items-center space-x-2"
                   style={{ color: '#FFFFFF' }}
                 >
-                  {item.label}
+                  <span style={{ color: colors.mainYellow }}>{item.icon}</span>
+                  <span>{item.label}</span>
                 </button>
-                {item.dropdown && activeDropdown === index && (
-                  <div className="pl-4">
-                    {item.dropdown.map((dropItem, dropIndex) => (
-                      <button
-                        key={dropIndex}
-                        onClick={() => handleNavigation(dropItem.path)}
-                        className="w-full text-left px-3 py-2 text-sm"
-                        style={{ color: colors.platinum }}
-                      >
-                        {dropItem.label}
-                      </button>
-                    ))}
-                  </div>
-                )}
               </div>
             ))}
             
