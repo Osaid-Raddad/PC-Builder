@@ -1,20 +1,20 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import AuthLayout from './layouts/AuthLayout';
-import Home from './pages/Home';
-import Builder from './pages/Builder';
-import CPU from './pages/components/CPU';
-import CPUCooler from './pages/components/CPUCooler';
-import GPU from './pages/components/GPU';
-import Motherboard from './pages/components/Motherboard';
-import Memory from './pages/components/Memory';
-import Storage from './pages/components/Storage';
-import Case from './pages/components/Case';
-import PowerSupply from './pages/components/PowerSupply';
-import Monitor from './pages/components/Monitor';
-import Expansion from './pages/components/Expansion';
-import Peripherals from './pages/components/Peripherals';
-import Accessories from './pages/components/Accessories';
+import Home from './pages/home/Home.jsx';
+import Builder from './pages/user/builder/Builder.jsx';
+import CPU from './pages/hardwareComponents/CPU.jsx';
+import CPUCooler from './pages/hardwareComponents/CPUCooler';
+import GPU from './pages/hardwareComponents/GPU';
+import Motherboard from './pages/hardwareComponents/Motherboard';
+import Memory from './pages/hardwareComponents/Memory';
+import Storage from './pages/hardwareComponents/Storage';
+import Case from './pages/hardwareComponents/Case';
+import PowerSupply from './pages/hardwareComponents/PowerSupply.jsx';
+import Monitor from './pages/hardwareComponents/Monitor';
+import Expansion from './pages/hardwareComponents/Expansion.jsx';
+import Peripherals from './pages/hardwareComponents/Peripherals';
+import Accessories from './pages/hardwareComponents/Accessories';
 
 function App() {
   return (

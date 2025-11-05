@@ -3,6 +3,9 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import BlurText from '../components/animations/BlurText';
 import colors from '../config/colors';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
+import colors from '../../config/colors';
 
 const Home = () => {
   const handleAnimationComplete = () => {
