@@ -4,7 +4,7 @@ import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { FaSquareFacebook, FaApple } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
-import colors from '../config/colors';
+import colors from '../../../config/colors';
 
 const SignIn = ({ onSwitchToSignUp }) => {
   const navigate = useNavigate();

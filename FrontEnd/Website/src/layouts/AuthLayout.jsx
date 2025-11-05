@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import SignIn from '../pages/SignIn';
-import SignUp from '../pages/SignUp';
+import SignIn from '../pages/user/auth/SignIn.jsx';
+import SignUp from '../pages/user/auth/SignUp.jsx';
 import colors from '../config/colors';
 
 const AuthLayout = () => {
