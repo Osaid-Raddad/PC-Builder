@@ -17,7 +17,7 @@ import Peripherals from './pages/hardwareComponents/Peripherals';
 import Accessories from './pages/hardwareComponents/Accessories';
 import ForgotPassword from './pages/user/auth/ForgotPassword.jsx';
 import ResetPassword from './pages/user/auth/ResetPassword';
-
+import News from './pages/user/news/News';
 function App() {
   return (
     <Router>
@@ -57,6 +57,8 @@ function App() {
         <Route path="/signup" element={<AuthLayout />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/news" element={<News />} />
+        
       </Routes>
     </Router>
   );
