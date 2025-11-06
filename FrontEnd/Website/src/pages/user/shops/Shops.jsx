@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
 import colors from '../../../config/colors';
-import { FiExternalLink, FiMapPin, FiChevronLeft, FiChevronRight, FiFilter } from 'react-icons/fi';
+import { FiExternalLink, FiMapPin, FiChevronLeft, FiChevronRight, FiFilter, FiSearch } from 'react-icons/fi';
 
 const Shops = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCity, setSelectedCity] = useState('All');
+  const [searchTerm, setSearchTerm] = useState('');
   const shopsPerPage = 6;
 
   const allShops = [
@@ -105,10 +106,17 @@ const Shops = () => {
   // Get unique cities for filter
   const cities = ['All', ...new Set(allShops.map(shop => shop.city))];
 
-  // Filter shops by selected city
-  const filteredShops = selectedCity === 'All' 
-    ? allShops 
-    : allShops.filter(shop => shop.city === selectedCity);
+  // Filter shops by selected city and search term
+  const filteredShops = allShops.filter(shop => {
+    const matchesCity = selectedCity === 'All' || shop.city === selectedCity;
+    const matchesSearch = searchTerm === '' || 
+      shop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      shop.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      shop.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      shop.specialties.some(specialty => specialty.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    return matchesCity && matchesSearch;
+  });
 
   const totalPages = Math.ceil(filteredShops.length / shopsPerPage);
   const indexOfLastShop = currentPage * shopsPerPage;
@@ -123,6 +131,11 @@ const Shops = () => {
   const handleCityFilter = (city) => {
     setSelectedCity(city);
     setCurrentPage(1); // Reset to first page when filtering
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page when searching
   };
 
   const handleShopClick = (url) => {
@@ -144,52 +157,66 @@ const Shops = () => {
           </p>
         </div>
 
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative">
+            <FiSearch 
+              className="absolute left-4 top-1/2 -translate-y-1/2" 
+              style={{ color: colors.mainYellow }} 
+              size={20} 
+            />
+            <input
+              type="text"
+              placeholder="Search shops by name, location, or specialty..."
+              value={searchTerm}
+              onChange={handleSearch}
+              className="w-full pl-12 pr-4 py-4 rounded-lg font-medium transition-all focus:outline-none focus:ring-2"
+              style={{
+                border: `2px solid ${colors.platinum}`,
+                backgroundColor: 'white',
+                color: colors.jet,
+                focusRingColor: colors.mainYellow
+              }}
+            />
+          </div>
+        </div>
+
         {/* City Filter */}
         <div className="mb-8">
-          <div 
-            className="bg-white rounded-lg shadow-lg p-6"
-            style={{ border: `2px solid ${colors.platinum}` }}
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <FiFilter size={24} style={{ color: colors.mainYellow }} />
-              <h3 className="text-xl font-bold" style={{ color: colors.mainBlack }}>
-                Filter by City
-              </h3>
-            </div>
-            
-            <div className="flex flex-wrap gap-3">
-              {cities.map((city) => (
-                <button
-                  key={city}
-                  onClick={() => handleCityFilter(city)}
-                  className="px-6 py-3 rounded-lg font-semibold transition-all duration-200"
-                  style={{
-                    backgroundColor: selectedCity === city ? colors.mainYellow : 'white',
-                    color: selectedCity === city ? 'white' : colors.mainBlack,
-                    border: `2px solid ${selectedCity === city ? colors.mainYellow : colors.platinum}`
-                  }}
-                >
-                  {city}
-                  {city !== 'All' && (
-                    <span 
-                      className="ml-2 px-2 py-1 rounded-full text-xs"
-                      style={{
-                        backgroundColor: selectedCity === city ? 'rgba(255,255,255,0.3)' : colors.mainYellow + '20'
-                      }}
-                    >
-                      {allShops.filter(shop => shop.city === city).length}
-                    </span>
-                  )}
-                </button>
-              ))}
-            </div>
-
-            {selectedCity !== 'All' && (
-              <div className="mt-4 text-sm" style={{ color: colors.jet }}>
-                Showing {filteredShops.length} shop{filteredShops.length !== 1 ? 's' : ''} in {selectedCity}
-              </div>
-            )}
+          <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            <FiFilter size={20} style={{ color: colors.mainYellow }} className="shrink-0" />
+            {cities.map((city) => (
+              <button
+                key={city}
+                onClick={() => handleCityFilter(city)}
+                className="px-5 py-2 rounded-full font-medium transition-all shrink-0"
+                style={{
+                  backgroundColor: selectedCity === city ? colors.mainYellow : 'white',
+                  color: selectedCity === city ? 'white' : colors.jet,
+                  border: `2px solid ${selectedCity === city ? colors.mainYellow : colors.platinum}`
+                }}
+              >
+                {city}
+                {city !== 'All' && (
+                  <span 
+                    className="ml-2 px-2 py-1 rounded-full text-xs font-semibold"
+                    style={{
+                      backgroundColor: selectedCity === city ? 'rgba(255,255,255,0.3)' : colors.mainYellow + '20',
+                      color: selectedCity === city ? 'white' : colors.mainBlack
+                    }}
+                  >
+                    {allShops.filter(shop => shop.city === city).length}
+                  </span>
+                )}
+              </button>
+            ))}
           </div>
+
+          {selectedCity !== 'All' && (
+            <div className="mt-4 text-sm" style={{ color: colors.jet }}>
+              Showing {filteredShops.length} shop{filteredShops.length !== 1 ? 's' : ''} in {selectedCity}
+            </div>
+          )}
         </div>
 
         {/* Shop Cards Grid */}

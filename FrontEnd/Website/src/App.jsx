@@ -5,6 +5,7 @@ import Home from './pages/home/Home.jsx';
 import Builder from './pages/user/builder/Builder.jsx';
 import Shops from './pages/user/shops/Shops.jsx';
 import ContactUs from './pages/user/contact/ContactUs.jsx';
+import CompletedBuilds from './pages/user/completedBuilds/CompletedBuilds.jsx';
 import CPU from './pages/hardwareComponents/CPU.jsx';
 import CPUCooler from './pages/hardwareComponents/CPUCooler';
 import GPU from './pages/hardwareComponents/GPU';
@@ -45,6 +46,7 @@ function App() {
         <Route path="/builder" element={<Builder />} />
         <Route path="/shops" element={<Shops />} />
         <Route path="/contact" element={<ContactUs />} />
+        <Route path="/completed-builds" element={<CompletedBuilds />} />
         <Route path="/builder/cpu" element={<CPU />} />
         <Route path="/builder/cooler" element={<CPUCooler />} />
         <Route path="/builder/motherboard" element={<Motherboard />} />
