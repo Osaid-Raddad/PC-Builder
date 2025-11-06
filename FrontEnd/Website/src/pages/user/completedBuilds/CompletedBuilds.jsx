@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
 import colors from '../../../config/colors';
@@ -7,6 +8,7 @@ import { BsCpuFill } from 'react-icons/bs';
 import { FaMicrochip, FaMemory } from 'react-icons/fa';
 
 const CompletedBuilds = () => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -442,17 +444,37 @@ const CompletedBuilds = () => {
           style={{ backgroundColor: 'white', border: `2px solid ${colors.mainYellow}` }}
         >
           <h3 className="text-3xl font-bold mb-4" style={{ color: colors.mainBlack }}>
-            Share Your Build!
+            Ready to Build Your Dream PC?
           </h3>
           <p className="text-lg mb-6" style={{ color: colors.jet }}>
-            Have you completed an amazing PC build? Share it with our community and inspire others!
+            Start building your custom PC with our interactive builder or share your completed build with the community!
           </p>
-          <button
-            className="px-8 py-4 rounded-lg font-bold text-white hover:opacity-90 transition-opacity text-lg"
-            style={{ backgroundColor: colors.mainYellow }}
-          >
-            Submit Your Build
-          </button>
+          <div className="flex flex-wrap justify-center gap-4">
+            <button
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: 'instant' });
+                navigate('/builder');
+              }}
+              className="px-8 py-4 rounded-lg font-bold text-white hover:opacity-90 transition-opacity text-lg"
+              style={{ backgroundColor: colors.mainYellow }}
+            >
+              Start Your Build
+            </button>
+            <button
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: 'instant' });
+                navigate('/submit-build');
+              }}
+              className="px-8 py-4 rounded-lg font-bold hover:opacity-90 transition-opacity text-lg"
+              style={{ 
+                backgroundColor: 'white',
+                color: colors.mainYellow,
+                border: `2px solid ${colors.mainYellow}`
+              }}
+            >
+              Submit Your Build
+            </button>
+          </div>
         </div>
       </div>
 
