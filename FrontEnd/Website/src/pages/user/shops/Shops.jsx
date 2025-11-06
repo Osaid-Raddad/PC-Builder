@@ -69,7 +69,7 @@ const Shops = () => {
       description: 'Reliable computer shop offering quality hardware and excellent customer service',
       logo: '/src/assets/Images/Arabi.jpg',
       url: 'https://www.facebook.com/alarabi.for.computer',
-      location: 'West Bank',
+      location: 'Bethlehem, West Bank',
       specialties: ['Computers', 'Hardware', 'Repairs', 'Accessories']
     },
     {
@@ -78,7 +78,7 @@ const Shops = () => {
       description: 'Trusted provider of computers and tech solutions for businesses and individuals',
       logo: '/src/assets/Images/yamen.png',
       url: 'https://www.facebook.com/Yamen4Computer/',
-      location: 'West Bank',
+      location: 'Hebron, West Bank',
       specialties: ['PC Building', 'Components', 'Software', 'IT Support']
     },
     {
@@ -87,7 +87,7 @@ const Shops = () => {
       description: 'Ultimate destination for gaming enthusiasts with top-tier gaming hardware',
       logo: '/src/assets/Images/extreme.png',
       url: 'https://xgc.ps/',
-      location: 'West Bank',
+      location: 'Ramallah, West Bank',
       specialties: ['Gaming PCs', 'High-End Components', 'Gaming Gear', 'Custom Builds']
     }
   ];

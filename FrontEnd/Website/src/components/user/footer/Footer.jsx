@@ -109,7 +109,7 @@ export default function Footer() {
               <li className="flex items-center space-x-2">
                 <FiPhone style={{ color: colors.mainYellow }} size={18} />
                 <span className="text-sm" style={{ color: colors.alabaster }}>
-                  +972 522758700
+                  +972 52 275 8700
                 </span>
               </li>
               <li className="flex items-start space-x-2">
