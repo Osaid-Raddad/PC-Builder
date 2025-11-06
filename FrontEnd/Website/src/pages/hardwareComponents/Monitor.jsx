@@ -4,11 +4,15 @@ import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import colors from '../../config/colors';
 import { FaTv } from 'react-icons/fa';
-import { FiArrowLeft, FiFilter } from 'react-icons/fi';
+import { FiArrowLeft, FiSearch } from 'react-icons/fi';
 
 const Monitor = () => {
   const navigate = useNavigate();
   const [selectedMonitor, setSelectedMonitor] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sizeFilter, setSizeFilter] = useState('All');
+  const [resolutionFilter, setResolutionFilter] = useState('All');
+  const [refreshRateFilter, setRefreshRateFilter] = useState('All');
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -23,6 +27,18 @@ const Monitor = () => {
     { id: 5, name: 'AOC CU34G2X', brand: 'AOC', size: '34"', resolution: '3440x1440', refreshRate: '144Hz', price: 449.99 },
     { id: 6, name: 'BenQ EX2780Q', brand: 'BenQ', size: '27"', resolution: '2560x1440', refreshRate: '144Hz', price: 499.99 },
   ];
+
+  const sizes = ['All', '24"', '27"', '32"', '34"', '49"'];
+  const resolutions = ['All', '1920x1080', '2560x1440', '3840x2160', '3440x1440'];
+  const refreshRates = ['All', '60Hz', '75Hz', '144Hz', '165Hz', '240Hz', '360Hz'];
+
+  const filteredMonitors = monitorList.filter(monitor => {
+    const matchesSearch = searchTerm === '' || monitor.name.toLowerCase().includes(searchTerm.toLowerCase()) || monitor.brand.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSize = sizeFilter === 'All' || monitor.size === sizeFilter;
+    const matchesResolution = resolutionFilter === 'All' || monitor.resolution === resolutionFilter;
+    const matchesRefreshRate = refreshRateFilter === 'All' || monitor.refreshRate === refreshRateFilter;
+    return matchesSearch && matchesSize && matchesResolution && matchesRefreshRate;
+  });
 
   const handleSelectMonitor = (monitor) => {
     setSelectedMonitor(monitor);
@@ -57,13 +73,105 @@ const Monitor = () => {
             </h1>
           </div>
           
-          <button
-            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
-            style={{ backgroundColor: 'white', color: colors.mainYellow, border: `2px solid ${colors.mainYellow}` }}
-          >
-            <FiFilter size={20} />
-            Filters
-          </button>
+          <div className="w-32"></div>
+        </div>
+
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative">
+            <FiSearch 
+              size={20} 
+              className="absolute left-4 top-1/2 transform -translate-y-1/2"
+              style={{ color: colors.platinum }}
+            />
+            <input
+              type="text"
+              placeholder="Search monitors..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+              style={{ 
+                backgroundColor: 'white', 
+                borderColor: colors.platinum,
+                color: colors.mainBlack 
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Filters Section */}
+        <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: 'white' }}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Size Filter */}
+            <div>
+              <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                Size
+              </label>
+              <select
+                value={sizeFilter}
+                onChange={(e) => setSizeFilter(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                style={{ 
+                  borderColor: colors.platinum,
+                  color: colors.mainBlack,
+                  backgroundColor: 'white'
+                }}
+              >
+                {sizes.map(size => (
+                  <option key={size} value={size}>{size}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Resolution Filter */}
+            <div>
+              <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                Resolution
+              </label>
+              <select
+                value={resolutionFilter}
+                onChange={(e) => setResolutionFilter(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                style={{ 
+                  borderColor: colors.platinum,
+                  color: colors.mainBlack,
+                  backgroundColor: 'white'
+                }}
+              >
+                {resolutions.map(resolution => (
+                  <option key={resolution} value={resolution}>{resolution}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Refresh Rate Filter */}
+            <div>
+              <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                Refresh Rate
+              </label>
+              <select
+                value={refreshRateFilter}
+                onChange={(e) => setRefreshRateFilter(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                style={{ 
+                  borderColor: colors.platinum,
+                  color: colors.mainBlack,
+                  backgroundColor: 'white'
+                }}
+              >
+                {refreshRates.map(refreshRate => (
+                  <option key={refreshRate} value={refreshRate}>{refreshRate}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Results Counter */}
+        <div className="mb-4">
+          <p className="text-lg font-semibold" style={{ color: colors.jet }}>
+            Showing {filteredMonitors.length} of {monitorList.length} monitors
+          </p>
         </div>
 
         {selectedMonitor && (
@@ -86,7 +194,7 @@ const Monitor = () => {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {monitorList.map((monitor) => (
+          {filteredMonitors.map((monitor) => (
             <div
               key={monitor.id}
               className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-pointer ${
@@ -140,6 +248,15 @@ const Monitor = () => {
           ))}
         </div>
       </div>
+
+      {/* Empty State */}
+      {filteredMonitors.length === 0 && (
+        <div className="text-center py-12">
+          <FaTv size={64} style={{ color: colors.platinum }} className="mx-auto mb-4" />
+          <p className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>No monitors found</p>
+          <p className="text-lg" style={{ color: colors.jet }}>Try adjusting your filters or search terms</p>
+        </div>
+      )}
 
       <Footer />
     </div>

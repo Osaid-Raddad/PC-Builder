@@ -4,18 +4,21 @@ import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import colors from '../../config/colors';
 import { FaFan } from 'react-icons/fa';
-import { FiArrowLeft, FiFilter } from 'react-icons/fi';
+import { FiArrowLeft, FiFilter, FiSearch } from 'react-icons/fi';
 
 const CPUCooler = () => {
   const navigate = useNavigate();
   const [selectedCooler, setSelectedCooler] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [typeFilter, setTypeFilter] = useState('All');
+  const [brandFilter, setBrandFilter] = useState('All');
+  const [priceFilter, setPriceFilter] = useState('All');
 
   // Scroll to top when component mounts
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // TODO: Replace with actual data from backend
   const coolerList = [
     { id: 1, name: 'Noctua NH-D15', brand: 'Noctua', type: 'Air', price: 109.99, compatibility: ['Intel', 'AMD'] },
     { id: 2, name: 'Corsair iCUE H150i Elite', brand: 'Corsair', type: 'Liquid', price: 189.99, compatibility: ['Intel', 'AMD'] },
@@ -24,6 +27,21 @@ const CPUCooler = () => {
     { id: 5, name: 'Cooler Master Hyper 212', brand: 'Cooler Master', type: 'Air', price: 44.99, compatibility: ['Intel', 'AMD'] },
     { id: 6, name: 'Arctic Liquid Freezer II 280', brand: 'Arctic', type: 'Liquid', price: 119.99, compatibility: ['Intel', 'AMD'] },
   ];
+
+  const types = ['All', 'Air', 'Liquid'];
+  const brands = ['All', 'Noctua', 'Corsair', 'be quiet!', 'NZXT', 'Cooler Master', 'Arctic'];
+  const priceRanges = ['All', 'Under $75', '$75-$125', 'Over $125'];
+
+  const filteredCoolers = coolerList.filter(cooler => {
+    const matchesSearch = searchTerm === '' || cooler.name.toLowerCase().includes(searchTerm.toLowerCase()) || cooler.brand.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = typeFilter === 'All' || cooler.type === typeFilter;
+    const matchesBrand = brandFilter === 'All' || cooler.brand === brandFilter;
+    let matchesPrice = true;
+    if (priceFilter === 'Under $75') matchesPrice = cooler.price < 75;
+    else if (priceFilter === '$75-$125') matchesPrice = cooler.price >= 75 && cooler.price <= 125;
+    else if (priceFilter === 'Over $125') matchesPrice = cooler.price > 125;
+    return matchesSearch && matchesType && matchesBrand && matchesPrice;
+  });
 
   const handleSelectCooler = (cooler) => {
     setSelectedCooler(cooler);
@@ -58,13 +76,105 @@ const CPUCooler = () => {
             </h1>
           </div>
           
-          <button
-            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
-            style={{ backgroundColor: 'white', color: colors.mainYellow, border: `2px solid ${colors.mainYellow}` }}
-          >
-            <FiFilter size={20} />
-            Filters
-          </button>
+          <div className="w-32"></div>
+        </div>
+
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative">
+            <FiSearch 
+              size={20} 
+              className="absolute left-4 top-1/2 transform -translate-y-1/2"
+              style={{ color: colors.platinum }}
+            />
+            <input
+              type="text"
+              placeholder="Search CPU coolers..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+              style={{ 
+                backgroundColor: 'white', 
+                borderColor: colors.platinum,
+                color: colors.mainBlack 
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Filters Section */}
+        <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: 'white' }}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Type Filter */}
+            <div>
+              <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                Type
+              </label>
+              <select
+                value={typeFilter}
+                onChange={(e) => setTypeFilter(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                style={{ 
+                  borderColor: colors.platinum,
+                  color: colors.mainBlack,
+                  backgroundColor: 'white'
+                }}
+              >
+                {types.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Brand Filter */}
+            <div>
+              <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                Brand
+              </label>
+              <select
+                value={brandFilter}
+                onChange={(e) => setBrandFilter(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                style={{ 
+                  borderColor: colors.platinum,
+                  color: colors.mainBlack,
+                  backgroundColor: 'white'
+                }}
+              >
+                {brands.map(brand => (
+                  <option key={brand} value={brand}>{brand}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Price Range Filter */}
+            <div>
+              <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                Price Range
+              </label>
+              <select
+                value={priceFilter}
+                onChange={(e) => setPriceFilter(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                style={{ 
+                  borderColor: colors.platinum,
+                  color: colors.mainBlack,
+                  backgroundColor: 'white'
+                }}
+              >
+                {priceRanges.map(range => (
+                  <option key={range} value={range}>{range}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Results Counter */}
+        <div className="mb-4">
+          <p className="text-lg font-semibold" style={{ color: colors.jet }}>
+            Showing {filteredCoolers.length} of {coolerList.length} CPU coolers
+          </p>
         </div>
 
         {selectedCooler && (
@@ -87,7 +197,7 @@ const CPUCooler = () => {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {coolerList.map((cooler) => (
+          {filteredCoolers.map((cooler) => (
             <div
               key={cooler.id}
               className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-pointer ${
@@ -150,6 +260,15 @@ const CPUCooler = () => {
             </div>
           ))}
         </div>
+
+        {/* Empty State */}
+        {filteredCoolers.length === 0 && (
+          <div className="text-center py-12">
+            <FaFan size={64} style={{ color: colors.platinum }} className="mx-auto mb-4" />
+            <p className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>No CPU coolers found</p>
+            <p className="text-lg" style={{ color: colors.jet }}>Try adjusting your filters or search terms</p>
+          </div>
+        )}
       </div>
 
       <Footer />

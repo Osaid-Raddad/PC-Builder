@@ -4,11 +4,15 @@ import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import colors from '../../config/colors';
 import { BsMotherboard } from 'react-icons/bs';
-import { FiArrowLeft, FiFilter } from 'react-icons/fi';
+import { FiArrowLeft, FiFilter, FiSearch } from 'react-icons/fi';
 
 const Motherboard = () => {
   const navigate = useNavigate();
   const [selectedMotherboard, setSelectedMotherboard] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [brandFilter, setBrandFilter] = useState('All');
+  const [socketFilter, setSocketFilter] = useState('All');
+  const [formFactorFilter, setFormFactorFilter] = useState('All');
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -23,6 +27,21 @@ const Motherboard = () => {
     { id: 5, name: 'ASUS TUF Gaming B760M', brand: 'ASUS', chipset: 'B760', socket: 'LGA1700', price: 189.99, formFactor: 'Micro-ATX' },
     { id: 6, name: 'MSI MAG B650 Tomahawk WiFi', brand: 'MSI', chipset: 'B650', socket: 'AM5', price: 229.99, formFactor: 'ATX' },
   ];
+
+  const brands = ['All', 'ASUS', 'MSI', 'Gigabyte', 'ASRock'];
+  const sockets = ['All', 'LGA1700', 'AM5'];
+  const formFactors = ['All', 'ATX', 'Micro-ATX', 'Mini-ITX'];
+
+  const filteredMotherboards = motherboardList.filter(mb => {
+    const matchesSearch = searchTerm === '' ||
+      mb.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      mb.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      mb.chipset.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesBrand = brandFilter === 'All' || mb.brand === brandFilter;
+    const matchesSocket = socketFilter === 'All' || mb.socket === socketFilter;
+    const matchesFormFactor = formFactorFilter === 'All' || mb.formFactor === formFactorFilter;
+    return matchesSearch && matchesBrand && matchesSocket && matchesFormFactor;
+  });
 
   const handleSelectMotherboard = (motherboard) => {
     setSelectedMotherboard(motherboard);
@@ -57,13 +76,44 @@ const Motherboard = () => {
             </h1>
           </div>
           
-          <button
-            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
-            style={{ backgroundColor: 'white', color: colors.mainYellow, border: `2px solid ${colors.mainYellow}` }}
-          >
-            <FiFilter size={20} />
-            Filters
-          </button>
+          <div style={{ width: '150px' }}></div>
+        </div>
+
+        <div className="mb-6">
+          <div className="relative">
+            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: colors.mainYellow }} size={20} />
+            <input type="text" placeholder="Search motherboards..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-12 pr-4 py-4 rounded-lg font-medium transition-all focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }} />
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <div className="bg-white rounded-lg shadow-lg p-6" style={{ border: `2px solid ${colors.platinum}` }}>
+            <div className="flex items-center gap-3 mb-4">
+              <FiFilter size={20} style={{ color: colors.mainYellow }} />
+              <h3 className="text-xl font-bold" style={{ color: colors.mainBlack }}>Filters</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Brand</label>
+                <select value={brandFilter} onChange={(e) => setBrandFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
+                  {brands.map(b => <option key={b} value={b}>{b}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Socket</label>
+                <select value={socketFilter} onChange={(e) => setSocketFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
+                  {sockets.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Form Factor</label>
+                <select value={formFactorFilter} onChange={(e) => setFormFactorFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
+                  {formFactors.map(f => <option key={f} value={f}>{f}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="mt-4 text-sm" style={{ color: colors.jet }}>Showing {filteredMotherboards.length} of {motherboardList.length} motherboards</div>
+          </div>
         </div>
 
         {selectedMotherboard && (
@@ -86,7 +136,7 @@ const Motherboard = () => {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {motherboardList.map((motherboard) => (
+          {filteredMotherboards.map((motherboard) => (
             <div
               key={motherboard.id}
               className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-pointer ${
@@ -139,6 +189,14 @@ const Motherboard = () => {
             </div>
           ))}
         </div>
+
+        {filteredMotherboards.length === 0 && (
+          <div className="text-center py-12">
+            <BsMotherboard size={64} style={{ color: colors.platinum }} className="mx-auto mb-4" />
+            <p className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>No motherboards found</p>
+            <p className="text-lg" style={{ color: colors.jet }}>Try adjusting your filters or search terms</p>
+          </div>
+        )}
       </div>
 
       <Footer />
