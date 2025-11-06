@@ -4,6 +4,7 @@ import { FiSearch, FiMenu, FiX, FiUser, FiChevronDown, FiShoppingBag } from 'rea
 import { FaTools, FaBoxOpen, FaNewspaper, FaEdit } from 'react-icons/fa';
 import { PiDesktopTowerFill } from 'react-icons/pi';
 import { HiCog } from 'react-icons/hi';
+import { Tooltip } from 'react-tooltip';
 import colors from '../../../config/colors';
 
 export default function Navbar() {
@@ -12,12 +13,42 @@ export default function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   const menuItems = [
-    { label: 'Builder', path: '/builder', icon: <FaTools size={18} /> },
-    { label: 'Products', path: '/products', icon: <FaBoxOpen size={18} /> },
-    { label: 'Completed Builds', path: '/completed-builds', icon: <PiDesktopTowerFill size={20} /> },
-    { label: 'Posts', path: '/posts', icon: <FaEdit size={18} /> },
-    { label: 'News', path: '/news', icon: <FaNewspaper size={18} /> },
-    { label: 'Shops', path: '/shops', icon: <FiShoppingBag size={18} /> },
+    { 
+      label: 'Builder', 
+      path: '/builder', 
+      icon: <FaTools size={18} />,
+      tooltip: 'Build your custom PC step by step'
+    },
+    { 
+      label: 'Products', 
+      path: '/products', 
+      icon: <FaBoxOpen size={18} />,
+      tooltip: 'Browse all PC components and hardware'
+    },
+    { 
+      label: 'Completed Builds', 
+      path: '/completed-builds', 
+      icon: <PiDesktopTowerFill size={20} />,
+      tooltip: 'Explore community PC builds for inspiration'
+    },
+    { 
+      label: 'Posts', 
+      path: '/posts', 
+      icon: <FaEdit size={18} />,
+      tooltip: 'Read community posts and discussions'
+    },
+    { 
+      label: 'News', 
+      path: '/news', 
+      icon: <FaNewspaper size={18} />,
+      tooltip: 'Latest tech news and hardware releases'
+    },
+    { 
+      label: 'Shops', 
+      path: '/shops', 
+      icon: <FiShoppingBag size={18} />,
+      tooltip: 'Find local computer shops in Palestine'
+    },
   ];
 
   const handleNavigation = (path) => {
@@ -32,7 +63,12 @@ export default function Navbar() {
         <div className="relative flex items-center justify-between h-16">
           
           {/* Logo - Max Left */}
-          <div className="shrink-0 cursor-pointer z-10" onClick={() => handleNavigation('/')}>
+          <div 
+            className="shrink-0 cursor-pointer z-10" 
+            onClick={() => handleNavigation('/')}
+            data-tooltip-id="logo-tooltip"
+            data-tooltip-content="Go to Home"
+          >
             <img 
               src="/src/assets/Images/LogoIcon.png" 
               alt="PC Builder Logo" 
@@ -52,6 +88,8 @@ export default function Navbar() {
                   }}
                   onMouseEnter={(e) => e.currentTarget.style.color = colors.mainYellow}
                   onMouseLeave={(e) => e.currentTarget.style.color = '#FFFFFF'}
+                  data-tooltip-id="nav-tooltip"
+                  data-tooltip-content={item.tooltip}
                 >
                   <span style={{ color: colors.mainYellow }}>{item.icon}</span>
                   <span>{item.label}</span>
@@ -81,6 +119,8 @@ export default function Navbar() {
                   e.target.style.borderColor = colors.platinum;
                   e.target.style.boxShadow = 'none';
                 }}
+                data-tooltip-id="search-tooltip"
+                data-tooltip-content="Search for products, builds, or posts"
               />
               <FiSearch 
                 className="absolute left-3 top-1/2 transform -translate-y-1/2" 
@@ -95,6 +135,8 @@ export default function Navbar() {
               style={{ border: `2px solid ${colors.mainYellow}` }}
               onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.jet}
               onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+              data-tooltip-id="user-tooltip"
+              data-tooltip-content="Sign in to your account"
             >
               <FiUser style={{ color: colors.mainYellow }} size={20} />
             </button>
@@ -146,6 +188,57 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+      {/* Tooltips */}
+      <Tooltip 
+        id="logo-tooltip" 
+        place="bottom"
+        style={{ 
+          backgroundColor: colors.mainYellow, 
+          color: colors.mainBlack,
+          fontWeight: 'bold',
+          fontSize: '14px',
+          borderRadius: '8px',
+          padding: '8px 12px'
+        }}
+      />
+      <Tooltip 
+        id="nav-tooltip" 
+        place="bottom"
+        style={{ 
+          backgroundColor: colors.mainYellow, 
+          color: colors.mainBlack,
+          fontWeight: '600',
+          fontSize: '13px',
+          borderRadius: '8px',
+          padding: '6px 12px',
+          maxWidth: '250px'
+        }}
+      />
+      <Tooltip 
+        id="search-tooltip" 
+        place="bottom"
+        style={{ 
+          backgroundColor: colors.mainYellow, 
+          color: colors.mainBlack,
+          fontWeight: '600',
+          fontSize: '13px',
+          borderRadius: '8px',
+          padding: '6px 12px'
+        }}
+      />
+      <Tooltip 
+        id="user-tooltip" 
+        place="bottom"
+        style={{ 
+          backgroundColor: colors.mainYellow, 
+          color: colors.mainBlack,
+          fontWeight: '600',
+          fontSize: '13px',
+          borderRadius: '8px',
+          padding: '6px 12px'
+        }}
+      />
     </nav>
   );
 }
