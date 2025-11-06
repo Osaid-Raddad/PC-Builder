@@ -1,18 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
 import colors from '../../../config/colors';
-import { FiExternalLink, FiMapPin } from 'react-icons/fi';
+import { FiExternalLink, FiMapPin, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 
 const Shops = () => {
-  const shops = [
+  const [currentPage, setCurrentPage] = useState(1);
+  const shopsPerPage = 6;
+
+  const allShops = [
     {
       id: 1,
       name: 'Watani Mall',
       description: 'Your trusted destination for computers, electronics, and tech accessories in Palestine',
       logo: '/src/assets/Images/watani.png',
       url: 'https://watanimall.com/?srsltid=AfmBOor1Zh5XPOFWmau4Ty-57WDCplKHQEoddNMlTyIfS4TpG-4F1UMH',
-      location: 'Ramallah, West Bank',
+      location: 'Beit-Hanina, Jerualem',
       specialties: ['Computers', 'Gaming', 'Electronics', 'Accessories']
     },
     {
@@ -21,7 +24,7 @@ const Shops = () => {
       description: 'Premium computer hardware and gaming equipment supplier',
       logo: '/src/assets/Images/cobra.webp',
       url: 'https://www.cobrashop.ps/',
-      location: 'West Bank',
+      location: 'Ramallah, West Bank',
       specialties: ['PC Components', 'Gaming Gear', 'Peripherals']
     },
     {
@@ -30,7 +33,7 @@ const Shops = () => {
       description: 'Modern tech store offering latest computers and accessories',
       logo: '/src/assets/Images/zikzak.webp',
       url: 'https://zikzakstore.com/en/',
-      location: 'West Bank',
+      location: 'Nablus, West Bank',
       specialties: ['Laptops', 'Desktops', 'Accessories', 'Software']
     },
     {
@@ -39,7 +42,7 @@ const Shops = () => {
       description: 'Professional computer solutions and IT services',
       logo: '/src/assets/Images/quantum.webp',
       url: 'https://quantum.ps/',
-      location: 'West Bank',
+      location: 'Ramallah, West Bank',
       specialties: ['Business Solutions', 'Hardware', 'IT Services']
     },
     {
@@ -48,7 +51,7 @@ const Shops = () => {
       description: 'Complete tech solutions for all your computing needs',
       logo: '/src/assets/Images/mega.png',
       url: 'https://megatech.ps/',
-      location: 'West Bank',
+      location: 'Ramallah, West Bank',
       specialties: ['PC Building', 'Repairs', 'Components', 'Gaming']
     },
     {
@@ -57,10 +60,47 @@ const Shops = () => {
       description: 'Gaming specialists with wide selection of gaming hardware',
       logo: '/src/assets/Images/cs.svg',
       url: 'https://csnetgames.com/ar',
-      location: 'West Bank',
+      location: 'Ramallah, West Bank',
       specialties: ['Gaming PCs', 'Consoles', 'Gaming Accessories']
+    },
+    {
+      id: 7,
+      name: 'Arabi',
+      description: 'Reliable computer shop offering quality hardware and excellent customer service',
+      logo: '/src/assets/Images/Arabi.jpg',
+      url: 'https://www.facebook.com/alarabi.for.computer',
+      location: 'West Bank',
+      specialties: ['Computers', 'Hardware', 'Repairs', 'Accessories']
+    },
+    {
+      id: 8,
+      name: 'Alyamen',
+      description: 'Trusted provider of computers and tech solutions for businesses and individuals',
+      logo: '/src/assets/Images/yamen.png',
+      url: 'https://www.facebook.com/Yamen4Computer/',
+      location: 'West Bank',
+      specialties: ['PC Building', 'Components', 'Software', 'IT Support']
+    },
+    {
+      id: 9,
+      name: 'Extreme Gaming Store',
+      description: 'Ultimate destination for gaming enthusiasts with top-tier gaming hardware',
+      logo: '/src/assets/Images/extreme.png',
+      url: 'https://xgc.ps/',
+      location: 'West Bank',
+      specialties: ['Gaming PCs', 'High-End Components', 'Gaming Gear', 'Custom Builds']
     }
   ];
+
+  const totalPages = Math.ceil(allShops.length / shopsPerPage);
+  const indexOfLastShop = currentPage * shopsPerPage;
+  const indexOfFirstShop = indexOfLastShop - shopsPerPage;
+  const currentShops = allShops.slice(indexOfFirstShop, indexOfLastShop);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
 
   const handleShopClick = (url) => {
     window.open(url, '_blank', 'noopener,noreferrer');
@@ -73,7 +113,7 @@ const Shops = () => {
       <div className="flex-1 container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4" style={{ color: colors.mainBlack }}>
+          <h1 className="text-6xl font-bold mb-4" style={{ color: colors.mainBlack }}>
             Computer Shops in West Bank
           </h1>
           <p className="text-xl" style={{ color: colors.jet }}>
@@ -82,11 +122,11 @@ const Shops = () => {
         </div>
 
         {/* Shop Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {shops.map((shop) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {currentShops.map((shop) => (
             <div
               key={shop.id}
-              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:-translate-y-2"
+              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:-translate-y-2 flex flex-col"
               style={{ border: `2px solid ${colors.platinum}` }}
               onClick={() => handleShopClick(shop.url)}
               onMouseEnter={(e) => e.currentTarget.style.borderColor = colors.mainYellow}
@@ -120,7 +160,7 @@ const Shops = () => {
               </div>
 
               {/* Shop Info */}
-              <div className="p-6">
+              <div className="p-6 flex flex-col flex-1">
                 {/* Shop Name */}
                 <h2 className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>
                   {shop.name}
@@ -135,7 +175,7 @@ const Shops = () => {
                 </div>
 
                 {/* Description */}
-                <p className="text-sm mb-4" style={{ color: colors.jet }}>
+                <p className="text-sm mb-4 flex-1" style={{ color: colors.jet }}>
                   {shop.description}
                 </p>
 
@@ -176,6 +216,58 @@ const Shops = () => {
             </div>
           ))}
         </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-4 mb-12">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-4 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2"
+              style={{
+                backgroundColor: currentPage === 1 ? colors.platinum : colors.mainYellow,
+                color: currentPage === 1 ? colors.jet : 'white',
+                cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                opacity: currentPage === 1 ? 0.5 : 1
+              }}
+            >
+              <FiChevronLeft size={20} />
+              Previous
+            </button>
+
+            <div className="flex gap-2">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
+                <button
+                  key={pageNumber}
+                  onClick={() => handlePageChange(pageNumber)}
+                  className="w-10 h-10 rounded-lg font-semibold transition-all duration-200"
+                  style={{
+                    backgroundColor: currentPage === pageNumber ? colors.mainYellow : 'white',
+                    color: currentPage === pageNumber ? 'white' : colors.mainBlack,
+                    border: `2px solid ${currentPage === pageNumber ? colors.mainYellow : colors.platinum}`
+                  }}
+                >
+                  {pageNumber}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2"
+              style={{
+                backgroundColor: currentPage === totalPages ? colors.platinum : colors.mainYellow,
+                color: currentPage === totalPages ? colors.jet : 'white',
+                cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                opacity: currentPage === totalPages ? 0.5 : 1
+              }}
+            >
+              Next
+              <FiChevronRight size={20} />
+            </button>
+          </div>
+        )}
 
         {/* Info Section */}
         <div 
