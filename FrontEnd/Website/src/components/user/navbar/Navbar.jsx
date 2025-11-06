@@ -61,6 +61,8 @@ export default function Navbar() {
     setIsMobileMenuOpen(false);
     setActiveDropdown(null);
     setIsUserMenuOpen(false);
+    // Scroll to top of the page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleLogout = () => {
