@@ -15,6 +15,8 @@ import Monitor from './pages/hardwareComponents/Monitor';
 import Expansion from './pages/hardwareComponents/Expansion.jsx';
 import Peripherals from './pages/hardwareComponents/Peripherals';
 import Accessories from './pages/hardwareComponents/Accessories';
+import ForgotPassword from './pages/user/auth/ForgotPassword.jsx';
+import ResetPassword from './pages/user/auth/ResetPassword';
 
 function App() {
   return (
@@ -53,6 +55,8 @@ function App() {
         <Route path="/builder/accessories" element={<Accessories />} />
         <Route path="/signin" element={<AuthLayout />} />
         <Route path="/signup" element={<AuthLayout />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </Router>
   );

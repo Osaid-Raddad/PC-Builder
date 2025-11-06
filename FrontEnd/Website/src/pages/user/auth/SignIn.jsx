@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { FaSquareFacebook, FaApple } from 'react-icons/fa6';
@@ -110,9 +110,9 @@ const SignIn = ({ onSwitchToSignUp }) => {
               Remember me
             </span>
           </label>
-          <a href="#" className="text-sm hover:underline" style={{ color: colors.mainYellow }}>
+          <Link to="/forgot-password" className="text-sm hover:underline" style={{ color: colors.mainYellow }}>
             Forgot password?
-          </a>
+          </Link>
         </div>
 
         <button
