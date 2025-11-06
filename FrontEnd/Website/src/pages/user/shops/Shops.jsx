@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
 import colors from '../../../config/colors';
-import { FiExternalLink, FiMapPin, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiExternalLink, FiMapPin, FiChevronLeft, FiChevronRight, FiFilter } from 'react-icons/fi';
 
 const Shops = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCity, setSelectedCity] = useState('All');
   const shopsPerPage = 6;
 
   const allShops = [
@@ -16,6 +17,7 @@ const Shops = () => {
       logo: '/src/assets/Images/watani.png',
       url: 'https://watanimall.com/?srsltid=AfmBOor1Zh5XPOFWmau4Ty-57WDCplKHQEoddNMlTyIfS4TpG-4F1UMH',
       location: 'Beit-Hanina, Jerualem',
+      city: 'Jerusalem',
       specialties: ['Computers', 'Gaming', 'Electronics', 'Accessories']
     },
     {
@@ -25,6 +27,7 @@ const Shops = () => {
       logo: '/src/assets/Images/cobra.webp',
       url: 'https://www.cobrashop.ps/',
       location: 'Ramallah, West Bank',
+      city: 'Ramallah',
       specialties: ['PC Components', 'Gaming Gear', 'Peripherals']
     },
     {
@@ -34,6 +37,7 @@ const Shops = () => {
       logo: '/src/assets/Images/zikzak.webp',
       url: 'https://zikzakstore.com/en/',
       location: 'Nablus, West Bank',
+      city: 'Nablus',
       specialties: ['Laptops', 'Desktops', 'Accessories', 'Software']
     },
     {
@@ -43,6 +47,7 @@ const Shops = () => {
       logo: '/src/assets/Images/quantum.webp',
       url: 'https://quantum.ps/',
       location: 'Ramallah, West Bank',
+      city: 'Ramallah',
       specialties: ['Business Solutions', 'Hardware', 'IT Services']
     },
     {
@@ -52,6 +57,7 @@ const Shops = () => {
       logo: '/src/assets/Images/mega.png',
       url: 'https://megatech.ps/',
       location: 'Ramallah, West Bank',
+      city: 'Ramallah',
       specialties: ['PC Building', 'Repairs', 'Components', 'Gaming']
     },
     {
@@ -61,6 +67,7 @@ const Shops = () => {
       logo: '/src/assets/Images/cs.svg',
       url: 'https://csnetgames.com/ar',
       location: 'Ramallah, West Bank',
+      city: 'Ramallah',
       specialties: ['Gaming PCs', 'Consoles', 'Gaming Accessories']
     },
     {
@@ -70,6 +77,7 @@ const Shops = () => {
       logo: '/src/assets/Images/Arabi.jpg',
       url: 'https://www.facebook.com/alarabi.for.computer',
       location: 'Bethlehem, West Bank',
+      city: 'Bethlehem',
       specialties: ['Computers', 'Hardware', 'Repairs', 'Accessories']
     },
     {
@@ -79,6 +87,7 @@ const Shops = () => {
       logo: '/src/assets/Images/yamen.png',
       url: 'https://www.facebook.com/Yamen4Computer/',
       location: 'Hebron, West Bank',
+      city: 'Hebron',
       specialties: ['PC Building', 'Components', 'Software', 'IT Support']
     },
     {
@@ -88,18 +97,32 @@ const Shops = () => {
       logo: '/src/assets/Images/extreme.png',
       url: 'https://xgc.ps/',
       location: 'Ramallah, West Bank',
+      city: 'Ramallah',
       specialties: ['Gaming PCs', 'High-End Components', 'Gaming Gear', 'Custom Builds']
     }
   ];
 
-  const totalPages = Math.ceil(allShops.length / shopsPerPage);
+  // Get unique cities for filter
+  const cities = ['All', ...new Set(allShops.map(shop => shop.city))];
+
+  // Filter shops by selected city
+  const filteredShops = selectedCity === 'All' 
+    ? allShops 
+    : allShops.filter(shop => shop.city === selectedCity);
+
+  const totalPages = Math.ceil(filteredShops.length / shopsPerPage);
   const indexOfLastShop = currentPage * shopsPerPage;
   const indexOfFirstShop = indexOfLastShop - shopsPerPage;
-  const currentShops = allShops.slice(indexOfFirstShop, indexOfLastShop);
+  const currentShops = filteredShops.slice(indexOfFirstShop, indexOfLastShop);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
     window.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
+  const handleCityFilter = (city) => {
+    setSelectedCity(city);
+    setCurrentPage(1); // Reset to first page when filtering
   };
 
   const handleShopClick = (url) => {
@@ -119,6 +142,54 @@ const Shops = () => {
           <p className="text-xl" style={{ color: colors.jet }}>
             Find the best computer shops near you for all your PC building needs
           </p>
+        </div>
+
+        {/* City Filter */}
+        <div className="mb-8">
+          <div 
+            className="bg-white rounded-lg shadow-lg p-6"
+            style={{ border: `2px solid ${colors.platinum}` }}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <FiFilter size={24} style={{ color: colors.mainYellow }} />
+              <h3 className="text-xl font-bold" style={{ color: colors.mainBlack }}>
+                Filter by City
+              </h3>
+            </div>
+            
+            <div className="flex flex-wrap gap-3">
+              {cities.map((city) => (
+                <button
+                  key={city}
+                  onClick={() => handleCityFilter(city)}
+                  className="px-6 py-3 rounded-lg font-semibold transition-all duration-200"
+                  style={{
+                    backgroundColor: selectedCity === city ? colors.mainYellow : 'white',
+                    color: selectedCity === city ? 'white' : colors.mainBlack,
+                    border: `2px solid ${selectedCity === city ? colors.mainYellow : colors.platinum}`
+                  }}
+                >
+                  {city}
+                  {city !== 'All' && (
+                    <span 
+                      className="ml-2 px-2 py-1 rounded-full text-xs"
+                      style={{
+                        backgroundColor: selectedCity === city ? 'rgba(255,255,255,0.3)' : colors.mainYellow + '20'
+                      }}
+                    >
+                      {allShops.filter(shop => shop.city === city).length}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+
+            {selectedCity !== 'All' && (
+              <div className="mt-4 text-sm" style={{ color: colors.jet }}>
+                Showing {filteredShops.length} shop{filteredShops.length !== 1 ? 's' : ''} in {selectedCity}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Shop Cards Grid */}
