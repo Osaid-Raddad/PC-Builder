@@ -235,8 +235,12 @@ const CompletedBuilds = () => {
           {currentBuilds.map((build) => (
             <div
               key={build.id}
-              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300"
+              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer"
               style={{ border: `2px solid ${colors.platinum}` }}
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: 'instant' });
+                navigate(`/build/${build.id}`);
+              }}
             >
               {/* Build Image */}
               <div 
