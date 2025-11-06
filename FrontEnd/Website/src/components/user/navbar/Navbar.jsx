@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { FiSearch, FiMenu, FiX, FiUser, FiChevronDown } from 'react-icons/fi';
 import { FaTools, FaBoxOpen, FaDesktop, FaNewspaper, FaEdit } from 'react-icons/fa';
 import { HiCog } from 'react-icons/hi';
-import colors from '../config/colors';
+import colors from '../../../config/colors';
 
 export default function Navbar() {
   const navigate = useNavigate();

@@ -1,7 +1,7 @@
 import React from 'react';
 import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin, FaGithub } from 'react-icons/fa';
 import { FiMail, FiPhone, FiMapPin } from 'react-icons/fi';
-import colors from '../config/colors';
+import colors from '../../../config/colors';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
