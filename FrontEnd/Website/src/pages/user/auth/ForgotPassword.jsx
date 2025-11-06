@@ -33,39 +33,30 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#2c2c2c] flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Wavy Background - Matching SignIn/SignUp */}
-      <div className="absolute inset-0 overflow-hidden">
+    <div className="relative min-h-screen overflow-hidden flex items-center justify-center" style={{ backgroundColor: '#1A1A1A' }}>
+      {/* Wave Background - Matching SignIn/SignUp */}
+      <div className="absolute inset-0 z-0">
         <svg
-          className="absolute bottom-0 left-0 w-full h-full"
-          viewBox="0 0 1440 800"
+          className="absolute bottom-0 w-full h-full"
+          viewBox="0 0 1440 320"
           preserveAspectRatio="none"
-          xmlns="http://www.w3.org/2000/svg"
+          style={{ height: '100%' }}
         >
-          {/* Dark Gold Wave - Bottom */}
           <path
-            d="M0,400 C240,500 480,300 720,400 C960,500 1200,300 1440,400 L1440,800 L0,800 Z"
-            fill="#8B7355"
-            opacity="1"
-          />
-          {/* Medium Gold Wave - Middle */}
+            fill="#F3BD4A"
+            fillOpacity="0.3"
+            d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,197.3C1248,203,1344,149,1392,122.7L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+          ></path>
           <path
-            d="M0,450 C240,550 480,350 720,450 C960,550 1200,350 1440,450 L1440,800 L0,800 Z"
-            fill="#B8956A"
-            opacity="1"
-          />
-          {/* Light Gold Wave - Top */}
+            fill="#F3BD4A"
+            fillOpacity="0.5"
+            d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,197.3C672,192,768,160,864,154.7C960,149,1056,171,1152,165.3C1248,160,1344,128,1392,112L1440,96L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+          ></path>
           <path
-            d="M0,500 C240,600 480,400 720,500 C960,600 1200,400 1440,500 L1440,800 L0,800 Z"
-            fill="#D4AF37"
-            opacity="1"
-          />
-          {/* Brightest Gold Wave - Front */}
-          <path
-            d="M0,550 C240,650 480,450 720,550 C960,650 1200,450 1440,550 L1440,800 L0,800 Z"
-            fill="#F5CB5C"
-            opacity="1"
-          />
+            fill="#F3BD4A"
+            fillOpacity="0.7"
+            d="M0,256L48,234.7C96,213,192,171,288,170.7C384,171,480,213,576,229.3C672,245,768,235,864,208C960,181,1056,139,1152,138.7C1248,139,1344,181,1392,202.7L1440,224L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+          ></path>
         </svg>
       </div>
 
@@ -73,7 +64,7 @@ const ForgotPassword = () => {
         {/* Back to Sign In */}
         <Link
           to="/signin"
-          className="inline-flex items-center gap-2 text-[#CFDBD5] hover:text-[#F5CB5C] transition-colors mb-8"
+          className="inline-flex items-center gap-2 text-white hover:text-[#F3BD4A] transition-colors mb-8"
         >
           <FiArrowLeft size={20} />
           <span>Back to Sign In</span>
@@ -83,10 +74,10 @@ const ForgotPassword = () => {
         <div className="bg-white rounded-2xl shadow-2xl p-8">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-[#F5CB5C]/10 rounded-full mb-4">
-              <FiMail className="text-[#F5CB5C]" size={32} />
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-[#F3BD4A]/10 rounded-full mb-4">
+              <FiMail className="text-[#F3BD4A]" size={32} />
             </div>
-            <h2 className="text-3xl font-bold text-[#2c2c2c] mb-2">
+            <h2 className="text-3xl font-bold text-[#1A1A1A] mb-2">
               Forgot Password?
             </h2>
             <p className="text-gray-600">
@@ -98,11 +89,11 @@ const ForgotPassword = () => {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
             {/* Email Input */}
             <div>
-              <label className="block text-[#2c2c2c] font-medium mb-2">
+              <label className="block text-[#1A1A1A] font-medium mb-2">
                 Email Address
               </label>
               <div className="relative">
-                <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#F5CB5C]" size={20} />
+                <FiMail className="absolute left-4 top-1/2 -translate-y-1/2 text-[#F3BD4A]" size={20} />
                 <input
                   type="email"
                   {...register('email', {
@@ -112,7 +103,7 @@ const ForgotPassword = () => {
                       message: 'Invalid email address',
                     },
                   })}
-                  className="w-full pl-12 pr-4 py-3 bg-gray-100 border border-gray-200 rounded-lg text-[#2c2c2c] placeholder-gray-400 focus:outline-none focus:border-[#F5CB5C] focus:bg-white transition-colors"
+                  className="w-full pl-12 pr-4 py-3 bg-gray-100 border border-gray-200 rounded-lg text-[#1A1A1A] placeholder-gray-400 focus:outline-none focus:border-[#F3BD4A] focus:bg-white transition-colors"
                   placeholder="Enter your email"
                 />
               </div>
@@ -125,7 +116,7 @@ const ForgotPassword = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#F5CB5C] text-white py-3 rounded-lg font-semibold hover:bg-[#e6bc4a] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+              className="w-full bg-[#F3BD4A] text-white py-3 rounded-lg font-semibold hover:bg-[#e6bc4a] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
             >
               {isLoading ? 'Sending...' : 'Send Verification Code'}
             </button>
@@ -137,7 +128,7 @@ const ForgotPassword = () => {
               Remember your password?{' '}
               <Link
                 to="/signin"
-                className="text-[#F5CB5C] hover:underline font-medium"
+                className="text-[#F3BD4A] hover:underline font-medium"
               >
                 Sign In
               </Link>
