@@ -1,7 +1,7 @@
 import React from 'react';
-import Navbar from '../../components/user/navbar/Navbar';
-import Footer from '../../components/user/footer/Footer';
-import colors from '../../config/colors';
+import Navbar from '../../../components/user/navbar/Navbar';
+import Footer from '../../../components/user/footer/Footer';
+import colors from '../../../config/colors';
 import { FiExternalLink, FiMapPin } from 'react-icons/fi';
 
 const Shops = () => {
