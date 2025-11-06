@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
 import colors from '../../../config/colors';
-import { FiExternalLink, FiMapPin, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FiExternalLink, FiMapPin, FiChevronLeft, FiChevronRight, FiFilter, FiSearch } from 'react-icons/fi';
 
 const Shops = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCity, setSelectedCity] = useState('All');
+  const [searchTerm, setSearchTerm] = useState('');
   const shopsPerPage = 6;
 
   const allShops = [
@@ -16,6 +18,7 @@ const Shops = () => {
       logo: '/src/assets/Images/watani.png',
       url: 'https://watanimall.com/?srsltid=AfmBOor1Zh5XPOFWmau4Ty-57WDCplKHQEoddNMlTyIfS4TpG-4F1UMH',
       location: 'Beit-Hanina, Jerualem',
+      city: 'Jerusalem',
       specialties: ['Computers', 'Gaming', 'Electronics', 'Accessories']
     },
     {
@@ -25,6 +28,7 @@ const Shops = () => {
       logo: '/src/assets/Images/cobra.webp',
       url: 'https://www.cobrashop.ps/',
       location: 'Ramallah, West Bank',
+      city: 'Ramallah',
       specialties: ['PC Components', 'Gaming Gear', 'Peripherals']
     },
     {
@@ -34,6 +38,7 @@ const Shops = () => {
       logo: '/src/assets/Images/zikzak.webp',
       url: 'https://zikzakstore.com/en/',
       location: 'Nablus, West Bank',
+      city: 'Nablus',
       specialties: ['Laptops', 'Desktops', 'Accessories', 'Software']
     },
     {
@@ -43,6 +48,7 @@ const Shops = () => {
       logo: '/src/assets/Images/quantum.webp',
       url: 'https://quantum.ps/',
       location: 'Ramallah, West Bank',
+      city: 'Ramallah',
       specialties: ['Business Solutions', 'Hardware', 'IT Services']
     },
     {
@@ -52,6 +58,7 @@ const Shops = () => {
       logo: '/src/assets/Images/mega.png',
       url: 'https://megatech.ps/',
       location: 'Ramallah, West Bank',
+      city: 'Ramallah',
       specialties: ['PC Building', 'Repairs', 'Components', 'Gaming']
     },
     {
@@ -61,6 +68,7 @@ const Shops = () => {
       logo: '/src/assets/Images/cs.svg',
       url: 'https://csnetgames.com/ar',
       location: 'Ramallah, West Bank',
+      city: 'Ramallah',
       specialties: ['Gaming PCs', 'Consoles', 'Gaming Accessories']
     },
     {
@@ -69,7 +77,8 @@ const Shops = () => {
       description: 'Reliable computer shop offering quality hardware and excellent customer service',
       logo: '/src/assets/Images/Arabi.jpg',
       url: 'https://www.facebook.com/alarabi.for.computer',
-      location: 'West Bank',
+      location: 'Bethlehem, West Bank',
+      city: 'Bethlehem',
       specialties: ['Computers', 'Hardware', 'Repairs', 'Accessories']
     },
     {
@@ -78,7 +87,8 @@ const Shops = () => {
       description: 'Trusted provider of computers and tech solutions for businesses and individuals',
       logo: '/src/assets/Images/yamen.png',
       url: 'https://www.facebook.com/Yamen4Computer/',
-      location: 'West Bank',
+      location: 'Hebron, West Bank',
+      city: 'Hebron',
       specialties: ['PC Building', 'Components', 'Software', 'IT Support']
     },
     {
@@ -87,19 +97,45 @@ const Shops = () => {
       description: 'Ultimate destination for gaming enthusiasts with top-tier gaming hardware',
       logo: '/src/assets/Images/extreme.png',
       url: 'https://xgc.ps/',
-      location: 'West Bank',
+      location: 'Ramallah, West Bank',
+      city: 'Ramallah',
       specialties: ['Gaming PCs', 'High-End Components', 'Gaming Gear', 'Custom Builds']
     }
   ];
 
-  const totalPages = Math.ceil(allShops.length / shopsPerPage);
+  // Get unique cities for filter
+  const cities = ['All', ...new Set(allShops.map(shop => shop.city))];
+
+  // Filter shops by selected city and search term
+  const filteredShops = allShops.filter(shop => {
+    const matchesCity = selectedCity === 'All' || shop.city === selectedCity;
+    const matchesSearch = searchTerm === '' || 
+      shop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      shop.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      shop.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      shop.specialties.some(specialty => specialty.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    return matchesCity && matchesSearch;
+  });
+
+  const totalPages = Math.ceil(filteredShops.length / shopsPerPage);
   const indexOfLastShop = currentPage * shopsPerPage;
   const indexOfFirstShop = indexOfLastShop - shopsPerPage;
-  const currentShops = allShops.slice(indexOfFirstShop, indexOfLastShop);
+  const currentShops = filteredShops.slice(indexOfFirstShop, indexOfLastShop);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
     window.scrollTo({ top: 0, behavior: 'instant' });
+  };
+
+  const handleCityFilter = (city) => {
+    setSelectedCity(city);
+    setCurrentPage(1); // Reset to first page when filtering
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page when searching
   };
 
   const handleShopClick = (url) => {
@@ -119,6 +155,68 @@ const Shops = () => {
           <p className="text-xl" style={{ color: colors.jet }}>
             Find the best computer shops near you for all your PC building needs
           </p>
+        </div>
+
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative">
+            <FiSearch 
+              className="absolute left-4 top-1/2 -translate-y-1/2" 
+              style={{ color: colors.mainYellow }} 
+              size={20} 
+            />
+            <input
+              type="text"
+              placeholder="Search shops by name, location, or specialty..."
+              value={searchTerm}
+              onChange={handleSearch}
+              className="w-full pl-12 pr-4 py-4 rounded-lg font-medium transition-all focus:outline-none focus:ring-2"
+              style={{
+                border: `2px solid ${colors.platinum}`,
+                backgroundColor: 'white',
+                color: colors.jet,
+                focusRingColor: colors.mainYellow
+              }}
+            />
+          </div>
+        </div>
+
+        {/* City Filter */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
+            <FiFilter size={20} style={{ color: colors.mainYellow }} className="shrink-0" />
+            {cities.map((city) => (
+              <button
+                key={city}
+                onClick={() => handleCityFilter(city)}
+                className="px-5 py-2 rounded-full font-medium transition-all shrink-0"
+                style={{
+                  backgroundColor: selectedCity === city ? colors.mainYellow : 'white',
+                  color: selectedCity === city ? 'white' : colors.jet,
+                  border: `2px solid ${selectedCity === city ? colors.mainYellow : colors.platinum}`
+                }}
+              >
+                {city}
+                {city !== 'All' && (
+                  <span 
+                    className="ml-2 px-2 py-1 rounded-full text-xs font-semibold"
+                    style={{
+                      backgroundColor: selectedCity === city ? 'rgba(255,255,255,0.3)' : colors.mainYellow + '20',
+                      color: selectedCity === city ? 'white' : colors.mainBlack
+                    }}
+                  >
+                    {allShops.filter(shop => shop.city === city).length}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+
+          {selectedCity !== 'All' && (
+            <div className="mt-4 text-sm" style={{ color: colors.jet }}>
+              Showing {filteredShops.length} shop{filteredShops.length !== 1 ? 's' : ''} in {selectedCity}
+            </div>
+          )}
         </div>
 
         {/* Shop Cards Grid */}

@@ -1,30 +1,92 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiSearch, FiMenu, FiX, FiUser, FiChevronDown, FiShoppingBag } from 'react-icons/fi';
-import { FaTools, FaBoxOpen, FaNewspaper, FaEdit } from 'react-icons/fa';
+import { FiSearch, FiMenu, FiX, FiUser, FiChevronDown, FiShoppingBag, FiLogOut, FiHeart } from 'react-icons/fi';
+import { FaTools, FaBoxOpen, FaNewspaper, FaEdit, FaUserCircle } from 'react-icons/fa';
 import { PiDesktopTowerFill } from 'react-icons/pi';
 import { HiCog } from 'react-icons/hi';
+import { Tooltip } from 'react-tooltip';
 import colors from '../../../config/colors';
 
 export default function Navbar() {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  
+  // TODO: Replace with actual authentication state from your auth context/redux
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Change this based on actual auth state
+  const [userName, setUserName] = useState('John Doe'); // Get from auth context
 
   const menuItems = [
-    { label: 'Builder', path: '/builder', icon: <FaTools size={18} /> },
-    { label: 'Products', path: '/products', icon: <FaBoxOpen size={18} /> },
-    { label: 'Completed Builds', path: '/completed-builds', icon: <PiDesktopTowerFill size={20} /> },
-    { label: 'Posts', path: '/posts', icon: <FaEdit size={18} /> },
-    { label: 'News', path: '/news', icon: <FaNewspaper size={18} /> },
-    { label: 'Shops', path: '/shops', icon: <FiShoppingBag size={18} /> },
+    { 
+      label: 'Builder', 
+      path: '/builder', 
+      icon: <FaTools size={18} />,
+      tooltip: 'Build your custom PC step by step'
+    },
+    { 
+      label: 'Products', 
+      path: '/products', 
+      icon: <FaBoxOpen size={18} />,
+      tooltip: 'Browse all PC components and hardware'
+    },
+    { 
+      label: 'Completed Builds', 
+      path: '/completed-builds', 
+      icon: <PiDesktopTowerFill size={20} />,
+      tooltip: 'Explore community PC builds for inspiration'
+    },
+    { 
+      label: 'Posts', 
+      path: '/posts', 
+      icon: <FaEdit size={18} />,
+      tooltip: 'Read community posts and discussions'
+    },
+    { 
+      label: 'News', 
+      path: '/news', 
+      icon: <FaNewspaper size={18} />,
+      tooltip: 'Latest tech news and hardware releases'
+    },
+    { 
+      label: 'Shops', 
+      path: '/shops', 
+      icon: <FiShoppingBag size={18} />,
+      tooltip: 'Find local computer shops in Palestine'
+    },
   ];
 
   const handleNavigation = (path) => {
     navigate(path);
     setIsMobileMenuOpen(false);
     setActiveDropdown(null);
+    setIsUserMenuOpen(false);
+    // Scroll to top of the page
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  const handleLogout = () => {
+    // TODO: Implement actual logout logic
+    setIsLoggedIn(false);
+    setIsUserMenuOpen(false);
+    navigate('/');
+  };
+
+  const toggleUserMenu = () => {
+    setIsUserMenuOpen(!isUserMenuOpen);
+  };
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isUserMenuOpen && !event.target.closest('.user-menu-container')) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isUserMenuOpen]);
 
   return (
     <nav style={{ backgroundColor: colors.mainBlack }} className="sticky top-0 z-50 shadow-lg">
@@ -32,7 +94,12 @@ export default function Navbar() {
         <div className="relative flex items-center justify-between h-16">
           
           {/* Logo - Max Left */}
-          <div className="shrink-0 cursor-pointer z-10" onClick={() => handleNavigation('/')}>
+          <div 
+            className="shrink-0 cursor-pointer z-10" 
+            onClick={() => handleNavigation('/')}
+            data-tooltip-id="logo-tooltip"
+            data-tooltip-content="Go to Home"
+          >
             <img 
               src="/src/assets/Images/LogoIcon.png" 
               alt="PC Builder Logo" 
@@ -52,6 +119,8 @@ export default function Navbar() {
                   }}
                   onMouseEnter={(e) => e.currentTarget.style.color = colors.mainYellow}
                   onMouseLeave={(e) => e.currentTarget.style.color = '#FFFFFF'}
+                  data-tooltip-id="nav-tooltip"
+                  data-tooltip-content={item.tooltip}
                 >
                   <span style={{ color: colors.mainYellow }}>{item.icon}</span>
                   <span>{item.label}</span>
@@ -81,6 +150,8 @@ export default function Navbar() {
                   e.target.style.borderColor = colors.platinum;
                   e.target.style.boxShadow = 'none';
                 }}
+                data-tooltip-id="search-tooltip"
+                data-tooltip-content="Search for products, builds, or posts"
               />
               <FiSearch 
                 className="absolute left-3 top-1/2 transform -translate-y-1/2" 
@@ -89,15 +160,121 @@ export default function Navbar() {
               />
             </div>
 
-            {/* User Avatar */}
-            <button 
-              className="flex items-center space-x-2 px-3 py-2 rounded-full transition-all duration-200"
-              style={{ border: `2px solid ${colors.mainYellow}` }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.jet}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-            >
-              <FiUser style={{ color: colors.mainYellow }} size={20} />
-            </button>
+            {/* User Avatar with Dropdown */}
+            <div className="relative user-menu-container">
+              <button 
+                onClick={toggleUserMenu}
+                className="flex items-center space-x-2 px-3 py-2 rounded-full transition-all duration-200"
+                style={{ border: `2px solid ${colors.mainYellow}` }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.jet}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                data-tooltip-id="user-tooltip"
+                data-tooltip-content={isLoggedIn ? `Logged in as ${userName}` : "Sign in to your account"}
+              >
+                <FiUser style={{ color: colors.mainYellow }} size={20} />
+                <FiChevronDown 
+                  style={{ 
+                    color: colors.mainYellow,
+                    transform: isUserMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.2s'
+                  }} 
+                  size={16} 
+                />
+              </button>
+
+              {/* Dropdown Menu */}
+              {isUserMenuOpen && (
+                <div 
+                  className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl overflow-hidden z-50"
+                  style={{ 
+                    backgroundColor: colors.jet,
+                    border: `2px solid ${colors.mainYellow}`
+                  }}
+                >
+                  {!isLoggedIn ? (
+                    // Not logged in - Show Login/Signup
+                    <>
+                      <button
+                        onClick={() => handleNavigation('/signin')}
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        style={{ color: 'white' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        <FiUser size={18} style={{ color: colors.mainYellow }} />
+                        <span className="font-medium">Login</span>
+                      </button>
+                      <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
+                      <button
+                        onClick={() => handleNavigation('/signup')}
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        style={{ color: 'white' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        <FaUserCircle size={18} style={{ color: colors.mainYellow }} />
+                        <span className="font-medium">Sign Up</span>
+                      </button>
+                    </>
+                  ) : (
+                    // Logged in - Show Profile/My Builds/Favorites/Logout
+                    <>
+                      <button
+                        onClick={() => handleNavigation('/profile')}
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        style={{ color: 'white' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        <FaUserCircle size={18} style={{ color: colors.mainYellow }} />
+                        <span className="font-medium">Profile</span>
+                      </button>
+                      <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
+                      <button
+                        onClick={() => handleNavigation('/my-builds')}
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        style={{ color: 'white' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        <PiDesktopTowerFill size={18} style={{ color: colors.mainYellow }} />
+                        <span className="font-medium">My Builds</span>
+                      </button>
+                      <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
+                      <button
+                        onClick={() => handleNavigation('/favorites')}
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        style={{ color: 'white' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        <FiHeart size={18} style={{ color: colors.mainYellow }} />
+                        <span className="font-medium">Favorites</span>
+                      </button>
+                      <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        style={{ color: 'white' }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#dc2626';
+                          e.currentTarget.querySelector('svg').style.color = 'white';
+                          e.currentTarget.querySelector('span').style.color = 'white';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.querySelector('svg').style.color = colors.mainYellow;
+                          e.currentTarget.querySelector('span').style.color = 'white';
+                        }}
+                      >
+                        <FiLogOut size={18} style={{ color: colors.mainYellow }} />
+                        <span className="font-medium">Logout</span>
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -146,6 +323,57 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+      {/* Tooltips */}
+      <Tooltip 
+        id="logo-tooltip" 
+        place="bottom"
+        style={{ 
+          backgroundColor: colors.mainYellow, 
+          color: colors.mainBlack,
+          fontWeight: 'bold',
+          fontSize: '14px',
+          borderRadius: '8px',
+          padding: '8px 12px'
+        }}
+      />
+      <Tooltip 
+        id="nav-tooltip" 
+        place="bottom"
+        style={{ 
+          backgroundColor: colors.mainYellow, 
+          color: colors.mainBlack,
+          fontWeight: '600',
+          fontSize: '13px',
+          borderRadius: '8px',
+          padding: '6px 12px',
+          maxWidth: '250px'
+        }}
+      />
+      <Tooltip 
+        id="search-tooltip" 
+        place="bottom"
+        style={{ 
+          backgroundColor: colors.mainYellow, 
+          color: colors.mainBlack,
+          fontWeight: '600',
+          fontSize: '13px',
+          borderRadius: '8px',
+          padding: '6px 12px'
+        }}
+      />
+      <Tooltip 
+        id="user-tooltip" 
+        place="bottom-end"
+        style={{ 
+          backgroundColor: colors.mainYellow, 
+          color: colors.mainBlack,
+          fontWeight: '600',
+          fontSize: '13px',
+          borderRadius: '8px',
+          padding: '6px 12px'
+        }}
+      />
     </nav>
   );
 }

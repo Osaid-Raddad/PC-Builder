@@ -264,12 +264,12 @@ const News = () => {
           </div>
 
           <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
-            <FiFilter className="text-[#F5CB5C] text-xl flex-shrink-0" />
+            <FiFilter className="text-[#F5CB5C] text-xl shrink-0" />
             {categories.map((category) => (
               <button
                 key={category}
                 onClick={() => setSelectedCategory(category)}
-                className={`px-5 py-2 rounded-full font-medium transition-all flex-shrink-0 ${
+                className={`px-5 py-2 rounded-full font-medium transition-all shrink-0 ${
                   selectedCategory === category
                     ? 'bg-[#F5CB5C] text-[#242423]'
                     : 'bg-[#242423] text-gray-400 hover:text-white border border-[#F5CB5C]/20'
@@ -341,7 +341,7 @@ const News = () => {
                           alt={article.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-[#242423] via-transparent to-transparent"></div>
+                        <div className="absolute inset-0 bg-linear-to-t from-[#242423] via-transparent to-transparent"></div>
                         <div className="absolute top-4 left-4 flex gap-2">
                           <span className="px-3 py-1 bg-[#F5CB5C] text-[#242423] text-xs font-bold rounded-full">
                             {article.category}

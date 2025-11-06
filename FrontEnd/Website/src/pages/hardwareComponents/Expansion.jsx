@@ -4,11 +4,15 @@ import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import colors from '../../config/colors';
 import { FaNetworkWired } from 'react-icons/fa';
-import { FiArrowLeft, FiFilter } from 'react-icons/fi';
+import { FiArrowLeft, FiSearch } from 'react-icons/fi';
 
 const Expansion = () => {
   const navigate = useNavigate();
   const [selectedExpansion, setSelectedExpansion] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [typeFilter, setTypeFilter] = useState('All');
+  const [brandFilter, setBrandFilter] = useState('All');
+  const [priceFilter, setPriceFilter] = useState('All');
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -23,6 +27,21 @@ const Expansion = () => {
     { id: 5, name: 'Elgato Game Capture 4K60 Pro', brand: 'Elgato', type: 'Capture Card', interface: 'PCIe', price: 299.99 },
     { id: 6, name: 'StarTech 4-Port USB 3.0', brand: 'StarTech', type: 'USB Expansion', interface: 'PCIe', price: 39.99 },
   ];
+
+  const types = ['All', 'WiFi Adapter', 'Sound Card', 'Capture Card', 'USB Expansion'];
+  const brands = ['All', 'TP-Link', 'Creative', 'Intel', 'ASUS', 'Elgato', 'StarTech'];
+  const priceRanges = ['All', 'Under $50', '$50-$100', 'Over $100'];
+
+  const filteredExpansions = expansionList.filter(expansion => {
+    const matchesSearch = searchTerm === '' || expansion.name.toLowerCase().includes(searchTerm.toLowerCase()) || expansion.brand.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = typeFilter === 'All' || expansion.type === typeFilter;
+    const matchesBrand = brandFilter === 'All' || expansion.brand === brandFilter;
+    let matchesPrice = true;
+    if (priceFilter === 'Under $50') matchesPrice = expansion.price < 50;
+    else if (priceFilter === '$50-$100') matchesPrice = expansion.price >= 50 && expansion.price <= 100;
+    else if (priceFilter === 'Over $100') matchesPrice = expansion.price > 100;
+    return matchesSearch && matchesType && matchesBrand && matchesPrice;
+  });
 
   const handleSelectExpansion = (expansion) => {
     setSelectedExpansion(expansion);
@@ -57,13 +76,105 @@ const Expansion = () => {
             </h1>
           </div>
           
-          <button
-            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
-            style={{ backgroundColor: 'white', color: colors.mainYellow, border: `2px solid ${colors.mainYellow}` }}
-          >
-            <FiFilter size={20} />
-            Filters
-          </button>
+          <div className="w-32"></div>
+        </div>
+
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative">
+            <FiSearch 
+              size={20} 
+              className="absolute left-4 top-1/2 transform -translate-y-1/2"
+              style={{ color: colors.platinum }}
+            />
+            <input
+              type="text"
+              placeholder="Search expansion cards..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+              style={{ 
+                backgroundColor: 'white', 
+                borderColor: colors.platinum,
+                color: colors.mainBlack 
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Filters Section */}
+        <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: 'white' }}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Type Filter */}
+            <div>
+              <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                Type
+              </label>
+              <select
+                value={typeFilter}
+                onChange={(e) => setTypeFilter(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                style={{ 
+                  borderColor: colors.platinum,
+                  color: colors.mainBlack,
+                  backgroundColor: 'white'
+                }}
+              >
+                {types.map(type => (
+                  <option key={type} value={type}>{type}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Brand Filter */}
+            <div>
+              <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                Brand
+              </label>
+              <select
+                value={brandFilter}
+                onChange={(e) => setBrandFilter(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                style={{ 
+                  borderColor: colors.platinum,
+                  color: colors.mainBlack,
+                  backgroundColor: 'white'
+                }}
+              >
+                {brands.map(brand => (
+                  <option key={brand} value={brand}>{brand}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Price Range Filter */}
+            <div>
+              <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                Price Range
+              </label>
+              <select
+                value={priceFilter}
+                onChange={(e) => setPriceFilter(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                style={{ 
+                  borderColor: colors.platinum,
+                  color: colors.mainBlack,
+                  backgroundColor: 'white'
+                }}
+              >
+                {priceRanges.map(range => (
+                  <option key={range} value={range}>{range}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Results Counter */}
+        <div className="mb-4">
+          <p className="text-lg font-semibold" style={{ color: colors.jet }}>
+            Showing {filteredExpansions.length} of {expansionList.length} expansion cards
+          </p>
         </div>
 
         {selectedExpansion && (
@@ -86,7 +197,7 @@ const Expansion = () => {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {expansionList.map((expansion) => (
+          {filteredExpansions.map((expansion) => (
             <div
               key={expansion.id}
               className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-pointer ${
@@ -139,6 +250,15 @@ const Expansion = () => {
             </div>
           ))}
         </div>
+
+        {/* Empty State */}
+        {filteredExpansions.length === 0 && (
+          <div className="text-center py-12">
+            <FaNetworkWired size={64} style={{ color: colors.platinum }} className="mx-auto mb-4" />
+            <p className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>No expansion cards found</p>
+            <p className="text-lg" style={{ color: colors.jet }}>Try adjusting your filters or search terms</p>
+          </div>
+        )}
       </div>
 
       <Footer />

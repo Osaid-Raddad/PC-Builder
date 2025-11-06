@@ -4,11 +4,15 @@ import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import colors from '../../config/colors';
 import { FaMemory } from 'react-icons/fa';
-import { FiArrowLeft, FiFilter } from 'react-icons/fi';
+import { FiArrowLeft, FiFilter, FiSearch } from 'react-icons/fi';
 
 const Memory = () => {
   const navigate = useNavigate();
   const [selectedMemory, setSelectedMemory] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [brandFilter, setBrandFilter] = useState('All');
+  const [capacityFilter, setCapacityFilter] = useState('All');
+  const [speedFilter, setSpeedFilter] = useState('All');
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -23,6 +27,18 @@ const Memory = () => {
     { id: 5, name: 'Crucial DDR5', brand: 'Crucial', capacity: '32GB (2x16GB)', speed: 'DDR5-5200', price: 109.99 },
     { id: 6, name: 'G.Skill Ripjaws S5', brand: 'G.Skill', capacity: '32GB (2x16GB)', speed: 'DDR5-6000', price: 139.99 },
   ];
+
+  const brands = ['All', 'Corsair', 'G.Skill', 'Kingston', 'Crucial'];
+  const capacities = ['All', '32GB (2x16GB)', '64GB (2x32GB)'];
+  const speeds = ['All', 'DDR5-5200', 'DDR5-5600', 'DDR5-6000', 'DDR5-6400'];
+
+  const filteredMemory = memoryList.filter(mem => {
+    const matchesSearch = searchTerm === '' || mem.name.toLowerCase().includes(searchTerm.toLowerCase()) || mem.brand.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesBrand = brandFilter === 'All' || mem.brand === brandFilter;
+    const matchesCapacity = capacityFilter === 'All' || mem.capacity === capacityFilter;
+    const matchesSpeed = speedFilter === 'All' || mem.speed === speedFilter;
+    return matchesSearch && matchesBrand && matchesCapacity && matchesSpeed;
+  });
 
   const handleSelectMemory = (memory) => {
     setSelectedMemory(memory);
@@ -57,13 +73,44 @@ const Memory = () => {
             </h1>
           </div>
           
-          <button
-            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
-            style={{ backgroundColor: 'white', color: colors.mainYellow, border: `2px solid ${colors.mainYellow}` }}
-          >
-            <FiFilter size={20} />
-            Filters
-          </button>
+          <div style={{ width: '150px' }}></div>
+        </div>
+
+        <div className="mb-6">
+          <div className="relative">
+            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: colors.mainYellow }} size={20} />
+            <input type="text" placeholder="Search memory..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-12 pr-4 py-4 rounded-lg font-medium transition-all focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }} />
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <div className="bg-white rounded-lg shadow-lg p-6" style={{ border: `2px solid ${colors.platinum}` }}>
+            <div className="flex items-center gap-3 mb-4">
+              <FiFilter size={20} style={{ color: colors.mainYellow }} />
+              <h3 className="text-xl font-bold" style={{ color: colors.mainBlack }}>Filters</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Brand</label>
+                <select value={brandFilter} onChange={(e) => setBrandFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
+                  {brands.map(b => <option key={b} value={b}>{b}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Capacity</label>
+                <select value={capacityFilter} onChange={(e) => setCapacityFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
+                  {capacities.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Speed</label>
+                <select value={speedFilter} onChange={(e) => setSpeedFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
+                  {speeds.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="mt-4 text-sm" style={{ color: colors.jet }}>Showing {filteredMemory.length} of {memoryList.length} memory kits</div>
+          </div>
         </div>
 
         {selectedMemory && (
@@ -86,7 +133,7 @@ const Memory = () => {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {memoryList.map((memory) => (
+          {filteredMemory.map((memory) => (
             <div
               key={memory.id}
               className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-pointer ${
@@ -135,6 +182,14 @@ const Memory = () => {
             </div>
           ))}
         </div>
+
+        {filteredMemory.length === 0 && (
+          <div className="text-center py-12">
+            <FaMemory size={64} style={{ color: colors.platinum }} className="mx-auto mb-4" />
+            <p className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>No memory kits found</p>
+            <p className="text-lg" style={{ color: colors.jet }}>Try adjusting your filters or search terms</p>
+          </div>
+        )}
       </div>
 
       <Footer />

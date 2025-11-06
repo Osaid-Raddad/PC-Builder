@@ -4,6 +4,10 @@ import AuthLayout from './layouts/AuthLayout';
 import Home from './pages/home/Home.jsx';
 import Builder from './pages/user/builder/Builder.jsx';
 import Shops from './pages/user/shops/Shops.jsx';
+import ContactUs from './pages/user/contact/ContactUs.jsx';
+import CompletedBuilds from './pages/user/completedBuilds/CompletedBuilds.jsx';
+import SubmitBuild from './pages/user/submitBuild/SubmitBuild.jsx';
+import BuildDetails from './pages/user/buildDetails/BuildDetails.jsx';
 import CPU from './pages/hardwareComponents/CPU.jsx';
 import CPUCooler from './pages/hardwareComponents/CPUCooler';
 import GPU from './pages/hardwareComponents/GPU';
@@ -44,6 +48,10 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/builder" element={<Builder />} />
         <Route path="/shops" element={<Shops />} />
+        <Route path="/contact" element={<ContactUs />} />
+        <Route path="/completed-builds" element={<CompletedBuilds />} />
+        <Route path="/build/:id" element={<BuildDetails />} />
+        <Route path="/submit-build" element={<SubmitBuild />} />
         <Route path="/builder/cpu" element={<CPU />} />
         <Route path="/builder/cooler" element={<CPUCooler />} />
         <Route path="/builder/motherboard" element={<Motherboard />} />

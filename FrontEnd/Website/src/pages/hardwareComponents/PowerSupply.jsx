@@ -4,11 +4,15 @@ import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import colors from '../../config/colors';
 import { FaBolt } from 'react-icons/fa';
-import { FiArrowLeft, FiFilter } from 'react-icons/fi';
+import { FiArrowLeft, FiSearch } from 'react-icons/fi';
 
 const PowerSupply = () => {
   const navigate = useNavigate();
   const [selectedPSU, setSelectedPSU] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [wattageFilter, setWattageFilter] = useState('All');
+  const [efficiencyFilter, setEfficiencyFilter] = useState('All');
+  const [modularFilter, setModularFilter] = useState('All');
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -23,6 +27,18 @@ const PowerSupply = () => {
     { id: 5, name: 'Thermaltake Toughpower GF1', brand: 'Thermaltake', wattage: '750W', efficiency: '80+ Gold', modular: 'Fully Modular', price: 119.99 },
     { id: 6, name: 'Cooler Master V850 SFX', brand: 'Cooler Master', wattage: '850W', efficiency: '80+ Gold', modular: 'Fully Modular', price: 169.99 },
   ];
+
+  const wattages = ['All', '500W', '650W', '750W', '850W', '1000W', '1200W+'];
+  const efficiencies = ['All', '80+ Bronze', '80+ Gold', '80+ Platinum', '80+ Titanium'];
+  const modularTypes = ['All', 'Fully Modular', 'Semi-Modular', 'Non-Modular'];
+
+  const filteredPSUs = psuList.filter(psu => {
+    const matchesSearch = searchTerm === '' || psu.name.toLowerCase().includes(searchTerm.toLowerCase()) || psu.brand.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesWattage = wattageFilter === 'All' || psu.wattage === wattageFilter;
+    const matchesEfficiency = efficiencyFilter === 'All' || psu.efficiency === efficiencyFilter;
+    const matchesModular = modularFilter === 'All' || psu.modular === modularFilter;
+    return matchesSearch && matchesWattage && matchesEfficiency && matchesModular;
+  });
 
   const handleSelectPSU = (psu) => {
     setSelectedPSU(psu);
@@ -57,13 +73,105 @@ const PowerSupply = () => {
             </h1>
           </div>
           
-          <button
-            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
-            style={{ backgroundColor: 'white', color: colors.mainYellow, border: `2px solid ${colors.mainYellow}` }}
-          >
-            <FiFilter size={20} />
-            Filters
-          </button>
+          <div className="w-32"></div>
+        </div>
+
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative">
+            <FiSearch 
+              size={20} 
+              className="absolute left-4 top-1/2 transform -translate-y-1/2"
+              style={{ color: colors.platinum }}
+            />
+            <input
+              type="text"
+              placeholder="Search power supplies..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+              style={{ 
+                backgroundColor: 'white', 
+                borderColor: colors.platinum,
+                color: colors.mainBlack 
+              }}
+            />
+          </div>
+        </div>
+
+        {/* Filters Section */}
+        <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: 'white' }}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Wattage Filter */}
+            <div>
+              <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                Wattage
+              </label>
+              <select
+                value={wattageFilter}
+                onChange={(e) => setWattageFilter(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                style={{ 
+                  borderColor: colors.platinum,
+                  color: colors.mainBlack,
+                  backgroundColor: 'white'
+                }}
+              >
+                {wattages.map(wattage => (
+                  <option key={wattage} value={wattage}>{wattage}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Efficiency Filter */}
+            <div>
+              <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                Efficiency
+              </label>
+              <select
+                value={efficiencyFilter}
+                onChange={(e) => setEfficiencyFilter(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                style={{ 
+                  borderColor: colors.platinum,
+                  color: colors.mainBlack,
+                  backgroundColor: 'white'
+                }}
+              >
+                {efficiencies.map(efficiency => (
+                  <option key={efficiency} value={efficiency}>{efficiency}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Modular Type Filter */}
+            <div>
+              <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                Modular
+              </label>
+              <select
+                value={modularFilter}
+                onChange={(e) => setModularFilter(e.target.value)}
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                style={{ 
+                  borderColor: colors.platinum,
+                  color: colors.mainBlack,
+                  backgroundColor: 'white'
+                }}
+              >
+                {modularTypes.map(modular => (
+                  <option key={modular} value={modular}>{modular}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Results Counter */}
+        <div className="mb-4">
+          <p className="text-lg font-semibold" style={{ color: colors.jet }}>
+            Showing {filteredPSUs.length} of {psuList.length} power supplies
+          </p>
         </div>
 
         {selectedPSU && (
@@ -86,7 +194,7 @@ const PowerSupply = () => {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {psuList.map((psu) => (
+          {filteredPSUs.map((psu) => (
             <div
               key={psu.id}
               className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-pointer ${
@@ -142,6 +250,15 @@ const PowerSupply = () => {
             </div>
           ))}
         </div>
+
+        {/* Empty State */}
+        {filteredPSUs.length === 0 && (
+          <div className="text-center py-12">
+            <FaBolt size={64} style={{ color: colors.platinum }} className="mx-auto mb-4" />
+            <p className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>No power supplies found</p>
+            <p className="text-lg" style={{ color: colors.jet }}>Try adjusting your filters or search terms</p>
+          </div>
+        )}
       </div>
 
       <Footer />

@@ -4,11 +4,15 @@ import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import colors from '../../config/colors';
 import { FaHdd } from 'react-icons/fa';
-import { FiArrowLeft, FiFilter } from 'react-icons/fi';
+import { FiArrowLeft, FiFilter, FiSearch } from 'react-icons/fi';
 
 const Storage = () => {
   const navigate = useNavigate();
   const [selectedStorage, setSelectedStorage] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [typeFilter, setTypeFilter] = useState('All');
+  const [capacityFilter, setCapacityFilter] = useState('All');
+  const [brandFilter, setBrandFilter] = useState('All');
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -23,6 +27,18 @@ const Storage = () => {
     { id: 5, name: 'Seagate BarraCuda', brand: 'Seagate', capacity: '4TB', type: 'HDD', speed: '5,400 RPM', price: 89.99 },
     { id: 6, name: 'WD Blue', brand: 'Western Digital', capacity: '2TB', type: 'HDD', speed: '7,200 RPM', price: 54.99 },
   ];
+
+  const types = ['All', 'NVMe SSD', 'SATA SSD', 'HDD'];
+  const capacities = ['All', '1TB', '2TB', '4TB'];
+  const brands = ['All', 'Samsung', 'Western Digital', 'Crucial', 'Seagate'];
+
+  const filteredStorage = storageList.filter(storage => {
+    const matchesSearch = searchTerm === '' || storage.name.toLowerCase().includes(searchTerm.toLowerCase()) || storage.brand.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = typeFilter === 'All' || storage.type === typeFilter;
+    const matchesCapacity = capacityFilter === 'All' || storage.capacity === capacityFilter;
+    const matchesBrand = brandFilter === 'All' || storage.brand === brandFilter;
+    return matchesSearch && matchesType && matchesCapacity && matchesBrand;
+  });
 
   const handleSelectStorage = (storage) => {
     setSelectedStorage(storage);
@@ -57,13 +73,44 @@ const Storage = () => {
             </h1>
           </div>
           
-          <button
-            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
-            style={{ backgroundColor: 'white', color: colors.mainYellow, border: `2px solid ${colors.mainYellow}` }}
-          >
-            <FiFilter size={20} />
-            Filters
-          </button>
+          <div style={{ width: '150px' }}></div>
+        </div>
+
+        <div className="mb-6">
+          <div className="relative">
+            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: colors.mainYellow }} size={20} />
+            <input type="text" placeholder="Search storage..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-12 pr-4 py-4 rounded-lg font-medium transition-all focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }} />
+          </div>
+        </div>
+
+        <div className="mb-6">
+          <div className="bg-white rounded-lg shadow-lg p-6" style={{ border: `2px solid ${colors.platinum}` }}>
+            <div className="flex items-center gap-3 mb-4">
+              <FiFilter size={20} style={{ color: colors.mainYellow }} />
+              <h3 className="text-xl font-bold" style={{ color: colors.mainBlack }}>Filters</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Type</label>
+                <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
+                  {types.map(t => <option key={t} value={t}>{t}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Capacity</label>
+                <select value={capacityFilter} onChange={(e) => setCapacityFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
+                  {capacities.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Brand</label>
+                <select value={brandFilter} onChange={(e) => setBrandFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
+                  {brands.map(b => <option key={b} value={b}>{b}</option>)}
+                </select>
+              </div>
+            </div>
+            <div className="mt-4 text-sm" style={{ color: colors.jet }}>Showing {filteredStorage.length} of {storageList.length} storage devices</div>
+          </div>
         </div>
 
         {selectedStorage && (
@@ -86,7 +133,7 @@ const Storage = () => {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {storageList.map((storage) => (
+          {filteredStorage.map((storage) => (
             <div
               key={storage.id}
               className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-pointer ${
@@ -142,6 +189,14 @@ const Storage = () => {
             </div>
           ))}
         </div>
+
+        {filteredStorage.length === 0 && (
+          <div className="text-center py-12">
+            <FaHdd size={64} style={{ color: colors.platinum }} className="mx-auto mb-4" />
+            <p className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>No storage found</p>
+            <p className="text-lg" style={{ color: colors.jet }}>Try adjusting your filters or search terms</p>
+          </div>
+        )}
       </div>
 
       <Footer />
