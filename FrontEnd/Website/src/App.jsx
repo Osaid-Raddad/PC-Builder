@@ -3,7 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import AuthLayout from './layouts/AuthLayout';
 import Home from './pages/home/Home.jsx';
 import Builder from './pages/user/builder/Builder.jsx';
-import Shops from './pages/Shops.jsx';
+import Shops from './pages/user/Shops.jsx';
 import CPU from './pages/hardwareComponents/CPU.jsx';
 import CPUCooler from './pages/hardwareComponents/CPUCooler';
 import GPU from './pages/hardwareComponents/GPU';
