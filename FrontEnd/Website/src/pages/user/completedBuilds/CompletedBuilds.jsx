@@ -481,7 +481,7 @@ const CompletedBuilds = () => {
           </div>
         </div>
       </div>
-
+      
       <Footer />
     </div>
   );

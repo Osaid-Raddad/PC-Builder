@@ -582,7 +582,7 @@ const BuildDetails = () => {
           )}
         </div>
       </div>
-
+      
       <Footer />
     </div>
   );

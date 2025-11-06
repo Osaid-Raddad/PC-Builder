@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiSearch, FiMenu, FiX, FiUser, FiChevronDown, FiShoppingBag } from 'react-icons/fi';
-import { FaTools, FaBoxOpen, FaNewspaper, FaEdit } from 'react-icons/fa';
+import { FiSearch, FiMenu, FiX, FiUser, FiChevronDown, FiShoppingBag, FiLogOut, FiHeart } from 'react-icons/fi';
+import { FaTools, FaBoxOpen, FaNewspaper, FaEdit, FaUserCircle } from 'react-icons/fa';
 import { PiDesktopTowerFill } from 'react-icons/pi';
 import { HiCog } from 'react-icons/hi';
 import { Tooltip } from 'react-tooltip';
@@ -11,6 +11,11 @@ export default function Navbar() {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  
+  // TODO: Replace with actual authentication state from your auth context/redux
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Change this based on actual auth state
+  const [userName, setUserName] = useState('John Doe'); // Get from auth context
 
   const menuItems = [
     { 
@@ -55,7 +60,31 @@ export default function Navbar() {
     navigate(path);
     setIsMobileMenuOpen(false);
     setActiveDropdown(null);
+    setIsUserMenuOpen(false);
   };
+
+  const handleLogout = () => {
+    // TODO: Implement actual logout logic
+    setIsLoggedIn(false);
+    setIsUserMenuOpen(false);
+    navigate('/');
+  };
+
+  const toggleUserMenu = () => {
+    setIsUserMenuOpen(!isUserMenuOpen);
+  };
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isUserMenuOpen && !event.target.closest('.user-menu-container')) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isUserMenuOpen]);
 
   return (
     <nav style={{ backgroundColor: colors.mainBlack }} className="sticky top-0 z-50 shadow-lg">
@@ -129,17 +158,121 @@ export default function Navbar() {
               />
             </div>
 
-            {/* User Avatar */}
-            <button 
-              className="flex items-center space-x-2 px-3 py-2 rounded-full transition-all duration-200"
-              style={{ border: `2px solid ${colors.mainYellow}` }}
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.jet}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-              data-tooltip-id="user-tooltip"
-              data-tooltip-content="Sign in to your account"
-            >
-              <FiUser style={{ color: colors.mainYellow }} size={20} />
-            </button>
+            {/* User Avatar with Dropdown */}
+            <div className="relative user-menu-container">
+              <button 
+                onClick={toggleUserMenu}
+                className="flex items-center space-x-2 px-3 py-2 rounded-full transition-all duration-200"
+                style={{ border: `2px solid ${colors.mainYellow}` }}
+                onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.jet}
+                onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                data-tooltip-id="user-tooltip"
+                data-tooltip-content={isLoggedIn ? `Logged in as ${userName}` : "Sign in to your account"}
+              >
+                <FiUser style={{ color: colors.mainYellow }} size={20} />
+                <FiChevronDown 
+                  style={{ 
+                    color: colors.mainYellow,
+                    transform: isUserMenuOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                    transition: 'transform 0.2s'
+                  }} 
+                  size={16} 
+                />
+              </button>
+
+              {/* Dropdown Menu */}
+              {isUserMenuOpen && (
+                <div 
+                  className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl overflow-hidden z-50"
+                  style={{ 
+                    backgroundColor: colors.jet,
+                    border: `2px solid ${colors.mainYellow}`
+                  }}
+                >
+                  {!isLoggedIn ? (
+                    // Not logged in - Show Login/Signup
+                    <>
+                      <button
+                        onClick={() => handleNavigation('/signin')}
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        style={{ color: 'white' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        <FiUser size={18} style={{ color: colors.mainYellow }} />
+                        <span className="font-medium">Login</span>
+                      </button>
+                      <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
+                      <button
+                        onClick={() => handleNavigation('/signup')}
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        style={{ color: 'white' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        <FaUserCircle size={18} style={{ color: colors.mainYellow }} />
+                        <span className="font-medium">Sign Up</span>
+                      </button>
+                    </>
+                  ) : (
+                    // Logged in - Show Profile/My Builds/Favorites/Logout
+                    <>
+                      <button
+                        onClick={() => handleNavigation('/profile')}
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        style={{ color: 'white' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        <FaUserCircle size={18} style={{ color: colors.mainYellow }} />
+                        <span className="font-medium">Profile</span>
+                      </button>
+                      <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
+                      <button
+                        onClick={() => handleNavigation('/my-builds')}
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        style={{ color: 'white' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        <PiDesktopTowerFill size={18} style={{ color: colors.mainYellow }} />
+                        <span className="font-medium">My Builds</span>
+                      </button>
+                      <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
+                      <button
+                        onClick={() => handleNavigation('/favorites')}
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        style={{ color: 'white' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        <FiHeart size={18} style={{ color: colors.mainYellow }} />
+                        <span className="font-medium">Favorites</span>
+                      </button>
+                      <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        style={{ color: 'white' }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#dc2626';
+                          e.currentTarget.querySelector('svg').style.color = 'white';
+                          e.currentTarget.querySelector('span').style.color = 'white';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.querySelector('svg').style.color = colors.mainYellow;
+                          e.currentTarget.querySelector('span').style.color = 'white';
+                        }}
+                      >
+                        <FiLogOut size={18} style={{ color: colors.mainYellow }} />
+                        <span className="font-medium">Logout</span>
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
@@ -229,7 +362,7 @@ export default function Navbar() {
       />
       <Tooltip 
         id="user-tooltip" 
-        place="bottom"
+        place="bottom-end"
         style={{ 
           backgroundColor: colors.mainYellow, 
           color: colors.mainBlack,
