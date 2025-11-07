@@ -1,6 +1,0 @@
-@PcBuilder.PL_HostAddress = http://localhost:5083
-
-GET {{PcBuilder.PL_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
