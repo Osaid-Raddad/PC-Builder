@@ -35,6 +35,16 @@ const Shops = () => {
       specialties: ['Computers', 'Gaming', 'Electronics', 'Accessories']
     },
     {
+      id: 6,
+      name: 'CS Net Games',
+      description: 'Gaming specialists with wide selection of gaming hardware',
+      logo: '/src/assets/Images/cs.svg',
+      url: 'https://csnetgames.com/ar',
+      location: 'Ramallah, West Bank',
+      city: 'Ramallah',
+      specialties: ['Gaming PCs', 'Consoles', 'Gaming Accessories']
+    },
+    {
       id: 2,
       name: 'Cobra Shop',
       description: 'Premium computer hardware and gaming equipment supplier',
@@ -43,26 +53,6 @@ const Shops = () => {
       location: 'Ramallah, West Bank',
       city: 'Ramallah',
       specialties: ['PC Components', 'Gaming Gear', 'Peripherals']
-    },
-    {
-      id: 3,
-      name: 'ZikZak Store',
-      description: 'Modern tech store offering latest computers and accessories',
-      logo: '/src/assets/Images/zikzak.webp',
-      url: 'https://zikzakstore.com/en/',
-      location: 'Nablus, West Bank',
-      city: 'Nablus',
-      specialties: ['Laptops', 'Desktops', 'Accessories', 'Software']
-    },
-    {
-      id: 4,
-      name: 'Quantum',
-      description: 'Professional computer solutions and IT services',
-      logo: '/src/assets/Images/quantum.webp',
-      url: 'https://quantum.ps/',
-      location: 'Ramallah, West Bank',
-      city: 'Ramallah',
-      specialties: ['Business Solutions', 'Hardware', 'IT Services']
     },
     {
       id: 5,
@@ -75,14 +65,24 @@ const Shops = () => {
       specialties: ['PC Building', 'Repairs', 'Components', 'Gaming']
     },
     {
-      id: 6,
-      name: 'CS Net Games',
-      description: 'Gaming specialists with wide selection of gaming hardware',
-      logo: '/src/assets/Images/cs.svg',
-      url: 'https://csnetgames.com/ar',
+      id: 4,
+      name: 'Quantum',
+      description: 'Professional computer solutions and IT services',
+      logo: '/src/assets/Images/quantum.webp',
+      url: 'https://quantum.ps/',
       location: 'Ramallah, West Bank',
       city: 'Ramallah',
-      specialties: ['Gaming PCs', 'Consoles', 'Gaming Accessories']
+      specialties: ['Business Solutions', 'Hardware', 'IT Services']
+    },
+    {
+      id: 3,
+      name: 'ZikZak Store',
+      description: 'Modern tech store offering latest computers and accessories',
+      logo: '/src/assets/Images/zikzak.webp',
+      url: 'https://zikzakstore.com/en/',
+      location: 'Nablus, West Bank',
+      city: 'Nablus',
+      specialties: ['Laptops', 'Desktops', 'Accessories', 'Software']
     },
     {
       id: 7,
