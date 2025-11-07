@@ -2,12 +2,25 @@ import React, { useState } from 'react';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
 import colors from '../../../config/colors';
-import { FiExternalLink, FiMapPin, FiChevronLeft, FiChevronRight, FiFilter, FiSearch } from 'react-icons/fi';
+import { FiExternalLink, FiMapPin, FiChevronLeft, FiChevronRight, FiFilter, FiSearch, FiPlus, FiShoppingBag, FiX } from 'react-icons/fi';
+import toast from 'react-hot-toast';
 
 const Shops = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCity, setSelectedCity] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [shopSubmission, setShopSubmission] = useState({
+    shopName: '',
+    ownerName: '',
+    email: '',
+    phone: '',
+    city: '',
+    location: '',
+    website: '',
+    description: '',
+    specialties: ''
+  });
   const shopsPerPage = 6;
 
   const allShops = [
@@ -262,6 +275,45 @@ const Shops = () => {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
+  const handleSubmissionChange = (e) => {
+    const { name, value } = e.target;
+    setShopSubmission(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmitShop = (e) => {
+    e.preventDefault();
+    
+    // Validation
+    if (!shopSubmission.shopName || !shopSubmission.ownerName || !shopSubmission.email || 
+        !shopSubmission.phone || !shopSubmission.city || !shopSubmission.location ||
+        !shopSubmission.website || !shopSubmission.description || !shopSubmission.specialties) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    // TODO: Send submission to backend/database
+    console.log('Shop Submission:', shopSubmission);
+    
+    toast.success('Your shop has been submitted for review! We will contact you soon.');
+    
+    // Reset form and close modal
+    setShopSubmission({
+      shopName: '',
+      ownerName: '',
+      email: '',
+      phone: '',
+      city: '',
+      location: '',
+      website: '',
+      description: '',
+      specialties: ''
+    });
+    setShowSubmitModal(false);
+  };
+
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.mainBeige }}>
       <Navbar />
@@ -501,6 +553,28 @@ const Shops = () => {
           </div>
         )}
 
+        {/* Submit Your Shop Section */}
+        <div 
+          className="mt-12 p-8 rounded-lg text-center"
+          style={{ backgroundColor: colors.mainYellow + '15', border: `2px solid ${colors.mainYellow}` }}
+        >
+          <FiShoppingBag size={48} style={{ color: colors.mainYellow, margin: '0 auto 16px' }} />
+          <h3 className="text-3xl font-bold mb-4" style={{ color: colors.mainBlack }}>
+            Own a Computer Shop?
+          </h3>
+          <p className="text-lg mb-6" style={{ color: colors.jet }}>
+            List your shop on our platform and reach thousands of PC builders and tech enthusiasts across Palestine!
+          </p>
+          <button
+            onClick={() => setShowSubmitModal(true)}
+            className="px-8 py-4 rounded-lg font-bold text-white hover:opacity-90 transition-opacity text-lg flex items-center gap-2 mx-auto"
+            style={{ backgroundColor: colors.mainYellow }}
+          >
+            <FiPlus size={20} />
+            Submit Your Shop
+          </button>
+        </div>
+
         {/* Info Section */}
         <div 
           className="mt-12 p-8 rounded-lg text-center"
@@ -516,6 +590,281 @@ const Shops = () => {
           </p>
         </div>
       </div>
+
+      {/* Submit Shop Modal */}
+      {showSubmitModal && (
+        <div 
+          className="fixed inset-0 flex items-center justify-center z-50 p-4"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.9)' }}
+          onClick={() => setShowSubmitModal(false)}
+        >
+          <div 
+            className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+            style={{ border: `3px solid ${colors.mainYellow}` }}
+          >
+            {/* Modal Header */}
+            <div 
+              className="sticky top-0 bg-white p-6 border-b-2 flex items-center justify-between"
+              style={{ borderColor: colors.platinum }}
+            >
+              <h2 className="text-2xl font-bold" style={{ color: colors.mainBlack }}>
+                Submit Your Shop for Review
+              </h2>
+              <button
+                onClick={() => setShowSubmitModal(false)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              >
+                <FiX size={24} style={{ color: colors.jet }} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <form onSubmit={handleSubmitShop} className="p-6">
+              <div className="mb-4 p-4 rounded-lg" style={{ backgroundColor: colors.mainYellow + '15' }}>
+                <p className="text-sm font-semibold" style={{ color: colors.mainBlack }}>
+                  📋 Your submission will be reviewed by our team before being published on the website.
+                </p>
+              </div>
+
+              <div className="space-y-4">
+                {/* Shop Name */}
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                    Shop Name <span style={{ color: 'red' }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="shopName"
+                    value={shopSubmission.shopName}
+                    onChange={handleSubmissionChange}
+                    placeholder="e.g., Tech Paradise"
+                    className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
+                    style={{ 
+                      borderColor: colors.platinum,
+                      color: colors.mainBlack
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
+                    onBlur={(e) => e.target.style.borderColor = colors.platinum}
+                    required
+                  />
+                </div>
+
+                {/* Owner Name */}
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                    Owner Name <span style={{ color: 'red' }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="ownerName"
+                    value={shopSubmission.ownerName}
+                    onChange={handleSubmissionChange}
+                    placeholder="Your full name"
+                    className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
+                    style={{ 
+                      borderColor: colors.platinum,
+                      color: colors.mainBlack
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
+                    onBlur={(e) => e.target.style.borderColor = colors.platinum}
+                    required
+                  />
+                </div>
+
+                {/* Email & Phone */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                      Email <span style={{ color: 'red' }}>*</span>
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={shopSubmission.email}
+                      onChange={handleSubmissionChange}
+                      placeholder="shop@example.com"
+                      className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
+                      style={{ 
+                        borderColor: colors.platinum,
+                        color: colors.mainBlack
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
+                      onBlur={(e) => e.target.style.borderColor = colors.platinum}
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                      Phone <span style={{ color: 'red' }}>*</span>
+                    </label>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={shopSubmission.phone}
+                      onChange={handleSubmissionChange}
+                      placeholder="+970 XX XXX XXXX"
+                      className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
+                      style={{ 
+                        borderColor: colors.platinum,
+                        color: colors.mainBlack
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
+                      onBlur={(e) => e.target.style.borderColor = colors.platinum}
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* City & Location */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                      City <span style={{ color: 'red' }}>*</span>
+                    </label>
+                    <select
+                      name="city"
+                      value={shopSubmission.city}
+                      onChange={handleSubmissionChange}
+                      className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
+                      style={{ 
+                        borderColor: colors.platinum,
+                        color: colors.mainBlack
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
+                      onBlur={(e) => e.target.style.borderColor = colors.platinum}
+                      required
+                    >
+                      <option value="">Select a city</option>
+                      <option value="Ramallah">Ramallah</option>
+                      <option value="Jerusalem">Jerusalem</option>
+                      <option value="Nablus">Nablus</option>
+                      <option value="Hebron">Hebron</option>
+                      <option value="Bethlehem">Bethlehem</option>
+                      <option value="Jenin">Jenin</option>
+                      <option value="Tulkarm">Tulkarm</option>
+                      <option value="Qalqilya">Qalqilya</option>
+                      <option value="Jericho">Jericho</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                      Exact Location <span style={{ color: 'red' }}>*</span>
+                    </label>
+                    <input
+                      type="text"
+                      name="location"
+                      value={shopSubmission.location}
+                      onChange={handleSubmissionChange}
+                      placeholder="Street address, area"
+                      className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
+                      style={{ 
+                        borderColor: colors.platinum,
+                        color: colors.mainBlack
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
+                      onBlur={(e) => e.target.style.borderColor = colors.platinum}
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* Website/Facebook */}
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                    Website or Facebook Page URL <span style={{ color: 'red' }}>*</span>
+                  </label>
+                  <input
+                    type="url"
+                    name="website"
+                    value={shopSubmission.website}
+                    onChange={handleSubmissionChange}
+                    placeholder="https://..."
+                    className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
+                    style={{ 
+                      borderColor: colors.platinum,
+                      color: colors.mainBlack
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
+                    onBlur={(e) => e.target.style.borderColor = colors.platinum}
+                    required
+                  />
+                </div>
+
+                {/* Description */}
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                    Shop Description <span style={{ color: 'red' }}>*</span>
+                  </label>
+                  <textarea
+                    name="description"
+                    value={shopSubmission.description}
+                    onChange={handleSubmissionChange}
+                    placeholder="Brief description of your shop and services..."
+                    rows={4}
+                    className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors resize-none"
+                    style={{ 
+                      borderColor: colors.platinum,
+                      color: colors.mainBlack
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
+                    onBlur={(e) => e.target.style.borderColor = colors.platinum}
+                    required
+                  />
+                </div>
+
+                {/* Specialties */}
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                    Specialties <span style={{ color: 'red' }}>*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="specialties"
+                    value={shopSubmission.specialties}
+                    onChange={handleSubmissionChange}
+                    placeholder="e.g., Gaming PCs, Components, Repairs (comma-separated)"
+                    className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
+                    style={{ 
+                      borderColor: colors.platinum,
+                      color: colors.mainBlack
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
+                    onBlur={(e) => e.target.style.borderColor = colors.platinum}
+                    required
+                  />
+                  <p className="text-xs mt-1" style={{ color: colors.jet }}>
+                    Separate multiple specialties with commas
+                  </p>
+                </div>
+              </div>
+
+              {/* Submit Buttons */}
+              <div className="flex gap-4 mt-6">
+                <button
+                  type="button"
+                  onClick={() => setShowSubmitModal(false)}
+                  className="flex-1 px-6 py-3 rounded-lg font-semibold transition-colors border-2"
+                  style={{ 
+                    borderColor: colors.platinum,
+                    color: colors.jet,
+                    backgroundColor: 'white'
+                  }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-6 py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity"
+                  style={{ backgroundColor: colors.mainYellow }}
+                >
+                  Submit for Review
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>
