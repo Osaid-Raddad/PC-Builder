@@ -17,7 +17,7 @@ const Shops = () => {
       description: 'Your trusted destination for computers, electronics, and tech accessories in Palestine',
       logo: '/src/assets/Images/watani.png',
       url: 'https://watanimall.com/?srsltid=AfmBOor1Zh5XPOFWmau4Ty-57WDCplKHQEoddNMlTyIfS4TpG-4F1UMH',
-      location: 'Beit-Hanina, Jerualem',
+      location: 'Beit-Hanina, Jerusalem',
       city: 'Jerusalem',
       specialties: ['Computers', 'Gaming', 'Electronics', 'Accessories']
     },
@@ -100,6 +100,126 @@ const Shops = () => {
       location: 'Ramallah, West Bank',
       city: 'Ramallah',
       specialties: ['Gaming PCs', 'High-End Components', 'Gaming Gear', 'Custom Builds']
+    },
+    {
+      id: 10,
+      name: 'Core Tech',
+      description: 'Cutting-edge technology solutions and computer hardware provider',
+      logo: '/src/assets/Images/coretech.jpg',
+      url: 'https://www.facebook.com/share/17SqcdAwHe/?mibextid=wwXIfr',
+      location: 'Hebron, West Bank',
+      city: 'Hebron',
+      specialties: ['PC Components', 'Hardware', 'Gaming', 'Accessories']
+    },
+    {
+      id: 11,
+      name: 'Masalmeh',
+      description: 'Trusted computer store with quality products and professional service',
+      logo: '/src/assets/Images/masalmeh.jpg',
+      url: 'https://www.facebook.com/masalmehpc',
+      location: 'Hebron, West Bank',
+      city: 'Hebron',
+      specialties: ['Computers', 'Components', 'Repairs', 'IT Solutions']
+    },
+    {
+      id: 13,
+      name: 'Digital Doctors',
+      description: 'Expert computer repair and hardware solutions with technical expertise',
+      logo: '/src/assets/Images/digital.jpg',
+      url: 'https://www.facebook.com/share/1AUkjNyi6F/?mibextid=wwXIfr',
+      location: 'Hebron, West Bank',
+      city: 'Hebron',
+      specialties: ['Repairs', 'IT Support', 'Hardware', 'Diagnostics']
+    },
+    {
+      id: 14,
+      name: 'Islam PC',
+      description: 'Quality computer hardware and accessories at competitive prices',
+      logo: '/src/assets/Images/islam.jpg',
+      url: 'https://www.facebook.com/share/19Jy7FQ3Rt/?mibextid=wwXIfr',
+      location: 'Hebron, West Bank',
+      city: 'Hebron',
+      specialties: ['PC Components', 'Accessories', 'Gaming', 'Peripherals']
+    },
+    {
+      id: 15,
+      name: 'Master PC',
+      description: 'Professional PC building and hardware solutions for enthusiasts',
+      logo: '/src/assets/Images/master.jpg',
+      url: 'https://www.facebook.com/share/17Pycrjfnw/?mibextid=wwXIfr',
+      location: 'Hebron, West Bank',
+      city: 'Hebron',
+      specialties: ['Custom Builds', 'High-End Components', 'Gaming', 'Workstations']
+    },
+    {
+      id: 16,
+      name: 'Gold PC',
+      description: 'Premium computer hardware and gaming equipment with excellent service',
+      logo: '/src/assets/Images/gold.jpg',
+      url: 'https://www.facebook.com/share/1YuYdFSNAs/?mibextid=wwXIfr',
+      location: 'Kafr Aqab, Jerusalem',
+      city: 'Jerusalem',
+      specialties: ['Gaming PCs', 'Components', 'Accessories', 'Upgrades']
+    },
+    {
+      id: 17,
+      name: 'Ultra PC',
+      description: 'High-performance PC solutions and cutting-edge computer technology',
+      logo: '/src/assets/Images/ultra.jpg',
+      url: 'https://www.facebook.com/share/1BM24Wqouh/?mibextid=wwXIfr',
+      location: 'Hebron, West Bank',
+      city: 'Hebron',
+      specialties: ['Gaming', 'High-End Hardware', 'Custom Builds', 'Overclocking']
+    },
+    {
+      id: 18,
+      name: 'Computer Strix',
+      description: 'Gaming-focused computer shop with latest hardware and peripherals',
+      logo: '/src/assets/Images/strix.jpg',
+      url: 'https://www.facebook.com/share/16RSGSFkpM/?mibextid=wwXIfr',
+      location: 'Jerusalem',
+      city: 'Jerusalem',
+      specialties: ['Gaming PCs', 'RGB Components', 'Peripherals', 'Custom Builds']
+    },
+    {
+      id: 19,
+      name: 'Nabtech',
+      description: 'Modern technology solutions and computer hardware provider',
+      logo: '/src/assets/Images/nabtech.jpg',
+      url: 'https://www.facebook.com/share/16dz6BzfjS/?mibextid=wwXIfr',
+      location: 'Nablus, West Bank',
+      city: 'Nablus',
+      specialties: ['PC Components', 'Laptops', 'Networking', 'IT Solutions']
+    },
+    {
+      id: 20,
+      name: 'Warehouse',
+      description: 'Large inventory of computer parts and electronics at wholesale prices',
+      logo: '/src/assets/Images/warrehouse.jpg',
+      url: 'https://www.facebook.com/share/1CRDffJKm7/?mibextid=wwXIfr',
+      location: 'Tulkarem, West Bank',
+      city: 'Tulkarem',
+      specialties: ['Wholesale', 'Components', 'Bulk Orders', 'Electronics']
+    },
+    {
+      id: 21,
+      name: 'Etihad',
+      description: 'Comprehensive computer solutions and hardware supplier',
+      logo: '/src/assets/Images/ithad.jpg',
+      url: 'https://www.facebook.com/share/16TGdXvzH1/?mibextid=wwXIfr',
+      location: 'Hebron, West Bank',
+      city: 'Hebron',
+      specialties: ['Computers', 'Hardware', 'Networking', 'Business Solutions']
+    },
+    {
+      id: 22,
+      name: 'Horizon',
+      description: 'Innovative computer solutions and technology services',
+      logo: '/src/assets/Images/horizon.jpg',
+      url: 'https://www.facebook.com/profile.php?id=100083081091336',
+      location: 'Kafr Aqab, Jerusalem',
+      city: 'Jerusalem',
+      specialties: ['PC Components', 'Gaming', 'Hardware', 'Tech Solutions']
     }
   ];
 
