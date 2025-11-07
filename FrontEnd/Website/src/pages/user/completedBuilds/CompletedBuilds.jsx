@@ -410,6 +410,20 @@ const CompletedBuilds = () => {
                   color: currentPage === index + 1 ? 'white' : colors.jet,
                   border: `2px solid ${currentPage === index + 1 ? colors.mainYellow : colors.platinum}`
                 }}
+                onMouseEnter={(e) => {
+                  if (currentPage !== index + 1) {
+                    e.currentTarget.style.backgroundColor = colors.mainYellow;
+                    e.currentTarget.style.color = 'white';
+                    e.currentTarget.style.borderColor = colors.mainYellow;
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (currentPage !== index + 1) {
+                    e.currentTarget.style.backgroundColor = 'white';
+                    e.currentTarget.style.color = colors.jet;
+                    e.currentTarget.style.borderColor = colors.platinum;
+                  }
+                }}
               >
                 {index + 1}
               </button>

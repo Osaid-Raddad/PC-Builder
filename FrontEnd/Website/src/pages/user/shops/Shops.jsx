@@ -344,6 +344,20 @@ const Shops = () => {
                     color: currentPage === pageNumber ? 'white' : colors.mainBlack,
                     border: `2px solid ${currentPage === pageNumber ? colors.mainYellow : colors.platinum}`
                   }}
+                  onMouseEnter={(e) => {
+                    if (currentPage !== pageNumber) {
+                      e.currentTarget.style.backgroundColor = colors.platinum;
+                      e.currentTarget.style.color = 'white';
+                      e.currentTarget.style.borderColor = colors.platinum;
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (currentPage !== pageNumber) {
+                      e.currentTarget.style.backgroundColor = 'white';
+                      e.currentTarget.style.color = colors.mainBlack;
+                      e.currentTarget.style.borderColor = colors.platinum;
+                    }
+                  }}
                 >
                   {pageNumber}
                 </button>
