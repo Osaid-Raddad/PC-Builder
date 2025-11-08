@@ -135,12 +135,12 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Menu - Absolute Center */}
-          <div className="hidden md:flex items-center space-x-8 absolute left-1/2 transform -translate-x-1/2">
+          <div className="hidden 2xl:flex items-center space-x-6 absolute left-1/2 transform -translate-x-1/2">
             {menuItems.map((item, index) => (
               <div key={index} className="relative group products-menu-container">
                 <button
                   onClick={() => item.hasDropdown ? handleProductsClick() : handleNavigation(item.path)}
-                  className="flex items-center space-x-2 px-2 py-2 rounded-md text-sm font-medium transition-all duration-200"
+                  className="flex items-center space-x-1.5 px-2 py-2 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap"
                   style={{ 
                     color: '#FFFFFF',
                   }}
@@ -202,13 +202,13 @@ export default function Navbar() {
           </div>
 
           {/* Right Side - Search & User - Max Right */}
-          <div className="hidden md:flex items-center space-x-4 shrink-0 z-10">
+          <div className="hidden 2xl:flex items-center space-x-3 shrink-0 z-10">
             {/* Search Bar */}
             <div className="relative">
               <input
                 type="text"
                 placeholder="Search..."
-                className="pl-10 pr-4 py-2 rounded-full text-sm focus:outline-none focus:ring-2 transition-all duration-200"
+                className="pl-10 pr-4 py-2 rounded-full text-sm focus:outline-none focus:ring-2 transition-all duration-200 w-44"
                 style={{ 
                   backgroundColor: colors.jet,
                   border: `1px solid ${colors.platinum}`,
@@ -350,7 +350,110 @@ export default function Navbar() {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden">
+          <div className="2xl:hidden flex items-center space-x-3">
+            {/* Mobile User Icon */}
+            <div className="relative user-menu-container">
+              <button 
+                onClick={toggleUserMenu}
+                className="flex items-center space-x-2 px-2 py-2 rounded-full transition-all duration-200"
+                style={{ border: `2px solid ${colors.mainYellow}` }}
+              >
+                <FiUser style={{ color: colors.mainYellow }} size={20} />
+              </button>
+
+              {/* User Dropdown for mobile/tablet */}
+              {isUserMenuOpen && (
+                <div 
+                  className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl overflow-hidden z-50"
+                  style={{ 
+                    backgroundColor: colors.jet,
+                    border: `2px solid ${colors.mainYellow}`
+                  }}
+                >
+                  {!isLoggedIn ? (
+                    <>
+                      <button
+                        onClick={() => handleNavigation('/signin')}
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        style={{ color: 'white' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        <FiUser size={18} style={{ color: colors.mainYellow }} />
+                        <span className="font-medium">Login</span>
+                      </button>
+                      <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
+                      <button
+                        onClick={() => handleNavigation('/signup')}
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        style={{ color: 'white' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        <FaUserCircle size={18} style={{ color: colors.mainYellow }} />
+                        <span className="font-medium">Sign Up</span>
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => handleNavigation('/profile')}
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        style={{ color: 'white' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        <FaUserCircle size={18} style={{ color: colors.mainYellow }} />
+                        <span className="font-medium">Profile</span>
+                      </button>
+                      <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
+                      <button
+                        onClick={() => handleNavigation('/my-builds')}
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        style={{ color: 'white' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        <PiDesktopTowerFill size={18} style={{ color: colors.mainYellow }} />
+                        <span className="font-medium">My Builds</span>
+                      </button>
+                      <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
+                      <button
+                        onClick={() => handleNavigation('/favorites')}
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        style={{ color: 'white' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        <FiHeart size={18} style={{ color: colors.mainYellow }} />
+                        <span className="font-medium">Favorites</span>
+                      </button>
+                      <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
+                      <button
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        style={{ color: 'white' }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#dc2626';
+                          e.currentTarget.querySelector('svg').style.color = 'white';
+                          e.currentTarget.querySelector('span').style.color = 'white';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.querySelector('svg').style.color = colors.mainYellow;
+                          e.currentTarget.querySelector('span').style.color = 'white';
+                        }}
+                      >
+                        <FiLogOut size={18} style={{ color: colors.mainYellow }} />
+                        <span className="font-medium">Logout</span>
+                      </button>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+
+            {/* Hamburger Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="p-2 rounded-md"
@@ -364,7 +467,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden" style={{ backgroundColor: colors.jet }}>
+        <div className="2xl:hidden" style={{ backgroundColor: colors.jet }}>
           <div className="px-2 pt-2 pb-3 space-y-1">
             {menuItems.map((item, index) => (
               <div key={index} className={item.hasDropdown ? 'mobile-products-container' : ''}>
