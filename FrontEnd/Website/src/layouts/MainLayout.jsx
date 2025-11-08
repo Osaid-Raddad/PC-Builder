@@ -49,6 +49,11 @@ const MainLayout = () => {
     navigate('/signin');
   };
 
+  const handleMenuItemClick = (e) => {
+    e.stopPropagation(); // Prevent sidebar from opening
+    setIsSidebarOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-[#333533]">
       {/* Main Content */}
@@ -72,6 +77,8 @@ const MainLayout = () => {
             <NavLink
               key={item.path}
               to={item.path}
+              end={item.path === '/builder' || item.path === '/'}
+              onClick={handleMenuItemClick}
               className={({ isActive }) =>
                 `flex items-center gap-4 px-4 py-3 rounded-lg transition-all ${
                   isActive
