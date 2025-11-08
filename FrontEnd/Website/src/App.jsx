@@ -25,12 +25,14 @@ import ForgotPassword from './pages/user/auth/ForgotPassword.jsx';
 import ResetPassword from './pages/user/auth/ResetPassword';
 import News from './pages/user/news/News';
 import ChatBot from './components/common/chatbot/ChatBot.jsx';
+import Chat from './pages/user/chat/Chat';
 
 function AppContent() {
   const location = useLocation();
   
-  // Check if current page is news page
+  // Check if current page is news page or chat page
   const isNewsPage = location.pathname.includes('/news');
+  const isChatPage = location.pathname.includes('/chat');
 
   return (
     <div>
@@ -79,10 +81,11 @@ function AppContent() {
         <Route path="/signup" element={<AuthLayout />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/chat" element={<Chat />} />
       </Routes>
 
-      {/* Show ChatBot on all pages except news */}
-      {!isNewsPage && <ChatBot />}
+      {/* Show ChatBot on all pages except news and chat */}
+      {!isNewsPage && !isChatPage && <ChatBot />}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiSearch, FiMenu, FiX, FiUser, FiChevronDown, FiShoppingBag, FiLogOut, FiHeart } from 'react-icons/fi';
+import { FiSearch, FiMenu, FiX, FiUser, FiChevronDown, FiShoppingBag, FiLogOut, FiHeart, FiMessageCircle } from 'react-icons/fi';
 import { FaTools, FaBoxOpen, FaNewspaper, FaEdit, FaUserCircle, FaMicrochip, FaMemory, FaHdd, FaDesktop } from 'react-icons/fa';
 import { PiDesktopTowerFill } from 'react-icons/pi';
 import { HiCog } from 'react-icons/hi';
@@ -72,6 +72,12 @@ export default function Navbar() {
       path: '/shops', 
       icon: <FiShoppingBag size={18} />,
       tooltip: 'Find local computer shops in Palestine'
+    },
+    { 
+      label: 'Chat', 
+      path: '/chat', 
+      icon: <FiMessageCircle size={18} />,
+      tooltip: 'Message other users and shop owners'
     },
   ];
 
