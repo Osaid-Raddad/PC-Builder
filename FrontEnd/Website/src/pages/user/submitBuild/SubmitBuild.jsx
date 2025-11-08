@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
 import colors from '../../../config/colors';
-import { FiUpload, FiImage, FiUser, FiTag, FiDollarSign, FiCpu, FiMonitor, FiHardDrive, FiZap, FiAlignLeft } from 'react-icons/fi';
+import { FiUpload, FiImage, FiUser, FiTag, FiDollarSign, FiCpu, FiMonitor, FiHardDrive, FiZap, FiAlignLeft, FiX } from 'react-icons/fi';
 import { BsCpuFill } from 'react-icons/bs';
 import { FaMicrochip, FaMemory } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 
 const SubmitBuild = () => {
   const navigate = useNavigate();
-  const [imagePreview, setImagePreview] = useState(null);
+  const [imagePreviews, setImagePreviews] = useState([]);
   const [formData, setFormData] = useState({
     buildName: '',
     ownerName: '',
@@ -22,27 +22,53 @@ const SubmitBuild = () => {
     storage: '',
     psu: '',
     description: '',
-    image: null
+    images: []
   });
 
   const categories = ['Gaming', 'Workstation', 'Budget', 'Office', 'Mini-ITX'];
+  const MAX_IMAGES = 5;
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
+    const files = Array.from(e.target.files);
+    
+    // Check if adding these files would exceed the limit
+    if (formData.images.length + files.length > MAX_IMAGES) {
+      toast.error(`You can only upload up to ${MAX_IMAGES} images`);
+      return;
+    }
+
+    // Validate each file
+    const validFiles = [];
+    const newPreviews = [];
+
+    for (const file of files) {
       if (file.size > 5 * 1024 * 1024) {
-        toast.error('Image size should be less than 5MB');
-        return;
+        toast.error(`${file.name} is too large. Maximum size is 5MB`);
+        continue;
       }
-      
-      setFormData({ ...formData, image: file });
-      
+
+      validFiles.push(file);
+
+      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImagePreview(reader.result);
+        newPreviews.push(reader.result);
+        if (newPreviews.length === validFiles.length) {
+          setImagePreviews([...imagePreviews, ...newPreviews]);
+        }
       };
       reader.readAsDataURL(file);
     }
+
+    setFormData({ ...formData, images: [...formData.images, ...validFiles] });
+  };
+
+  const removeImage = (index) => {
+    const newImages = formData.images.filter((_, i) => i !== index);
+    const newPreviews = imagePreviews.filter((_, i) => i !== index);
+    
+    setFormData({ ...formData, images: newImages });
+    setImagePreviews(newPreviews);
   };
 
   const handleInputChange = (e) => {
@@ -54,8 +80,8 @@ const SubmitBuild = () => {
     e.preventDefault();
 
     // Validation
-    if (!formData.image) {
-      toast.error('Please upload an image of your build');
+    if (formData.images.length === 0) {
+      toast.error('Please upload at least one image of your build');
       return;
     }
 
@@ -100,47 +126,101 @@ const SubmitBuild = () => {
                   style={{ border: `2px solid ${colors.platinum}` }}
                 >
                   <h3 className="text-2xl font-bold mb-4" style={{ color: colors.mainBlack }}>
-                    Build Image *
+                    Build Images * ({imagePreviews.length}/{MAX_IMAGES})
                   </h3>
                   
                   <div className="space-y-4">
-                    {/* Image Preview */}
-                    <div 
-                      className="relative h-80 rounded-lg overflow-hidden flex items-center justify-center"
-                      style={{ 
-                        backgroundColor: colors.platinum,
-                        backgroundImage: imagePreview ? `url(${imagePreview})` : 'none',
-                        backgroundSize: 'cover',
-                        backgroundPosition: 'center'
-                      }}
-                    >
-                      {!imagePreview && (
+                    {/* Image Previews Grid */}
+                    {imagePreviews.length > 0 && (
+                      <div className="grid grid-cols-2 gap-3 mb-4">
+                        {imagePreviews.map((preview, index) => (
+                          <div 
+                            key={index}
+                            className="relative group rounded-lg overflow-hidden"
+                            style={{ 
+                              height: '150px',
+                              backgroundImage: `url(${preview})`,
+                              backgroundSize: 'cover',
+                              backgroundPosition: 'center',
+                              border: `2px solid ${colors.platinum}`
+                            }}
+                          >
+                            {/* Remove button */}
+                            <button
+                              type="button"
+                              onClick={() => removeImage(index)}
+                              className="absolute top-2 right-2 p-2 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                              title="Remove image"
+                            >
+                              <FiX size={16} />
+                            </button>
+                            {/* Image number badge */}
+                            <div 
+                              className="absolute bottom-2 left-2 px-2 py-1 rounded text-xs font-bold"
+                              style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+                            >
+                              #{index + 1}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Main Preview or Empty State */}
+                    {imagePreviews.length === 0 ? (
+                      <div 
+                        className="relative h-80 rounded-lg overflow-hidden flex items-center justify-center"
+                        style={{ backgroundColor: colors.platinum }}
+                      >
                         <div className="text-center">
                           <FiImage size={64} style={{ color: colors.mainYellow }} className="mx-auto mb-4" />
                           <p className="text-lg font-semibold" style={{ color: colors.jet }}>
-                            No image selected
+                            No images selected
+                          </p>
+                          <p className="text-sm mt-2" style={{ color: colors.jet }}>
+                            Upload up to {MAX_IMAGES} images
                           </p>
                         </div>
-                      )}
-                    </div>
+                      </div>
+                    ) : (
+                      <div 
+                        className="relative h-80 rounded-lg overflow-hidden"
+                        style={{ 
+                          backgroundImage: `url(${imagePreviews[0]})`,
+                          backgroundSize: 'cover',
+                          backgroundPosition: 'center',
+                          border: `2px solid ${colors.mainYellow}`
+                        }}
+                      >
+                        <div 
+                          className="absolute top-3 left-3 px-3 py-1 rounded-full text-sm font-bold"
+                          style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+                        >
+                          Main Image
+                        </div>
+                      </div>
+                    )}
 
                     {/* Upload Button */}
-                    <label 
-                      className="flex items-center justify-center gap-3 px-6 py-4 rounded-lg font-bold cursor-pointer hover:opacity-90 transition-opacity"
-                      style={{ backgroundColor: colors.mainYellow, color: 'white' }}
-                    >
-                      <FiUpload size={20} />
-                      Choose Image
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="hidden"
-                      />
-                    </label>
+                    {imagePreviews.length < MAX_IMAGES && (
+                      <label 
+                        className="flex items-center justify-center gap-3 px-6 py-4 rounded-lg font-bold cursor-pointer hover:opacity-90 transition-opacity"
+                        style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+                      >
+                        <FiUpload size={20} />
+                        {imagePreviews.length === 0 ? 'Choose Images' : `Add More Images (${MAX_IMAGES - imagePreviews.length} remaining)`}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          multiple
+                          onChange={handleImageChange}
+                          className="hidden"
+                        />
+                      </label>
+                    )}
                     
                     <p className="text-sm text-center" style={{ color: colors.jet }}>
-                      Max file size: 5MB. Supported formats: JPG, PNG, WebP
+                      Max {MAX_IMAGES} images. Each file max size: 5MB. Supported: JPG, PNG, WebP
                     </p>
                   </div>
                 </div>
