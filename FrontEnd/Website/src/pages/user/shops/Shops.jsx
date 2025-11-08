@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
 import colors from '../../../config/colors';
-import { FiExternalLink, FiMapPin, FiChevronLeft, FiChevronRight, FiFilter, FiSearch, FiPlus, FiShoppingBag, FiX } from 'react-icons/fi';
+import { FiExternalLink, FiMapPin, FiChevronLeft, FiChevronRight, FiFilter, FiSearch, FiPlus, FiShoppingBag, FiX, FiUpload, FiImage } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 const Shops = () => {
@@ -19,8 +19,10 @@ const Shops = () => {
     location: '',
     website: '',
     description: '',
-    specialties: ''
+    specialties: '',
+    logo: null
   });
+  const [logoPreview, setLogoPreview] = useState(null);
   const shopsPerPage = 6;
 
   const allShops = [
@@ -35,7 +37,7 @@ const Shops = () => {
       specialties: ['Computers', 'Gaming', 'Electronics', 'Accessories']
     },
     {
-      id: 6,
+      id: 2,
       name: 'CS Net Games',
       description: 'Gaming specialists with wide selection of gaming hardware',
       logo: '/src/assets/Images/cs.svg',
@@ -45,7 +47,7 @@ const Shops = () => {
       specialties: ['Gaming PCs', 'Consoles', 'Gaming Accessories']
     },
     {
-      id: 2,
+      id: 3,
       name: 'Cobra Shop',
       description: 'Premium computer hardware and gaming equipment supplier',
       logo: '/src/assets/Images/cobra.webp',
@@ -55,7 +57,7 @@ const Shops = () => {
       specialties: ['PC Components', 'Gaming Gear', 'Peripherals']
     },
     {
-      id: 5,
+      id: 4,
       name: 'Mega Tech',
       description: 'Complete tech solutions for all your computing needs',
       logo: '/src/assets/Images/mega.png',
@@ -65,7 +67,7 @@ const Shops = () => {
       specialties: ['PC Building', 'Repairs', 'Components', 'Gaming']
     },
     {
-      id: 4,
+      id: 5,
       name: 'Quantum',
       description: 'Professional computer solutions and IT services',
       logo: '/src/assets/Images/quantum.webp',
@@ -75,7 +77,17 @@ const Shops = () => {
       specialties: ['Business Solutions', 'Hardware', 'IT Services']
     },
     {
-      id: 3,
+      id: 6,
+      name: 'A to Z',
+      description: 'Complete technology store offering comprehensive range of computer products',
+      logo: '/src/assets/Images/AZ.jpg',
+      url: 'https://www.facebook.com/atoztechnologystore',
+      location: 'Ramallah, West Bank',
+      city: 'Ramallah',
+      specialties: ['Computers', 'Technology', 'Accessories', 'Electronics']
+    },
+    {
+      id: 7,
       name: 'ZikZak Store',
       description: 'Modern tech store offering latest computers and accessories',
       logo: '/src/assets/Images/zikzak.webp',
@@ -85,7 +97,7 @@ const Shops = () => {
       specialties: ['Laptops', 'Desktops', 'Accessories', 'Software']
     },
     {
-      id: 7,
+      id: 8,
       name: 'Arabi',
       description: 'Reliable computer shop offering quality hardware and excellent customer service',
       logo: '/src/assets/Images/Arabi.jpg',
@@ -95,7 +107,7 @@ const Shops = () => {
       specialties: ['Computers', 'Hardware', 'Repairs', 'Accessories']
     },
     {
-      id: 8,
+      id: 9,
       name: 'Alyamen',
       description: 'Trusted provider of computers and tech solutions for businesses and individuals',
       logo: '/src/assets/Images/yamen.png',
@@ -105,7 +117,7 @@ const Shops = () => {
       specialties: ['PC Building', 'Components', 'Software', 'IT Support']
     },
     {
-      id: 9,
+      id: 10,
       name: 'Extreme Gaming Store',
       description: 'Ultimate destination for gaming enthusiasts with top-tier gaming hardware',
       logo: '/src/assets/Images/extreme.png',
@@ -115,7 +127,7 @@ const Shops = () => {
       specialties: ['Gaming PCs', 'High-End Components', 'Gaming Gear', 'Custom Builds']
     },
     {
-      id: 10,
+      id: 11,
       name: 'Core Tech',
       description: 'Cutting-edge technology solutions and computer hardware provider',
       logo: '/src/assets/Images/coretech.jpg',
@@ -125,7 +137,7 @@ const Shops = () => {
       specialties: ['PC Components', 'Hardware', 'Gaming', 'Accessories']
     },
     {
-      id: 11,
+      id: 12,
       name: 'Masalmeh',
       description: 'Trusted computer store with quality products and professional service',
       logo: '/src/assets/Images/masalmeh.jpg',
@@ -233,6 +245,16 @@ const Shops = () => {
       location: 'Kafr Aqab, Jerusalem',
       city: 'Jerusalem',
       specialties: ['PC Components', 'Gaming', 'Hardware', 'Tech Solutions']
+    },
+    {
+      id: 23,
+      name: 'Easy Life',
+      description: 'Making technology accessible with quality computers and electronics',
+      logo: '/src/assets/Images/Easy.png',
+      url: 'https://www.facebook.com/EasyLifeSales',
+      location: 'Nablus, West Bank',
+      city: 'Nablus',
+      specialties: ['Computers', 'Electronics', 'Home Tech', 'Accessories']
     }
   ];
 
@@ -283,14 +305,45 @@ const Shops = () => {
     }));
   };
 
+  const handleLogoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Validate file type
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/svg+xml'];
+      if (!validTypes.includes(file.type)) {
+        toast.error('Please upload a valid image file (JPG, PNG, WEBP, or SVG)');
+        return;
+      }
+
+      // Validate file size (max 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        toast.error('Logo size must be less than 2MB');
+        return;
+      }
+
+      setShopSubmission(prev => ({
+        ...prev,
+        logo: file
+      }));
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setLogoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmitShop = (e) => {
     e.preventDefault();
     
     // Validation
     if (!shopSubmission.shopName || !shopSubmission.ownerName || !shopSubmission.email || 
         !shopSubmission.phone || !shopSubmission.city || !shopSubmission.location ||
-        !shopSubmission.website || !shopSubmission.description || !shopSubmission.specialties) {
-      toast.error('Please fill in all required fields');
+        !shopSubmission.website || !shopSubmission.description || !shopSubmission.specialties ||
+        !shopSubmission.logo) {
+      toast.error('Please fill in all required fields including the logo');
       return;
     }
 
@@ -309,8 +362,10 @@ const Shops = () => {
       location: '',
       website: '',
       description: '',
-      specialties: ''
+      specialties: '',
+      logo: null
     });
+    setLogoPreview(null);
     setShowSubmitModal(false);
   };
 
@@ -670,6 +725,53 @@ const Shops = () => {
                     onBlur={(e) => e.target.style.borderColor = colors.platinum}
                     required
                   />
+                </div>
+
+                {/* Shop Logo */}
+                <div>
+                  <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                    Shop Logo <span style={{ color: 'red' }}>*</span>
+                  </label>
+                  <div className="flex items-start gap-4">
+                    <div className="flex-1">
+                      <label 
+                        className="flex items-center justify-center w-full px-4 py-8 rounded-lg border-2 border-dashed cursor-pointer transition-all hover:border-solid"
+                        style={{ 
+                          borderColor: colors.platinum,
+                          backgroundColor: colors.mainYellow + '08'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.borderColor = colors.mainYellow}
+                        onMouseLeave={(e) => e.currentTarget.style.borderColor = colors.platinum}
+                      >
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/jpg,image/png,image/webp,image/svg+xml"
+                          onChange={handleLogoChange}
+                          className="hidden"
+                          required
+                        />
+                        <div className="text-center">
+                          <FiUpload className="mx-auto mb-2" size={32} style={{ color: colors.mainYellow }} />
+                          <p className="text-sm font-semibold" style={{ color: colors.mainBlack }}>
+                            Click to upload logo
+                          </p>
+                          <p className="text-xs mt-1" style={{ color: colors.jet }}>
+                            JPG, PNG, WEBP, or SVG (Max 2MB)
+                          </p>
+                        </div>
+                      </label>
+                    </div>
+                    {logoPreview && (
+                      <div className="w-24 h-24 rounded-lg border-2 overflow-hidden flex items-center justify-center bg-white"
+                           style={{ borderColor: colors.mainYellow }}>
+                        <img 
+                          src={logoPreview} 
+                          alt="Logo preview" 
+                          className="max-w-full max-h-full object-contain"
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Email & Phone */}
