@@ -66,9 +66,9 @@ function App() {
           <Route path="/builder/expansion" element={<Expansion />} />
           <Route path="/builder/peripherals" element={<Peripherals />} />
           <Route path="/builder/accessories" element={<Accessories />} />
-          <Route path="/news" element={<News />} />
         </Route>
         
+        <Route path="/news" element={<News />} />
         <Route path="/signin" element={<AuthLayout />} />
         <Route path="/signup" element={<AuthLayout />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
