@@ -6,7 +6,7 @@ import { PiDesktopTowerFill } from 'react-icons/pi';
 import { HiCog } from 'react-icons/hi';
 import { Tooltip } from 'react-tooltip';
 import colors from '../../../config/colors';
-
+import { openSidebar } from '../../../utils/sidebarHelper';
 export default function Navbar() {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -65,6 +65,12 @@ export default function Navbar() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleProductsClick = () => {
+    openSidebar();
+    setIsMobileMenuOpen(false);
+    setActiveDropdown(null);
+  };
+
   const handleLogout = () => {
     // TODO: Implement actual logout logic
     setIsLoggedIn(false);
@@ -112,7 +118,7 @@ export default function Navbar() {
             {menuItems.map((item, index) => (
               <div key={index} className="relative group">
                 <button
-                  onClick={() => handleNavigation(item.path)}
+                  onClick={() => item.label === 'Products' ? handleProductsClick() : handleNavigation(item.path)}
                   className="flex items-center space-x-2 px-2 py-2 rounded-md text-sm font-medium transition-all duration-200"
                   style={{ 
                     color: '#FFFFFF',
@@ -297,7 +303,7 @@ export default function Navbar() {
             {menuItems.map((item, index) => (
               <div key={index}>
                 <button
-                  onClick={() => handleNavigation(item.path)}
+                  onClick={() => item.label === 'Products' ? handleProductsClick() : handleNavigation(item.path)}
                   className="w-full text-left px-3 py-2 rounded-md text-base font-medium flex items-center space-x-2"
                   style={{ color: '#FFFFFF' }}
                 >

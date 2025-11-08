@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import MainLayout from './layouts/MainLayout';
 import AuthLayout from './layouts/AuthLayout';
 import Home from './pages/home/Home.jsx';
 import Builder from './pages/user/builder/Builder.jsx';
@@ -45,30 +46,33 @@ function App() {
       />
       
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/builder" element={<Builder />} />
-        <Route path="/shops" element={<Shops />} />
-        <Route path="/contact" element={<ContactUs />} />
-        <Route path="/completed-builds" element={<CompletedBuilds />} />
-        <Route path="/build/:id" element={<BuildDetails />} />
-        <Route path="/submit-build" element={<SubmitBuild />} />
-        <Route path="/builder/cpu" element={<CPU />} />
-        <Route path="/builder/cooler" element={<CPUCooler />} />
-        <Route path="/builder/motherboard" element={<Motherboard />} />
-        <Route path="/builder/memory" element={<Memory />} />
-        <Route path="/builder/storage" element={<Storage />} />
-        <Route path="/builder/gpu" element={<GPU />} />
-        <Route path="/builder/case" element={<Case />} />
-        <Route path="/builder/psu" element={<PowerSupply />} />
-        <Route path="/builder/monitor" element={<Monitor />} />
-        <Route path="/builder/expansion" element={<Expansion />} />
-        <Route path="/builder/peripherals" element={<Peripherals />} />
-        <Route path="/builder/accessories" element={<Accessories />} />
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/builder" element={<Builder />} />
+          <Route path="/shops" element={<Shops />} />
+          <Route path="/contact" element={<ContactUs />} />
+          <Route path="/completed-builds" element={<CompletedBuilds />} />
+          <Route path="/build/:id" element={<BuildDetails />} />
+          <Route path="/submit-build" element={<SubmitBuild />} />
+          <Route path="/builder/cpu" element={<CPU />} />
+          <Route path="/builder/cooler" element={<CPUCooler />} />
+          <Route path="/builder/motherboard" element={<Motherboard />} />
+          <Route path="/builder/memory" element={<Memory />} />
+          <Route path="/builder/storage" element={<Storage />} />
+          <Route path="/builder/gpu" element={<GPU />} />
+          <Route path="/builder/case" element={<Case />} />
+          <Route path="/builder/psu" element={<PowerSupply />} />
+          <Route path="/builder/monitor" element={<Monitor />} />
+          <Route path="/builder/expansion" element={<Expansion />} />
+          <Route path="/builder/peripherals" element={<Peripherals />} />
+          <Route path="/builder/accessories" element={<Accessories />} />
+          <Route path="/news" element={<News />} />
+        </Route>
+        
         <Route path="/signin" element={<AuthLayout />} />
         <Route path="/signup" element={<AuthLayout />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/news" element={<News />} />
       </Routes>
     </Router>
   );

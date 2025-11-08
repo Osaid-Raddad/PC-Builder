@@ -1,12 +1,39 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
-import { FiHome, FiCpu, FiMonitor, FiHardDrive, FiMenu, FiX, FiLogOut } from 'react-icons/fi';
+import { FiHome, FiCpu, FiMonitor, FiHardDrive, FiLogOut } from 'react-icons/fi';
 import { AiOutlineAppstore } from 'react-icons/ai';
 import { MdMemory } from 'react-icons/md';
 
 const MainLayout = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const sidebarRef = useRef(null);
   const navigate = useNavigate();
+
+  // Close sidebar when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (sidebarRef.current && !sidebarRef.current.contains(event.target) && isSidebarOpen) {
+        setIsSidebarOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isSidebarOpen]);
+
+  // Listen for custom event to open sidebar
+  useEffect(() => {
+    const handleOpenSidebar = () => {
+      setIsSidebarOpen(true);
+    };
+
+    window.addEventListener('openSidebar', handleOpenSidebar);
+    return () => {
+      window.removeEventListener('openSidebar', handleOpenSidebar);
+    };
+  }, []);
 
   const menuItems = [
     { path: '/', icon: FiHome, label: 'Home' },
@@ -23,26 +50,22 @@ const MainLayout = () => {
   };
 
   return (
-    <div className="flex h-screen bg-[#333533]">
-      {/* Sidebar */}
+    <div className="min-h-screen bg-[#333533]">
+      {/* Main Content */}
+      <main>
+        <Outlet />
+      </main>
+
+      {/* Sidebar - Fixed on right, below navbar */}
       <aside
+        ref={sidebarRef}
+        onClick={() => !isSidebarOpen && setIsSidebarOpen(true)}
         className={`${
           isSidebarOpen ? 'w-64' : 'w-20'
-        } bg-[#242423] transition-all duration-300 flex flex-col border-r border-[#F5CB5C]/20`}
+        } bg-[#242423] transition-all duration-300 flex flex-col border-l border-[#F5CB5C]/20 ${
+          !isSidebarOpen ? 'cursor-pointer' : ''
+        } fixed top-[64px] right-0 bottom-0 z-40 shadow-lg`}
       >
-        {/* Header */}
-        <div className="p-4 border-b border-[#F5CB5C]/20 flex items-center justify-between">
-          {isSidebarOpen && (
-            <h1 className="text-[#F5CB5C] text-xl font-bold">PC Builder</h1>
-          )}
-          <button
-            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="text-[#CFDBD5] hover:text-[#F5CB5C] transition-colors"
-          >
-            {isSidebarOpen ? <FiX size={24} /> : <FiMenu size={24} />}
-          </button>
-        </div>
-
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {menuItems.map((item) => (
@@ -56,6 +79,7 @@ const MainLayout = () => {
                     : 'text-[#CFDBD5] hover:bg-[#333533] hover:text-[#F5CB5C]'
                 }`
               }
+              title={!isSidebarOpen ? item.label : ''}
             >
               <item.icon size={20} />
               {isSidebarOpen && <span className="font-medium">{item.label}</span>}
@@ -68,17 +92,13 @@ const MainLayout = () => {
           <button
             onClick={handleLogout}
             className="flex items-center gap-4 px-4 py-3 w-full text-[#CFDBD5] hover:bg-[#333533] hover:text-[#F5CB5C] rounded-lg transition-all"
+            title={!isSidebarOpen ? 'Logout' : ''}
           >
             <FiLogOut size={20} />
             {isSidebarOpen && <span className="font-medium">Logout</span>}
           </button>
         </div>
       </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 overflow-y-auto">
-        <Outlet />
-      </main>
     </div>
   );
 };
