@@ -52,7 +52,7 @@ function AppContent() {
       />
       
       <Routes>
-        <Route element={<MainLayout />}>
+        
           <Route path="/" element={<Home />} />
           <Route path="/builder" element={<Builder />} />
           <Route path="/shops" element={<Shops />} />
@@ -72,7 +72,7 @@ function AppContent() {
           <Route path="/builder/expansion" element={<Expansion />} />
           <Route path="/builder/peripherals" element={<Peripherals />} />
           <Route path="/builder/accessories" element={<Accessories />} />
-        </Route>
+        
         
         <Route path="/news" element={<News />} />
         <Route path="/signin" element={<AuthLayout />} />

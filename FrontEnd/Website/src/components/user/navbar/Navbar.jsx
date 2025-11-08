@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiSearch, FiMenu, FiX, FiUser, FiChevronDown, FiShoppingBag, FiLogOut, FiHeart } from 'react-icons/fi';
-import { FaTools, FaBoxOpen, FaNewspaper, FaEdit, FaUserCircle } from 'react-icons/fa';
+import { FaTools, FaBoxOpen, FaNewspaper, FaEdit, FaUserCircle, FaMicrochip, FaMemory, FaHdd, FaDesktop } from 'react-icons/fa';
 import { PiDesktopTowerFill } from 'react-icons/pi';
 import { HiCog } from 'react-icons/hi';
+import { BsFillMotherboardFill, BsGpuCard } from 'react-icons/bs';
+import { GiComputerFan } from 'react-icons/gi';
+import { MdPowerSettingsNew, MdCable } from 'react-icons/md';
 import { Tooltip } from 'react-tooltip';
 import colors from '../../../config/colors';
 import { openSidebar } from '../../../utils/sidebarHelper';
@@ -12,10 +15,25 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isProductsDropdownOpen, setIsProductsDropdownOpen] = useState(false);
   
   // TODO: Replace with actual authentication state from your auth context/redux
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Change this based on actual auth state
   const [userName, setUserName] = useState('John Doe'); // Get from auth context
+
+  // Product categories with icons
+  const productCategories = [
+    { label: 'CPU', path: '/products/cpu', icon: <FaMicrochip size={18} /> },
+    { label: 'GPU', path: '/products/gpu', icon: <BsGpuCard size={18} /> },
+    { label: 'Motherboard', path: '/products/motherboard', icon: <BsFillMotherboardFill size={18} /> },
+    { label: 'RAM', path: '/products/ram', icon: <FaMemory size={18} /> },
+    { label: 'Storage', path: '/products/storage', icon: <FaHdd size={18} /> },
+    { label: 'Power Supply', path: '/products/power-supply', icon: <MdPowerSettingsNew size={18} /> },
+    { label: 'Case', path: '/products/case', icon: <PiDesktopTowerFill size={18} /> },
+    { label: 'Cooling', path: '/products/cooling', icon: <GiComputerFan size={18} /> },
+    { label: 'Monitor', path: '/products/monitor', icon: <FaDesktop size={18} /> },
+    { label: 'Accessories', path: '/products/accessories', icon: <MdCable size={18} /> },
+  ];
 
   const menuItems = [
     { 
@@ -28,7 +46,8 @@ export default function Navbar() {
       label: 'Products', 
       path: '/products', 
       icon: <FaBoxOpen size={18} />,
-      tooltip: 'Browse all PC components and hardware'
+      tooltip: 'Browse all PC components and hardware',
+      hasDropdown: true
     },
     { 
       label: 'Completed Builds', 
@@ -61,14 +80,13 @@ export default function Navbar() {
     setIsMobileMenuOpen(false);
     setActiveDropdown(null);
     setIsUserMenuOpen(false);
+    setIsProductsDropdownOpen(false);
     // Scroll to top of the page
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleProductsClick = () => {
-    openSidebar();
-    setIsMobileMenuOpen(false);
-    setActiveDropdown(null);
+    setIsProductsDropdownOpen(!isProductsDropdownOpen);
   };
 
   const handleLogout = () => {
@@ -88,11 +106,14 @@ export default function Navbar() {
       if (isUserMenuOpen && !event.target.closest('.user-menu-container')) {
         setIsUserMenuOpen(false);
       }
+      if (isProductsDropdownOpen && !event.target.closest('.products-menu-container') && !event.target.closest('.mobile-products-container')) {
+        setIsProductsDropdownOpen(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isUserMenuOpen]);
+  }, [isUserMenuOpen, isProductsDropdownOpen]);
 
   return (
     <nav style={{ backgroundColor: colors.mainBlack }} className="sticky top-0 z-50 shadow-lg">
@@ -116,9 +137,9 @@ export default function Navbar() {
           {/* Desktop Menu - Absolute Center */}
           <div className="hidden md:flex items-center space-x-8 absolute left-1/2 transform -translate-x-1/2">
             {menuItems.map((item, index) => (
-              <div key={index} className="relative group">
+              <div key={index} className="relative group products-menu-container">
                 <button
-                  onClick={() => item.label === 'Products' ? handleProductsClick() : handleNavigation(item.path)}
+                  onClick={() => item.hasDropdown ? handleProductsClick() : handleNavigation(item.path)}
                   className="flex items-center space-x-2 px-2 py-2 rounded-md text-sm font-medium transition-all duration-200"
                   style={{ 
                     color: '#FFFFFF',
@@ -130,7 +151,52 @@ export default function Navbar() {
                 >
                   <span style={{ color: colors.mainYellow }}>{item.icon}</span>
                   <span>{item.label}</span>
+                  {item.hasDropdown && (
+                    <FiChevronDown 
+                      style={{ 
+                        color: colors.mainYellow,
+                        transform: isProductsDropdownOpen && item.label === 'Products' ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.2s'
+                      }} 
+                      size={16} 
+                    />
+                  )}
                 </button>
+
+                {/* Products Dropdown */}
+                {item.hasDropdown && isProductsDropdownOpen && (
+                  <div 
+                    className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-56 rounded-lg shadow-xl overflow-hidden z-50"
+                    style={{ 
+                      backgroundColor: colors.jet,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {productCategories.map((product, idx) => (
+                      <React.Fragment key={idx}>
+                        <button
+                          onClick={() => handleNavigation(product.path)}
+                          className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200"
+                          style={{ color: 'white' }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = colors.mainYellow;
+                            e.currentTarget.style.color = colors.mainBlack;
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                            e.currentTarget.style.color = 'white';
+                          }}
+                        >
+                          <span style={{ color: colors.mainYellow }}>{product.icon}</span>
+                          <span className="font-medium">{product.label}</span>
+                        </button>
+                        {idx < productCategories.length - 1 && (
+                          <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -301,15 +367,46 @@ export default function Navbar() {
         <div className="md:hidden" style={{ backgroundColor: colors.jet }}>
           <div className="px-2 pt-2 pb-3 space-y-1">
             {menuItems.map((item, index) => (
-              <div key={index}>
+              <div key={index} className={item.hasDropdown ? 'mobile-products-container' : ''}>
                 <button
-                  onClick={() => item.label === 'Products' ? handleProductsClick() : handleNavigation(item.path)}
-                  className="w-full text-left px-3 py-2 rounded-md text-base font-medium flex items-center space-x-2"
+                  onClick={() => item.hasDropdown ? setIsProductsDropdownOpen(!isProductsDropdownOpen) : handleNavigation(item.path)}
+                  className="w-full text-left px-3 py-2 rounded-md text-base font-medium flex items-center justify-between"
                   style={{ color: '#FFFFFF' }}
                 >
-                  <span style={{ color: colors.mainYellow }}>{item.icon}</span>
-                  <span>{item.label}</span>
+                  <div className="flex items-center space-x-2">
+                    <span style={{ color: colors.mainYellow }}>{item.icon}</span>
+                    <span>{item.label}</span>
+                  </div>
+                  {item.hasDropdown && (
+                    <FiChevronDown 
+                      style={{ 
+                        color: colors.mainYellow,
+                        transform: isProductsDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transition: 'transform 0.2s'
+                      }} 
+                      size={16} 
+                    />
+                  )}
                 </button>
+                
+                {/* Mobile Products Dropdown */}
+                {item.hasDropdown && isProductsDropdownOpen && (
+                  <div className="ml-4 mt-1 space-y-1">
+                    {productCategories.map((product, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleNavigation(product.path)}
+                        className="w-full text-left px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-2"
+                        style={{ color: '#FFFFFF' }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                      >
+                        <span style={{ color: colors.mainYellow }}>{product.icon}</span>
+                        <span>{product.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
             
