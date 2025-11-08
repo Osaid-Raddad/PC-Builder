@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import MainLayout from './layouts/MainLayout';
 import AuthLayout from './layouts/AuthLayout';
@@ -24,10 +24,16 @@ import Accessories from './pages/hardwareComponents/Accessories';
 import ForgotPassword from './pages/user/auth/ForgotPassword.jsx';
 import ResetPassword from './pages/user/auth/ResetPassword';
 import News from './pages/user/news/News';
+import ChatBot from './components/common/chatbot/ChatBot.jsx';
 
-function App() {
+function AppContent() {
+  const location = useLocation();
+  
+  // Check if current page is news page
+  const isNewsPage = location.pathname.includes('/news');
+
   return (
-    <Router>
+    <div>
       <Toaster
         position="top-right"
         toastOptions={{
@@ -74,6 +80,17 @@ function App() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
+
+      {/* Show ChatBot on all pages except news */}
+      {!isNewsPage && <ChatBot />}
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }
