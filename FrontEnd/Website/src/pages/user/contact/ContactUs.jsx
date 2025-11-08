@@ -81,8 +81,8 @@ const ContactUs = () => {
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.mainBeige }}>
       <Navbar />
-      
-      <div className="flex-1 container mx-auto px-4 py-8">
+      <div className="flex-1 w-full px-4 py-8 pb-12" style={{ maxWidth: '100%', margin: '0 auto' }}>
+        <div className="container mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-6xl font-bold mb-4" style={{ color: colors.mainBlack }}>
@@ -353,7 +353,7 @@ const ContactUs = () => {
 
         {/* FAQ Section */}
         <div 
-          className="bg-white rounded-lg shadow-lg p-8"
+          className="bg-white rounded-lg shadow-lg p-8 mb-0"
           style={{ border: `2px solid ${colors.mainYellow}` }}
         >
           <h2 className="text-3xl font-bold mb-6 text-center" style={{ color: colors.mainBlack }}>
@@ -394,6 +394,7 @@ const ContactUs = () => {
               </p>
             </div>
           </div>
+        </div>
         </div>
       </div>
 
