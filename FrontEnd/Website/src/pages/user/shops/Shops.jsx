@@ -595,7 +595,7 @@ const Shops = () => {
       {showSubmitModal && (
         <div 
           className="fixed inset-0 flex items-center justify-center z-50 p-4"
-          style={{ backgroundColor: 'rgba(0, 0, 0, 0.9)' }}
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
           onClick={() => setShowSubmitModal(false)}
         >
           <div 
