@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
+import ElectricCard from '../../../components/user/electric-card/ElectricCard';
 import colors from '../../../config/colors';
 import { FiUser, FiCpu, FiMonitor, FiHardDrive, FiZap, FiThumbsUp, FiMessageSquare, FiShare2, FiSearch, FiFilter, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { BsCpuFill } from 'react-icons/bs';
@@ -233,154 +234,157 @@ const CompletedBuilds = () => {
         {/* Builds Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {currentBuilds.map((build) => (
-            <div
+            <ElectricCard
               key={build.id}
-              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer"
-              style={{ border: `2px solid ${colors.platinum}` }}
+              className="hover:shadow-2xl transition-all duration-300 cursor-pointer"
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: 'instant' });
                 navigate(`/build/${build.id}`);
               }}
             >
-              {/* Build Image */}
-              <div 
-                className="h-64 bg-cover bg-center relative"
-                style={{ 
-                  backgroundColor: colors.platinum,
-                  backgroundImage: `url(${build.image})`
-                }}
+              <div
+                className="bg-white rounded-lg shadow-lg overflow-hidden"
               >
-                {/* Category Badge */}
+                {/* Build Image */}
                 <div 
-                  className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold"
-                  style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+                  className="h-64 bg-cover bg-center relative"
+                  style={{ 
+                    backgroundColor: colors.platinum,
+                    backgroundImage: `url(${build.image})`
+                  }}
                 >
-                  {build.category}
-                </div>
-                
-                {/* Price Badge */}
-                <div 
-                  className="absolute bottom-4 left-4 px-4 py-2 rounded-lg font-bold backdrop-blur-md"
-                  style={{ backgroundColor: 'rgba(36, 36, 35, 0.8)', color: colors.mainYellow }}
-                >
-                  {build.price}
-                </div>
-              </div>
-
-              {/* Build Info */}
-              <div className="p-6">
-                {/* Build Name & Owner */}
-                <div className="mb-4">
-                  <h2 className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>
-                    {build.name}
-                  </h2>
-                  <div className="flex items-center gap-2">
-                    <FiUser size={16} style={{ color: colors.mainYellow }} />
-                    <span className="text-sm" style={{ color: colors.jet }}>
-                      Built by {build.owner}
-                    </span>
+                  {/* Category Badge */}
+                  <div 
+                    className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold"
+                    style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+                  >
+                    {build.category}
+                  </div>
+                  
+                  {/* Price Badge */}
+                  <div 
+                    className="absolute bottom-4 left-4 px-4 py-2 rounded-lg font-bold backdrop-blur-md"
+                    style={{ backgroundColor: 'rgba(36, 36, 35, 0.8)', color: colors.mainYellow }}
+                  >
+                    {build.price}
                   </div>
                 </div>
 
-                {/* Description */}
-                <p className="text-sm mb-4" style={{ color: colors.jet }}>
-                  {build.description}
-                </p>
-
-                {/* Specs */}
-                <div className="space-y-2 mb-4">
-                  {/* CPU */}
-                  <div className="flex items-center gap-2">
-                    <BsCpuFill size={16} style={{ color: colors.mainYellow }} />
-                    <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
-                      CPU:
-                    </span>
-                    <span className="text-xs" style={{ color: colors.jet }}>
-                      {build.cpu}
-                    </span>
-                  </div>
-
-                  {/* GPU */}
-                  <div className="flex items-center gap-2">
-                    <FaMicrochip size={16} style={{ color: colors.mainYellow }} />
-                    <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
-                      GPU:
-                    </span>
-                    <span className="text-xs" style={{ color: colors.jet }}>
-                      {build.gpu}
-                    </span>
-                  </div>
-
-                  {/* RAM */}
-                  <div className="flex items-center gap-2">
-                    <FaMemory size={16} style={{ color: colors.mainYellow }} />
-                    <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
-                      RAM:
-                    </span>
-                    <span className="text-xs" style={{ color: colors.jet }}>
-                      {build.ram}
-                    </span>
-                  </div>
-
-                  {/* Storage */}
-                  <div className="flex items-center gap-2">
-                    <FiHardDrive size={16} style={{ color: colors.mainYellow }} />
-                    <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
-                      Storage:
-                    </span>
-                    <span className="text-xs" style={{ color: colors.jet }}>
-                      {build.storage}
-                    </span>
-                  </div>
-
-                  {/* PSU */}
-                  <div className="flex items-center gap-2">
-                    <FiZap size={16} style={{ color: colors.mainYellow }} />
-                    <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
-                      PSU:
-                    </span>
-                    <span className="text-xs" style={{ color: colors.jet }}>
-                      {build.psu}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div 
-                  className="flex items-center justify-between pt-4"
-                  style={{ borderTop: `1px solid ${colors.platinum}` }}
-                >
-                  {/* Likes & Comments */}
-                  <div className="flex items-center gap-4">
-                    <button 
-                      onClick={() => handleLike(build.id)}
-                      className="flex items-center gap-1 hover:opacity-70 transition-opacity"
-                    >
-                      <FiThumbsUp size={18} style={{ color: colors.mainYellow }} />
-                      <span className="text-sm font-semibold" style={{ color: colors.mainBlack }}>
-                        {build.likes}
-                      </span>
-                    </button>
-
-                    <div className="flex items-center gap-1">
-                      <FiMessageSquare size={18} style={{ color: colors.jet }} />
+                {/* Build Info */}
+                <div className="p-6">
+                  {/* Build Name & Owner */}
+                  <div className="mb-4">
+                    <h2 className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>
+                      {build.name}
+                    </h2>
+                    <div className="flex items-center gap-2">
+                      <FiUser size={16} style={{ color: colors.mainYellow }} />
                       <span className="text-sm" style={{ color: colors.jet }}>
-                        {build.comments}
+                        Built by {build.owner}
                       </span>
                     </div>
                   </div>
 
-                  {/* Share Button */}
-                  <button
-                    onClick={() => handleShare(build.id)}
-                    className="p-2 rounded-lg hover:opacity-70 transition-all"
-                    style={{ border: `2px solid ${colors.platinum}` }}
+                  {/* Description */}
+                  <p className="text-sm mb-4" style={{ color: colors.jet }}>
+                    {build.description}
+                  </p>
+
+                  {/* Specs */}
+                  <div className="space-y-2 mb-4">
+                    {/* CPU */}
+                    <div className="flex items-center gap-2">
+                      <BsCpuFill size={16} style={{ color: colors.mainYellow }} />
+                      <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
+                        CPU:
+                      </span>
+                      <span className="text-xs" style={{ color: colors.jet }}>
+                        {build.cpu}
+                      </span>
+                    </div>
+
+                    {/* GPU */}
+                    <div className="flex items-center gap-2">
+                      <FaMicrochip size={16} style={{ color: colors.mainYellow }} />
+                      <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
+                        GPU:
+                      </span>
+                      <span className="text-xs" style={{ color: colors.jet }}>
+                        {build.gpu}
+                      </span>
+                    </div>
+
+                    {/* RAM */}
+                    <div className="flex items-center gap-2">
+                      <FaMemory size={16} style={{ color: colors.mainYellow }} />
+                      <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
+                        RAM:
+                      </span>
+                      <span className="text-xs" style={{ color: colors.jet }}>
+                        {build.ram}
+                      </span>
+                    </div>
+
+                    {/* Storage */}
+                    <div className="flex items-center gap-2">
+                      <FiHardDrive size={16} style={{ color: colors.mainYellow }} />
+                      <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
+                        Storage:
+                      </span>
+                      <span className="text-xs" style={{ color: colors.jet }}>
+                        {build.storage}
+                      </span>
+                    </div>
+
+                    {/* PSU */}
+                    <div className="flex items-center gap-2">
+                      <FiZap size={16} style={{ color: colors.mainYellow }} />
+                      <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
+                        PSU:
+                      </span>
+                      <span className="text-xs" style={{ color: colors.jet }}>
+                        {build.psu}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div 
+                    className="flex items-center justify-between pt-4"
+                    style={{ borderTop: `1px solid ${colors.platinum}` }}
                   >
-                    <FiShare2 size={18} style={{ color: colors.mainYellow }} />
-                  </button>
+                    {/* Likes & Comments */}
+                    <div className="flex items-center gap-4">
+                      <button 
+                        onClick={() => handleLike(build.id)}
+                        className="flex items-center gap-1 hover:opacity-70 transition-opacity"
+                      >
+                        <FiThumbsUp size={18} style={{ color: colors.mainYellow }} />
+                        <span className="text-sm font-semibold" style={{ color: colors.mainBlack }}>
+                          {build.likes}
+                        </span>
+                      </button>
+
+                      <div className="flex items-center gap-1">
+                        <FiMessageSquare size={18} style={{ color: colors.jet }} />
+                        <span className="text-sm" style={{ color: colors.jet }}>
+                          {build.comments}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Share Button */}
+                    <button
+                      onClick={() => handleShare(build.id)}
+                      className="p-2 rounded-lg hover:opacity-70 transition-all"
+                      style={{ border: `2px solid ${colors.platinum}` }}
+                    >
+                      <FiShare2 size={18} style={{ color: colors.mainYellow }} />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            </ElectricCard>
           ))}
         </div>
 
