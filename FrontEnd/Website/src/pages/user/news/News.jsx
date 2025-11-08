@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { FiSearch, FiFilter, FiClock, FiExternalLink, FiTrendingUp, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
-import { BiNews } from 'react-icons/bi';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { BsBookmark, BsShare } from 'react-icons/bs';
 
@@ -234,7 +233,11 @@ const News = () => {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl md:text-4xl font-bold text-[#F5CB5C] flex items-center gap-3">
-                <BiNews className="text-4xl" />
+                <img 
+                  src="/src/assets/Images/LogoIcon.png" 
+                  alt="PC Builder Logo" 
+                  style={{ height: '50px', width: 'auto', objectFit: 'contain' }}
+                />
                 PC Building News
               </h1>
               <p className="text-gray-400 mt-2">Stay updated with the latest hardware releases and tech news</p>
@@ -289,7 +292,6 @@ const News = () => {
           </div>
         ) : filteredNews.length === 0 ? (
           <div className="text-center py-20">
-            <BiNews className="text-6xl text-gray-600 mx-auto mb-4" />
             <p className="text-gray-400 text-xl">No news articles found</p>
           </div>
         ) : (
@@ -558,4 +560,6 @@ const News = () => {
   );
 };
 
+
+export default News;
 export default News;
