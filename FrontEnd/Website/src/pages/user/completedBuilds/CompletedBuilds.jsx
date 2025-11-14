@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
+import ElectricCard from '../../../components/user/electric-card/ElectricCard';
 import colors from '../../../config/colors';
 import { FiUser, FiCpu, FiMonitor, FiHardDrive, FiZap, FiThumbsUp, FiMessageSquare, FiShare2, FiSearch, FiFilter, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { BsCpuFill } from 'react-icons/bs';
@@ -110,6 +111,198 @@ const CompletedBuilds = () => {
       likes: 267,
       comments: 54,
       description: 'Small form factor without compromising performance'
+    },
+    {
+      id: 7,
+      name: 'White Snow Elegance',
+      owner: 'Rana Saleh',
+      image: '/src/assets/Images/build1.jpg',
+      category: 'Gaming',
+      cpu: 'Intel Core i5-14600K',
+      gpu: 'NVIDIA RTX 4060 Ti',
+      ram: '32GB DDR5',
+      storage: '1TB NVMe SSD',
+      psu: '700W 80+ Gold',
+      price: '$1,650',
+      likes: 421,
+      comments: 89,
+      description: 'All-white themed build with clean aesthetics and great 1440p performance'
+    },
+    {
+      id: 8,
+      name: 'Creator Studio',
+      owner: 'Tariq Mansour',
+      image: '/src/assets/Images/build2.jpg',
+      category: 'Workstation',
+      cpu: 'AMD Ryzen 9 7900X',
+      gpu: 'NVIDIA RTX 4070 Ti',
+      ram: '64GB DDR5',
+      storage: '2TB NVMe + 4TB HDD',
+      psu: '850W 80+ Platinum',
+      price: '$3,100',
+      likes: 187,
+      comments: 42,
+      description: 'Perfect for content creation, streaming, and video production'
+    },
+    {
+      id: 9,
+      name: 'First Build Ever',
+      owner: 'Noor Ibrahim',
+      image: '/src/assets/Images/build3.jpg',
+      category: 'Budget',
+      cpu: 'AMD Ryzen 5 5600',
+      gpu: 'NVIDIA GTX 1660 Super',
+      ram: '16GB DDR4',
+      storage: '500GB NVMe SSD',
+      psu: '500W 80+ Bronze',
+      price: '$650',
+      likes: 278,
+      comments: 96,
+      description: 'My first PC build! Great entry-level gaming performance on a student budget'
+    },
+    {
+      id: 10,
+      name: 'Cyberpunk Dream',
+      owner: 'Khalid Zaid',
+      image: '/src/assets/Images/build4.jpg',
+      category: 'Gaming',
+      cpu: 'Intel Core i9-14900KS',
+      gpu: 'NVIDIA RTX 4090',
+      ram: '64GB DDR5',
+      storage: '4TB NVMe SSD',
+      psu: '1200W 80+ Titanium',
+      price: '$5,200',
+      likes: 542,
+      comments: 134,
+      description: 'Custom water-cooled beast with neon RGB and futuristic theme'
+    },
+    {
+      id: 11,
+      name: 'Office Minimalist',
+      owner: 'Maha Fares',
+      image: '/src/assets/Images/build5.jpg',
+      category: 'Office',
+      cpu: 'Intel Core i3-14100',
+      gpu: 'Integrated UHD Graphics',
+      ram: '16GB DDR5',
+      storage: '512GB NVMe SSD',
+      psu: '450W 80+ Bronze',
+      price: '$520',
+      likes: 67,
+      comments: 12,
+      description: 'Simple and efficient setup for daily office tasks and web browsing'
+    },
+    {
+      id: 12,
+      name: 'AMD All The Way',
+      owner: 'Basel Yousef',
+      image: '/src/assets/Images/build6.jpg',
+      category: 'Gaming',
+      cpu: 'AMD Ryzen 7 7800X3D',
+      gpu: 'AMD Radeon RX 7900 XTX',
+      ram: '32GB DDR5',
+      storage: '2TB NVMe SSD',
+      psu: '850W 80+ Gold',
+      price: '$2,800',
+      likes: 334,
+      comments: 71,
+      description: 'Full AMD build with excellent gaming performance and SAM enabled'
+    },
+    {
+      id: 13,
+      name: 'ITX Travel Companion',
+      owner: 'Dina Rashid',
+      image: '/src/assets/Images/build1.jpg',
+      category: 'Mini-ITX',
+      cpu: 'AMD Ryzen 5 7600X',
+      gpu: 'NVIDIA RTX 4060',
+      ram: '32GB DDR5',
+      storage: '1TB NVMe SSD',
+      psu: '600W 80+ Gold SFX',
+      price: '$1,450',
+      likes: 203,
+      comments: 38,
+      description: 'Portable gaming setup that fits in a backpack for LAN parties'
+    },
+    {
+      id: 14,
+      name: 'Retro Gaming Station',
+      owner: 'Fadi Haddad',
+      image: '/src/assets/Images/build2.jpg',
+      category: 'Budget',
+      cpu: 'Intel Core i5-12400F',
+      gpu: 'AMD RX 6600',
+      ram: '16GB DDR4',
+      storage: '1TB NVMe SSD',
+      psu: '550W 80+ Bronze',
+      price: '$750',
+      likes: 145,
+      comments: 29,
+      description: 'Perfect for emulation and playing older games at high settings'
+    },
+    {
+      id: 15,
+      name: 'Dual Monitor Workstation',
+      owner: 'Hiba Kamal',
+      image: '/src/assets/Images/build3.jpg',
+      category: 'Workstation',
+      cpu: 'AMD Ryzen 7 7700X',
+      gpu: 'NVIDIA RTX 4060 Ti',
+      ram: '64GB DDR5',
+      storage: '2TB NVMe SSD',
+      psu: '750W 80+ Gold',
+      price: '$2,300',
+      likes: 176,
+      comments: 34,
+      description: 'Productivity powerhouse for multitasking with dual 4K monitors'
+    },
+    {
+      id: 16,
+      name: 'Silent Assassin',
+      owner: 'Jamal Qasim',
+      image: '/src/assets/Images/build4.jpg',
+      category: 'Gaming',
+      cpu: 'Intel Core i7-14700F',
+      gpu: 'NVIDIA RTX 4070 Super',
+      ram: '32GB DDR5',
+      storage: '2TB NVMe SSD',
+      psu: '750W 80+ Gold',
+      price: '$2,200',
+      likes: 298,
+      comments: 56,
+      description: 'Ultra-quiet build with premium Noctua cooling and sound dampening'
+    },
+    {
+      id: 17,
+      name: 'Family PC',
+      owner: 'Amira Taleb',
+      image: '/src/assets/Images/build5.jpg',
+      category: 'Office',
+      cpu: 'AMD Ryzen 5 5600G',
+      gpu: 'Integrated Radeon Graphics',
+      ram: '16GB DDR4',
+      storage: '512GB NVMe SSD',
+      psu: '450W 80+ Bronze',
+      price: '$480',
+      likes: 92,
+      comments: 18,
+      description: 'Affordable family computer for homework, browsing, and light tasks'
+    },
+    {
+      id: 18,
+      name: 'Green Machine',
+      owner: 'Sami Najjar',
+      image: '/src/assets/Images/build6.jpg',
+      category: 'Gaming',
+      cpu: 'AMD Ryzen 5 7600X',
+      gpu: 'NVIDIA RTX 4070',
+      ram: '32GB DDR5',
+      storage: '1TB NVMe SSD',
+      psu: '700W 80+ Gold',
+      price: '$1,850',
+      likes: 256,
+      comments: 48,
+      description: 'Green and black themed build with excellent 1440p gaming performance'
     }
   ];
 
@@ -233,154 +426,157 @@ const CompletedBuilds = () => {
         {/* Builds Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {currentBuilds.map((build) => (
-            <div
+            <ElectricCard
               key={build.id}
-              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer"
-              style={{ border: `2px solid ${colors.platinum}` }}
+              className="hover:shadow-2xl transition-all duration-300 cursor-pointer"
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: 'instant' });
                 navigate(`/build/${build.id}`);
               }}
             >
-              {/* Build Image */}
-              <div 
-                className="h-64 bg-cover bg-center relative"
-                style={{ 
-                  backgroundColor: colors.platinum,
-                  backgroundImage: `url(${build.image})`
-                }}
+              <div
+                className="bg-white rounded-lg shadow-lg overflow-hidden"
               >
-                {/* Category Badge */}
+                {/* Build Image */}
                 <div 
-                  className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold"
-                  style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+                  className="h-64 bg-cover bg-center relative"
+                  style={{ 
+                    backgroundColor: colors.platinum,
+                    backgroundImage: `url(${build.image})`
+                  }}
                 >
-                  {build.category}
-                </div>
-                
-                {/* Price Badge */}
-                <div 
-                  className="absolute bottom-4 left-4 px-4 py-2 rounded-lg font-bold backdrop-blur-md"
-                  style={{ backgroundColor: 'rgba(36, 36, 35, 0.8)', color: colors.mainYellow }}
-                >
-                  {build.price}
-                </div>
-              </div>
-
-              {/* Build Info */}
-              <div className="p-6">
-                {/* Build Name & Owner */}
-                <div className="mb-4">
-                  <h2 className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>
-                    {build.name}
-                  </h2>
-                  <div className="flex items-center gap-2">
-                    <FiUser size={16} style={{ color: colors.mainYellow }} />
-                    <span className="text-sm" style={{ color: colors.jet }}>
-                      Built by {build.owner}
-                    </span>
+                  {/* Category Badge */}
+                  <div 
+                    className="absolute top-4 right-4 px-3 py-1 rounded-full text-xs font-bold"
+                    style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+                  >
+                    {build.category}
+                  </div>
+                  
+                  {/* Price Badge */}
+                  <div 
+                    className="absolute bottom-4 left-4 px-4 py-2 rounded-lg font-bold backdrop-blur-md"
+                    style={{ backgroundColor: 'rgba(36, 36, 35, 0.8)', color: colors.mainYellow }}
+                  >
+                    {build.price}
                   </div>
                 </div>
 
-                {/* Description */}
-                <p className="text-sm mb-4" style={{ color: colors.jet }}>
-                  {build.description}
-                </p>
-
-                {/* Specs */}
-                <div className="space-y-2 mb-4">
-                  {/* CPU */}
-                  <div className="flex items-center gap-2">
-                    <BsCpuFill size={16} style={{ color: colors.mainYellow }} />
-                    <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
-                      CPU:
-                    </span>
-                    <span className="text-xs" style={{ color: colors.jet }}>
-                      {build.cpu}
-                    </span>
-                  </div>
-
-                  {/* GPU */}
-                  <div className="flex items-center gap-2">
-                    <FaMicrochip size={16} style={{ color: colors.mainYellow }} />
-                    <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
-                      GPU:
-                    </span>
-                    <span className="text-xs" style={{ color: colors.jet }}>
-                      {build.gpu}
-                    </span>
-                  </div>
-
-                  {/* RAM */}
-                  <div className="flex items-center gap-2">
-                    <FaMemory size={16} style={{ color: colors.mainYellow }} />
-                    <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
-                      RAM:
-                    </span>
-                    <span className="text-xs" style={{ color: colors.jet }}>
-                      {build.ram}
-                    </span>
-                  </div>
-
-                  {/* Storage */}
-                  <div className="flex items-center gap-2">
-                    <FiHardDrive size={16} style={{ color: colors.mainYellow }} />
-                    <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
-                      Storage:
-                    </span>
-                    <span className="text-xs" style={{ color: colors.jet }}>
-                      {build.storage}
-                    </span>
-                  </div>
-
-                  {/* PSU */}
-                  <div className="flex items-center gap-2">
-                    <FiZap size={16} style={{ color: colors.mainYellow }} />
-                    <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
-                      PSU:
-                    </span>
-                    <span className="text-xs" style={{ color: colors.jet }}>
-                      {build.psu}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div 
-                  className="flex items-center justify-between pt-4"
-                  style={{ borderTop: `1px solid ${colors.platinum}` }}
-                >
-                  {/* Likes & Comments */}
-                  <div className="flex items-center gap-4">
-                    <button 
-                      onClick={() => handleLike(build.id)}
-                      className="flex items-center gap-1 hover:opacity-70 transition-opacity"
-                    >
-                      <FiThumbsUp size={18} style={{ color: colors.mainYellow }} />
-                      <span className="text-sm font-semibold" style={{ color: colors.mainBlack }}>
-                        {build.likes}
-                      </span>
-                    </button>
-
-                    <div className="flex items-center gap-1">
-                      <FiMessageSquare size={18} style={{ color: colors.jet }} />
+                {/* Build Info */}
+                <div className="p-6">
+                  {/* Build Name & Owner */}
+                  <div className="mb-4">
+                    <h2 className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>
+                      {build.name}
+                    </h2>
+                    <div className="flex items-center gap-2">
+                      <FiUser size={16} style={{ color: colors.mainYellow }} />
                       <span className="text-sm" style={{ color: colors.jet }}>
-                        {build.comments}
+                        Built by {build.owner}
                       </span>
                     </div>
                   </div>
 
-                  {/* Share Button */}
-                  <button
-                    onClick={() => handleShare(build.id)}
-                    className="p-2 rounded-lg hover:opacity-70 transition-all"
-                    style={{ border: `2px solid ${colors.platinum}` }}
+                  {/* Description */}
+                  <p className="text-sm mb-4" style={{ color: colors.jet }}>
+                    {build.description}
+                  </p>
+
+                  {/* Specs */}
+                  <div className="space-y-2 mb-4">
+                    {/* CPU */}
+                    <div className="flex items-center gap-2">
+                      <BsCpuFill size={16} style={{ color: colors.mainYellow }} />
+                      <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
+                        CPU:
+                      </span>
+                      <span className="text-xs" style={{ color: colors.jet }}>
+                        {build.cpu}
+                      </span>
+                    </div>
+
+                    {/* GPU */}
+                    <div className="flex items-center gap-2">
+                      <FaMicrochip size={16} style={{ color: colors.mainYellow }} />
+                      <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
+                        GPU:
+                      </span>
+                      <span className="text-xs" style={{ color: colors.jet }}>
+                        {build.gpu}
+                      </span>
+                    </div>
+
+                    {/* RAM */}
+                    <div className="flex items-center gap-2">
+                      <FaMemory size={16} style={{ color: colors.mainYellow }} />
+                      <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
+                        RAM:
+                      </span>
+                      <span className="text-xs" style={{ color: colors.jet }}>
+                        {build.ram}
+                      </span>
+                    </div>
+
+                    {/* Storage */}
+                    <div className="flex items-center gap-2">
+                      <FiHardDrive size={16} style={{ color: colors.mainYellow }} />
+                      <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
+                        Storage:
+                      </span>
+                      <span className="text-xs" style={{ color: colors.jet }}>
+                        {build.storage}
+                      </span>
+                    </div>
+
+                    {/* PSU */}
+                    <div className="flex items-center gap-2">
+                      <FiZap size={16} style={{ color: colors.mainYellow }} />
+                      <span className="text-xs font-semibold" style={{ color: colors.mainBlack }}>
+                        PSU:
+                      </span>
+                      <span className="text-xs" style={{ color: colors.jet }}>
+                        {build.psu}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div 
+                    className="flex items-center justify-between pt-4"
+                    style={{ borderTop: `1px solid ${colors.platinum}` }}
                   >
-                    <FiShare2 size={18} style={{ color: colors.mainYellow }} />
-                  </button>
+                    {/* Likes & Comments */}
+                    <div className="flex items-center gap-4">
+                      <button 
+                        onClick={() => handleLike(build.id)}
+                        className="flex items-center gap-1 hover:opacity-70 transition-opacity"
+                      >
+                        <FiThumbsUp size={18} style={{ color: colors.mainYellow }} />
+                        <span className="text-sm font-semibold" style={{ color: colors.mainBlack }}>
+                          {build.likes}
+                        </span>
+                      </button>
+
+                      <div className="flex items-center gap-1">
+                        <FiMessageSquare size={18} style={{ color: colors.jet }} />
+                        <span className="text-sm" style={{ color: colors.jet }}>
+                          {build.comments}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Share Button */}
+                    <button
+                      onClick={() => handleShare(build.id)}
+                      className="p-2 rounded-lg hover:opacity-70 transition-all"
+                      style={{ border: `2px solid ${colors.platinum}` }}
+                    >
+                      <FiShare2 size={18} style={{ color: colors.mainYellow }} />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
+            </ElectricCard>
           ))}
         </div>
 

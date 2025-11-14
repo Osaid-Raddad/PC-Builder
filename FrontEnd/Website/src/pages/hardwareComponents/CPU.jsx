@@ -4,7 +4,8 @@ import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import colors from '../../config/colors';
 import { BsCpuFill } from 'react-icons/bs';
-import { FiArrowLeft, FiFilter, FiSearch } from 'react-icons/fi';
+import { FiArrowLeft, FiFilter, FiSearch, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { loadAllCPUs, getUniqueBrands, getUniqueSockets, filterCPUs } from '../../services/cpuService.js';
 
 const CPU = () => {
   const navigate = useNavigate();
@@ -12,48 +13,51 @@ const CPU = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [brandFilter, setBrandFilter] = useState('All');
   const [socketFilter, setSocketFilter] = useState('All');
-  const [priceFilter, setPriceFilter] = useState('All');
+  const [allCPUs, setAllCPUs] = useState([]);
+  const [brands, setBrands] = useState(['All']);
+  const [sockets, setSockets] = useState(['All']);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const cpusPerPage = 9;
 
-  // Scroll to top when component mounts
+  // Load CPU data on mount
   useEffect(() => {
     window.scrollTo(0, 0);
+    
+    const loadCPUData = async () => {
+      setLoading(true);
+      try {
+        const cpus = await loadAllCPUs();
+        setAllCPUs(cpus);
+        setBrands(getUniqueBrands(cpus));
+        setSockets(getUniqueSockets(cpus));
+      } catch (error) {
+        console.error('Error loading CPU data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCPUData();
   }, []);
 
-  // TODO: Replace with actual data from backend
-  const cpuList = [
-    { id: 1, name: 'Intel Core i9-14900K', brand: 'Intel', cores: 24, threads: 32, price: 589.99, socket: 'LGA1700' },
-    { id: 2, name: 'AMD Ryzen 9 7950X', brand: 'AMD', cores: 16, threads: 32, price: 549.99, socket: 'AM5' },
-    { id: 3, name: 'Intel Core i7-14700K', brand: 'Intel', cores: 20, threads: 28, price: 409.99, socket: 'LGA1700' },
-    { id: 4, name: 'AMD Ryzen 7 7800X3D', brand: 'AMD', cores: 8, threads: 16, price: 449.99, socket: 'AM5' },
-    { id: 5, name: 'Intel Core i5-14600K', brand: 'Intel', cores: 14, threads: 20, price: 319.99, socket: 'LGA1700' },
-    { id: 6, name: 'AMD Ryzen 5 7600X', brand: 'AMD', cores: 6, threads: 12, price: 249.99, socket: 'AM5' },
-  ];
-
-  // Filter options
-  const brands = ['All', 'Intel', 'AMD'];
-  const sockets = ['All', 'LGA1700', 'AM5'];
-  const priceRanges = ['All', 'Under $300', '$300-$450', 'Over $450'];
-
   // Filter and search logic
-  const filteredCPUs = cpuList.filter(cpu => {
-    const matchesSearch = searchTerm === '' ||
-      cpu.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cpu.brand.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    const matchesBrand = brandFilter === 'All' || cpu.brand === brandFilter;
-    const matchesSocket = socketFilter === 'All' || cpu.socket === socketFilter;
-    
-    let matchesPrice = true;
-    if (priceFilter === 'Under $300') {
-      matchesPrice = cpu.price < 300;
-    } else if (priceFilter === '$300-$450') {
-      matchesPrice = cpu.price >= 300 && cpu.price <= 450;
-    } else if (priceFilter === 'Over $450') {
-      matchesPrice = cpu.price > 450;
-    }
-
-    return matchesSearch && matchesBrand && matchesSocket && matchesPrice;
+  const filteredCPUs = filterCPUs(allCPUs, {
+    searchTerm,
+    brand: brandFilter,
+    socket: socketFilter
   });
+
+  // Pagination
+  const totalPages = Math.ceil(filteredCPUs.length / cpusPerPage);
+  const indexOfLastCPU = currentPage * cpusPerPage;
+  const indexOfFirstCPU = indexOfLastCPU - cpusPerPage;
+  const currentCPUs = filteredCPUs.slice(indexOfFirstCPU, indexOfLastCPU);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, brandFilter, socketFilter]);
 
   const handleSelectCPU = (cpu) => {
     setSelectedCPU(cpu);
@@ -172,32 +176,16 @@ const CPU = () => {
                   ))}
                 </select>
               </div>
-
-              {/* Price Filter */}
-              <div>
-                <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
-                  Price Range
-                </label>
-                <select
-                  value={priceFilter}
-                  onChange={(e) => setPriceFilter(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2"
-                  style={{
-                    border: `2px solid ${colors.platinum}`,
-                    backgroundColor: 'white',
-                    color: colors.jet
-                  }}
-                >
-                  {priceRanges.map(range => (
-                    <option key={range} value={range}>{range}</option>
-                  ))}
-                </select>
-              </div>
             </div>
 
             {/* Results Count */}
             <div className="mt-4 text-sm" style={{ color: colors.jet }}>
-              Showing {filteredCPUs.length} of {cpuList.length} CPUs
+              {!loading && (
+                <>
+                  Showing {indexOfFirstCPU + 1}-{Math.min(indexOfLastCPU, filteredCPUs.length)} of {filteredCPUs.length} CPUs
+                  {filteredCPUs.length !== allCPUs.length && ` (filtered from ${allCPUs.length} total)`}
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -222,9 +210,21 @@ const CPU = () => {
           </div>
         )}
 
+        {/* Loading State */}
+        {loading && (
+          <div className="text-center py-20">
+            <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 mb-4" 
+                 style={{ borderColor: colors.mainYellow }}></div>
+            <p className="text-xl font-semibold" style={{ color: colors.mainBlack }}>
+              Loading CPUs from BuildCores...
+            </p>
+          </div>
+        )}
+
         {/* CPU List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCPUs.map((cpu) => (
+        {!loading && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {currentCPUs.map((cpu) => (
             <div
               key={cpu.id}
               className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-pointer ${
@@ -276,17 +276,110 @@ const CPU = () => {
 
                 {/* Price */}
                 <div className="pt-4 border-t" style={{ borderColor: colors.platinum }}>
-                  <p className="text-2xl font-bold text-center" style={{ color: colors.mainYellow }}>
-                    ${cpu.price.toFixed(2)}
+                  <p className="text-sm font-semibold text-center" style={{ color: colors.jet }}>
+                    Price Not Available
                   </p>
                 </div>
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {!loading && totalPages > 1 && (
+          <div className="flex justify-center items-center gap-4 mt-8">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-opacity disabled:opacity-30"
+              style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+            >
+              <FiChevronLeft size={20} />
+              Previous
+            </button>
+
+            <div className="flex items-center gap-2">
+              {/* First Page */}
+              {currentPage > 3 && totalPages > 5 && (
+                <>
+                  <button
+                    onClick={() => setCurrentPage(1)}
+                    className="w-10 h-10 rounded-lg font-semibold transition-all"
+                    style={{
+                      backgroundColor: 'white',
+                      color: colors.mainBlack,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    1
+                  </button>
+                  <span className="text-xl font-bold" style={{ color: colors.mainBlack }}>...</span>
+                </>
+              )}
+
+              {/* Page Numbers */}
+              {[...Array(Math.min(5, totalPages))].map((_, i) => {
+                let pageNum;
+                if (totalPages <= 5) {
+                  pageNum = i + 1;
+                } else if (currentPage <= 3) {
+                  pageNum = i + 1;
+                } else if (currentPage >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i;
+                } else {
+                  pageNum = currentPage - 2 + i;
+                }
+
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setCurrentPage(pageNum)}
+                    className="w-10 h-10 rounded-lg font-semibold transition-all"
+                    style={{
+                      backgroundColor: currentPage === pageNum ? colors.mainYellow : 'white',
+                      color: currentPage === pageNum ? 'white' : colors.mainBlack,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+
+              {/* Last Page */}
+              {currentPage < totalPages - 2 && totalPages > 5 && (
+                <>
+                  <span className="text-xl font-bold" style={{ color: colors.mainBlack }}>...</span>
+                  <button
+                    onClick={() => setCurrentPage(totalPages)}
+                    className="w-10 h-10 rounded-lg font-semibold transition-all"
+                    style={{
+                      backgroundColor: 'white',
+                      color: colors.mainBlack,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {totalPages}
+                  </button>
+                </>
+              )}
+            </div>
+
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-opacity disabled:opacity-30"
+              style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+            >
+              Next
+              <FiChevronRight size={20} />
+            </button>
+          </div>
+        )}
 
         {/* Empty State */}
-        {filteredCPUs.length === 0 && (
+        {!loading && filteredCPUs.length === 0 && (
           <div className="text-center py-12">
             <BsCpuFill size={64} style={{ color: colors.platinum }} className="mx-auto mb-4" />
             <p className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>
