@@ -26,6 +26,7 @@ import ResetPassword from './pages/user/auth/ResetPassword';
 import News from './pages/user/news/News';
 import ChatBot from './components/common/chatbot/ChatBot.jsx';
 import Chat from './pages/user/chat/Chat';
+import ProductDetails from './pages/hardwareComponents/productDetails/ProductDetails.jsx';
 
 
 
@@ -93,6 +94,9 @@ function AppContent() {
         <Route path="/products/case" element={<Case />} /> 
         <Route path="/products/monitor" element={<Monitor />} />
         <Route path="/products/accessories" element={<Accessories />} />
+        
+        {/* Product Details Route - Dynamic */}
+        <Route path="/product/:category/:id" element={<ProductDetails />} />
       </Routes>
 
       {/* Show ChatBot on all pages except news and chat */}

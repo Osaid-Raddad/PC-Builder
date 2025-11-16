@@ -72,6 +72,10 @@ const CPU = () => {
     }
   };
 
+  const handleProductClick = (productId) => {
+    navigate(`/product/cpu/${productId}`);
+  };
+
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.mainBeige }}>
       <Navbar />
@@ -234,7 +238,6 @@ const CPU = () => {
                 border: `2px solid ${selectedCPU?.id === cpu.id ? colors.mainYellow : colors.platinum}`,
                 ringColor: colors.mainYellow
               }}
-              onClick={() => handleSelectCPU(cpu)}
             >
               <div className="p-6">
                 {/* Brand Badge */}
@@ -275,10 +278,42 @@ const CPU = () => {
                 </div>
 
                 {/* Price */}
-                <div className="pt-4 border-t" style={{ borderColor: colors.platinum }}>
+                <div className="pt-4 border-t mb-4" style={{ borderColor: colors.platinum }}>
                   <p className="text-sm font-semibold text-center" style={{ color: colors.jet }}>
                     Price Not Available
                   </p>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectCPU(cpu);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedCPU?.id === cpu.id ? colors.mainYellow : 'white',
+                      color: selectedCPU?.id === cpu.id ? 'white' : colors.mainYellow,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {selectedCPU?.id === cpu.id ? 'Selected' : 'Select'}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleProductClick(cpu.id);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedCPU?.id === cpu.id ? 'white' : colors.mainYellow,
+                      color: selectedCPU?.id === cpu.id ? colors.mainYellow : 'white',
+                      border: selectedCPU?.id === cpu.id ? `2px solid ${colors.mainYellow}` : 'none'
+                    }}
+                  >
+                    Details
+                  </button>
                 </div>
               </div>
             </div>

@@ -204,7 +204,6 @@ const Peripherals = () => {
                 border: `2px solid ${selectedPeripheral?.id === peripheral.id ? colors.mainYellow : colors.platinum}`,
                 ringColor: colors.mainYellow
               }}
-              onClick={() => handleSelectPeripheral(peripheral)}
             >
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
@@ -238,10 +237,42 @@ const Peripherals = () => {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t" style={{ borderColor: colors.platinum }}>
+                <div className="pt-4 border-t mb-4" style={{ borderColor: colors.platinum }}>
                   <p className="text-2xl font-bold text-center" style={{ color: colors.mainYellow }}>
                     ${peripheral.price.toFixed(2)}
                   </p>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectPeripheral(peripheral);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedPeripheral?.id === peripheral.id ? colors.mainYellow : 'white',
+                      color: selectedPeripheral?.id === peripheral.id ? 'white' : colors.mainYellow,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {selectedPeripheral?.id === peripheral.id ? 'Selected' : 'Select'}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/product/peripherals/${peripheral.id}`);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedPeripheral?.id === peripheral.id ? 'white' : colors.mainYellow,
+                      color: selectedPeripheral?.id === peripheral.id ? colors.mainYellow : 'white',
+                      border: selectedPeripheral?.id === peripheral.id ? `2px solid ${colors.mainYellow}` : 'none'
+                    }}
+                  >
+                    Details
+                  </button>
                 </div>
               </div>
             </div>

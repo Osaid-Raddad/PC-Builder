@@ -4,7 +4,7 @@ import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import colors from '../../config/colors';
 import { FaMicrochip } from 'react-icons/fa';
-import { FiArrowLeft, FiFilter, FiSearch } from 'react-icons/fi';
+import { FiArrowLeft, FiFilter, FiSearch, FiEye } from 'react-icons/fi';
 
 const GPU = () => {
   const navigate = useNavigate();
@@ -64,6 +64,11 @@ const GPU = () => {
     if (selectedGPU) {
       navigate('/builder');
     }
+  };
+
+  const handleProductClick = (productId, e) => {
+    e.stopPropagation(); // Prevent card selection when clicking view details
+    navigate(`/product/gpu/${productId}`);
   };
 
   return (
@@ -222,14 +227,13 @@ const GPU = () => {
           {filteredGPUs.map((gpu) => (
             <div
               key={gpu.id}
-              className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-pointer ${
+              className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all ${
                 selectedGPU?.id === gpu.id ? 'ring-4' : ''
               }`}
               style={{ 
                 border: `2px solid ${selectedGPU?.id === gpu.id ? colors.mainYellow : colors.platinum}`,
                 ringColor: colors.mainYellow
               }}
-              onClick={() => handleSelectGPU(gpu)}
             >
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
@@ -262,10 +266,39 @@ const GPU = () => {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t" style={{ borderColor: colors.platinum }}>
+                <div className="pt-4 border-t mb-4" style={{ borderColor: colors.platinum }}>
                   <p className="text-2xl font-bold text-center" style={{ color: colors.mainYellow }}>
                     ${gpu.price.toFixed(2)}
                   </p>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectGPU(gpu);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedGPU?.id === gpu.id ? colors.mainYellow : 'white',
+                      color: selectedGPU?.id === gpu.id ? 'white' : colors.mainYellow,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {selectedGPU?.id === gpu.id ? 'Selected' : 'Select'}
+                  </button>
+                  <button
+                    onClick={(e) => handleProductClick(gpu.id, e)}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedGPU?.id === gpu.id ? 'white' : colors.mainYellow,
+                      color: selectedGPU?.id === gpu.id ? colors.mainYellow : 'white',
+                      border: selectedGPU?.id === gpu.id ? `2px solid ${colors.mainYellow}` : 'none'
+                    }}
+                  >
+                    Details
+                  </button>
                 </div>
               </div>
             </div>

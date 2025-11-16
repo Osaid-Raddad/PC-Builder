@@ -54,6 +54,10 @@ const Motherboard = () => {
     }
   };
 
+  const handleProductClick = (productId) => {
+    navigate(`/product/motherboard/${productId}`);
+  };
+
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.mainBeige }}>
       <Navbar />
@@ -146,7 +150,6 @@ const Motherboard = () => {
                 border: `2px solid ${selectedMotherboard?.id === motherboard.id ? colors.mainYellow : colors.platinum}`,
                 ringColor: colors.mainYellow
               }}
-              onClick={() => handleSelectMotherboard(motherboard)}
             >
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
@@ -180,10 +183,42 @@ const Motherboard = () => {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t" style={{ borderColor: colors.platinum }}>
+                <div className="pt-4 border-t mb-4" style={{ borderColor: colors.platinum }}>
                   <p className="text-2xl font-bold text-center" style={{ color: colors.mainYellow }}>
                     ${motherboard.price.toFixed(2)}
                   </p>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectMotherboard(motherboard);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedMotherboard?.id === motherboard.id ? colors.mainYellow : 'white',
+                      color: selectedMotherboard?.id === motherboard.id ? 'white' : colors.mainYellow,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {selectedMotherboard?.id === motherboard.id ? 'Selected' : 'Select'}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleProductClick(motherboard.id);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedMotherboard?.id === motherboard.id ? 'white' : colors.mainYellow,
+                      color: selectedMotherboard?.id === motherboard.id ? colors.mainYellow : 'white',
+                      border: selectedMotherboard?.id === motherboard.id ? `2px solid ${colors.mainYellow}` : 'none'
+                    }}
+                  >
+                    Details
+                  </button>
                 </div>
               </div>
             </div>

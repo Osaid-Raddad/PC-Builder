@@ -207,7 +207,6 @@ const Expansion = () => {
                 border: `2px solid ${selectedExpansion?.id === expansion.id ? colors.mainYellow : colors.platinum}`,
                 ringColor: colors.mainYellow
               }}
-              onClick={() => handleSelectExpansion(expansion)}
             >
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
@@ -241,10 +240,42 @@ const Expansion = () => {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t" style={{ borderColor: colors.platinum }}>
+                <div className="pt-4 border-t mb-4" style={{ borderColor: colors.platinum }}>
                   <p className="text-2xl font-bold text-center" style={{ color: colors.mainYellow }}>
                     ${expansion.price.toFixed(2)}
                   </p>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectExpansion(expansion);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedExpansion?.id === expansion.id ? colors.mainYellow : 'white',
+                      color: selectedExpansion?.id === expansion.id ? 'white' : colors.mainYellow,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {selectedExpansion?.id === expansion.id ? 'Selected' : 'Select'}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/product/expansion/${expansion.id}`);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedExpansion?.id === expansion.id ? 'white' : colors.mainYellow,
+                      color: selectedExpansion?.id === expansion.id ? colors.mainYellow : 'white',
+                      border: selectedExpansion?.id === expansion.id ? `2px solid ${colors.mainYellow}` : 'none'
+                    }}
+                  >
+                    Details
+                  </button>
                 </div>
               </div>
             </div>

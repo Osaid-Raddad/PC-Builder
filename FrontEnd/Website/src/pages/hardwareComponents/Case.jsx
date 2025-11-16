@@ -204,7 +204,6 @@ const Case = () => {
                 border: `2px solid ${selectedCase?.id === caseItem.id ? colors.mainYellow : colors.platinum}`,
                 ringColor: colors.mainYellow
               }}
-              onClick={() => handleSelectCase(caseItem)}
             >
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
@@ -234,10 +233,42 @@ const Case = () => {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t" style={{ borderColor: colors.platinum }}>
+                <div className="pt-4 border-t mb-4" style={{ borderColor: colors.platinum }}>
                   <p className="text-2xl font-bold text-center" style={{ color: colors.mainYellow }}>
                     ${caseItem.price.toFixed(2)}
                   </p>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectCase(caseItem);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedCase?.id === caseItem.id ? colors.mainYellow : 'white',
+                      color: selectedCase?.id === caseItem.id ? 'white' : colors.mainYellow,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {selectedCase?.id === caseItem.id ? 'Selected' : 'Select'}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/product/case/${caseItem.id}`);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedCase?.id === caseItem.id ? 'white' : colors.mainYellow,
+                      color: selectedCase?.id === caseItem.id ? colors.mainYellow : 'white',
+                      border: selectedCase?.id === caseItem.id ? `2px solid ${colors.mainYellow}` : 'none'
+                    }}
+                  >
+                    Details
+                  </button>
                 </div>
               </div>
             </div>
