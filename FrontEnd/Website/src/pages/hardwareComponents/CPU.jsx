@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
+import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { BsCpuFill } from 'react-icons/bs';
 import { FiArrowLeft, FiFilter, FiSearch, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
@@ -237,10 +238,11 @@ const CPU = () => {
         {/* CPU List */}
         {!loading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentCPUs.map((cpu) => (
-            <div
+            {currentCPUs.map((cpu, index) => (
+            <BounceCard
               key={cpu.id}
-              className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-pointer ${
+              delay={index * 0.1}
+              className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all ${
                 selectedCPU?.id === cpu.id ? 'ring-4' : ''
               }`}
               style={{ 
@@ -325,7 +327,7 @@ const CPU = () => {
                   </button>
                 </div>
               </div>
-            </div>
+            </BounceCard>
           ))}
           </div>
         )}

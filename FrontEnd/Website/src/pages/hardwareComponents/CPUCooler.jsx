@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
+import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaFan } from 'react-icons/fa';
 import { FiArrowLeft, FiFilter, FiSearch } from 'react-icons/fi';
@@ -13,6 +14,8 @@ const CPUCooler = () => {
   const [typeFilter, setTypeFilter] = useState('All');
   const [brandFilter, setBrandFilter] = useState('All');
   const [priceFilter, setPriceFilter] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(6);
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -53,6 +56,12 @@ const CPUCooler = () => {
       navigate('/builder');
     }
   };
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentProducts = filteredCoolers.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredCoolers.length / itemsPerPage);
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.mainBeige }}>
@@ -173,7 +182,7 @@ const CPUCooler = () => {
         {/* Results Counter */}
         <div className="mb-4">
           <p className="text-lg font-semibold" style={{ color: colors.jet }}>
-            Showing {filteredCoolers.length} of {coolerList.length} CPU coolers
+            Showing {currentProducts.length} of {filteredCoolers.length} CPU coolers
           </p>
         </div>
 
@@ -205,17 +214,16 @@ const CPUCooler = () => {
           </div>
         )}
 
+        {/* Product Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCoolers.map((cooler) => (
-            <div
+          {currentProducts.map((cooler, index) => (
+            <BounceCard
               key={cooler.id}
-              className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-pointer ${
-                selectedCooler?.id === cooler.id ? 'ring-4' : ''
-              }`}
-              style={{ 
-                border: `2px solid ${selectedCooler?.id === cooler.id ? colors.mainYellow : colors.platinum}`,
-                ringColor: colors.mainYellow
-              }}
+              delay={index * 0.1}
+              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all"
+              style={{ border: `2px solid ${colors.platinum}` }}
+              onMouseEnter={(e) => e.currentTarget.style.borderColor = colors.mainYellow}
+              onMouseLeave={(e) => e.currentTarget.style.borderColor = colors.platinum}
             >
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
@@ -297,9 +305,40 @@ const CPUCooler = () => {
                   </button>
                 </div>
               </div>
-            </div>
+            </BounceCard>
           ))}
         </div>
+
+        {/* Pagination */}
+        {filteredCoolers.length > itemsPerPage && (
+          <div className="mt-8 flex justify-center">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+              style={{
+                backgroundColor: colors.mainYellow,
+                color: 'white',
+                border: 'none'
+              }}
+            >
+              Previous
+            </button>
+            <span className="px-4 py-2 text-lg font-semibold" style={{ color: colors.mainBlack }}>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+              style={{
+                backgroundColor: colors.mainYellow,
+                color: 'white',
+                border: 'none'
+              }}
+            >
+              Next
+            </button>
+          </div>
+        )}
 
         {/* Empty State */}
         {filteredCoolers.length === 0 && (

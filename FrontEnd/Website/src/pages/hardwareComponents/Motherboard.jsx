@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
+import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { BsMotherboard } from 'react-icons/bs';
 import { FiArrowLeft, FiFilter, FiSearch } from 'react-icons/fi';
@@ -148,17 +149,16 @@ const Motherboard = () => {
           </div>
         )}
 
+        {/* Product Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredMotherboards.map((motherboard) => (
-            <div
+          {filteredMotherboards.map((motherboard, index) => (
+            <BounceCard
               key={motherboard.id}
-              className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-pointer ${
-                selectedMotherboard?.id === motherboard.id ? 'ring-4' : ''
-              }`}
-              style={{ 
-                border: `2px solid ${selectedMotherboard?.id === motherboard.id ? colors.mainYellow : colors.platinum}`,
-                ringColor: colors.mainYellow
-              }}
+              delay={index * 0.1}
+              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all"
+              style={{ border: `2px solid ${colors.platinum}` }}
+              onMouseEnter={(e) => e.currentTarget.style.borderColor = colors.mainYellow}
+              onMouseLeave={(e) => e.currentTarget.style.borderColor = colors.platinum}
             >
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
@@ -230,7 +230,7 @@ const Motherboard = () => {
                   </button>
                 </div>
               </div>
-            </div>
+            </BounceCard>
           ))}
         </div>
 
