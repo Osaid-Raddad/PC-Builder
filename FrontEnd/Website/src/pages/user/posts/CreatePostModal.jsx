@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import colors from '../../../../config/colors';
+import colors from '../../../config/colors';
 import { FiX, FiImage, FiTrash2 } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 

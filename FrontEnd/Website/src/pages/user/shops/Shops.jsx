@@ -4,6 +4,7 @@ import Footer from '../../../components/user/footer/Footer';
 import colors from '../../../config/colors';
 import { FiExternalLink, FiMapPin, FiChevronLeft, FiChevronRight, FiFilter, FiSearch, FiPlus, FiShoppingBag, FiX, FiUpload, FiImage } from 'react-icons/fi';
 import toast from 'react-hot-toast';
+import BlurText from '../../../components/animations/BlurText/BlurText';
 
 const Shops = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -376,9 +377,15 @@ const Shops = () => {
       <div className="flex-1 container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-6xl font-bold mb-4" style={{ color: colors.mainBlack }}>
-            Computer Shops in West Bank
-          </h1>
+          <div className="flex justify-center">
+            <BlurText 
+              text="Computer Shops in West Bank"
+              className="text-6xl font-bold mb-4"
+              delay={80}
+              animateBy="words"
+              direction="top"
+            />
+          </div>
           <p className="text-xl" style={{ color: colors.jet }}>
             Find the best computer shops near you for all your PC building needs
           </p>

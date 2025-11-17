@@ -3,10 +3,11 @@ import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
 import colors from '../../../config/colors';
 import { FiPlus, FiImage } from 'react-icons/fi';
-import CreatePostModal from './createPost/CreatePostModal';
+import CreatePostModal from './CreatePostModal';
 import PostCard from './PostCard';
 import CommentsModal from './CommentsModal';
 import toast from 'react-hot-toast';
+import BlurText from '../../../components/animations/BlurText/BlurText';
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
@@ -73,15 +74,14 @@ const Posts = () => {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000));
     
-    // Simulate pagination
-    const startIdx = (pageNum - 1) * 3;
-    const endIdx = startIdx + 3;
-    const newPosts = mockPosts.slice(startIdx, endIdx).map(post => ({
+    // Simulate pagination - create unique posts for each page
+    const newPosts = mockPosts.map((post, idx) => ({
       ...post,
-      id: post.id + (pageNum - 1) * 3
+      id: (pageNum - 1) * mockPosts.length + idx + 1, // Generate unique ID
+      liked: false // Reset liked status for new posts
     }));
     
-    if (newPosts.length === 0) {
+    if (pageNum > 3) { // Limit to 3 pages for demo
       setHasMore(false);
     } else {
       setPosts(prev => [...prev, ...newPosts]);
@@ -150,9 +150,15 @@ const Posts = () => {
       <div className="flex-1 container mx-auto px-4 py-8 max-w-3xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <h1 className="text-5xl font-bold mb-3" style={{ color: colors.mainBlack }}>
-            Community Posts
-          </h1>
+          <div className="flex justify-center">
+            <BlurText 
+              text="Community Posts"
+              className="text-5xl font-bold mb-3"
+              delay={100}
+              animateBy="words"
+              direction="top"
+            />
+          </div>
           <p className="text-lg" style={{ color: colors.jet }}>
             Share your builds, ask questions, and connect with PC builders
           </p>
