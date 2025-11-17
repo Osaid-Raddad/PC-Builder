@@ -27,7 +27,7 @@ import News from './pages/user/news/News';
 import ChatBot from './components/common/chatbot/ChatBot.jsx';
 import Chat from './pages/user/chat/Chat';
 import ProductDetails from './pages/hardwareComponents/productDetails/ProductDetails.jsx';
-
+import Posts from './pages/user/posts/Posts';
 
 
 function AppContent() {
@@ -84,7 +84,7 @@ function AppContent() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/chat" element={<Chat />} />
-        
+        <Route path="/posts" element={<Posts />} />
         {/* Product Category Routes */}
         <Route path="/products/cpu" element={<CPU />} />
         <Route path="/products/gpu" element={<GPU />} />
