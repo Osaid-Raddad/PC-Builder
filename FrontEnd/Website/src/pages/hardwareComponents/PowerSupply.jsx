@@ -14,6 +14,7 @@ const PowerSupply = () => {
   const [wattageFilter, setWattageFilter] = useState('All');
   const [efficiencyFilter, setEfficiencyFilter] = useState('All');
   const [modularFilter, setModularFilter] = useState('All');
+  const [animationKey, setAnimationKey] = useState(0);
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -50,6 +51,21 @@ const PowerSupply = () => {
     if (selectedPSU) {
       navigate('/builder');
     }
+  };
+
+  const handleWattageFilter = (wattage) => {
+    setWattageFilter(wattage);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleEfficiencyFilter = (efficiency) => {
+    setEfficiencyFilter(efficiency);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setAnimationKey(prev => prev + 1);
   };
 
   return (
@@ -89,7 +105,7 @@ const PowerSupply = () => {
               type="text"
               placeholder="Search power supplies..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearch}
               className="w-full pl-12 pr-4 py-3 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
               style={{ 
                 backgroundColor: 'white', 
@@ -110,7 +126,7 @@ const PowerSupply = () => {
               </label>
               <select
                 value={wattageFilter}
-                onChange={(e) => setWattageFilter(e.target.value)}
+                onChange={(e) => handleWattageFilter(e.target.value)}
                 className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
                 style={{ 
                   borderColor: colors.platinum,
@@ -131,7 +147,7 @@ const PowerSupply = () => {
               </label>
               <select
                 value={efficiencyFilter}
-                onChange={(e) => setEfficiencyFilter(e.target.value)}
+                onChange={(e) => handleEfficiencyFilter(e.target.value)}
                 className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
                 style={{ 
                   borderColor: colors.platinum,
@@ -207,8 +223,9 @@ const PowerSupply = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPSUs.map((psu, index) => (
             <BounceCard
-              key={psu.id}
+              key={`${psu.id}-${animationKey}`}
               delay={index * 0.1}
+              animationKey={animationKey}
               className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all"
               style={{ border: `2px solid ${colors.platinum}` }}
               onMouseEnter={(e) => e.currentTarget.style.borderColor = colors.mainYellow}

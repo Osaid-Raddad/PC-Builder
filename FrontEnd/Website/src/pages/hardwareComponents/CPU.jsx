@@ -19,6 +19,7 @@ const CPU = () => {
   const [sockets, setSockets] = useState(['All']);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [animationKey, setAnimationKey] = useState(0);
   const cpusPerPage = 9;
 
   // Load CPU data on mount
@@ -77,6 +78,31 @@ const CPU = () => {
     navigate(`/product/cpu/${productId}`);
   };
 
+  // Update filter handlers to trigger re-animation
+  const handleBrandFilter = (brand) => {
+    setBrandFilter(brand);
+    setCurrentPage(1);
+    setAnimationKey(prev => prev + 1); // Trigger re-animation
+  };
+
+  const handleSocketFilter = (socket) => {
+    setSocketFilter(socket);
+    setCurrentPage(1);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    setAnimationKey(prev => prev + 1); // Re-animate on page change
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.mainBeige }}>
       <Navbar />
@@ -115,7 +141,7 @@ const CPU = () => {
               type="text"
               placeholder="Search CPUs by name or brand..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearch}
               className="w-full pl-12 pr-4 py-4 rounded-lg font-medium transition-all focus:outline-none focus:ring-2"
               style={{
                 border: `2px solid ${colors.platinum}`,
@@ -147,7 +173,7 @@ const CPU = () => {
                 </label>
                 <select
                   value={brandFilter}
-                  onChange={(e) => setBrandFilter(e.target.value)}
+                  onChange={(e) => handleBrandFilter(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2"
                   style={{
                     border: `2px solid ${colors.platinum}`,
@@ -168,7 +194,7 @@ const CPU = () => {
                 </label>
                 <select
                   value={socketFilter}
-                  onChange={(e) => setSocketFilter(e.target.value)}
+                  onChange={(e) => handleSocketFilter(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2"
                   style={{
                     border: `2px solid ${colors.platinum}`,
@@ -242,6 +268,7 @@ const CPU = () => {
             <BounceCard
               key={cpu.id}
               delay={index * 0.1}
+              animationKey={animationKey}
               className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all ${
                 selectedCPU?.id === cpu.id ? 'ring-4' : ''
               }`}
@@ -380,7 +407,7 @@ const CPU = () => {
                 return (
                   <button
                     key={pageNum}
-                    onClick={() => setCurrentPage(pageNum)}
+                    onClick={() => handlePageChange(pageNum)}
                     className="w-10 h-10 rounded-lg font-semibold transition-all"
                     style={{
                       backgroundColor: currentPage === pageNum ? colors.mainYellow : 'white',

@@ -6,19 +6,31 @@ const BounceCard = ({
   className = '',
   style = {},
   threshold = 0.2,
+  animationKey = 0,
   ...props 
 }) => {
   const [isVisible, setIsVisible] = useState(false);
   const cardRef = useRef(null);
+  const observerRef = useRef(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
+    // Reset animation when key changes
+    setIsVisible(false);
+    
+    // Clean up previous observer
+    if (observerRef.current && cardRef.current) {
+      observerRef.current.unobserve(cardRef.current);
+    }
+
+    // Create new observer
+    observerRef.current = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setIsVisible(true);
-            // Optionally unobserve after animation
-            observer.unobserve(entry.target);
+            // Small delay to ensure reset completed
+            setTimeout(() => {
+              setIsVisible(true);
+            }, 10);
           }
         });
       },
@@ -26,15 +38,15 @@ const BounceCard = ({
     );
 
     if (cardRef.current) {
-      observer.observe(cardRef.current);
+      observerRef.current.observe(cardRef.current);
     }
 
     return () => {
-      if (cardRef.current) {
-        observer.unobserve(cardRef.current);
+      if (observerRef.current && cardRef.current) {
+        observerRef.current.unobserve(cardRef.current);
       }
     };
-  }, [threshold]);
+  }, [threshold, animationKey]);
 
   return (
     <>

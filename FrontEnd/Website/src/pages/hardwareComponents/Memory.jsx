@@ -14,6 +14,7 @@ const Memory = () => {
   const [brandFilter, setBrandFilter] = useState('All');
   const [capacityFilter, setCapacityFilter] = useState('All');
   const [speedFilter, setSpeedFilter] = useState('All');
+  const [animationKey, setAnimationKey] = useState(0);
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -50,6 +51,30 @@ const Memory = () => {
     if (selectedMemory) {
       navigate('/builder');
     }
+  };
+
+  const handleTypeFilter = (type) => {
+    setSelectedType(type);
+    setCurrentPage(1);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleCapacityFilter = (capacity) => {
+    setSelectedCapacity(capacity);
+    setCurrentPage(1);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    setAnimationKey(prev => prev + 1);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (

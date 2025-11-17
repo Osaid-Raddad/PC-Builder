@@ -14,6 +14,7 @@ const Monitor = () => {
   const [sizeFilter, setSizeFilter] = useState('All');
   const [resolutionFilter, setResolutionFilter] = useState('All');
   const [refreshRateFilter, setRefreshRateFilter] = useState('All');
+  const [animationKey, setAnimationKey] = useState(0);
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -50,6 +51,26 @@ const Monitor = () => {
     if (selectedMonitor) {
       navigate('/builder');
     }
+  };
+
+  const handleSizeFilter = (size) => {
+    setSizeFilter(size);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleResolutionFilter = (resolution) => {
+    setResolutionFilter(resolution);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleRefreshRateFilter = (rate) => {
+    setRefreshRateFilter(rate);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setAnimationKey(prev => prev + 1);
   };
 
   return (
@@ -89,7 +110,7 @@ const Monitor = () => {
               type="text"
               placeholder="Search monitors..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearch}
               className="w-full pl-12 pr-4 py-3 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
               style={{ 
                 backgroundColor: 'white', 
@@ -110,7 +131,7 @@ const Monitor = () => {
               </label>
               <select
                 value={sizeFilter}
-                onChange={(e) => setSizeFilter(e.target.value)}
+                onChange={(e) => handleSizeFilter(e.target.value)}
                 className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
                 style={{ 
                   borderColor: colors.platinum,
@@ -131,7 +152,7 @@ const Monitor = () => {
               </label>
               <select
                 value={resolutionFilter}
-                onChange={(e) => setResolutionFilter(e.target.value)}
+                onChange={(e) => handleResolutionFilter(e.target.value)}
                 className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
                 style={{ 
                   borderColor: colors.platinum,
@@ -152,7 +173,7 @@ const Monitor = () => {
               </label>
               <select
                 value={refreshRateFilter}
-                onChange={(e) => setRefreshRateFilter(e.target.value)}
+                onChange={(e) => handleRefreshRateFilter(e.target.value)}
                 className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
                 style={{ 
                   borderColor: colors.platinum,
@@ -207,8 +228,9 @@ const Monitor = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredMonitors.map((monitor, index) => (
             <BounceCard
-              key={monitor.id}
+              key={`${monitor.id}-${animationKey}`}
               delay={index * 0.1}
+              animationKey={animationKey}
               className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all"
               style={{ border: `2px solid ${colors.platinum}` }}
               onMouseEnter={(e) => e.currentTarget.style.borderColor = colors.mainYellow}

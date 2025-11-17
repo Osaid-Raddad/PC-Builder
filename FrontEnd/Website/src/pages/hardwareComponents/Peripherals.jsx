@@ -14,6 +14,7 @@ const Peripherals = () => {
   const [typeFilter, setTypeFilter] = useState('All');
   const [brandFilter, setBrandFilter] = useState('All');
   const [connectivityFilter, setConnectivityFilter] = useState('All');
+  const [animationKey, setAnimationKey] = useState(0);
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -50,6 +51,21 @@ const Peripherals = () => {
     if (selectedPeripheral) {
       navigate('/builder');
     }
+  };
+
+  const handleTypeFilter = (type) => {
+    setTypeFilter(type);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleBrandFilter = (brand) => {
+    setBrandFilter(brand);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setAnimationKey(prev => prev + 1);
   };
 
   return (
@@ -89,7 +105,7 @@ const Peripherals = () => {
               type="text"
               placeholder="Search peripherals..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearch}
               className="w-full pl-12 pr-4 py-3 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
               style={{ 
                 backgroundColor: 'white', 
@@ -110,7 +126,7 @@ const Peripherals = () => {
               </label>
               <select
                 value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
+                onChange={(e) => handleTypeFilter(e.target.value)}
                 className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
                 style={{ 
                   borderColor: colors.platinum,
@@ -131,7 +147,7 @@ const Peripherals = () => {
               </label>
               <select
                 value={brandFilter}
-                onChange={(e) => setBrandFilter(e.target.value)}
+                onChange={(e) => handleBrandFilter(e.target.value)}
                 className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
                 style={{ 
                   borderColor: colors.platinum,
@@ -207,8 +223,9 @@ const Peripherals = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredPeripherals.map((peripheral, index) => (
             <BounceCard
-              key={peripheral.id}
+              key={`${peripheral.id}-${animationKey}`}
               delay={index * 0.1}
+              animationKey={animationKey}
               className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all"
               style={{ border: `2px solid ${colors.platinum}` }}
               onMouseEnter={(e) => e.currentTarget.style.borderColor = colors.mainYellow}

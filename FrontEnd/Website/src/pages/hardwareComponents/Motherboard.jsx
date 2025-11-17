@@ -14,6 +14,7 @@ const Motherboard = () => {
   const [brandFilter, setBrandFilter] = useState('All');
   const [socketFilter, setSocketFilter] = useState('All');
   const [formFactorFilter, setFormFactorFilter] = useState('All');
+  const [animationKey, setAnimationKey] = useState(0);
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -57,6 +58,26 @@ const Motherboard = () => {
 
   const handleProductClick = (productId) => {
     navigate(`/product/motherboard/${productId}`);
+  };
+
+  const handleSocketFilter = (socket) => {
+    setSocketFilter(socket);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleFormFactorFilter = (formFactor) => {
+    setFormFactorFilter(formFactor);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleBrandFilter = (brand) => {
+    setBrandFilter(brand);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setAnimationKey(prev => prev + 1);
   };
 
   return (
@@ -155,6 +176,7 @@ const Motherboard = () => {
             <BounceCard
               key={motherboard.id}
               delay={index * 0.1}
+              animationKey={animationKey}
               className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all"
               style={{ border: `2px solid ${colors.platinum}` }}
               onMouseEnter={(e) => e.currentTarget.style.borderColor = colors.mainYellow}

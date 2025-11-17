@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
+import BounceCard from '../../../components/animations/BounceCard/BounceCard';
 import colors from '../../../config/colors';
 import { FiExternalLink, FiMapPin, FiChevronLeft, FiChevronRight, FiFilter, FiSearch, FiPlus, FiShoppingBag, FiX, FiUpload, FiImage } from 'react-icons/fi';
 import toast from 'react-hot-toast';
@@ -24,6 +25,7 @@ const Shops = () => {
     logo: null
   });
   const [logoPreview, setLogoPreview] = useState(null);
+  const [animationKey, setAnimationKey] = useState(0);
   const shopsPerPage = 6;
 
   const allShops = [
@@ -281,17 +283,20 @@ const Shops = () => {
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
+    setAnimationKey(prev => prev + 1);
     window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   const handleCityFilter = (city) => {
     setSelectedCity(city);
-    setCurrentPage(1); // Reset to first page when filtering
+    setCurrentPage(1);
+    setAnimationKey(prev => prev + 1);
   };
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1); // Reset to first page when searching
+    setCurrentPage(1);
+    setAnimationKey(prev => prev + 1);
   };
 
   const handleShopClick = (url) => {
@@ -455,9 +460,11 @@ const Shops = () => {
 
         {/* Shop Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {currentShops.map((shop) => (
-            <div
-              key={shop.id}
+          {currentShops.map((shop, index) => (
+            <BounceCard
+              key={`${shop.id}-${animationKey}`}
+              delay={index * 0.1}
+              animationKey={animationKey}
               className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 cursor-pointer transform hover:-translate-y-2 flex flex-col"
               style={{ border: `2px solid ${colors.platinum}` }}
               onClick={() => handleShopClick(shop.url)}
@@ -545,7 +552,7 @@ const Shops = () => {
                   <FiExternalLink size={18} />
                 </button>
               </div>
-            </div>
+            </BounceCard>
           ))}
         </div>
 

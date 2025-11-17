@@ -14,6 +14,7 @@ const GPU = () => {
   const [brandFilter, setBrandFilter] = useState('All');
   const [memoryFilter, setMemoryFilter] = useState('All');
   const [priceFilter, setPriceFilter] = useState('All');
+  const [animationKey, setAnimationKey] = useState(0);
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -72,6 +73,26 @@ const GPU = () => {
     navigate(`/product/gpu/${productId}`);
   };
 
+  const handleBrandFilter = (brand) => {
+    setBrandFilter(brand);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleMemoryFilter = (memory) => {
+    setMemoryFilter(memory);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handlePriceFilter = (price) => {
+    setPriceFilter(price);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setAnimationKey(prev => prev + 1);
+  };
+
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.mainBeige }}>
       <Navbar />
@@ -109,7 +130,7 @@ const GPU = () => {
               type="text"
               placeholder="Search GPUs by name or brand..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearch}
               className="w-full pl-12 pr-4 py-4 rounded-lg font-medium transition-all focus:outline-none focus:ring-2"
               style={{
                 border: `2px solid ${colors.platinum}`,
@@ -141,7 +162,7 @@ const GPU = () => {
                 </label>
                 <select
                   value={brandFilter}
-                  onChange={(e) => setBrandFilter(e.target.value)}
+                  onChange={(e) => handleBrandFilter(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2"
                   style={{
                     border: `2px solid ${colors.platinum}`,
@@ -162,7 +183,7 @@ const GPU = () => {
                 </label>
                 <select
                   value={memoryFilter}
-                  onChange={(e) => setMemoryFilter(e.target.value)}
+                  onChange={(e) => handleMemoryFilter(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2"
                   style={{
                     border: `2px solid ${colors.platinum}`,
@@ -183,7 +204,7 @@ const GPU = () => {
                 </label>
                 <select
                   value={priceFilter}
-                  onChange={(e) => setPriceFilter(e.target.value)}
+                  onChange={(e) => handlePriceFilter(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2"
                   style={{
                     border: `2px solid ${colors.platinum}`,
@@ -243,6 +264,7 @@ const GPU = () => {
               style={{ border: `2px solid ${colors.platinum}` }}
               onMouseEnter={(e) => e.currentTarget.style.borderColor = colors.mainYellow}
               onMouseLeave={(e) => e.currentTarget.style.borderColor = colors.platinum}
+              animationKey={animationKey}
             >
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
