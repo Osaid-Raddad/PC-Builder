@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../../components/user/navbar/Navbar.jsx';
 import Footer from '../../../components/user/footer/Footer.jsx';
+import BounceCard from '../../../components/animations/BounceCard/BounceCard.jsx';
 import colors from '../../../config/colors';
 import { 
   FaMicrochip, 
@@ -9,9 +10,7 @@ import {
   FaMemory, 
   FaHdd, 
   FaDesktop,
-  FaExpand,
   FaBolt,
-  FaWindows,
   FaTv,
   FaNetworkWired,
   FaKeyboard,
@@ -20,14 +19,11 @@ import {
   FaExclamationTriangle,
   FaTimesCircle
 } from 'react-icons/fa';
-import { HiCog } from 'react-icons/hi';
 import { BsCpuFill, BsMotherboard } from 'react-icons/bs';
 
 const Builder = () => {
   const navigate = useNavigate();
   const [selectedComponents, setSelectedComponents] = useState({});
-  const [visibleCards, setVisibleCards] = useState(new Set());
-  const cardRefs = useRef([]);
 
   const components = [
     { id: 'cpu', name: 'CPU', icon: <BsCpuFill size={24} />, description: 'Choose your processor' },
@@ -43,33 +39,6 @@ const Builder = () => {
     { id: 'peripherals', name: 'Peripherals', icon: <FaKeyboard size={24} />, description: 'Keyboard, mouse, etc.' },
     { id: 'accessories', name: 'Accessories / Other', icon: <FaPlus size={24} />, description: 'Extra items' },
   ];
-
-  // Intersection Observer for scroll-triggered animation
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const index = cardRefs.current.indexOf(entry.target);
-            if (index !== -1) {
-              setVisibleCards(prev => new Set([...prev, index]));
-            }
-          }
-        });
-      },
-      { threshold: 0.2 }
-    );
-
-    cardRefs.current.forEach((card) => {
-      if (card) observer.observe(card);
-    });
-
-    return () => {
-      cardRefs.current.forEach((card) => {
-        if (card) observer.unobserve(card);
-      });
-    };
-  }, []);
 
   const handleComponentClick = (componentId) => {
     console.log(`Selecting component: ${componentId}`);
@@ -183,18 +152,12 @@ const Builder = () => {
         {/* Component Selection Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
           {components.map((component, index) => (
-            <div
+            <BounceCard
               key={component.id}
-              ref={(el) => (cardRefs.current[index] = el)}
+              delay={index * 0.1}
               className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-pointer"
               onClick={() => handleComponentClick(component.id)}
-              style={{ 
-                border: `2px solid ${colors.platinum}`,
-                animation: visibleCards.has(index) 
-                  ? `bounceIn 0.6s ease-out ${index * 0.1}s both`
-                  : 'none',
-                opacity: visibleCards.has(index) ? 1 : 0
-              }}
+              style={{ border: `2px solid ${colors.platinum}` }}
               onMouseEnter={(e) => e.currentTarget.style.borderColor = colors.mainYellow}
               onMouseLeave={(e) => e.currentTarget.style.borderColor = colors.platinum}
             >
@@ -239,7 +202,7 @@ const Builder = () => {
                   </button>
                 )}
               </div>
-            </div>
+            </BounceCard>
           ))}
         </div>
 
@@ -275,39 +238,6 @@ const Builder = () => {
       </div>
 
       <Footer />
-
-      {/* Keyframe Animation Styles */}
-      <style>{`
-        @keyframes bounceIn {
-          0% {
-            opacity: 0;
-            transform: scale(0.3) translateY(50px);
-          }
-          50% {
-            opacity: 1;
-            transform: scale(1.05) translateY(-10px);
-          }
-          70% {
-            transform: scale(0.95) translateY(5px);
-          }
-          85% {
-            transform: scale(1.02) translateY(-3px);
-          }
-          100% {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-          }
-        }
-
-        @keyframes bounceHover {
-          0%, 100% {
-            transform: translateY(0);
-          }
-          50% {
-            transform: translateY(-10px);
-          }
-        }
-      `}</style>
     </div>
   );
 };
