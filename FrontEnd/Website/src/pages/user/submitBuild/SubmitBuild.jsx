@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
+import BlurText from '../../../components/animations/BlurText/BlurText';
 import colors from '../../../config/colors';
 import { FiUpload, FiImage, FiUser, FiTag, FiDollarSign, FiCpu, FiMonitor, FiHardDrive, FiZap, FiAlignLeft, FiX } from 'react-icons/fi';
 import { BsCpuFill } from 'react-icons/bs';
@@ -107,9 +108,13 @@ const SubmitBuild = () => {
       <div className="flex-1 container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-6xl font-bold mb-4" style={{ color: colors.mainBlack }}>
-            Submit Your Build
-          </h1>
+          <div className="flex justify-center">
+            <BlurText 
+              text="Submit Your Build" 
+              className="text-6xl font-bold mb-4" 
+              style={{ color: colors.mainBlack }}
+            />
+          </div>
           <p className="text-xl" style={{ color: colors.jet }}>
             Share your amazing PC build with the community and inspire others!
           </p>
