@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../../components/user/navbar/Navbar.jsx';
 import Footer from '../../../components/user/footer/Footer.jsx';
+import BounceCard from '../../../components/animations/BounceCard/BounceCard.jsx';
 import colors from '../../../config/colors';
 import { 
   FaMicrochip, 
@@ -9,9 +10,7 @@ import {
   FaMemory, 
   FaHdd, 
   FaDesktop,
-  FaExpand,
   FaBolt,
-  FaWindows,
   FaTv,
   FaNetworkWired,
   FaKeyboard,
@@ -20,7 +19,6 @@ import {
   FaExclamationTriangle,
   FaTimesCircle
 } from 'react-icons/fa';
-import { HiCog } from 'react-icons/hi';
 import { BsCpuFill, BsMotherboard } from 'react-icons/bs';
 
 const Builder = () => {
@@ -153,10 +151,11 @@ const Builder = () => {
 
         {/* Component Selection Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 ">
-          {components.map((component) => (
-            <div
+          {components.map((component, index) => (
+            <BounceCard
               key={component.id}
-              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow cursor-pointer"
+              delay={index * 0.1}
+              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-pointer"
               onClick={() => handleComponentClick(component.id)}
               style={{ border: `2px solid ${colors.platinum}` }}
               onMouseEnter={(e) => e.currentTarget.style.borderColor = colors.mainYellow}
@@ -203,7 +202,7 @@ const Builder = () => {
                   </button>
                 )}
               </div>
-            </div>
+            </BounceCard>
           ))}
         </div>
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
+import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaFan } from 'react-icons/fa';
 import { FiArrowLeft, FiFilter, FiSearch } from 'react-icons/fi';
@@ -13,6 +14,9 @@ const CPUCooler = () => {
   const [typeFilter, setTypeFilter] = useState('All');
   const [brandFilter, setBrandFilter] = useState('All');
   const [priceFilter, setPriceFilter] = useState('All');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(6);
+  const [animationKey, setAnimationKey] = useState(0);
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -54,6 +58,31 @@ const CPUCooler = () => {
     }
   };
 
+  // Update filter handlers
+  const handleTypeFilter = (type) => {
+    setTypeFilter(type);
+    setCurrentPage(1);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleBrandFilter = (brand) => {
+    setBrandFilter(brand);
+    setCurrentPage(1);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentProducts = filteredCoolers.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredCoolers.length / itemsPerPage);
+
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.mainBeige }}>
       <Navbar />
@@ -91,7 +120,7 @@ const CPUCooler = () => {
               type="text"
               placeholder="Search CPU coolers..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearch}
               className="w-full pl-12 pr-4 py-3 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
               style={{ 
                 backgroundColor: 'white', 
@@ -112,7 +141,7 @@ const CPUCooler = () => {
               </label>
               <select
                 value={typeFilter}
-                onChange={(e) => setTypeFilter(e.target.value)}
+                onChange={(e) => handleTypeFilter(e.target.value)}
                 className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
                 style={{ 
                   borderColor: colors.platinum,
@@ -133,7 +162,7 @@ const CPUCooler = () => {
               </label>
               <select
                 value={brandFilter}
-                onChange={(e) => setBrandFilter(e.target.value)}
+                onChange={(e) => handleBrandFilter(e.target.value)}
                 className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
                 style={{ 
                   borderColor: colors.platinum,
@@ -173,7 +202,7 @@ const CPUCooler = () => {
         {/* Results Counter */}
         <div className="mb-4">
           <p className="text-lg font-semibold" style={{ color: colors.jet }}>
-            Showing {filteredCoolers.length} of {coolerList.length} CPU coolers
+            Showing {currentProducts.length} of {filteredCoolers.length} CPU coolers
           </p>
         </div>
 
@@ -186,59 +215,67 @@ const CPUCooler = () => {
               <p className="text-sm font-semibold text-white">Selected:</p>
               <p className="text-lg font-bold text-white">{selectedCooler.name}</p>
             </div>
-            <button
-              onClick={handleConfirm}
-              className="px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity"
-              style={{ backgroundColor: 'white', color: colors.mainYellow }}
-            >
-              Confirm Selection
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setSelectedCooler(null)}
+                className="px-6 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+                style={{ backgroundColor: 'transparent', color: 'white', border: '2px solid white' }}
+              >
+                Cancel Selection
+              </button>
+              <button
+                onClick={handleConfirm}
+                className="px-6 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+                style={{ backgroundColor: 'white', color: colors.mainYellow }}
+              >
+                Confirm Selection
+              </button>
+            </div>
           </div>
         )}
 
+        {/* Product Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCoolers.map((cooler) => (
-            <div
-              key={cooler.id}
-              className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-pointer ${
-                selectedCooler?.id === cooler.id ? 'ring-4' : ''
-              }`}
-              style={{ 
-                border: `2px solid ${selectedCooler?.id === cooler.id ? colors.mainYellow : colors.platinum}`,
-                ringColor: colors.mainYellow
-              }}
-              onClick={() => handleSelectCooler(cooler)}
+          {currentProducts.map((product, index) => (
+            <BounceCard
+              key={product.id}
+              delay={index * 0.1}
+              animationKey={animationKey}
+              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all"
+              style={{ border: `2px solid ${colors.platinum}` }}
+              onMouseEnter={(e) => e.currentTarget.style.borderColor = colors.mainYellow}
+              onMouseLeave={(e) => e.currentTarget.style.borderColor = colors.platinum}
             >
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
                   <span 
                     className="px-3 py-1 rounded-full text-xs font-semibold text-white"
-                    style={{ backgroundColor: cooler.type === 'Air' ? '#4CAF50' : '#2196F3' }}
+                    style={{ backgroundColor: product.type === 'Air' ? '#4CAF50' : '#2196F3' }}
                   >
-                    {cooler.type} Cooling
+                    {product.type} Cooling
                   </span>
-                  {selectedCooler?.id === cooler.id && (
+                  {selectedCooler?.id === product.id && (
                     <span className="text-2xl">✓</span>
                   )}
                 </div>
 
                 <h3 className="text-xl font-bold mb-4" style={{ color: colors.mainBlack }}>
-                  {cooler.name}
+                  {product.name}
                 </h3>
 
                 <div className="space-y-2 mb-4">
                   <div className="flex justify-between text-sm">
                     <span style={{ color: colors.jet }}>Brand:</span>
-                    <span className="font-semibold" style={{ color: colors.mainBlack }}>{cooler.brand}</span>
+                    <span className="font-semibold" style={{ color: colors.mainBlack }}>{product.brand}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span style={{ color: colors.jet }}>Type:</span>
-                    <span className="font-semibold" style={{ color: colors.mainBlack }}>{cooler.type}</span>
+                    <span className="font-semibold" style={{ color: colors.mainBlack }}>{product.type}</span>
                   </div>
                   <div className="text-sm">
                     <span style={{ color: colors.jet }}>Compatible:</span>
                     <div className="flex gap-2 mt-1">
-                      {cooler.compatibility.map((comp) => (
+                      {product.compatibility.map((comp) => (
                         <span 
                           key={comp}
                           className="px-2 py-1 rounded text-xs"
@@ -251,15 +288,78 @@ const CPUCooler = () => {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t" style={{ borderColor: colors.platinum }}>
+                <div className="pt-4 border-t mb-4" style={{ borderColor: colors.platinum }}>
                   <p className="text-2xl font-bold text-center" style={{ color: colors.mainYellow }}>
-                    ${cooler.price.toFixed(2)}
+                    ${product.price.toFixed(2)}
                   </p>
                 </div>
+
+                {/* Action Buttons */}
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectCooler(product);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedCooler?.id === product.id ? colors.mainYellow : 'white',
+                      color: selectedCooler?.id === product.id ? 'white' : colors.mainYellow,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {selectedCooler?.id === product.id ? 'Selected' : 'Select'}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/product/cpucooler/${product.id}`);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedCooler?.id === product.id ? 'white' : colors.mainYellow,
+                      color: selectedCooler?.id === product.id ? colors.mainYellow : 'white',
+                      border: selectedCooler?.id === product.id ? `2px solid ${colors.mainYellow}` : 'none'
+                    }}
+                  >
+                    Details
+                  </button>
+                </div>
               </div>
-            </div>
+            </BounceCard>
           ))}
         </div>
+
+        {/* Pagination */}
+        {filteredCoolers.length > itemsPerPage && (
+          <div className="mt-8 flex justify-center">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+              style={{
+                backgroundColor: colors.mainYellow,
+                color: 'white',
+                border: 'none'
+              }}
+            >
+              Previous
+            </button>
+            <span className="px-4 py-2 text-lg font-semibold" style={{ color: colors.mainBlack }}>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+              style={{
+                backgroundColor: colors.mainYellow,
+                color: 'white',
+                border: 'none'
+              }}
+            >
+              Next
+            </button>
+          </div>
+        )}
 
         {/* Empty State */}
         {filteredCoolers.length === 0 && (

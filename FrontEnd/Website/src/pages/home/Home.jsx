@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
-import BlurText from '../../components/animations/BlurText';
+import BlurText from '../../components/animations/BlurText/BlurText.jsx';
 import colors from '../../config/colors';
 
 const Home = () => {

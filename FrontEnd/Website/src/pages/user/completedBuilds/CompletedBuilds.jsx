@@ -7,6 +7,7 @@ import colors from '../../../config/colors';
 import { FiUser, FiCpu, FiMonitor, FiHardDrive, FiZap, FiThumbsUp, FiMessageSquare, FiShare2, FiSearch, FiFilter, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import { BsCpuFill } from 'react-icons/bs';
 import { FaMicrochip, FaMemory } from 'react-icons/fa';
+import BlurText from '../../../components/animations/BlurText/BlurText';
 
 const CompletedBuilds = () => {
   const navigate = useNavigate();
@@ -360,11 +361,17 @@ const CompletedBuilds = () => {
       <div className="flex-1 container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-6xl font-bold mb-4" style={{ color: colors.mainBlack }}>
-            Completed Builds
-          </h1>
+          <div className="flex justify-center">
+            <BlurText 
+              text="Completed Builds"
+              className="text-6xl font-bold mb-4"
+              delay={100}
+              animateBy="words"
+              direction="top"
+            />
+          </div>
           <p className="text-xl" style={{ color: colors.jet }}>
-            Get inspired by amazing PC builds from our community
+            Explore amazing PC builds from our community
           </p>
         </div>
 

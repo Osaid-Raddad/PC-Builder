@@ -26,6 +26,9 @@ import ResetPassword from './pages/user/auth/ResetPassword';
 import News from './pages/user/news/News';
 import ChatBot from './components/common/chatbot/ChatBot.jsx';
 import Chat from './pages/user/chat/Chat';
+import ProductDetails from './pages/hardwareComponents/productDetails/ProductDetails.jsx';
+import Posts from './pages/user/posts/Posts';
+
 
 function AppContent() {
   const location = useLocation();
@@ -54,7 +57,6 @@ function AppContent() {
       />
       
       <Routes>
-        
           <Route path="/" element={<Home />} />
           <Route path="/builder" element={<Builder />} />
           <Route path="/shops" element={<Shops />} />
@@ -82,6 +84,19 @@ function AppContent() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/chat" element={<Chat />} />
+        <Route path="/posts" element={<Posts />} />
+        {/* Product Category Routes */}
+        <Route path="/products/cpu" element={<CPU />} />
+        <Route path="/products/gpu" element={<GPU />} />
+        <Route path="/products/motherboard" element={<Motherboard />} /> 
+        <Route path="/products/storage" element={<Storage />} />
+        <Route path="/products/power-supply" element={<PowerSupply />} />
+        <Route path="/products/case" element={<Case />} /> 
+        <Route path="/products/monitor" element={<Monitor />} />
+        <Route path="/products/accessories" element={<Accessories />} />
+        <Route path="/products/cooler" element={<CPUCooler />} />
+        {/* Product Details Route - Dynamic */}
+        <Route path="/product/:category/:id" element={<ProductDetails />} />
       </Routes>
 
       {/* Show ChatBot on all pages except news and chat */}

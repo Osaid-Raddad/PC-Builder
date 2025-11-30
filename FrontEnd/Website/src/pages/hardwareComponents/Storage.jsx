@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
+import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaHdd } from 'react-icons/fa';
 import { FiArrowLeft, FiFilter, FiSearch } from 'react-icons/fi';
@@ -13,6 +14,7 @@ const Storage = () => {
   const [typeFilter, setTypeFilter] = useState('All');
   const [capacityFilter, setCapacityFilter] = useState('All');
   const [brandFilter, setBrandFilter] = useState('All');
+  const [animationKey, setAnimationKey] = useState(0);
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -51,6 +53,25 @@ const Storage = () => {
     }
   };
 
+  const handleProductClick = (productId) => {
+    navigate(`/product/storage/${productId}`);
+  };
+
+  const handleTypeFilter = (type) => {
+    setTypeFilter(type);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleCapacityFilter = (capacity) => {
+    setCapacityFilter(capacity);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setAnimationKey(prev => prev + 1);
+  };
+
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.mainBeige }}>
       <Navbar />
@@ -79,7 +100,7 @@ const Storage = () => {
         <div className="mb-6">
           <div className="relative">
             <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: colors.mainYellow }} size={20} />
-            <input type="text" placeholder="Search storage..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-12 pr-4 py-4 rounded-lg font-medium transition-all focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }} />
+            <input type="text" placeholder="Search storage..." value={searchTerm} onChange={handleSearch} className="w-full pl-12 pr-4 py-4 rounded-lg font-medium transition-all focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }} />
           </div>
         </div>
 
@@ -92,13 +113,13 @@ const Storage = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Type</label>
-                <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
+                <select value={typeFilter} onChange={(e) => handleTypeFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
                   {types.map(t => <option key={t} value={t}>{t}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Capacity</label>
-                <select value={capacityFilter} onChange={(e) => setCapacityFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
+                <select value={capacityFilter} onChange={(e) => handleCapacityFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
                   {capacities.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
@@ -122,28 +143,36 @@ const Storage = () => {
               <p className="text-sm font-semibold text-white">Selected:</p>
               <p className="text-lg font-bold text-white">{selectedStorage.name}</p>
             </div>
-            <button
-              onClick={handleConfirm}
-              className="px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity"
-              style={{ backgroundColor: 'white', color: colors.mainYellow }}
-            >
-              Confirm Selection
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setSelectedStorage(null)}
+                className="px-6 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+                style={{ backgroundColor: 'transparent', color: 'white', border: '2px solid white' }}
+              >
+                Cancel Selection
+              </button>
+              <button
+                onClick={handleConfirm}
+                className="px-6 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+                style={{ backgroundColor: 'white', color: colors.mainYellow }}
+              >
+                Confirm Selection
+              </button>
+            </div>
           </div>
         )}
 
+        {/* Product Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredStorage.map((storage) => (
-            <div
+          {filteredStorage.map((storage, index) => (
+            <BounceCard
               key={storage.id}
-              className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-pointer ${
-                selectedStorage?.id === storage.id ? 'ring-4' : ''
-              }`}
-              style={{ 
-                border: `2px solid ${selectedStorage?.id === storage.id ? colors.mainYellow : colors.platinum}`,
-                ringColor: colors.mainYellow
-              }}
-              onClick={() => handleSelectStorage(storage)}
+              delay={index * 0.1}
+              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all"
+              style={{ border: `2px solid ${colors.platinum}` }}
+              onMouseEnter={(e) => e.currentTarget.style.borderColor = colors.mainYellow}
+              onMouseLeave={(e) => e.currentTarget.style.borderColor = colors.platinum}
+              animationKey={animationKey}
             >
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
@@ -180,13 +209,45 @@ const Storage = () => {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t" style={{ borderColor: colors.platinum }}>
+                <div className="pt-4 border-t mb-4" style={{ borderColor: colors.platinum }}>
                   <p className="text-2xl font-bold text-center" style={{ color: colors.mainYellow }}>
                     ${storage.price.toFixed(2)}
                   </p>
                 </div>
+
+                {/* Action Buttons */}
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectStorage(storage);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedStorage?.id === storage.id ? colors.mainYellow : 'white',
+                      color: selectedStorage?.id === storage.id ? 'white' : colors.mainYellow,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {selectedStorage?.id === storage.id ? 'Selected' : 'Select'}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/product/storage/${storage.id}`);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedStorage?.id === storage.id ? 'white' : colors.mainYellow,
+                      color: selectedStorage?.id === storage.id ? colors.mainYellow : 'white',
+                      border: selectedStorage?.id === storage.id ? `2px solid ${colors.mainYellow}` : 'none'
+                    }}
+                  >
+                    Details
+                  </button>
+                </div>
               </div>
-            </div>
+            </BounceCard>
           ))}
         </div>
 

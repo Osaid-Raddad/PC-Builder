@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
+import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { BsCpuFill } from 'react-icons/bs';
 import { FiArrowLeft, FiFilter, FiSearch, FiChevronLeft, FiChevronRight } from 'react-icons/fi';
@@ -18,6 +19,7 @@ const CPU = () => {
   const [sockets, setSockets] = useState(['All']);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [animationKey, setAnimationKey] = useState(0);
   const cpusPerPage = 9;
 
   // Load CPU data on mount
@@ -72,6 +74,35 @@ const CPU = () => {
     }
   };
 
+  const handleProductClick = (productId) => {
+    navigate(`/product/cpu/${productId}`);
+  };
+
+  // Update filter handlers to trigger re-animation
+  const handleBrandFilter = (brand) => {
+    setBrandFilter(brand);
+    setCurrentPage(1);
+    setAnimationKey(prev => prev + 1); // Trigger re-animation
+  };
+
+  const handleSocketFilter = (socket) => {
+    setSocketFilter(socket);
+    setCurrentPage(1);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    setAnimationKey(prev => prev + 1); // Re-animate on page change
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.mainBeige }}>
       <Navbar />
@@ -110,7 +141,7 @@ const CPU = () => {
               type="text"
               placeholder="Search CPUs by name or brand..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearch}
               className="w-full pl-12 pr-4 py-4 rounded-lg font-medium transition-all focus:outline-none focus:ring-2"
               style={{
                 border: `2px solid ${colors.platinum}`,
@@ -142,7 +173,7 @@ const CPU = () => {
                 </label>
                 <select
                   value={brandFilter}
-                  onChange={(e) => setBrandFilter(e.target.value)}
+                  onChange={(e) => handleBrandFilter(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2"
                   style={{
                     border: `2px solid ${colors.platinum}`,
@@ -163,7 +194,7 @@ const CPU = () => {
                 </label>
                 <select
                   value={socketFilter}
-                  onChange={(e) => setSocketFilter(e.target.value)}
+                  onChange={(e) => handleSocketFilter(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2"
                   style={{
                     border: `2px solid ${colors.platinum}`,
@@ -200,13 +231,22 @@ const CPU = () => {
               <p className="text-sm font-semibold text-white">Selected:</p>
               <p className="text-lg font-bold text-white">{selectedCPU.name}</p>
             </div>
-            <button
-              onClick={handleConfirm}
-              className="px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity"
-              style={{ backgroundColor: 'white', color: colors.mainYellow }}
-            >
-              Confirm Selection
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setSelectedCPU(null)}
+                className="px-6 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+                style={{ backgroundColor: 'transparent', color: 'white', border: '2px solid white' }}
+              >
+                Cancel Selection
+              </button>
+              <button
+                onClick={handleConfirm}
+                className="px-6 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+                style={{ backgroundColor: 'white', color: colors.mainYellow }}
+              >
+                Confirm Selection
+              </button>
+            </div>
           </div>
         )}
 
@@ -224,17 +264,18 @@ const CPU = () => {
         {/* CPU List */}
         {!loading && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {currentCPUs.map((cpu) => (
-            <div
+            {currentCPUs.map((cpu, index) => (
+            <BounceCard
               key={cpu.id}
-              className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-pointer ${
+              delay={index * 0.1}
+              animationKey={animationKey}
+              className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all ${
                 selectedCPU?.id === cpu.id ? 'ring-4' : ''
               }`}
               style={{ 
                 border: `2px solid ${selectedCPU?.id === cpu.id ? colors.mainYellow : colors.platinum}`,
                 ringColor: colors.mainYellow
               }}
-              onClick={() => handleSelectCPU(cpu)}
             >
               <div className="p-6">
                 {/* Brand Badge */}
@@ -275,13 +316,45 @@ const CPU = () => {
                 </div>
 
                 {/* Price */}
-                <div className="pt-4 border-t" style={{ borderColor: colors.platinum }}>
+                <div className="pt-4 border-t mb-4" style={{ borderColor: colors.platinum }}>
                   <p className="text-sm font-semibold text-center" style={{ color: colors.jet }}>
                     Price Not Available
                   </p>
                 </div>
+
+                {/* Action Buttons */}
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectCPU(cpu);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedCPU?.id === cpu.id ? colors.mainYellow : 'white',
+                      color: selectedCPU?.id === cpu.id ? 'white' : colors.mainYellow,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {selectedCPU?.id === cpu.id ? 'Selected' : 'Select'}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleProductClick(cpu.id);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedCPU?.id === cpu.id ? 'white' : colors.mainYellow,
+                      color: selectedCPU?.id === cpu.id ? colors.mainYellow : 'white',
+                      border: selectedCPU?.id === cpu.id ? `2px solid ${colors.mainYellow}` : 'none'
+                    }}
+                  >
+                    Details
+                  </button>
+                </div>
               </div>
-            </div>
+            </BounceCard>
           ))}
           </div>
         )}
@@ -334,7 +407,7 @@ const CPU = () => {
                 return (
                   <button
                     key={pageNum}
-                    onClick={() => setCurrentPage(pageNum)}
+                    onClick={() => handlePageChange(pageNum)}
                     className="w-10 h-10 rounded-lg font-semibold transition-all"
                     style={{
                       backgroundColor: currentPage === pageNum ? colors.mainYellow : 'white',

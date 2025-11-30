@@ -30,7 +30,7 @@ export default function Navbar() {
     { label: 'Storage', path: '/products/storage', icon: <FaHdd size={18} /> },
     { label: 'Power Supply', path: '/products/power-supply', icon: <MdPowerSettingsNew size={18} /> },
     { label: 'Case', path: '/products/case', icon: <PiDesktopTowerFill size={18} /> },
-    { label: 'Cooling', path: '/products/cooling', icon: <GiComputerFan size={18} /> },
+    { label: 'Cooling', path: '/products/cooler', icon: <GiComputerFan size={18} /> },
     { label: 'Monitor', path: '/products/monitor', icon: <FaDesktop size={18} /> },
     { label: 'Accessories', path: '/products/accessories', icon: <MdCable size={18} /> },
   ];

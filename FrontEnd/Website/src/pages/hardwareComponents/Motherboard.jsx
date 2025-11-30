@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
+import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { BsMotherboard } from 'react-icons/bs';
 import { FiArrowLeft, FiFilter, FiSearch } from 'react-icons/fi';
@@ -13,6 +14,7 @@ const Motherboard = () => {
   const [brandFilter, setBrandFilter] = useState('All');
   const [socketFilter, setSocketFilter] = useState('All');
   const [formFactorFilter, setFormFactorFilter] = useState('All');
+  const [animationKey, setAnimationKey] = useState(0);
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -52,6 +54,30 @@ const Motherboard = () => {
     if (selectedMotherboard) {
       navigate('/builder');
     }
+  };
+
+  const handleProductClick = (productId) => {
+    navigate(`/product/motherboard/${productId}`);
+  };
+
+  const handleSocketFilter = (socket) => {
+    setSocketFilter(socket);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleFormFactorFilter = (formFactor) => {
+    setFormFactorFilter(formFactor);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleBrandFilter = (brand) => {
+    setBrandFilter(brand);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setAnimationKey(prev => prev + 1);
   };
 
   return (
@@ -125,28 +151,36 @@ const Motherboard = () => {
               <p className="text-sm font-semibold text-white">Selected:</p>
               <p className="text-lg font-bold text-white">{selectedMotherboard.name}</p>
             </div>
-            <button
-              onClick={handleConfirm}
-              className="px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity"
-              style={{ backgroundColor: 'white', color: colors.mainYellow }}
-            >
-              Confirm Selection
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setSelectedMotherboard(null)}
+                className="px-6 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+                style={{ backgroundColor: 'transparent', color: 'white', border: '2px solid white' }}
+              >
+                Cancel Selection
+              </button>
+              <button
+                onClick={handleConfirm}
+                className="px-6 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+                style={{ backgroundColor: 'white', color: colors.mainYellow }}
+              >
+                Confirm Selection
+              </button>
+            </div>
           </div>
         )}
 
+        {/* Product Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredMotherboards.map((motherboard) => (
-            <div
+          {filteredMotherboards.map((motherboard, index) => (
+            <BounceCard
               key={motherboard.id}
-              className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-pointer ${
-                selectedMotherboard?.id === motherboard.id ? 'ring-4' : ''
-              }`}
-              style={{ 
-                border: `2px solid ${selectedMotherboard?.id === motherboard.id ? colors.mainYellow : colors.platinum}`,
-                ringColor: colors.mainYellow
-              }}
-              onClick={() => handleSelectMotherboard(motherboard)}
+              delay={index * 0.1}
+              animationKey={animationKey}
+              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all"
+              style={{ border: `2px solid ${colors.platinum}` }}
+              onMouseEnter={(e) => e.currentTarget.style.borderColor = colors.mainYellow}
+              onMouseLeave={(e) => e.currentTarget.style.borderColor = colors.platinum}
             >
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
@@ -180,13 +214,45 @@ const Motherboard = () => {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t" style={{ borderColor: colors.platinum }}>
+                <div className="pt-4 border-t mb-4" style={{ borderColor: colors.platinum }}>
                   <p className="text-2xl font-bold text-center" style={{ color: colors.mainYellow }}>
                     ${motherboard.price.toFixed(2)}
                   </p>
                 </div>
+
+                {/* Action Buttons */}
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectMotherboard(motherboard);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedMotherboard?.id === motherboard.id ? colors.mainYellow : 'white',
+                      color: selectedMotherboard?.id === motherboard.id ? 'white' : colors.mainYellow,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {selectedMotherboard?.id === motherboard.id ? 'Selected' : 'Select'}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleProductClick(motherboard.id);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedMotherboard?.id === motherboard.id ? 'white' : colors.mainYellow,
+                      color: selectedMotherboard?.id === motherboard.id ? colors.mainYellow : 'white',
+                      border: selectedMotherboard?.id === motherboard.id ? `2px solid ${colors.mainYellow}` : 'none'
+                    }}
+                  >
+                    Details
+                  </button>
+                </div>
               </div>
-            </div>
+            </BounceCard>
           ))}
         </div>
 

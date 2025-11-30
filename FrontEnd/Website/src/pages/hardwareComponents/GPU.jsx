@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
+import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaMicrochip } from 'react-icons/fa';
-import { FiArrowLeft, FiFilter, FiSearch } from 'react-icons/fi';
+import { FiArrowLeft, FiFilter, FiSearch, FiEye } from 'react-icons/fi';
 
 const GPU = () => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const GPU = () => {
   const [brandFilter, setBrandFilter] = useState('All');
   const [memoryFilter, setMemoryFilter] = useState('All');
   const [priceFilter, setPriceFilter] = useState('All');
+  const [animationKey, setAnimationKey] = useState(0);
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -66,6 +68,31 @@ const GPU = () => {
     }
   };
 
+  const handleProductClick = (productId, e) => {
+    e.stopPropagation(); // Prevent card selection when clicking view details
+    navigate(`/product/gpu/${productId}`);
+  };
+
+  const handleBrandFilter = (brand) => {
+    setBrandFilter(brand);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleMemoryFilter = (memory) => {
+    setMemoryFilter(memory);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handlePriceFilter = (price) => {
+    setPriceFilter(price);
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setAnimationKey(prev => prev + 1);
+  };
+
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.mainBeige }}>
       <Navbar />
@@ -103,7 +130,7 @@ const GPU = () => {
               type="text"
               placeholder="Search GPUs by name or brand..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearch}
               className="w-full pl-12 pr-4 py-4 rounded-lg font-medium transition-all focus:outline-none focus:ring-2"
               style={{
                 border: `2px solid ${colors.platinum}`,
@@ -135,7 +162,7 @@ const GPU = () => {
                 </label>
                 <select
                   value={brandFilter}
-                  onChange={(e) => setBrandFilter(e.target.value)}
+                  onChange={(e) => handleBrandFilter(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2"
                   style={{
                     border: `2px solid ${colors.platinum}`,
@@ -156,7 +183,7 @@ const GPU = () => {
                 </label>
                 <select
                   value={memoryFilter}
-                  onChange={(e) => setMemoryFilter(e.target.value)}
+                  onChange={(e) => handleMemoryFilter(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2"
                   style={{
                     border: `2px solid ${colors.platinum}`,
@@ -177,7 +204,7 @@ const GPU = () => {
                 </label>
                 <select
                   value={priceFilter}
-                  onChange={(e) => setPriceFilter(e.target.value)}
+                  onChange={(e) => handlePriceFilter(e.target.value)}
                   className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2"
                   style={{
                     border: `2px solid ${colors.platinum}`,
@@ -208,28 +235,36 @@ const GPU = () => {
               <p className="text-sm font-semibold text-white">Selected:</p>
               <p className="text-lg font-bold text-white">{selectedGPU.name}</p>
             </div>
-            <button
-              onClick={handleConfirm}
-              className="px-6 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity"
-              style={{ backgroundColor: 'white', color: colors.mainYellow }}
-            >
-              Confirm Selection
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setSelectedGPU(null)}
+                className="px-6 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+                style={{ backgroundColor: 'transparent', color: 'white', border: '2px solid white' }}
+              >
+                Cancel Selection
+              </button>
+              <button
+                onClick={handleConfirm}
+                className="px-6 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+                style={{ backgroundColor: 'white', color: colors.mainYellow }}
+              >
+                Confirm Selection
+              </button>
+            </div>
           </div>
         )}
 
+        {/* Product Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredGPUs.map((gpu) => (
-            <div
+          {filteredGPUs.map((gpu, index) => (
+            <BounceCard
               key={gpu.id}
-              className={`bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all cursor-pointer ${
-                selectedGPU?.id === gpu.id ? 'ring-4' : ''
-              }`}
-              style={{ 
-                border: `2px solid ${selectedGPU?.id === gpu.id ? colors.mainYellow : colors.platinum}`,
-                ringColor: colors.mainYellow
-              }}
-              onClick={() => handleSelectGPU(gpu)}
+              delay={index * 0.1}
+              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all"
+              style={{ border: `2px solid ${colors.platinum}` }}
+              onMouseEnter={(e) => e.currentTarget.style.borderColor = colors.mainYellow}
+              onMouseLeave={(e) => e.currentTarget.style.borderColor = colors.platinum}
+              animationKey={animationKey}
             >
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
@@ -262,13 +297,42 @@ const GPU = () => {
                   </div>
                 </div>
 
-                <div className="pt-4 border-t" style={{ borderColor: colors.platinum }}>
+                <div className="pt-4 border-t mb-4" style={{ borderColor: colors.platinum }}>
                   <p className="text-2xl font-bold text-center" style={{ color: colors.mainYellow }}>
                     ${gpu.price.toFixed(2)}
                   </p>
                 </div>
+
+                {/* Action Buttons */}
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSelectGPU(gpu);
+                    }}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedGPU?.id === gpu.id ? colors.mainYellow : 'white',
+                      color: selectedGPU?.id === gpu.id ? 'white' : colors.mainYellow,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {selectedGPU?.id === gpu.id ? 'Selected' : 'Select'}
+                  </button>
+                  <button
+                    onClick={(e) => handleProductClick(gpu.id, e)}
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: selectedGPU?.id === gpu.id ? 'white' : colors.mainYellow,
+                      color: selectedGPU?.id === gpu.id ? colors.mainYellow : 'white',
+                      border: selectedGPU?.id === gpu.id ? `2px solid ${colors.mainYellow}` : 'none'
+                    }}
+                  >
+                    Details
+                  </button>
+                </div>
               </div>
-            </div>
+            </BounceCard>
           ))}
         </div>
 
