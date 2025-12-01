@@ -64,41 +64,27 @@ function AppContent() {
           <Route path="/completed-builds" element={<CompletedBuilds />} />
           <Route path="/build/:id" element={<BuildDetails />} />
           <Route path="/completed-builds/submit-build" element={<SubmitBuild />} />
-          <Route path="/builder/cpu" element={<CPU />} />
-          <Route path="/builder/cooler" element={<CPUCooler />} />
-          <Route path="/builder/motherboard" element={<Motherboard />} />
-          <Route path="/builder/memory" element={<Memory />} />
-          <Route path="/builder/storage" element={<Storage />} />
-          <Route path="/builder/gpu" element={<GPU />} />
-          <Route path="/builder/case" element={<Case />} />
-          <Route path="/builder/psu" element={<PowerSupply />} />
-          <Route path="/builder/monitor" element={<Monitor />} />
-          <Route path="/builder/expansion" element={<Expansion />} />
-          <Route path="/builder/peripherals" element={<Peripherals />} />
-          <Route path="/builder/accessories" element={<Accessories />} />
-        
-        
-        <Route path="/news" element={<News />} />
-        <Route path="/signin" element={<AuthLayout />} />
-        <Route path="/signup" element={<AuthLayout />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/chat" element={<Chat />} />
-        <Route path="/posts" element={<Posts />} />
-        <Route path="/tech-support" element={<TechSupport />} />
-        {/* Product Category Routes */}
-        <Route path="/products/cpu" element={<CPU />} />
-        <Route path="/products/gpu" element={<GPU />} />
-        <Route path="/products/memory" element={<Memory />} />
-        <Route path="/products/motherboard" element={<Motherboard />} /> 
-        <Route path="/products/storage" element={<Storage />} />
-        <Route path="/products/power-supply" element={<PowerSupply />} />
-        <Route path="/products/case" element={<Case />} /> 
-        <Route path="/products/monitor" element={<Monitor />} />
-        <Route path="/products/accessories" element={<Accessories />} />
-        <Route path="/products/cooler" element={<CPUCooler />} />
-        {/* Product Details Route - Dynamic */}
-        <Route path="/product/:category/:id" element={<ProductDetails />} />
+          <Route path="/news" element={<News />} />
+          <Route path="/signin" element={<AuthLayout />} />
+          <Route path="/signup" element={<AuthLayout />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/posts" element={<Posts />} />
+          <Route path="/tech-support" element={<TechSupport />} />
+          {/* Product Category Routes */}
+          <Route path="/products/cpu" element={<CPU />} />
+          <Route path="/products/gpu" element={<GPU />} />
+          <Route path="/products/memory" element={<Memory />} />
+          <Route path="/products/motherboard" element={<Motherboard />} /> 
+          <Route path="/products/storage" element={<Storage />} />
+          <Route path="/products/power-supply" element={<PowerSupply />} />
+          <Route path="/products/case" element={<Case />} /> 
+          <Route path="/products/monitor" element={<Monitor />} />
+          <Route path="/products/accessories" element={<Accessories />} />
+          <Route path="/products/cooler" element={<CPUCooler />} />
+          {/* Product Details Route - Dynamic */}
+          <Route path="/product/:category/:id" element={<ProductDetails />} />
       </Routes>
 
       {/* Show ChatBot on all pages except news and chat */}

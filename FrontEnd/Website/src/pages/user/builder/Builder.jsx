@@ -44,8 +44,23 @@ const Builder = () => {
 
   const handleComponentClick = (componentId) => {
     console.log(`Selecting component: ${componentId}`);
-    // Navigate to component selection page
-    navigate(`/builder/${componentId}`);
+    // Navigate to products page for the specific component
+    const routeMap = {
+      'cpu': '/products/cpu',
+      'cooler': '/products/cooler',
+      'motherboard': '/products/motherboard',
+      'memory': '/products/ram',
+      'storage': '/products/storage',
+      'gpu': '/products/gpu',
+      'case': '/products/case',
+      'psu': '/products/power-supply',
+      'monitor': '/products/monitor',
+      'expansion': '/products/expansion',
+      'peripherals': '/products/peripherals',
+      'accessories': '/products/accessories'
+    };
+    
+    navigate(routeMap[componentId] || `/products/${componentId}`);
   };
 
   const calculateTotal = () => {
