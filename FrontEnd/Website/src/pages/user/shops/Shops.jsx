@@ -428,7 +428,7 @@ const Shops = () => {
               <button
                 key={city}
                 onClick={() => handleCityFilter(city)}
-                className="px-5 py-2 rounded-full font-medium transition-all shrink-0"
+                className="px-5 py-2 rounded-full font-medium transition-all shrink-0 cursor-pointer"
                 style={{
                   backgroundColor: selectedCity === city ? colors.mainYellow : 'white',
                   color: selectedCity === city ? 'white' : colors.jet,
@@ -541,7 +541,7 @@ const Shops = () => {
 
                 {/* Visit Button */}
                 <button
-                  className="w-full py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2"
+                  className="w-full py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2 cursor-pointer"
                   style={{ backgroundColor: colors.mainYellow }}
                   onClick={(e) => {
                     e.stopPropagation();
@@ -562,7 +562,7 @@ const Shops = () => {
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className="px-4 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2"
+              className="px-4 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 cursor-pointer"
               style={{
                 backgroundColor: currentPage === 1 ? colors.platinum : colors.mainYellow,
                 color: currentPage === 1 ? colors.jet : 'white',
@@ -579,7 +579,7 @@ const Shops = () => {
                 <button
                   key={pageNumber}
                   onClick={() => handlePageChange(pageNumber)}
-                  className="w-10 h-10 rounded-lg font-semibold transition-all duration-200"
+                  className="w-10 h-10 rounded-lg font-semibold transition-all duration-200 cursor-pointer"
                   style={{
                     backgroundColor: currentPage === pageNumber ? colors.mainYellow : 'white',
                     color: currentPage === pageNumber ? 'white' : colors.mainBlack,
@@ -608,7 +608,7 @@ const Shops = () => {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="px-4 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2"
+              className="px-4 py-2 rounded-lg font-semibold transition-all duration-200 flex items-center gap-2 cursor-pointer"
               style={{
                 backgroundColor: currentPage === totalPages ? colors.platinum : colors.mainYellow,
                 color: currentPage === totalPages ? colors.jet : 'white',
@@ -636,7 +636,7 @@ const Shops = () => {
           </p>
           <button
             onClick={() => setShowSubmitModal(true)}
-            className="px-8 py-4 rounded-lg font-bold text-white hover:opacity-90 transition-opacity text-lg flex items-center gap-2 mx-auto"
+            className="px-8 py-4 rounded-lg font-bold text-white hover:opacity-90 transition-opacity text-lg flex items-center gap-2 mx-auto cursor-pointer"
             style={{ backgroundColor: colors.mainYellow }}
           >
             <FiPlus size={20} />
@@ -682,7 +682,7 @@ const Shops = () => {
               </h2>
               <button
                 onClick={() => setShowSubmitModal(false)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
               >
                 <FiX size={24} style={{ color: colors.jet }} />
               </button>
@@ -842,7 +842,7 @@ const Shops = () => {
                       name="city"
                       value={shopSubmission.city}
                       onChange={handleSubmissionChange}
-                      className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
+                      className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors cursor-pointer"
                       style={{ 
                         borderColor: colors.platinum,
                         color: colors.mainBlack
@@ -960,7 +960,7 @@ const Shops = () => {
                 <button
                   type="button"
                   onClick={() => setShowSubmitModal(false)}
-                  className="flex-1 px-6 py-3 rounded-lg font-semibold transition-colors border-2"
+                  className="flex-1 px-6 py-3 rounded-lg font-semibold transition-colors border-2 cursor-pointer"
                   style={{ 
                     borderColor: colors.platinum,
                     color: colors.jet,
@@ -971,7 +971,7 @@ const Shops = () => {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-6 py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity"
+                  className="flex-1 px-6 py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity cursor-pointer"
                   style={{ backgroundColor: colors.mainYellow }}
                 >
                   Submit for Review

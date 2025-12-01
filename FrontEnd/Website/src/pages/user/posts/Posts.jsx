@@ -189,7 +189,7 @@ const Posts = () => {
           </div>
           
           <div className="flex items-center gap-4 mt-4 pt-4 border-t-2" style={{ borderColor: colors.platinum }}>
-            <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg hover:bg-opacity-10 transition-all"
+            <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg hover:bg-opacity-10 transition-all cursor-pointer"
                     style={{ color: colors.mainYellow }}>
               <FiImage size={20} />
               <span className="font-semibold">Photo/Video</span>

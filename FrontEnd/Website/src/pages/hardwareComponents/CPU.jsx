@@ -174,7 +174,7 @@ const CPU = () => {
                 <select
                   value={brandFilter}
                   onChange={(e) => handleBrandFilter(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2"
+                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer"
                   style={{
                     border: `2px solid ${colors.platinum}`,
                     backgroundColor: 'white',
@@ -195,7 +195,7 @@ const CPU = () => {
                 <select
                   value={socketFilter}
                   onChange={(e) => handleSocketFilter(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2"
+                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer"
                   style={{
                     border: `2px solid ${colors.platinum}`,
                     backgroundColor: 'white',
@@ -224,7 +224,7 @@ const CPU = () => {
         {/* Selected Component Bar */}
         {selectedCPU && (
           <div 
-            className="rounded-lg shadow-lg p-4 mb-6 flex justify-between items-center"
+            className="rounded-lg shadow-lg p-4 mb-6 flex justify-between items-center cursor-pointer"
             style={{ backgroundColor: colors.mainYellow }}
           >
             <div>

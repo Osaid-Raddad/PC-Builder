@@ -163,7 +163,7 @@ const GPU = () => {
                 <select
                   value={brandFilter}
                   onChange={(e) => handleBrandFilter(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2"
+                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer"
                   style={{
                     border: `2px solid ${colors.platinum}`,
                     backgroundColor: 'white',
@@ -184,7 +184,7 @@ const GPU = () => {
                 <select
                   value={memoryFilter}
                   onChange={(e) => handleMemoryFilter(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2"
+                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer"
                   style={{
                     border: `2px solid ${colors.platinum}`,
                     backgroundColor: 'white',
@@ -205,7 +205,7 @@ const GPU = () => {
                 <select
                   value={priceFilter}
                   onChange={(e) => handlePriceFilter(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2"
+                  className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer"
                   style={{
                     border: `2px solid ${colors.platinum}`,
                     backgroundColor: 'white',

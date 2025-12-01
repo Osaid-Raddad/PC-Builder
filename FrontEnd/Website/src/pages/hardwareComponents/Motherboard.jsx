@@ -121,19 +121,19 @@ const Motherboard = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Brand</label>
-                <select value={brandFilter} onChange={(e) => setBrandFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
+                <select value={brandFilter} onChange={(e) => setBrandFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
                   {brands.map(b => <option key={b} value={b}>{b}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Socket</label>
-                <select value={socketFilter} onChange={(e) => setSocketFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
+                <select value={socketFilter} onChange={(e) => setSocketFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
                   {sockets.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Form Factor</label>
-                <select value={formFactorFilter} onChange={(e) => setFormFactorFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
+                <select value={formFactorFilter} onChange={(e) => setFormFactorFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer " style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
                   {formFactors.map(f => <option key={f} value={f}>{f}</option>)}
                 </select>
               </div>

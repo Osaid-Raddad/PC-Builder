@@ -407,7 +407,7 @@ const CompletedBuilds = () => {
               <button
                 key={category}
                 onClick={() => handleCategoryFilter(category)}
-                className="px-5 py-2 rounded-full font-medium transition-all shrink-0"
+                className="px-5 py-2 rounded-full font-medium transition-all shrink-0 cursor-pointer"
                 style={{
                   backgroundColor: selectedCategory === category ? colors.mainYellow : 'white',
                   color: selectedCategory === category ? 'white' : colors.jet,
@@ -556,7 +556,7 @@ const CompletedBuilds = () => {
                     <div className="flex items-center gap-4">
                       <button 
                         onClick={() => handleLike(build.id)}
-                        className="flex items-center gap-1 hover:opacity-70 transition-opacity"
+                        className="flex items-center gap-1 hover:opacity-70 transition-opacity cursor-pointer"
                       >
                         <FiThumbsUp size={18} style={{ color: colors.mainYellow }} />
                         <span className="text-sm font-semibold" style={{ color: colors.mainBlack }}>
@@ -575,7 +575,7 @@ const CompletedBuilds = () => {
                     {/* Share Button */}
                     <button
                       onClick={() => handleShare(build.id)}
-                      className="p-2 rounded-lg hover:opacity-70 transition-all"
+                      className="p-2 rounded-lg hover:opacity-70 transition-all cursor-pointer"
                       style={{ border: `2px solid ${colors.platinum}` }}
                     >
                       <FiShare2 size={18} style={{ color: colors.mainYellow }} />
@@ -593,7 +593,7 @@ const CompletedBuilds = () => {
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className="p-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               style={{
                 backgroundColor: 'white',
                 border: `2px solid ${colors.platinum}`,
@@ -607,7 +607,7 @@ const CompletedBuilds = () => {
               <button
                 key={index + 1}
                 onClick={() => handlePageChange(index + 1)}
-                className="px-4 py-2 rounded-lg font-semibold transition-all"
+                className="px-4 py-2 rounded-lg font-semibold transition-all cursor-pointer"
                 style={{
                   backgroundColor: currentPage === index + 1 ? colors.mainYellow : 'white',
                   color: currentPage === index + 1 ? 'white' : colors.jet,
@@ -635,7 +635,7 @@ const CompletedBuilds = () => {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className="p-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
               style={{
                 backgroundColor: 'white',
                 border: `2px solid ${colors.platinum}`,
@@ -676,7 +676,7 @@ const CompletedBuilds = () => {
                 window.scrollTo({ top: 0, behavior: 'instant' });
                 navigate('/builder');
               }}
-              className="px-8 py-4 rounded-lg font-bold text-white hover:opacity-90 transition-opacity text-lg"
+              className="px-8 py-4 rounded-lg font-bold text-white hover:opacity-90 transition-opacity text-lg cursor-pointer"
               style={{ backgroundColor: colors.mainYellow }}
             >
               Start Your Build
@@ -684,9 +684,9 @@ const CompletedBuilds = () => {
             <button
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: 'instant' });
-                navigate('/submit-build');
+                navigate('/completed-builds/submit-build');
               }}
-              className="px-8 py-4 rounded-lg font-bold hover:opacity-90 transition-opacity text-lg"
+              className="px-8 py-4 rounded-lg font-bold hover:opacity-90 transition-opacity text-lg cursor-pointer"
               style={{ 
                 backgroundColor: 'white',
                 color: colors.mainYellow,

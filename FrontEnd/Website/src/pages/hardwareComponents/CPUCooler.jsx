@@ -142,7 +142,7 @@ const CPUCooler = () => {
               <select
                 value={typeFilter}
                 onChange={(e) => handleTypeFilter(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80 cursor-pointer"
                 style={{ 
                   borderColor: colors.platinum,
                   color: colors.mainBlack,
@@ -163,7 +163,7 @@ const CPUCooler = () => {
               <select
                 value={brandFilter}
                 onChange={(e) => handleBrandFilter(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80 cursor-pointer"
                 style={{ 
                   borderColor: colors.platinum,
                   color: colors.mainBlack,
@@ -184,7 +184,7 @@ const CPUCooler = () => {
               <select
                 value={priceFilter}
                 onChange={(e) => setPriceFilter(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80 cursor-pointer"
                 style={{ 
                   borderColor: colors.platinum,
                   color: colors.mainBlack,

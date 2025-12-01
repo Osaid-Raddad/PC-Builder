@@ -63,7 +63,7 @@ function AppContent() {
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/completed-builds" element={<CompletedBuilds />} />
           <Route path="/build/:id" element={<BuildDetails />} />
-          <Route path="/submit-build" element={<SubmitBuild />} />
+          <Route path="/completed-builds/submit-build" element={<SubmitBuild />} />
           <Route path="/builder/cpu" element={<CPU />} />
           <Route path="/builder/cooler" element={<CPUCooler />} />
           <Route path="/builder/motherboard" element={<Motherboard />} />
@@ -89,6 +89,7 @@ function AppContent() {
         {/* Product Category Routes */}
         <Route path="/products/cpu" element={<CPU />} />
         <Route path="/products/gpu" element={<GPU />} />
+        <Route path="/products/memory" element={<Memory />} />
         <Route path="/products/motherboard" element={<Motherboard />} /> 
         <Route path="/products/storage" element={<Storage />} />
         <Route path="/products/power-supply" element={<PowerSupply />} />

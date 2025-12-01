@@ -132,7 +132,7 @@ const Monitor = () => {
               <select
                 value={sizeFilter}
                 onChange={(e) => handleSizeFilter(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80 cursor-pointer"
                 style={{ 
                   borderColor: colors.platinum,
                   color: colors.mainBlack,
@@ -153,7 +153,7 @@ const Monitor = () => {
               <select
                 value={resolutionFilter}
                 onChange={(e) => handleResolutionFilter(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80 cursor-pointer"
                 style={{ 
                   borderColor: colors.platinum,
                   color: colors.mainBlack,
@@ -174,7 +174,7 @@ const Monitor = () => {
               <select
                 value={refreshRateFilter}
                 onChange={(e) => handleRefreshRateFilter(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80 cursor-pointer"
                 style={{ 
                   borderColor: colors.platinum,
                   color: colors.mainBlack,

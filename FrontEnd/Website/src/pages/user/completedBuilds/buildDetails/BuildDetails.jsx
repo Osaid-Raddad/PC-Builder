@@ -199,7 +199,7 @@ const BuildDetails = () => {
         <div className="mb-6">
           <button
             onClick={() => navigate('/completed-builds')}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all hover:shadow-md group"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all hover:shadow-md group cursor-pointer"
             style={{ 
               backgroundColor: colors.mainYellow,
               color: 'white',
@@ -241,14 +241,14 @@ const BuildDetails = () => {
                 <>
                   <button
                     onClick={() => setSelectedImage(prev => prev === 0 ? build.images.length - 1 : prev - 1)}
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full hover:opacity-80 transition-opacity"
+                    className="absolute left-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full hover:opacity-80 transition-opacity cursor-pointer"
                     style={{ backgroundColor: colors.mainYellow }}
                   >
                     <FiChevronLeft size={24} color="white" />
                   </button>
                   <button
                     onClick={() => setSelectedImage(prev => prev === build.images.length - 1 ? 0 : prev + 1)}
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full hover:opacity-80 transition-opacity"
+                    className="absolute right-4 top-1/2 transform -translate-y-1/2 p-2 rounded-full hover:opacity-80 transition-opacity cursor-pointer"
                     style={{ backgroundColor: colors.mainYellow }}
                   >
                     <FiChevronRight size={24} color="white" />
@@ -263,7 +263,7 @@ const BuildDetails = () => {
                 <button
                   key={index}
                   onClick={() => setSelectedImage(index)}
-                  className={`shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all ${
+                  className={`shrink-0 w-20 h-20 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
                     selectedImage === index ? 'ring-2' : ''
                   }`}
                   style={{ 
@@ -309,7 +309,7 @@ const BuildDetails = () => {
                 </span>
                 <button 
                   onClick={() => setActiveTab('reviews')}
-                  className="hover:underline"
+                  className="hover:underline cursor-pointer"
                   style={{ color: colors.jet }}
                 >
                   {build.reviewCount} reviews
@@ -356,7 +356,7 @@ const BuildDetails = () => {
                 {showFullDescription ? build.description : `${build.description.substring(0, 200)}...`}
                 <button
                   onClick={() => setShowFullDescription(!showFullDescription)}
-                  className="ml-2 font-semibold hover:underline"
+                  className="ml-2 font-semibold hover:underline cursor-pointer"
                   style={{ color: colors.mainYellow }}
                 >
                   {showFullDescription ? 'Show less' : 'Read more'}
@@ -368,7 +368,7 @@ const BuildDetails = () => {
             <div className="flex gap-3 mb-6">
               <button
                 onClick={handleLike}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer"
                 style={{ 
                   backgroundColor: liked ? colors.mainYellow : 'white',
                   color: liked ? 'white' : colors.mainYellow,
@@ -380,7 +380,7 @@ const BuildDetails = () => {
               </button>
               <button
                 onClick={handleShare}
-                className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+                className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer"
                 style={{ 
                   backgroundColor: 'white',
                   color: colors.mainYellow,
@@ -402,7 +402,7 @@ const BuildDetails = () => {
           <div className="flex gap-4 border-b-2 mb-6" style={{ borderColor: colors.platinum }}>
             <button
               onClick={() => setActiveTab('specs')}
-              className={`px-6 py-3 font-semibold transition-all ${
+              className={`px-6 py-3 font-semibold transition-all cursor-pointer ${
                 activeTab === 'specs' ? 'border-b-4' : ''
               }`}
               style={{ 
@@ -414,7 +414,7 @@ const BuildDetails = () => {
             </button>
             <button
               onClick={() => setActiveTab('reviews')}
-              className={`px-6 py-3 font-semibold transition-all ${
+              className={`px-6 py-3 font-semibold transition-all cursor-pointer ${
                 activeTab === 'reviews' ? 'border-b-4' : ''
               }`}
               style={{ 
@@ -426,7 +426,7 @@ const BuildDetails = () => {
             </button>
             <button
               onClick={() => setActiveTab('qna')}
-              className={`px-6 py-3 font-semibold transition-all ${
+              className={`px-6 py-3 font-semibold transition-all cursor-pointer ${
                 activeTab === 'qna' ? 'border-b-4' : ''
               }`}
               style={{ 
@@ -539,7 +539,7 @@ const BuildDetails = () => {
                     </p>
                     
                     <button
-                      className="text-sm hover:underline"
+                      className="text-sm hover:underline cursor-pointer"
                       style={{ color: colors.jet }}
                     >
                       👍 Helpful ({review.helpful})
@@ -584,7 +584,7 @@ const BuildDetails = () => {
               {/* Ask Question Button */}
               <button
                 onClick={() => toast.info('Question form coming soon!')}
-                className="w-full px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+                className="w-full px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer"
                 style={{ 
                   backgroundColor: 'white',
                   color: colors.mainYellow,

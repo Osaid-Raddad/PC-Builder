@@ -154,7 +154,7 @@ const SubmitBuild = () => {
                             <button
                               type="button"
                               onClick={() => removeImage(index)}
-                              className="absolute top-2 right-2 p-2 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                              className="absolute top-2 right-2 p-2 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 cursor-pointer"
                               title="Remove image"
                             >
                               <FiX size={16} />
@@ -294,7 +294,7 @@ const SubmitBuild = () => {
                         name="category"
                         value={formData.category}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2"
+                        className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 cursor-pointer"
                         style={{
                           border: `2px solid ${colors.platinum}`,
                           backgroundColor: 'white',
@@ -489,7 +489,7 @@ const SubmitBuild = () => {
               <button
                 type="button"
                 onClick={() => navigate('/completed-builds')}
-                className="px-8 py-4 rounded-lg font-bold transition-opacity hover:opacity-90 text-lg"
+                className="px-8 py-4 rounded-lg font-bold transition-opacity hover:opacity-90 text-lg cursor-pointer"
                 style={{
                   backgroundColor: 'white',
                   color: colors.jet,
@@ -500,7 +500,7 @@ const SubmitBuild = () => {
               </button>
               <button
                 type="submit"
-                className="px-12 py-4 rounded-lg font-bold text-white hover:opacity-90 transition-opacity text-lg"
+                className="px-12 py-4 rounded-lg font-bold text-white hover:opacity-90 transition-opacity text-lg cursor-pointer"
                 style={{ backgroundColor: colors.mainYellow }}
               >
                 Submit Build

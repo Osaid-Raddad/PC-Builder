@@ -126,9 +126,10 @@ const CommentsModal = ({ post, onClose }) => {
           <h2 className="text-2xl font-bold" style={{ color: colors.mainBlack }}>
             {post.author.name}'s Post
           </h2>
+          {/* Close Button */}
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
           >
             <FiX size={24} style={{ color: colors.jet }} />
           </button>
@@ -214,16 +215,20 @@ const CommentsModal = ({ post, onClose }) => {
                       </div>
                       
                       <div className="flex items-center gap-4 mt-1 ml-4 text-xs">
+                        {/* Like Comment Button */}
                         <button
                           onClick={() => handleLikeComment(comment.id)}
-                          className="font-semibold hover:underline"
+                          className="flex items-center gap-1 text-sm hover:opacity-70 transition-opacity cursor-pointer"
                           style={{ color: comment.liked ? colors.mainYellow : colors.jet }}
                         >
-                          Like {comment.likes > 0 && `(${comment.likes})`}
+                          <FiThumbsUp size={14} fill={comment.liked ? colors.mainYellow : 'none'} />
+                          <span>{comment.likes}</span>
                         </button>
+
+                        {/* Reply Button */}
                         <button
                           onClick={() => setReplyingTo(comment.id)}
-                          className="font-semibold hover:underline"
+                          className="text-sm hover:opacity-70 transition-opacity cursor-pointer"
                           style={{ color: colors.jet }}
                         >
                           Reply
@@ -321,12 +326,14 @@ const CommentsModal = ({ post, onClose }) => {
                 onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
                 onBlur={(e) => e.target.style.borderColor = colors.platinum}
               />
+              {/* Send Comment Button */}
               <button
-                type="submit"
-                className="px-4 py-2 rounded-full font-semibold text-white hover:opacity-90 transition-opacity flex items-center gap-2"
+                onClick={handleAddComment}
+                disabled={!newComment.trim()}
+                className="p-3 rounded-full hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 style={{ backgroundColor: colors.mainYellow }}
               >
-                <FiSend size={18} />
+                <FiSend size={20} color="white" />
               </button>
             </div>
           </form>
