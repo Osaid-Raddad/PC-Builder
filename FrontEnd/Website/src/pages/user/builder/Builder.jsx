@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../../../components/user/navbar/Navbar.jsx';
 import Footer from '../../../components/user/footer/Footer.jsx';
 import BounceCard from '../../../components/animations/BounceCard/BounceCard.jsx';
+import QRCodeModal from '../../../components/user/builder/QRCodeModal.jsx';
 import colors from '../../../config/colors';
 import { 
   FaMicrochip, 
@@ -24,6 +25,7 @@ import { BsCpuFill, BsMotherboard } from 'react-icons/bs';
 const Builder = () => {
   const navigate = useNavigate();
   const [selectedComponents, setSelectedComponents] = useState({});
+  const [showQRModal, setShowQRModal] = useState(false);
 
   const components = [
     { id: 'cpu', name: 'CPU', icon: <BsCpuFill size={24} />, description: 'Choose your processor' },
@@ -84,6 +86,21 @@ const Builder = () => {
         color: '#F44336'
       };
     }
+  };
+
+  const handleShareBuild = () => {
+    // Generate a unique URL for this build
+    // In production, you would save the build to backend and get a real ID
+    const buildId = Math.random().toString(36).substring(7);
+    const buildUrl = `${window.location.origin}/shared-build/${buildId}`;
+    
+    setShowQRModal(true);
+  };
+
+  const getBuildUrl = () => {
+    // Generate build URL with current components
+    const buildId = Math.random().toString(36).substring(7);
+    return `${window.location.origin}/shared-build/${buildId}`;
   };
 
   const compatibility = checkCompatibility();
@@ -195,7 +212,7 @@ const Builder = () => {
                   </div>
                 ) : (
                   <button
-                    className="w-full py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity"
+                    className="w-full py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity cursor-pointer"
                     style={{ backgroundColor: colors.mainYellow }}
                   >
                     Choose {component.name}
@@ -209,14 +226,14 @@ const Builder = () => {
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 mt-8 justify-center">
           <button
-            className="px-8 py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity shadow-lg"
+            className="px-8 py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity shadow-lg cursor-pointer"
             style={{ backgroundColor: colors.mainYellow }}
             disabled={Object.keys(selectedComponents).length === 0}
           >
             Save Build
           </button>
           <button
-            className="px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-lg"
+            className="px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-lg cursor-pointer"
             style={{ 
               backgroundColor: 'white',
               color: colors.mainYellow,
@@ -226,7 +243,8 @@ const Builder = () => {
             Clear Build
           </button>
           <button
-            className="px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-lg"
+            onClick={handleShareBuild}
+            className="px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-lg cursor-pointer"
             style={{ 
               backgroundColor: colors.jet,
               color: 'white'
@@ -236,6 +254,14 @@ const Builder = () => {
           </button>
         </div>
       </div>
+
+      {/* QR Code Modal */}
+      {showQRModal && (
+        <QRCodeModal
+          buildUrl={getBuildUrl()}
+          onClose={() => setShowQRModal(false)}
+        />
+      )}
 
       <Footer />
     </div>
