@@ -8,6 +8,7 @@ import PostCard from './PostCard';
 import CommentsModal from './CommentsModal';
 import toast from 'react-hot-toast';
 import BlurText from '../../../components/animations/BlurText/BlurText';
+import BounceCard from '../../../components/animations/BounceCard/BounceCard';
 
 const Posts = () => {
   const [posts, setPosts] = useState([]);
@@ -188,7 +189,7 @@ const Posts = () => {
           </div>
           
           <div className="flex items-center gap-4 mt-4 pt-4 border-t-2" style={{ borderColor: colors.platinum }}>
-            <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg hover:bg-opacity-10 transition-all"
+            <button className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg hover:bg-opacity-10 transition-all cursor-pointer"
                     style={{ color: colors.mainYellow }}>
               <FiImage size={20} />
               <span className="font-semibold">Photo/Video</span>
@@ -198,13 +199,14 @@ const Posts = () => {
 
         {/* Posts Feed */}
         <div className="space-y-6">
-          {posts.map((post) => (
-            <PostCard
-              key={post.id}
-              post={post}
-              onLike={handleLike}
-              onComment={handleComment}
-            />
+          {posts.map((post, index) => (
+            <BounceCard key={post.id} index={index}>
+              <PostCard
+                post={post}
+                onLike={handleLike}
+                onComment={handleComment}
+              />
+            </BounceCard>
           ))}
         </div>
 

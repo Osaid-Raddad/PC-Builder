@@ -90,9 +90,10 @@ const CreatePostModal = ({ onClose, onSubmit }) => {
           <h2 className="text-2xl font-bold" style={{ color: colors.mainBlack }}>
             Create Post
           </h2>
+          {/* Close Button */}
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 rounded-full hover:bg-gray-100 transition-colors cursor-pointer"
           >
             <FiX size={24} style={{ color: colors.jet }} />
           </button>
@@ -150,13 +151,12 @@ const CreatePostModal = ({ onClose, onSubmit }) => {
                       alt={`Preview ${index + 1}`}
                       className="w-full h-48 object-cover rounded-lg"
                     />
+                    {/* Remove Image Button */}
                     <button
-                      type="button"
                       onClick={() => removeImage(index)}
-                      className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                      style={{ color: colors.mainYellow }}
+                      className="absolute top-2 right-2 p-1 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                     >
-                      <FiTrash2 size={18} />
+                      <FiX size={16} />
                     </button>
                   </div>
                 ))}
@@ -165,22 +165,12 @@ const CreatePostModal = ({ onClose, onSubmit }) => {
           )}
 
           {/* Add Images Button */}
-          <label 
-            className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg border-2 cursor-pointer transition-all hover:border-solid"
-            style={{ 
-              borderColor: colors.platinum,
-              borderStyle: 'dashed',
-              color: colors.jet
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = colors.mainYellow;
-              e.currentTarget.style.backgroundColor = colors.mainYellow + '08';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = colors.platinum;
-              e.currentTarget.style.backgroundColor = 'transparent';
-            }}
+          <label
+            className="flex items-center justify-center gap-2 px-4 py-3 rounded-lg border-2 border-dashed hover:border-solid transition-all cursor-pointer"
+            style={{ borderColor: colors.mainYellow, color: colors.mainYellow }}
           >
+            <FiImage size={20} />
+            <span className="font-semibold">Add Photos ({images.length}/5)</span>
             <input
               type="file"
               accept="image/jpeg,image/jpg,image/png,image/webp"
@@ -188,8 +178,6 @@ const CreatePostModal = ({ onClose, onSubmit }) => {
               onChange={handleImageChange}
               className="hidden"
             />
-            <FiImage size={20} style={{ color: colors.mainYellow }} />
-            <span className="font-semibold">Add Photos ({images.length}/5)</span>
           </label>
         </form>
 
@@ -198,25 +186,28 @@ const CreatePostModal = ({ onClose, onSubmit }) => {
           className="p-4 border-t-2 flex gap-3"
           style={{ borderColor: colors.platinum }}
         >
-          <button
-            type="button"
-            onClick={onClose}
-            className="flex-1 px-6 py-3 rounded-lg font-semibold transition-colors border-2"
-            style={{ 
-              borderColor: colors.platinum,
-              color: colors.jet,
-              backgroundColor: 'white'
-            }}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="flex-1 px-6 py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity"
-            style={{ backgroundColor: colors.mainYellow }}
-          >
-            Post
-          </button>
+          {/* Action Buttons */}
+          <div className="flex gap-3">
+            <button
+              onClick={onClose}
+              className="flex-1 px-6 py-3 rounded-lg font-semibold border-2 hover:opacity-80 transition-opacity cursor-pointer"
+              style={{ 
+                borderColor: colors.platinum,
+                color: colors.jet,
+                backgroundColor: 'white'
+              }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleSubmit}
+              disabled={!content.trim()}
+              className="flex-1 px-6 py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+              style={{ backgroundColor: colors.mainYellow }}
+            >
+              Post
+            </button>
+          </div>
         </div>
       </div>
     </div>

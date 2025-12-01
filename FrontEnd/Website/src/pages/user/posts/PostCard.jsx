@@ -71,7 +71,7 @@ const PostCard = ({ post, onLike, onComment }) => {
       <div className="px-4 py-2 flex items-center justify-around">
         <button
           onClick={() => onLike(post.id)}
-          className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg hover:bg-opacity-10 transition-all font-semibold"
+          className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg hover:bg-opacity-10 transition-all font-semibold cursor-pointer"
           style={{ 
             color: post.liked ? colors.mainYellow : colors.jet,
           }}
@@ -84,7 +84,7 @@ const PostCard = ({ post, onLike, onComment }) => {
 
         <button
           onClick={() => onComment(post)}
-          className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg hover:bg-opacity-10 transition-all font-semibold"
+          className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg hover:bg-opacity-10 transition-all font-semibold cursor-pointer"
           style={{ color: colors.jet }}
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow + '10'}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -94,7 +94,7 @@ const PostCard = ({ post, onLike, onComment }) => {
         </button>
 
         <button
-          className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg hover:bg-opacity-10 transition-all font-semibold"
+          className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg hover:bg-opacity-10 transition-all font-semibold cursor-pointer"
           style={{ color: colors.jet }}
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow + '10'}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}

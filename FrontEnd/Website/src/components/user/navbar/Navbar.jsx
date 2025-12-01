@@ -26,7 +26,7 @@ export default function Navbar() {
     { label: 'CPU', path: '/products/cpu', icon: <FaMicrochip size={18} /> },
     { label: 'GPU', path: '/products/gpu', icon: <BsGpuCard size={18} /> },
     { label: 'Motherboard', path: '/products/motherboard', icon: <BsFillMotherboardFill size={18} /> },
-    { label: 'RAM', path: '/products/ram', icon: <FaMemory size={18} /> },
+    { label: 'RAM', path: '/products/memory', icon: <FaMemory size={18} /> },
     { label: 'Storage', path: '/products/storage', icon: <FaHdd size={18} /> },
     { label: 'Power Supply', path: '/products/power-supply', icon: <MdPowerSettingsNew size={18} /> },
     { label: 'Case', path: '/products/case', icon: <PiDesktopTowerFill size={18} /> },
@@ -79,6 +79,12 @@ export default function Navbar() {
       icon: <FiMessageCircle size={18} />,
       tooltip: 'Message other users and shop owners'
     },
+    { 
+      label: 'Tech Support',
+      path: '/tech-support',
+      icon: <HiCog size={18} />,
+      tooltip: 'Get in touch with our support team'
+    }
   ];
 
   const handleNavigation = (path) => {
@@ -146,7 +152,7 @@ export default function Navbar() {
               <div key={index} className="relative group products-menu-container">
                 <button
                   onClick={() => item.hasDropdown ? handleProductsClick() : handleNavigation(item.path)}
-                  className="flex items-center space-x-1.5 px-2 py-2 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap"
+                  className="flex items-center space-x-1.5 px-2 py-2 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap cursor-pointer"
                   style={{ 
                     color: '#FFFFFF',
                   }}
@@ -182,15 +188,19 @@ export default function Navbar() {
                       <React.Fragment key={idx}>
                         <button
                           onClick={() => handleNavigation(product.path)}
-                          className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200"
+                          className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 cursor-pointer"
                           style={{ color: 'white' }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.backgroundColor = colors.mainYellow;
                             e.currentTarget.style.color = colors.mainBlack;
+                            const icon = e.currentTarget.querySelector('span:first-child');
+                            if (icon) icon.style.color = colors.mainBlack;
                           }}
                           onMouseLeave={(e) => {
                             e.currentTarget.style.backgroundColor = 'transparent';
                             e.currentTarget.style.color = 'white';
+                            const icon = e.currentTarget.querySelector('span:first-child');
+                            if (icon) icon.style.color = colors.mainYellow;
                           }}
                         >
                           <span style={{ color: colors.mainYellow }}>{product.icon}</span>
@@ -214,7 +224,7 @@ export default function Navbar() {
               <input
                 type="text"
                 placeholder="Search..."
-                className="pl-10 pr-4 py-2 rounded-full text-sm focus:outline-none focus:ring-2 transition-all duration-200 w-44"
+                className="pl-10 pr-4 py-2 rounded-full text-sm focus:outline-none focus:ring-2 transition-all duration-200 w-44 cursor-text"
                 style={{ 
                   backgroundColor: colors.jet,
                   border: `1px solid ${colors.platinum}`,
@@ -242,7 +252,7 @@ export default function Navbar() {
             <div className="relative user-menu-container">
               <button 
                 onClick={toggleUserMenu}
-                className="flex items-center space-x-2 px-3 py-2 rounded-full transition-all duration-200"
+                className="flex items-center space-x-2 px-3 py-2 rounded-full transition-all duration-200 cursor-pointer"
                 style={{ border: `2px solid ${colors.mainYellow}` }}
                 onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.jet}
                 onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -274,7 +284,7 @@ export default function Navbar() {
                     <>
                       <button
                         onClick={() => handleNavigation('/signin')}
-                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
                         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -285,7 +295,7 @@ export default function Navbar() {
                       <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
                       <button
                         onClick={() => handleNavigation('/signup')}
-                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
                         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -299,7 +309,7 @@ export default function Navbar() {
                     <>
                       <button
                         onClick={() => handleNavigation('/profile')}
-                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
                         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -310,7 +320,7 @@ export default function Navbar() {
                       <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
                       <button
                         onClick={() => handleNavigation('/my-builds')}
-                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
                         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -321,7 +331,7 @@ export default function Navbar() {
                       <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
                       <button
                         onClick={() => handleNavigation('/favorites')}
-                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
                         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -332,7 +342,7 @@ export default function Navbar() {
                       <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
                       <button
                         onClick={handleLogout}
-                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.backgroundColor = '#dc2626';
@@ -361,7 +371,7 @@ export default function Navbar() {
             <div className="relative user-menu-container">
               <button 
                 onClick={toggleUserMenu}
-                className="flex items-center space-x-2 px-2 py-2 rounded-full transition-all duration-200"
+                className="flex items-center space-x-2 px-2 py-2 rounded-full transition-all duration-200 cursor-pointer"
                 style={{ border: `2px solid ${colors.mainYellow}` }}
               >
                 <FiUser style={{ color: colors.mainYellow }} size={20} />
@@ -380,7 +390,7 @@ export default function Navbar() {
                     <>
                       <button
                         onClick={() => handleNavigation('/signin')}
-                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
                         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -391,7 +401,7 @@ export default function Navbar() {
                       <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
                       <button
                         onClick={() => handleNavigation('/signup')}
-                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
                         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -404,7 +414,7 @@ export default function Navbar() {
                     <>
                       <button
                         onClick={() => handleNavigation('/profile')}
-                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
                         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -415,7 +425,7 @@ export default function Navbar() {
                       <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
                       <button
                         onClick={() => handleNavigation('/my-builds')}
-                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
                         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -426,7 +436,7 @@ export default function Navbar() {
                       <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
                       <button
                         onClick={() => handleNavigation('/favorites')}
-                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
                         onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
@@ -437,7 +447,7 @@ export default function Navbar() {
                       <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
                       <button
                         onClick={handleLogout}
-                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80"
+                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
                         onMouseEnter={(e) => {
                           e.currentTarget.style.backgroundColor = '#dc2626';
@@ -462,7 +472,7 @@ export default function Navbar() {
             {/* Hamburger Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="p-2 rounded-md"
+              className="p-2 rounded-md cursor-pointer"
               style={{ color: colors.mainYellow }}
             >
               {isMobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
@@ -479,7 +489,7 @@ export default function Navbar() {
               <div key={index} className={item.hasDropdown ? 'mobile-products-container' : ''}>
                 <button
                   onClick={() => item.hasDropdown ? setIsProductsDropdownOpen(!isProductsDropdownOpen) : handleNavigation(item.path)}
-                  className="w-full text-left px-3 py-2 rounded-md text-base font-medium flex items-center justify-between"
+                  className="w-full text-left px-3 py-2 rounded-md text-base font-medium flex items-center justify-between cursor-pointer"
                   style={{ color: '#FFFFFF' }}
                 >
                   <div className="flex items-center space-x-2">
@@ -505,10 +515,20 @@ export default function Navbar() {
                       <button
                         key={idx}
                         onClick={() => handleNavigation(product.path)}
-                        className="w-full text-left px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-2"
+                        className="w-full text-left px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-2 cursor-pointer"
                         style={{ color: '#FFFFFF' }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.mainYellow;
+                          e.currentTarget.style.color = colors.mainBlack;
+                          const icon = e.currentTarget.querySelector('span:first-child');
+                          if (icon) icon.style.color = colors.mainBlack;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = '#FFFFFF';
+                          const icon = e.currentTarget.querySelector('span:first-child');
+                          if (icon) icon.style.color = colors.mainYellow;
+                        }}
                       >
                         <span style={{ color: colors.mainYellow }}>{product.icon}</span>
                         <span>{product.label}</span>
@@ -524,7 +544,7 @@ export default function Navbar() {
               <input
                 type="text"
                 placeholder="Search..."
-                className="w-full px-4 py-2 rounded-md text-sm"
+                className="w-full px-4 py-2 rounded-md text-sm cursor-text"
                 style={{ 
                   backgroundColor: colors.mainBlack,
                   border: `1px solid ${colors.platinum}`,

@@ -125,7 +125,7 @@ const Expansion = () => {
               <select
                 value={typeFilter}
                 onChange={(e) => handleTypeFilter(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80 cursor-pointer"
                 style={{ 
                   borderColor: colors.platinum,
                   color: colors.mainBlack,
@@ -146,7 +146,7 @@ const Expansion = () => {
               <select
                 value={brandFilter}
                 onChange={(e) => setBrandFilter(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80 cursor-pointer"
                 style={{ 
                   borderColor: colors.platinum,
                   color: colors.mainBlack,
@@ -167,7 +167,7 @@ const Expansion = () => {
               <select
                 value={priceFilter}
                 onChange={(e) => setPriceFilter(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80 cursor-pointer"
                 style={{ 
                   borderColor: colors.platinum,
                   color: colors.mainBlack,

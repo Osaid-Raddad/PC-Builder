@@ -28,7 +28,20 @@ import ChatBot from './components/common/chatbot/ChatBot.jsx';
 import Chat from './pages/user/chat/Chat';
 import ProductDetails from './pages/hardwareComponents/productDetails/ProductDetails.jsx';
 import Posts from './pages/user/posts/Posts';
+import TechSupport from './pages/techSupport/TechSupport.jsx';  
+import Profile from './pages/user/profile/Profile.jsx';
+import TechSupportProfile from './pages/TechSupport/TechProfile/TechSupportProfile';
+import ProtectedRoute from './components/ProtectedRoute';
 
+// Admin Imports
+import AdminDashboard from './pages/admin/AdminDashboard';
+import Overview from './pages/admin/Overview';
+import ShopRequests from './pages/admin/ShopRequests';
+import TechSupportRequests from './pages/admin/TechSupportRequests';
+import PostManagement from './pages/admin/PostManagement';
+import UserManagement from './pages/admin/UserManagement';
+import ProductManagement from './pages/admin/ProductManagement';
+import Settings from './pages/admin/Settings';
 
 function AppContent() {
   const location = useLocation();
@@ -36,6 +49,7 @@ function AppContent() {
   // Check if current page is news page or chat page
   const isNewsPage = location.pathname.includes('/news');
   const isChatPage = location.pathname.includes('/chat');
+  const isAdminPage = location.pathname.includes('/admin');
 
   return (
     <div>
@@ -63,44 +77,52 @@ function AppContent() {
           <Route path="/contact" element={<ContactUs />} />
           <Route path="/completed-builds" element={<CompletedBuilds />} />
           <Route path="/build/:id" element={<BuildDetails />} />
-          <Route path="/submit-build" element={<SubmitBuild />} />
-          <Route path="/builder/cpu" element={<CPU />} />
-          <Route path="/builder/cooler" element={<CPUCooler />} />
-          <Route path="/builder/motherboard" element={<Motherboard />} />
-          <Route path="/builder/memory" element={<Memory />} />
-          <Route path="/builder/storage" element={<Storage />} />
-          <Route path="/builder/gpu" element={<GPU />} />
-          <Route path="/builder/case" element={<Case />} />
-          <Route path="/builder/psu" element={<PowerSupply />} />
-          <Route path="/builder/monitor" element={<Monitor />} />
-          <Route path="/builder/expansion" element={<Expansion />} />
-          <Route path="/builder/peripherals" element={<Peripherals />} />
-          <Route path="/builder/accessories" element={<Accessories />} />
-        
-        
-        <Route path="/news" element={<News />} />
-        <Route path="/signin" element={<AuthLayout />} />
-        <Route path="/signup" element={<AuthLayout />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        <Route path="/chat" element={<Chat />} />
-        <Route path="/posts" element={<Posts />} />
-        {/* Product Category Routes */}
-        <Route path="/products/cpu" element={<CPU />} />
-        <Route path="/products/gpu" element={<GPU />} />
-        <Route path="/products/motherboard" element={<Motherboard />} /> 
-        <Route path="/products/storage" element={<Storage />} />
-        <Route path="/products/power-supply" element={<PowerSupply />} />
-        <Route path="/products/case" element={<Case />} /> 
-        <Route path="/products/monitor" element={<Monitor />} />
-        <Route path="/products/accessories" element={<Accessories />} />
-        <Route path="/products/cooler" element={<CPUCooler />} />
-        {/* Product Details Route - Dynamic */}
-        <Route path="/product/:category/:id" element={<ProductDetails />} />
+          <Route path="/completed-builds/submit-build" element={<SubmitBuild />} />
+          <Route path="/news" element={<News />} />
+          <Route path="/signin" element={<AuthLayout />} />
+          <Route path="/signup" element={<AuthLayout />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/chat" element={<Chat />} />
+          <Route path="/posts" element={<Posts />} />
+          <Route path="/tech-support" element={<TechSupport />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/tech-support/profile" element={<TechSupportProfile />} />
+          {/* Product Category Routes */}
+          <Route path="/products/cpu" element={<CPU />} />
+          <Route path="/products/gpu" element={<GPU />} />
+          <Route path="/products/memory" element={<Memory />} />
+          <Route path="/products/motherboard" element={<Motherboard />} /> 
+          <Route path="/products/storage" element={<Storage />} />
+          <Route path="/products/power-supply" element={<PowerSupply />} />
+          <Route path="/products/case" element={<Case />} /> 
+          <Route path="/products/monitor" element={<Monitor />} />
+          <Route path="/products/accessories" element={<Accessories />} />
+          <Route path="/products/cooler" element={<CPUCooler />} />
+          {/* Product Details Route - Dynamic */}
+          <Route path="/product/:category/:id" element={<ProductDetails />} />
+
+          {/* Protected Admin Routes */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute isAdmin={true}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Overview />} />
+            <Route path="shop-requests" element={<ShopRequests />} />
+            <Route path="tech-support" element={<TechSupportRequests />} />
+            <Route path="posts" element={<PostManagement />} />
+            <Route path="users" element={<UserManagement />} />
+            <Route path="products" element={<ProductManagement />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
       </Routes>
 
       {/* Show ChatBot on all pages except news and chat */}
-      {!isNewsPage && !isChatPage && <ChatBot />}
+      {!isNewsPage && !isChatPage && !isAdminPage && <ChatBot />}
     </div>
   );
 }

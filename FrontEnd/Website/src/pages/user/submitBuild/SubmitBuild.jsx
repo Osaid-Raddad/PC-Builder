@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
+import BlurText from '../../../components/animations/BlurText/BlurText';
 import colors from '../../../config/colors';
 import { FiUpload, FiImage, FiUser, FiTag, FiDollarSign, FiCpu, FiMonitor, FiHardDrive, FiZap, FiAlignLeft, FiX } from 'react-icons/fi';
 import { BsCpuFill } from 'react-icons/bs';
@@ -107,9 +108,13 @@ const SubmitBuild = () => {
       <div className="flex-1 container mx-auto px-4 py-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-6xl font-bold mb-4" style={{ color: colors.mainBlack }}>
-            Submit Your Build
-          </h1>
+          <div className="flex justify-center">
+            <BlurText 
+              text="Submit Your Build" 
+              className="text-6xl font-bold mb-4" 
+              style={{ color: colors.mainBlack }}
+            />
+          </div>
           <p className="text-xl" style={{ color: colors.jet }}>
             Share your amazing PC build with the community and inspire others!
           </p>
@@ -149,7 +154,7 @@ const SubmitBuild = () => {
                             <button
                               type="button"
                               onClick={() => removeImage(index)}
-                              className="absolute top-2 right-2 p-2 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                              className="absolute top-2 right-2 p-2 rounded-full bg-red-500 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 cursor-pointer"
                               title="Remove image"
                             >
                               <FiX size={16} />
@@ -289,7 +294,7 @@ const SubmitBuild = () => {
                         name="category"
                         value={formData.category}
                         onChange={handleInputChange}
-                        className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2"
+                        className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 cursor-pointer"
                         style={{
                           border: `2px solid ${colors.platinum}`,
                           backgroundColor: 'white',
@@ -484,7 +489,7 @@ const SubmitBuild = () => {
               <button
                 type="button"
                 onClick={() => navigate('/completed-builds')}
-                className="px-8 py-4 rounded-lg font-bold transition-opacity hover:opacity-90 text-lg"
+                className="px-8 py-4 rounded-lg font-bold transition-opacity hover:opacity-90 text-lg cursor-pointer"
                 style={{
                   backgroundColor: 'white',
                   color: colors.jet,
@@ -495,7 +500,7 @@ const SubmitBuild = () => {
               </button>
               <button
                 type="submit"
-                className="px-12 py-4 rounded-lg font-bold text-white hover:opacity-90 transition-opacity text-lg"
+                className="px-12 py-4 rounded-lg font-bold text-white hover:opacity-90 transition-opacity text-lg cursor-pointer"
                 style={{ backgroundColor: colors.mainYellow }}
               >
                 Submit Build

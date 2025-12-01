@@ -127,7 +127,7 @@ const PowerSupply = () => {
               <select
                 value={wattageFilter}
                 onChange={(e) => handleWattageFilter(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80 cursor-pointer"
                 style={{ 
                   borderColor: colors.platinum,
                   color: colors.mainBlack,
@@ -148,7 +148,7 @@ const PowerSupply = () => {
               <select
                 value={efficiencyFilter}
                 onChange={(e) => handleEfficiencyFilter(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80 cursor-pointer"
                 style={{ 
                   borderColor: colors.platinum,
                   color: colors.mainBlack,
@@ -169,7 +169,7 @@ const PowerSupply = () => {
               <select
                 value={modularFilter}
                 onChange={(e) => setModularFilter(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80 cursor-pointer"
                 style={{ 
                   borderColor: colors.platinum,
                   color: colors.mainBlack,

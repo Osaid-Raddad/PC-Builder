@@ -233,7 +233,7 @@ const ContactUs = () => {
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className="w-full py-4 rounded-lg font-bold text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2 text-lg"
+                  className="w-full py-4 rounded-lg font-bold text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2 text-lg cursor-pointer"
                   style={{ backgroundColor: colors.mainYellow }}
                 >
                   <FiSend size={20} />
@@ -272,7 +272,7 @@ const ContactUs = () => {
                       {info.link ? (
                         <a 
                           href={info.link}
-                          className="text-sm hover:underline"
+                          className="text-sm hover:underline cursor-pointer"
                           style={{ color: colors.jet }}
                         >
                           {info.content}
@@ -304,7 +304,7 @@ const ContactUs = () => {
                     href={social.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 p-4 rounded-lg transition-all hover:shadow-md"
+                    className="flex items-center justify-center gap-2 p-4 rounded-lg transition-all hover:shadow-md cursor-pointer"
                     style={{ 
                       border: `2px solid ${colors.platinum}`,
                       color: colors.mainBlack
