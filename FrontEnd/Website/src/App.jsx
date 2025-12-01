@@ -31,7 +31,17 @@ import Posts from './pages/user/posts/Posts';
 import TechSupport from './pages/techSupport/TechSupport.jsx';  
 import Profile from './pages/user/profile/Profile.jsx';
 import TechSupportProfile from './pages/TechSupport/TechProfile/TechSupportProfile';
+import ProtectedRoute from './components/ProtectedRoute';
 
+// Admin Imports
+import AdminDashboard from './pages/admin/AdminDashboard';
+import Overview from './pages/admin/Overview';
+import ShopRequests from './pages/admin/ShopRequests';
+import TechSupportRequests from './pages/admin/TechSupportRequests';
+import PostManagement from './pages/admin/PostManagement';
+import UserManagement from './pages/admin/UserManagement';
+import ProductManagement from './pages/admin/ProductManagement';
+import Settings from './pages/admin/Settings';
 
 function AppContent() {
   const location = useLocation();
@@ -39,6 +49,7 @@ function AppContent() {
   // Check if current page is news page or chat page
   const isNewsPage = location.pathname.includes('/news');
   const isChatPage = location.pathname.includes('/chat');
+  const isAdminPage = location.pathname.includes('/admin');
 
   return (
     <div>
@@ -90,10 +101,28 @@ function AppContent() {
           <Route path="/products/cooler" element={<CPUCooler />} />
           {/* Product Details Route - Dynamic */}
           <Route path="/product/:category/:id" element={<ProductDetails />} />
+
+          {/* Protected Admin Routes */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute isAdmin={true}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<Overview />} />
+            <Route path="shop-requests" element={<ShopRequests />} />
+            <Route path="tech-support" element={<TechSupportRequests />} />
+            <Route path="posts" element={<PostManagement />} />
+            <Route path="users" element={<UserManagement />} />
+            <Route path="products" element={<ProductManagement />} />
+            <Route path="settings" element={<Settings />} />
+          </Route>
       </Routes>
 
       {/* Show ChatBot on all pages except news and chat */}
-      {!isNewsPage && !isChatPage && <ChatBot />}
+      {!isNewsPage && !isChatPage && !isAdminPage && <ChatBot />}
     </div>
   );
 }
