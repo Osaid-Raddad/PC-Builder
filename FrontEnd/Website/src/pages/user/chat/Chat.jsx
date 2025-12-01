@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   FiSearch, FiMoreVertical, FiPhone, FiVideo, FiSend, 
   FiPaperclip, FiSmile, FiImage, FiCheck, FiCheckCircle, FiArrowLeft 
@@ -10,6 +10,7 @@ import colors from '../../../config/colors';
 
 export default function Chat() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [conversations, setConversations] = useState([
     {
       id: 'ai-bot',
@@ -68,17 +69,8 @@ export default function Chat() {
     }
   ]);
 
-  const [selectedChat, setSelectedChat] = useState(conversations[0]);
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      senderId: 'ai-bot',
-      text: 'Hi! I am your PC Builder AI Assistant. I can help you with component selection, compatibility checks, and building recommendations. How can I assist you today?',
-      timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-      isSent: false
-    }
-  ]);
-
+  const [selectedChat, setSelectedChat] = useState(null);
+  const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
@@ -102,6 +94,71 @@ export default function Chat() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Handle incoming tech support worker from navigation
+  useEffect(() => {
+    const { recipientId, recipientName, recipientAvatar, recipientType } = location.state || {};
+    
+    if (recipientId && recipientType === 'techSupport') {
+      // Check if tech support conversation already exists
+      const existingConv = conversations.find(c => c.id === `tech-${recipientId}`);
+      
+      if (!existingConv) {
+        // Add new tech support conversation
+        const newTechSupport = {
+          id: `tech-${recipientId}`,
+          name: recipientName,
+          lastMessage: 'Start chatting with your tech support specialist',
+          timestamp: 'Now',
+          unread: 0,
+          avatar: recipientAvatar,
+          online: true,
+          isTechSupport: true
+        };
+        
+        setConversations(prev => [newTechSupport, ...prev]);
+        setSelectedChat(newTechSupport);
+        setMessages([
+          {
+            id: 1,
+            senderId: `tech-${recipientId}`,
+            text: `Hi! I'm ${recipientName}, your tech support specialist. How can I help you today?`,
+            timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+            isSent: false
+          }
+        ]);
+      } else {
+        // Select existing tech support conversation
+        setSelectedChat(existingConv);
+        // Load existing messages for this tech support
+        setMessages([
+          {
+            id: 1,
+            senderId: `tech-${recipientId}`,
+            text: existingConv.lastMessage,
+            timestamp: '10:30 AM',
+            isSent: false
+          }
+        ]);
+      }
+      
+      if (isMobileView) {
+        setShowConversations(false);
+      }
+    } else {
+      // Default to AI assistant if no tech support selected
+      setSelectedChat(conversations[0]);
+      setMessages([
+        {
+          id: 1,
+          senderId: 'ai-bot',
+          text: 'Hi! I am your PC Builder AI Assistant. I can help you with component selection, compatibility checks, and building recommendations. How can I assist you today?',
+          timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+          isSent: false
+        }
+      ]);
+    }
+  }, [location.state, isMobileView]);
 
   const handleSendMessage = () => {
     if (newMessage.trim() === '') return;
@@ -163,7 +220,7 @@ export default function Chat() {
   const handleSelectChat = (conversation) => {
     setSelectedChat(conversation);
     
-    // Load different messages based on conversation
+    // Load different messages based on conversation type
     if (conversation.isAI) {
       setMessages([
         {
@@ -174,8 +231,19 @@ export default function Chat() {
           isSent: false
         }
       ]);
+    } else if (conversation.isTechSupport) {
+      // Load tech support messages
+      setMessages([
+        {
+          id: 1,
+          senderId: conversation.id,
+          text: `Hi! I'm ${conversation.name}, your tech support specialist. How can I help you today?`,
+          timestamp: '10:30 AM',
+          isSent: false
+        }
+      ]);
     } else {
-      // Load regular user messages (you can customize this per user)
+      // Load regular user messages
       setMessages([
         {
           id: 1,
@@ -324,6 +392,17 @@ export default function Chat() {
                         AI
                       </span>
                     )}
+                    {conv.isTechSupport && (
+                      <span 
+                        className="ml-2 text-xs px-2 py-0.5 rounded-full"
+                        style={{ 
+                          backgroundColor: '#10b981' + '30',
+                          color: '#10b981'
+                        }}
+                      >
+                        Tech Support
+                      </span>
+                    )}
                   </h3>
                   <span 
                     className="text-xs ml-2 flex-shrink-0"
@@ -423,6 +502,17 @@ export default function Chat() {
                         }}
                       >
                         AI Assistant
+                      </span>
+                    )}
+                    {selectedChat.isTechSupport && (
+                      <span 
+                        className="text-xs px-2 py-0.5 rounded-full"
+                        style={{ 
+                          backgroundColor: '#10b981' + '30',
+                          color: '#10b981'
+                        }}
+                      >
+                        Tech Support
                       </span>
                     )}
                   </h2>

@@ -28,7 +28,7 @@ import ChatBot from './components/common/chatbot/ChatBot.jsx';
 import Chat from './pages/user/chat/Chat';
 import ProductDetails from './pages/hardwareComponents/productDetails/ProductDetails.jsx';
 import Posts from './pages/user/posts/Posts';
-
+import TechSupport from './pages/techSupport/TechSupport.jsx';  
 
 function AppContent() {
   const location = useLocation();
@@ -85,6 +85,7 @@ function AppContent() {
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/posts" element={<Posts />} />
+        <Route path="/tech-support" element={<TechSupport />} />
         {/* Product Category Routes */}
         <Route path="/products/cpu" element={<CPU />} />
         <Route path="/products/gpu" element={<GPU />} />

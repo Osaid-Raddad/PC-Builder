@@ -79,6 +79,12 @@ export default function Navbar() {
       icon: <FiMessageCircle size={18} />,
       tooltip: 'Message other users and shop owners'
     },
+    { 
+      label: 'Tech Support',
+      path: '/tech-support',
+      icon: <HiCog size={18} />,
+      tooltip: 'Get in touch with our support team'
+    }
   ];
 
   const handleNavigation = (path) => {
