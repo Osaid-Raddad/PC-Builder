@@ -30,8 +30,8 @@ import ProductDetails from './pages/hardwareComponents/productDetails/ProductDet
 import Posts from './pages/user/posts/Posts';
 import TechSupport from './pages/techSupport/TechSupport.jsx';  
 import Profile from './pages/user/profile/Profile.jsx';
+import TechSupportProfile from './pages/TechSupport/TechProfile/TechSupportProfile';
 
-// In your routes:
 
 function AppContent() {
   const location = useLocation();
@@ -76,6 +76,7 @@ function AppContent() {
           <Route path="/posts" element={<Posts />} />
           <Route path="/tech-support" element={<TechSupport />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/tech-support/profile" element={<TechSupportProfile />} />
           {/* Product Category Routes */}
           <Route path="/products/cpu" element={<CPU />} />
           <Route path="/products/gpu" element={<GPU />} />
