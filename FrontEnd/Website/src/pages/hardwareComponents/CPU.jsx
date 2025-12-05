@@ -23,7 +23,7 @@ const CPU = () => {
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={() => navigate('/builder')}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:opacity-80 transition-opacity cursor-pointer"
             style={{ backgroundColor: colors.mainYellow, color: 'white' }}
           >
             <FiArrowLeft size={20} />

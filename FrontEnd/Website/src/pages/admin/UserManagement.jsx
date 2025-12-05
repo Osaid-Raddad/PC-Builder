@@ -258,7 +258,7 @@ const UserManagement = () => {
                       {user.status === 'active' ? (
                         <button
                           onClick={() => handleSuspend(user)}
-                          className="p-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+                          className="p-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                           title="Suspend User"
                         >
                           <MdBlock className="text-xl" />
@@ -266,7 +266,7 @@ const UserManagement = () => {
                       ) : (
                         <button
                           onClick={() => handleActivate(user.id)}
-                          className="p-2 rounded-lg text-green-600 hover:bg-green-50 transition-colors"
+                          className="p-2 rounded-lg text-green-600 hover:bg-green-50 transition-colors cursor-pointer"
                           title="Activate User"
                         >
                           <MdCheckCircle className="text-xl" />
@@ -274,7 +274,7 @@ const UserManagement = () => {
                       )}
                       <button
                         onClick={() => handleDelete(user)}
-                        className="p-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+                        className="p-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
                         title="Delete User"
                       >
                         <MdDelete className="text-xl" />

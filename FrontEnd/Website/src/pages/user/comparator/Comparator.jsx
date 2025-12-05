@@ -18,7 +18,7 @@ import {
   FiMonitor,
   FiBox
 } from 'react-icons/fi';
-import { MdPowerSettingsNew } from 'react-icons/md';
+import { MdPowerSettingsNew, MdCompareArrows} from 'react-icons/md';
 
 const CATEGORIES = [
   { id: 'cpu', name: 'CPU', icon: BsCpuFill },
@@ -212,7 +212,7 @@ const Comparator = () => {
         <div className="flex items-center justify-between mb-6">
           <button
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
+            className="flex items-center cursor-pointer gap-2 px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
             style={{ backgroundColor: colors.mainYellow, color: 'white' }}
           >
             <FiArrowLeft size={20} />
@@ -220,7 +220,7 @@ const Comparator = () => {
           </button>
           
           <div className="flex items-center gap-3">
-            <CategoryIcon size={32} style={{ color: colors.mainYellow }} />
+            <MdCompareArrows size={40} style={{ color: colors.mainYellow }} />
             <h1 className="text-3xl font-bold" style={{ color: colors.mainBlack }}>
               Compare Components
             </h1>
@@ -246,7 +246,7 @@ const Comparator = () => {
                   <button
                     key={category.id}
                     onClick={() => handleCategoryChange(category.id)}
-                    className="flex flex-col items-center gap-2 p-4 rounded-lg transition-all hover:shadow-md"
+                    className="flex flex-col items-center gap-2 p-4 rounded-lg transition-all hover:shadow-md cursor-pointer"
                     style={{
                       backgroundColor: isSelected ? colors.mainYellow : 'white',
                       color: isSelected ? 'white' : colors.mainBlack,
@@ -270,7 +270,7 @@ const Comparator = () => {
           {selectedProducts.length < 4 && (
             <button
               onClick={() => setShowProductSelector(!showProductSelector)}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
+              className="flex items-center cursor-pointer gap-2 px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
               style={{ backgroundColor: colors.mainYellow, color: 'white' }}
             >
               <FiPlus size={18} />
@@ -291,7 +291,7 @@ const Comparator = () => {
               </h3>
               <button
                 onClick={() => setShowProductSelector(false)}
-                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
               >
                 <FiX size={20} style={{ color: colors.mainBlack }} />
               </button>
@@ -327,7 +327,7 @@ const Comparator = () => {
                     key={product.id}
                     onClick={() => !isAlreadySelected && handleAddProduct(product)}
                     disabled={isAlreadySelected}
-                    className="w-full p-4 rounded-lg transition-all hover:shadow-md text-left disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full p-4 rounded-lg transition-all hover:shadow-md text-left disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     style={{
                       border: `2px solid ${colors.platinum}`,
                       backgroundColor: isAlreadySelected ? colors.platinum : 'white',
@@ -396,7 +396,7 @@ const Comparator = () => {
                       >
                         <button
                           onClick={() => handleRemoveProduct(product.id)}
-                          className="absolute top-2 right-2 p-1 rounded-full hover:bg-red-100 transition-colors"
+                          className="absolute top-2 right-2 p-1 rounded-full hover:bg-red-100 transition-colors cursor-pointer"
                           style={{ color: colors.error }}
                         >
                           <FiX size={18} />
@@ -452,7 +452,7 @@ const Comparator = () => {
           <div className="mt-6 flex gap-4 justify-center">
             <button
               onClick={() => setSelectedProducts([])}
-              className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-opacity"
+              className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
               style={{ 
                 backgroundColor: 'white',
                 color: colors.mainYellow,
@@ -463,7 +463,7 @@ const Comparator = () => {
             </button>
             <button
               onClick={() => window.print()}
-              className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-opacity"
+              className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
               style={{ backgroundColor: colors.mainYellow, color: 'white' }}
             >
               Print Comparison

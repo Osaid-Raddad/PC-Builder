@@ -175,7 +175,7 @@ const Settings = () => {
         <div className="flex justify-end pt-6 border-t" style={{ borderColor: colors.border }}>
           <button
             onClick={handleSave}
-            className="flex items-center gap-2 px-6 py-3 rounded-lg text-white font-medium hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 px-6 py-3 rounded-lg text-white font-medium hover:opacity-90 transition-opacity cursor-pointer"
             style={{ backgroundColor: colors.primary }}
           >
             <MdSave className="text-xl" />

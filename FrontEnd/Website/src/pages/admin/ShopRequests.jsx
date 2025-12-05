@@ -137,7 +137,7 @@ const ShopRequests = () => {
             <button
               key={status}
               onClick={() => setFilter(status)}
-              className={`px-4 py-2 rounded-lg font-medium transition-all capitalize ${
+              className={`px-4 py-2 rounded-lg font-medium transition-all capitalize cursor-pointer ${
                 filter === status ? 'text-white shadow-md' : 'text-gray-600 hover:bg-gray-100'
               }`}
               style={{
@@ -202,7 +202,7 @@ const ShopRequests = () => {
               <div className="flex gap-3">
                 <button
                   onClick={() => handleApprove(request.id)}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity cursor-pointer"
                   style={{ backgroundColor: colors.success }}
                 >
                   <MdCheckCircle className="text-xl" />
@@ -210,7 +210,7 @@ const ShopRequests = () => {
                 </button>
                 <button
                   onClick={() => handleReject(request.id)}
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity"
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity cursor-pointer"
                   style={{ backgroundColor: colors.error }}
                 >
                   <MdCancel className="text-xl" />
