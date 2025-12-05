@@ -101,6 +101,8 @@ function AppContent() {
           <Route path="/products/monitor" element={<Monitor />} />
           <Route path="/products/accessories" element={<Accessories />} />
           <Route path="/products/cooler" element={<CPUCooler />} />
+          <Route path="/products/expansion" element={<Expansion/>} />
+          <Route path="/products/peripherals" element={<Peripherals />} />
           {/* Product Details Route - Dynamic */}
           <Route path="/product/:category/:id" element={<ProductDetails />} />
 
