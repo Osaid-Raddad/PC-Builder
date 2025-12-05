@@ -67,22 +67,27 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <a href="/faq" className="text-sm hover:underline transition-colors" style={{ color: colors.alabaster }}>
+                <a href="/tech-support" className="text-sm hover:underline transition-colors cursor-pointer" style={{ color: colors.alabaster }}>
+                  Tech Support
+                </a>
+              </li>
+              <li>
+                <a href="/faq" className="text-sm hover:underline transition-colors cursor-pointer" style={{ color: colors.alabaster }}>
                   FAQ
                 </a>
               </li>
               <li>
-                <a href="/guides" className="text-sm hover:underline transition-colors" style={{ color: colors.alabaster }}>
+                <a href="/guides" className="text-sm hover:underline transition-colors cursor-pointer" style={{ color: colors.alabaster }}>
                   Building Guides
                 </a>
               </li>
               <li>
-                <a href="/contact" className="text-sm hover:underline transition-colors" style={{ color: colors.alabaster }}>
+                <a href="/contact" className="text-sm hover:underline transition-colors cursor-pointer" style={{ color: colors.alabaster }}>
                   Contact Us
                 </a>
               </li>
               <li>
-                <a href="/terms" className="text-sm hover:underline transition-colors" style={{ color: colors.alabaster }}>
+                <a href="/terms" className="text-sm hover:underline transition-colors cursor-pointer" style={{ color: colors.alabaster }}>
                   Terms of Service
                 </a>
               </li>

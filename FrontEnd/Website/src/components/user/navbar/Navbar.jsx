@@ -16,6 +16,7 @@ export default function Navbar() {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isProductsDropdownOpen, setIsProductsDropdownOpen] = useState(false);
+  const [isCommunityDropdownOpen, setIsCommunityDropdownOpen] = useState(false);
   
   // TODO: Replace with actual authentication state from your auth context/redux
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Change this based on actual auth state
@@ -35,6 +36,13 @@ export default function Navbar() {
     { label: 'Accessories', path: '/products/accessories', icon: <MdCable size={18} /> },
   ];
 
+  // Community items for dropdown
+  const communityItems = [
+    { label: 'Posts', path: '/posts', icon: <FaEdit size={18} /> },
+    { label: 'News', path: '/news', icon: <FaNewspaper size={18} /> },
+    { label: 'Shops', path: '/shops', icon: <FiShoppingBag size={18} /> },
+  ];
+
   const menuItems = [
     { 
       label: 'Builder', 
@@ -47,7 +55,8 @@ export default function Navbar() {
       path: '/products', 
       icon: <FaBoxOpen size={18} />,
       tooltip: 'Browse all PC components and hardware',
-      hasDropdown: true
+      hasDropdown: true,
+      dropdownType: 'products'
     },
     { 
       label: 'Compare', 
@@ -62,34 +71,18 @@ export default function Navbar() {
       tooltip: 'Explore community PC builds for inspiration'
     },
     { 
-      label: 'Posts', 
-      path: '/posts', 
+      label: 'Community', 
+      path: '/community', 
       icon: <FaEdit size={18} />,
-      tooltip: 'Read community posts and discussions'
-    },
-    { 
-      label: 'News', 
-      path: '/news', 
-      icon: <FaNewspaper size={18} />,
-      tooltip: 'Latest tech news and hardware releases'
-    },
-    { 
-      label: 'Shops', 
-      path: '/shops', 
-      icon: <FiShoppingBag size={18} />,
-      tooltip: 'Find local computer shops in Palestine'
+      tooltip: 'Community posts, news, and local shops',
+      hasDropdown: true,
+      dropdownType: 'community'
     },
     { 
       label: 'Chat', 
       path: '/chat', 
       icon: <FiMessageCircle size={18} />,
       tooltip: 'Message other users and shop owners'
-    },
-    { 
-      label: 'Tech Support',
-      path: '/tech-support',
-      icon: <HiCog size={18} />,
-      tooltip: 'Get in touch with our support team'
     }
   ];
 
@@ -99,12 +92,19 @@ export default function Navbar() {
     setActiveDropdown(null);
     setIsUserMenuOpen(false);
     setIsProductsDropdownOpen(false);
+    setIsCommunityDropdownOpen(false);
     // Scroll to top of the page
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleProductsClick = () => {
     setIsProductsDropdownOpen(!isProductsDropdownOpen);
+    setIsCommunityDropdownOpen(false);
+  };
+
+  const handleCommunityClick = () => {
+    setIsCommunityDropdownOpen(!isCommunityDropdownOpen);
+    setIsProductsDropdownOpen(false);
   };
 
   const handleLogout = () => {
@@ -127,11 +127,14 @@ export default function Navbar() {
       if (isProductsDropdownOpen && !event.target.closest('.products-menu-container') && !event.target.closest('.mobile-products-container')) {
         setIsProductsDropdownOpen(false);
       }
+      if (isCommunityDropdownOpen && !event.target.closest('.community-menu-container') && !event.target.closest('.mobile-community-container')) {
+        setIsCommunityDropdownOpen(false);
+      }
     };
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, [isUserMenuOpen, isProductsDropdownOpen]);
+  }, [isUserMenuOpen, isProductsDropdownOpen, isCommunityDropdownOpen]);
 
   return (
     <nav style={{ backgroundColor: colors.mainBlack }} className="sticky top-0 z-50 shadow-lg">
@@ -155,9 +158,17 @@ export default function Navbar() {
           {/* Desktop Menu - Absolute Center */}
           <div className="hidden 2xl:flex items-center space-x-6 absolute left-1/2 transform -translate-x-1/2">
             {menuItems.map((item, index) => (
-              <div key={index} className="relative group products-menu-container">
+              <div key={index} className={`relative group ${item.dropdownType === 'products' ? 'products-menu-container' : item.dropdownType === 'community' ? 'community-menu-container' : ''}`}>
                 <button
-                  onClick={() => item.hasDropdown ? handleProductsClick() : handleNavigation(item.path)}
+                  onClick={() => {
+                    if (item.dropdownType === 'products') {
+                      handleProductsClick();
+                    } else if (item.dropdownType === 'community') {
+                      handleCommunityClick();
+                    } else {
+                      handleNavigation(item.path);
+                    }
+                  }}
                   className="flex items-center space-x-1.5 px-2 py-2 rounded-md text-sm font-medium transition-all duration-200 whitespace-nowrap cursor-pointer"
                   style={{ 
                     color: '#FFFFFF',
@@ -173,7 +184,7 @@ export default function Navbar() {
                     <FiChevronDown 
                       style={{ 
                         color: colors.mainYellow,
-                        transform: isProductsDropdownOpen && item.label === 'Products' ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transform: ((item.dropdownType === 'products' && isProductsDropdownOpen) || (item.dropdownType === 'community' && isCommunityDropdownOpen)) ? 'rotate(180deg)' : 'rotate(0deg)',
                         transition: 'transform 0.2s'
                       }} 
                       size={16} 
@@ -182,7 +193,7 @@ export default function Navbar() {
                 </button>
 
                 {/* Products Dropdown */}
-                {item.hasDropdown && isProductsDropdownOpen && (
+                {item.dropdownType === 'products' && isProductsDropdownOpen && (
                   <div 
                     className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-56 rounded-lg shadow-xl overflow-hidden z-50"
                     style={{ 
@@ -213,6 +224,45 @@ export default function Navbar() {
                           <span className="font-medium">{product.label}</span>
                         </button>
                         {idx < productCategories.length - 1 && (
+                          <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </div>
+                )}
+
+                {/* Community Dropdown */}
+                {item.dropdownType === 'community' && isCommunityDropdownOpen && (
+                  <div 
+                    className="absolute left-1/2 transform -translate-x-1/2 mt-2 w-56 rounded-lg shadow-xl overflow-hidden z-50"
+                    style={{ 
+                      backgroundColor: colors.jet,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {communityItems.map((community, idx) => (
+                      <React.Fragment key={idx}>
+                        <button
+                          onClick={() => handleNavigation(community.path)}
+                          className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 cursor-pointer"
+                          style={{ color: 'white' }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = colors.mainYellow;
+                            e.currentTarget.style.color = colors.mainBlack;
+                            const icon = e.currentTarget.querySelector('span:first-child');
+                            if (icon) icon.style.color = colors.mainBlack;
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'transparent';
+                            e.currentTarget.style.color = 'white';
+                            const icon = e.currentTarget.querySelector('span:first-child');
+                            if (icon) icon.style.color = colors.mainYellow;
+                          }}
+                        >
+                          <span style={{ color: colors.mainYellow }}>{community.icon}</span>
+                          <span className="font-medium">{community.label}</span>
+                        </button>
+                        {idx < communityItems.length - 1 && (
                           <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
                         )}
                       </React.Fragment>
@@ -492,9 +542,19 @@ export default function Navbar() {
         <div className="2xl:hidden" style={{ backgroundColor: colors.jet }}>
           <div className="px-2 pt-2 pb-3 space-y-1">
             {menuItems.map((item, index) => (
-              <div key={index} className={item.hasDropdown ? 'mobile-products-container' : ''}>
+              <div key={index} className={item.dropdownType === 'products' ? 'mobile-products-container' : item.dropdownType === 'community' ? 'mobile-community-container' : ''}>
                 <button
-                  onClick={() => item.hasDropdown ? setIsProductsDropdownOpen(!isProductsDropdownOpen) : handleNavigation(item.path)}
+                  onClick={() => {
+                    if (item.dropdownType === 'products') {
+                      setIsProductsDropdownOpen(!isProductsDropdownOpen);
+                      setIsCommunityDropdownOpen(false);
+                    } else if (item.dropdownType === 'community') {
+                      setIsCommunityDropdownOpen(!isCommunityDropdownOpen);
+                      setIsProductsDropdownOpen(false);
+                    } else {
+                      handleNavigation(item.path);
+                    }
+                  }}
                   className="w-full text-left px-3 py-2 rounded-md text-base font-medium flex items-center justify-between cursor-pointer"
                   style={{ color: '#FFFFFF' }}
                 >
@@ -506,7 +566,7 @@ export default function Navbar() {
                     <FiChevronDown 
                       style={{ 
                         color: colors.mainYellow,
-                        transform: isProductsDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                        transform: ((item.dropdownType === 'products' && isProductsDropdownOpen) || (item.dropdownType === 'community' && isCommunityDropdownOpen)) ? 'rotate(180deg)' : 'rotate(0deg)',
                         transition: 'transform 0.2s'
                       }} 
                       size={16} 
@@ -515,7 +575,7 @@ export default function Navbar() {
                 </button>
                 
                 {/* Mobile Products Dropdown */}
-                {item.hasDropdown && isProductsDropdownOpen && (
+                {item.dropdownType === 'products' && isProductsDropdownOpen && (
                   <div className="ml-4 mt-1 space-y-1">
                     {productCategories.map((product, idx) => (
                       <button
@@ -538,6 +598,35 @@ export default function Navbar() {
                       >
                         <span style={{ color: colors.mainYellow }}>{product.icon}</span>
                         <span>{product.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Mobile Community Dropdown */}
+                {item.dropdownType === 'community' && isCommunityDropdownOpen && (
+                  <div className="ml-4 mt-1 space-y-1">
+                    {communityItems.map((community, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleNavigation(community.path)}
+                        className="w-full text-left px-3 py-2 rounded-md text-sm font-medium flex items-center space-x-2 cursor-pointer"
+                        style={{ color: '#FFFFFF' }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.mainYellow;
+                          e.currentTarget.style.color = colors.mainBlack;
+                          const icon = e.currentTarget.querySelector('span:first-child');
+                          if (icon) icon.style.color = colors.mainBlack;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = '#FFFFFF';
+                          const icon = e.currentTarget.querySelector('span:first-child');
+                          if (icon) icon.style.color = colors.mainYellow;
+                        }}
+                      >
+                        <span style={{ color: colors.mainYellow }}>{community.icon}</span>
+                        <span>{community.label}</span>
                       </button>
                     ))}
                   </div>
