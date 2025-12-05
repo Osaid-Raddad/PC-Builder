@@ -38,8 +38,8 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="/products" className="text-sm hover:underline transition-colors" style={{ color: colors.alabaster }}>
-                  Products
+                <a href="/comparator" className="text-sm hover:underline transition-colors" style={{ color: colors.alabaster }}>
+                  Comparator
                 </a>
               </li>
               <li>
@@ -55,6 +55,11 @@ export default function Footer() {
               <li>
                 <a href="/news" className="text-sm hover:underline transition-colors" style={{ color: colors.alabaster }}>
                   Latest News
+                </a>
+              </li>
+              <li>
+                <a href="/shops" className="text-sm hover:underline transition-colors" style={{ color: colors.alabaster }}>
+                  Shops
                 </a>
               </li>
             </ul>
