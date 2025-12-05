@@ -6,7 +6,7 @@ import { PiDesktopTowerFill } from 'react-icons/pi';
 import { HiCog } from 'react-icons/hi';
 import { BsFillMotherboardFill, BsGpuCard } from 'react-icons/bs';
 import { GiComputerFan } from 'react-icons/gi';
-import { MdPowerSettingsNew, MdCable } from 'react-icons/md';
+import { MdPowerSettingsNew, MdCable, MdCompareArrows } from 'react-icons/md';
 import { Tooltip } from 'react-tooltip';
 import colors from '../../../config/colors';
 import { openSidebar } from '../../../utils/sidebarHelper';
@@ -48,6 +48,12 @@ export default function Navbar() {
       icon: <FaBoxOpen size={18} />,
       tooltip: 'Browse all PC components and hardware',
       hasDropdown: true
+    },
+    { 
+      label: 'Compare', 
+      path: '/comparator', 
+      icon: <MdCompareArrows size={20} />,
+      tooltip: 'Compare components side by side'
     },
     { 
       label: 'Completed Builds', 

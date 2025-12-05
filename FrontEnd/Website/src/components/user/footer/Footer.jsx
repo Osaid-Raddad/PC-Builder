@@ -77,11 +77,6 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="/compatibility" className="text-sm hover:underline transition-colors" style={{ color: colors.alabaster }}>
-                  Compatibility Checker
-                </a>
-              </li>
-              <li>
                 <a href="/contact" className="text-sm hover:underline transition-colors" style={{ color: colors.alabaster }}>
                   Contact Us
                 </a>
