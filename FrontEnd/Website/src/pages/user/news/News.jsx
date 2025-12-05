@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import axios from 'axios';
 import toast from 'react-hot-toast';
@@ -8,6 +8,7 @@ import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { BsBookmark, BsShare } from 'react-icons/bs';
 
 const News = () => {
+  const navigate = useNavigate();
   const [news, setNews] = useState([]);
   const [filteredNews, setFilteredNews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -229,18 +230,26 @@ const News = () => {
     <div className="min-h-screen bg-[#333533]">
       {/* Header */}
       <div className="bg-[#242423] border-b border-[#F5CB5C]/20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-[#F5CB5C] flex items-center gap-3">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate('/')}
+                className="cursor-pointer hover:opacity-80 transition-opacity"
+                aria-label="Go to Home"
+              >
                 <img 
                   src="/src/assets/Images/LogoIcon.png" 
                   alt="PC Builder Logo" 
                   style={{ height: '50px', width: 'auto', objectFit: 'contain' }}
                 />
-                PC Building News
-              </h1>
-              <p className="text-gray-400 mt-2">Stay updated with the latest hardware releases and tech news</p>
+              </button>
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold text-[#F5CB5C]">
+                  PC Building News
+                </h1>
+                <p className="text-gray-400 mt-2">Stay updated with the latest hardware releases and tech news</p>
+              </div>
             </div>
             <Link 
               to="/builder" 
@@ -251,6 +260,7 @@ const News = () => {
           </div>
         </div>
       </div>
+   
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Search and Filter Bar */}
