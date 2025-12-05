@@ -59,7 +59,7 @@ const PostCard = ({ post, onLike, onComment }) => {
           </span>
         </div>
         <button 
-          className="text-sm font-semibold hover:underline"
+          className="text-sm font-semibold hover:underline cursor-pointer"
           style={{ color: colors.jet }}
           onClick={() => onComment(post)}
         >

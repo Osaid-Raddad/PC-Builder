@@ -88,7 +88,7 @@ const SignIn = ({ onSwitchToSignUp }) => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 hover:scale-110 transition-transform"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 hover:scale-110 transition-transform cursor-pointer"
               style={{ color: colors.jet }}
             >
               {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
@@ -117,7 +117,7 @@ const SignIn = ({ onSwitchToSignUp }) => {
 
         <button
           type="submit"
-          className="w-full py-2 sm:py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity shadow-lg text-sm sm:text-base"
+          className="w-full py-2 sm:py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity shadow-lg text-sm sm:text-base cursor-pointer"
           style={{ backgroundColor: colors.mainYellow }}
         >
           Sign In
@@ -135,21 +135,21 @@ const SignIn = ({ onSwitchToSignUp }) => {
       <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
         <button
           type="button"
-          className="flex items-center justify-center py-2 sm:py-3 border-2 rounded-lg hover:shadow-md transition-shadow"
+          className="flex items-center justify-center py-2 sm:py-3 border-2 rounded-lg hover:shadow-md transition-shadow cursor-pointer"
           style={{ borderColor: colors.platinum, backgroundColor: colors.alabaster }}
         >
           <FcGoogle className="text-xl sm:text-2xl" />
         </button>
         <button
           type="button"
-          className="flex items-center justify-center py-2 sm:py-3 border-2 rounded-lg hover:shadow-md transition-shadow"
+          className="flex items-center justify-center py-2 sm:py-3 border-2 rounded-lg hover:shadow-md transition-shadow cursor-pointer"
           style={{ borderColor: colors.platinum, backgroundColor: colors.alabaster }}
         >
           <FaSquareFacebook className="text-xl sm:text-2xl" color="#1877F2" />
         </button>
         <button
           type="button"
-          className="flex items-center justify-center py-2 sm:py-3 border-2 rounded-lg hover:shadow-md transition-shadow"
+          className="flex items-center justify-center py-2 sm:py-3 border-2 rounded-lg hover:shadow-md transition-shadow cursor-pointer"
           style={{ borderColor: colors.platinum, backgroundColor: colors.alabaster }}
         >
           <FaApple className="text-xl sm:text-2xl" color="#000000" />
@@ -161,7 +161,7 @@ const SignIn = ({ onSwitchToSignUp }) => {
         <button
           type="button"
           onClick={onSwitchToSignUp}
-          className="font-semibold hover:underline"
+          className="font-semibold hover:underline cursor-pointer"
           style={{ color: colors.mainYellow }}
         >
           Sign Up

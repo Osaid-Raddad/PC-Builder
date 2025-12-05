@@ -148,7 +148,7 @@ const PostManagement = () => {
             <button
               key={status}
               onClick={() => setFilter(status)}
-              className={`px-4 py-2 rounded-lg font-medium transition-all capitalize ${
+              className={`px-4 py-2 rounded-lg font-medium transition-all capitalize cursor-pointer ${
                 filter === status ? 'text-white shadow-md' : 'text-gray-600 hover:bg-gray-100'
               }`}
               style={{
@@ -215,7 +215,7 @@ const PostManagement = () => {
               {post.isFlagged && (
                 <button
                   onClick={() => handleReviewFlag(post)}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity cursor-pointer"
                   style={{ backgroundColor: colors.warning }}
                 >
                   <MdFlag className="text-xl" />
@@ -224,7 +224,7 @@ const PostManagement = () => {
               )}
               <button
                 onClick={() => window.open(`/posts/${post.id}`, '_blank')}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors cursor-pointer"
                 style={{ color: colors.primary }}
               >
                 <MdVisibility className="text-xl" />
@@ -232,7 +232,7 @@ const PostManagement = () => {
               </button>
               <button
                 onClick={() => handleDelete(post.id)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity cursor-pointer"
                 style={{ backgroundColor: colors.error }}
               >
                 <MdDelete className="text-xl" />

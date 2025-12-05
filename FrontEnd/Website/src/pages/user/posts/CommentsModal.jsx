@@ -262,7 +262,7 @@ const CommentsModal = ({ post, onClose }) => {
                                 <div className="flex items-center gap-3 mt-1 ml-3 text-xs">
                                   <button
                                     onClick={() => handleLikeComment(reply.id, true, comment.id)}
-                                    className="font-semibold hover:underline"
+                                    className="font-semibold hover:underline cursor-pointer"
                                     style={{ color: reply.liked ? colors.mainYellow : colors.jet }}
                                   >
                                     Like {reply.likes > 0 && `(${reply.likes})`}
@@ -297,7 +297,7 @@ const CommentsModal = ({ post, onClose }) => {
               </span>
               <button
                 onClick={() => setReplyingTo(null)}
-                className="text-sm font-semibold hover:underline"
+                className="text-sm font-semibold hover:underline cursor-pointer"
                 style={{ color: colors.mainYellow }}
               >
                 Cancel

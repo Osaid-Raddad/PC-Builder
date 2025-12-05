@@ -32,6 +32,7 @@ import TechSupport from './pages/techSupport/TechSupport.jsx';
 import Profile from './pages/user/profile/Profile.jsx';
 import TechSupportProfile from './pages/TechSupport/TechProfile/TechSupportProfile';
 import ProtectedRoute from './components/ProtectedRoute';
+import Comparator from './pages/user/comparator/Comparator.jsx';
 
 // Admin Imports
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -88,6 +89,7 @@ function AppContent() {
           <Route path="/tech-support" element={<TechSupport />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/tech-support/profile" element={<TechSupportProfile />} />
+          <Route path="/comparator" element={<Comparator />} />
           {/* Product Category Routes */}
           <Route path="/products/cpu" element={<CPU />} />
           <Route path="/products/gpu" element={<GPU />} />
@@ -99,6 +101,8 @@ function AppContent() {
           <Route path="/products/monitor" element={<Monitor />} />
           <Route path="/products/accessories" element={<Accessories />} />
           <Route path="/products/cooler" element={<CPUCooler />} />
+          <Route path="/products/expansion" element={<Expansion/>} />
+          <Route path="/products/peripherals" element={<Peripherals />} />
           {/* Product Details Route - Dynamic */}
           <Route path="/product/:category/:id" element={<ProductDetails />} />
 

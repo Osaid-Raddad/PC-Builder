@@ -49,7 +49,7 @@ const Builder = () => {
       'cpu': '/products/cpu',
       'cooler': '/products/cooler',
       'motherboard': '/products/motherboard',
-      'memory': '/products/ram',
+      'memory': '/products/memory',
       'storage': '/products/storage',
       'gpu': '/products/gpu',
       'case': '/products/case',
