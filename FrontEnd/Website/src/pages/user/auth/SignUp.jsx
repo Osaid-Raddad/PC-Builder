@@ -113,7 +113,7 @@ const SignUp = ({ onSwitchToSignIn }) => {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 hover:scale-110 transition-transform"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 hover:scale-110 transition-transform cursor-pointer"
               style={{ color: '#333533' }}
             >
               {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
@@ -140,7 +140,7 @@ const SignUp = ({ onSwitchToSignIn }) => {
             <button
               type="button"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 hover:scale-110 transition-transform"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 hover:scale-110 transition-transform cursor-pointer"
               style={{ color: '#333533' }}
             >
               {showConfirmPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
@@ -173,7 +173,7 @@ const SignUp = ({ onSwitchToSignIn }) => {
 
         <button
           type="submit"
-          className="w-full py-2 sm:py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity shadow-lg text-sm sm:text-base"
+          className="w-full py-2 sm:py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity shadow-lg text-sm sm:text-base cursor-pointer"
           style={{ backgroundColor: '#F5CB5C' }}
         >
           Sign Up
@@ -191,21 +191,21 @@ const SignUp = ({ onSwitchToSignIn }) => {
       <div className="grid grid-cols-3 gap-2 sm:gap-4 mb-4 sm:mb-6">
         <button
           type="button"
-          className="flex items-center justify-center py-2 sm:py-3 border-2 rounded-lg hover:shadow-md transition-shadow"
+          className="flex items-center justify-center py-2 sm:py-3 border-2 rounded-lg hover:shadow-md transition-shadow cursor-pointer"
           style={{ borderColor: '#CFDBD5', backgroundColor: '#E8EDDF' }}
         >
           <FcGoogle className="text-xl sm:text-2xl" />
         </button>
         <button
           type="button"
-          className="flex items-center justify-center py-2 sm:py-3 border-2 rounded-lg hover:shadow-md transition-shadow"
+          className="flex items-center justify-center py-2 sm:py-3 border-2 rounded-lg hover:shadow-md transition-shadow cursor-pointer"
           style={{ borderColor: '#CFDBD5', backgroundColor: '#E8EDDF' }}
         >
           <FaSquareFacebook className="text-xl sm:text-2xl" color="#1877F2" />
         </button>
         <button
           type="button"
-          className="flex items-center justify-center py-2 sm:py-3 border-2 rounded-lg hover:shadow-md transition-shadow"
+          className="flex items-center justify-center py-2 sm:py-3 border-2 rounded-lg hover:shadow-md transition-shadow cursor-pointer"
           style={{ borderColor: '#CFDBD5', backgroundColor: '#E8EDDF' }}
         >
           <FaApple className="text-xl sm:text-2xl" color="#000000" />
@@ -217,7 +217,7 @@ const SignUp = ({ onSwitchToSignIn }) => {
         <button
           type="button"
           onClick={onSwitchToSignIn}
-          className="font-semibold hover:underline"
+          className="font-semibold hover:underline cursor-pointer"
           style={{ color: '#F5CB5C' }}
         >
           Sign In
