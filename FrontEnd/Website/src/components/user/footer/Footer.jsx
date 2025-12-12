@@ -160,7 +160,7 @@ export default function Footer() {
                 <FaInstagram size={24} />
               </a>
               <a 
-                href="https://linkedin.com" 
+                href="https://www.linkedin.com/in/omar-maher-khatib/" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="hover:scale-110 transition-transform"
@@ -169,7 +169,7 @@ export default function Footer() {
                 <FaLinkedin size={24} />
               </a>
               <a 
-                href="https://github.com" 
+                href="https://github.com/Omar-Maher-Khatib" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="hover:scale-110 transition-transform"
