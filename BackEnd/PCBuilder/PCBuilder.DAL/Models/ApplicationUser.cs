@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RddStore.DAL.Models
+namespace PCBuilder.DAL.Models
 {
     public class ApplicationUser : IdentityUser
     {

@@ -1,9 +1,16 @@
 
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using PCBuilder.BLL.Services.Classes;
+using PCBuilder.BLL.Services.Interfaces;
 using PCBuilder.DAL.Data;
-using RddStore.DAL.Models;
-using RddStore.DAL.Utilities;
+using PCBuilder.DAL.Models;
+using PCBuilder.DAL.Utilities;
+using PCBuilder.PL.Utilites;
+using System.Text;
 
 namespace PCBuilder.PL
 {
@@ -22,6 +29,9 @@ namespace PCBuilder.PL
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+            builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+            builder.Services.AddScoped<IEmailSender,EmailSetting>();
+            builder.Services.AddScoped<ISeedData, SeedData>();
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
             {
                 option.Password.RequireDigit = true;
@@ -35,6 +45,25 @@ namespace PCBuilder.PL
                 option.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
             })
             .AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JwtOption")["SecretKey"]))
+                };
+            });
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

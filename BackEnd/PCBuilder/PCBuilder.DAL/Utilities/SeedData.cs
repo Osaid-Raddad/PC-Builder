@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PCBuilder.DAL.Data;
-using RddStore.DAL.Models;
+using PCBuilder.DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RddStore.DAL.Utilities
+namespace PCBuilder.DAL.Utilities
 {
     public class SeedData : ISeedData
     {

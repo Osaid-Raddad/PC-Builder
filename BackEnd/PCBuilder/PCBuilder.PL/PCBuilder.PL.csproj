@@ -21,10 +21,8 @@
 
   <ItemGroup>
     <Folder Include="Areas\Admins\Controllers\" />
-    <Folder Include="Areas\Identity\Controllers\" />
     <Folder Include="Areas\TechSupport\Controllers\" />
     <Folder Include="Areas\User\Controllers\" />
-    <Folder Include="Utilites\" />
   </ItemGroup>
 
 </Project>

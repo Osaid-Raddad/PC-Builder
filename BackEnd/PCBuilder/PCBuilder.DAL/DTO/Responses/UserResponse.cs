@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PCBuilder.DAL.Utilities
+namespace PCBuilder.DAL.DTO.Responses
 {
-    public interface ISeedData
-    {  
-        Task IdentityDataSeedingAsync();
+    public class UserResponse
+    {
+        public string Token { get; set; }
     }
 }
