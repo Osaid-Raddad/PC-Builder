@@ -24,17 +24,17 @@ const Home = () => {
 
   const featureItems = [
     { icon: <FiCpu />, color: colors.mainYellow, label: 'CPU', link: '/products/cpu' },
-    { icon: <FiZap />, color: colors.mainYellow, label: 'GPU', link: '/gpu' },
-    { icon: <FiGrid />, color: colors.mainYellow, label: 'Motherboard', link: '/motherboard' },
-    { icon: <FiHardDrive />, color: colors.mainYellow, label: 'Storage', link: '/storage' },
-    { icon: <FiCommand />, color: colors.mainYellow, label: 'Memory', link: '/memory' },
-    { icon: <FiPackage />, color: colors.mainYellow, label: 'Power Supply', link: '/power-supply' },
-    { icon: <FiBox />, color: colors.mainYellow, label: 'Case', link: '/case' },
-    { icon: <FiWind />, color: colors.mainYellow, label: 'CPU Cooler', link: '/cpu-cooler' },
-    { icon: <FiMonitor />, color: colors.mainYellow, label: 'Monitor', link: '/monitor' },
-    { icon: <FiDisc />, color: colors.mainYellow, label: 'Peripherals', link: '/peripherals' },
-    { icon: <FiAperture />, color: colors.mainYellow, label: 'Accessories', link: '/accessories' },
-    { icon: <FiTool />, color: colors.mainYellow, label: 'Expansion', link: '/expansion' },
+    { icon: <FiZap />, color: colors.mainYellow, label: 'GPU', link: '/products/gpu' },
+    { icon: <FiGrid />, color: colors.mainYellow, label: 'Motherboard', link: '/products/motherboard' },
+    { icon: <FiHardDrive />, color: colors.mainYellow, label: 'Storage', link: '/products/storage' },
+    { icon: <FiCommand />, color: colors.mainYellow, label: 'Memory', link: '/products/memory' },
+    { icon: <FiPackage />, color: colors.mainYellow, label: 'Power Supply', link: '/products/power-supply' },
+    { icon: <FiBox />, color: colors.mainYellow, label: 'Case', link: '/products/case' },
+    { icon: <FiWind />, color: colors.mainYellow, label: 'CPU Cooler', link: '/products/cooler' },
+    { icon: <FiMonitor />, color: colors.mainYellow, label: 'Monitor', link: '/products/monitor' },
+    { icon: <FiDisc />, color: colors.mainYellow, label: 'Peripherals', link: '/products/peripherals' },
+    { icon: <FiAperture />, color: colors.mainYellow, label: 'Accessories', link: '/products/accessories' },
+    { icon: <FiTool />, color: colors.mainYellow, label: 'Expansion', link: '/products/expansion' },
   ];
 
   const performanceData = [
