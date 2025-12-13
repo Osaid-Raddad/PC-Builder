@@ -25,5 +25,12 @@ namespace PCBuilder.PL.Areas.Identity.Controllers
             return Ok(result);
         }
 
+        [HttpGet("ConfirmEmail")]
+        public async Task<ActionResult<string>> ConfirmEmail([FromQuery] string userId, [FromQuery] string token)
+        {
+            var result = await _authenticationService.ConfirmEmail(userId, token);
+            return Ok(result);
+        }
+
     }
 }

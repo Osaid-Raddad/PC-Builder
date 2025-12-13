@@ -10,52 +10,24 @@
       "RelativeMoniker": "D:0:0:{F174B36A-AAD5-4B4A-8146-4E901737F9F8}|PCBuilder.BLL\\PCBuilder.BLL.csproj|solutionrelative:pcbuilder.bll\\services\\classes\\authenticationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{F174B36A-AAD5-4B4A-8146-4E901737F9F8}|PCBuilder.BLL\\PCBuilder.BLL.csproj|d:\\projects\\vscode projects\\pcbuilder\\backend\\pcbuilder\\pcbuilder.bll\\services\\interfaces\\iauthenticationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{F174B36A-AAD5-4B4A-8146-4E901737F9F8}|PCBuilder.BLL\\PCBuilder.BLL.csproj|solutionrelative:pcbuilder.bll\\services\\interfaces\\iauthenticationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|d:\\projects\\vscode projects\\pcbuilder\\backend\\pcbuilder\\pcbuilder.dal\\dto\\responses\\registerresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|solutionrelative:pcbuilder.dal\\dto\\responses\\registerresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{132D511C-0222-478A-97E3-A305CD0A38B2}|PCBuilder.PL\\PCBuilder.PL.csproj|d:\\projects\\vscode projects\\pcbuilder\\backend\\pcbuilder\\pcbuilder.pl\\areas\\identity\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{132D511C-0222-478A-97E3-A305CD0A38B2}|PCBuilder.PL\\PCBuilder.PL.csproj|solutionrelative:pcbuilder.pl\\areas\\identity\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{F174B36A-AAD5-4B4A-8146-4E901737F9F8}|PCBuilder.BLL\\PCBuilder.BLL.csproj|d:\\projects\\vscode projects\\pcbuilder\\backend\\pcbuilder\\pcbuilder.bll\\services\\interfaces\\iauthenticationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{F174B36A-AAD5-4B4A-8146-4E901737F9F8}|PCBuilder.BLL\\PCBuilder.BLL.csproj|solutionrelative:pcbuilder.bll\\services\\interfaces\\iauthenticationservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|d:\\projects\\vscode projects\\pcbuilder\\backend\\pcbuilder\\pcbuilder.dal\\dto\\requests\\forgotpasswordrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|solutionrelative:pcbuilder.dal\\dto\\requests\\forgotpasswordrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|d:\\projects\\vscode projects\\pcbuilder\\backend\\pcbuilder\\pcbuilder.dal\\dto\\requests\\resetpasswordrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|solutionrelative:pcbuilder.dal\\dto\\requests\\resetpasswordrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{132D511C-0222-478A-97E3-A305CD0A38B2}|PCBuilder.PL\\PCBuilder.PL.csproj|d:\\projects\\vscode projects\\pcbuilder\\backend\\pcbuilder\\pcbuilder.pl\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{132D511C-0222-478A-97E3-A305CD0A38B2}|PCBuilder.PL\\PCBuilder.PL.csproj|solutionrelative:pcbuilder.pl\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{132D511C-0222-478A-97E3-A305CD0A38B2}|PCBuilder.PL\\PCBuilder.PL.csproj|d:\\projects\\vscode projects\\pcbuilder\\backend\\pcbuilder\\pcbuilder.pl\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
-      "RelativeMoniker": "D:0:0:{132D511C-0222-478A-97E3-A305CD0A38B2}|PCBuilder.PL\\PCBuilder.PL.csproj|solutionrelative:pcbuilder.pl\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|d:\\projects\\vscode projects\\pcbuilder\\backend\\pcbuilder\\pcbuilder.dal\\dto\\requests\\registerrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|solutionrelative:pcbuilder.dal\\dto\\requests\\registerrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|d:\\projects\\vscode projects\\pcbuilder\\backend\\pcbuilder\\pcbuilder.dal\\utilities\\seeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|solutionrelative:pcbuilder.dal\\utilities\\seeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|d:\\projects\\vscode projects\\pcbuilder\\backend\\pcbuilder\\pcbuilder.dal\\dto\\responses\\userresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|solutionrelative:pcbuilder.dal\\dto\\responses\\userresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|d:\\projects\\vscode projects\\pcbuilder\\backend\\pcbuilder\\pcbuilder.dal\\dto\\requests\\loginrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|solutionrelative:pcbuilder.dal\\dto\\requests\\loginrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|d:\\projects\\vscode projects\\pcbuilder\\backend\\pcbuilder\\pcbuilder.dal\\utilities\\iseeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|solutionrelative:pcbuilder.dal\\utilities\\iseeddata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|d:\\projects\\vscode projects\\pcbuilder\\backend\\pcbuilder\\pcbuilder.dal\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|solutionrelative:pcbuilder.dal\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|d:\\projects\\vscode projects\\pcbuilder\\backend\\pcbuilder\\pcbuilder.dal\\models\\applicationuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{780ADFFA-1FAD-418E-8D38-AE71BF9E96F2}|PCBuilder.DAL\\PCBuilder.DAL.csproj|solutionrelative:pcbuilder.dal\\models\\applicationuser.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -74,18 +46,44 @@
               "DocumentMoniker": "ViewDataWindow_MSSQL__/DESKTOP_420PRC7/PCBuilder/True/SqlTable/dbo.Users.sql",
               "ToolTip": "dbo.Users [Data]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000826|",
-              "WhenOpened": "2025-12-13T16:26:33.789Z",
+              "WhenOpened": "2025-12-13T17:24:10.849Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
+              "Title": "ResetPasswordRequest.cs",
+              "DocumentMoniker": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\DTO\\Requests\\ResetPasswordRequest.cs",
+              "RelativeDocumentMoniker": "PCBuilder.DAL\\DTO\\Requests\\ResetPasswordRequest.cs",
+              "ToolTip": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\DTO\\Requests\\ResetPasswordRequest.cs",
+              "RelativeToolTip": "PCBuilder.DAL\\DTO\\Requests\\ResetPasswordRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-13T17:01:29.007Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ForgotPasswordRequest.cs",
+              "DocumentMoniker": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\DTO\\Requests\\ForgotPasswordRequest.cs",
+              "RelativeDocumentMoniker": "PCBuilder.DAL\\DTO\\Requests\\ForgotPasswordRequest.cs",
+              "ToolTip": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\DTO\\Requests\\ForgotPasswordRequest.cs",
+              "RelativeToolTip": "PCBuilder.DAL\\DTO\\Requests\\ForgotPasswordRequest.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-13T17:01:04.789Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "IAuthenticationService.cs",
               "DocumentMoniker": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.BLL\\Services\\Interfaces\\IAuthenticationService.cs",
               "RelativeDocumentMoniker": "PCBuilder.BLL\\Services\\Interfaces\\IAuthenticationService.cs",
               "ToolTip": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.BLL\\Services\\Interfaces\\IAuthenticationService.cs",
               "RelativeToolTip": "PCBuilder.BLL\\Services\\Interfaces\\IAuthenticationService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAVAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-13T16:23:21.379Z",
               "EditorCaption": ""
@@ -100,26 +98,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "RegisterResponse.cs",
-              "DocumentMoniker": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\DTO\\Responses\\RegisterResponse.cs",
-              "RelativeDocumentMoniker": "PCBuilder.DAL\\DTO\\Responses\\RegisterResponse.cs",
-              "ToolTip": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\DTO\\Responses\\RegisterResponse.cs",
-              "RelativeToolTip": "PCBuilder.DAL\\DTO\\Responses\\RegisterResponse.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAArAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-13T16:23:01.825Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
               "Title": "AccountController.cs",
               "DocumentMoniker": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.PL\\Areas\\Identity\\Controllers\\AccountController.cs",
               "RelativeDocumentMoniker": "PCBuilder.PL\\Areas\\Identity\\Controllers\\AccountController.cs",
               "ToolTip": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.PL\\Areas\\Identity\\Controllers\\AccountController.cs",
               "RelativeToolTip": "PCBuilder.PL\\Areas\\Identity\\Controllers\\AccountController.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAawBwAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAawBsAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-13T15:47:22.289Z",
               "EditorCaption": ""
@@ -132,66 +117,14 @@
               "RelativeDocumentMoniker": "PCBuilder.BLL\\Services\\Classes\\AuthenticationService.cs",
               "ToolTip": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.BLL\\Services\\Classes\\AuthenticationService.cs",
               "RelativeToolTip": "PCBuilder.BLL\\Services\\Classes\\AuthenticationService.cs",
-              "ViewState": "AgIAAGYAAAAAAAAAAAAAAFcAAABEAAAAAAAAAA==",
+              "ViewState": "AgIAAEwAAAAAAAAAAAAmwGEAAABKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-13T15:32:11.655Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "UserResponse.cs",
-              "DocumentMoniker": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\DTO\\Responses\\UserResponse.cs",
-              "RelativeDocumentMoniker": "PCBuilder.DAL\\DTO\\Responses\\UserResponse.cs",
-              "ToolTip": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\DTO\\Responses\\UserResponse.cs",
-              "RelativeToolTip": "PCBuilder.DAL\\DTO\\Responses\\UserResponse.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAqwA0AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-13T15:28:24.425Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "RegisterRequest.cs",
-              "DocumentMoniker": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\DTO\\Requests\\RegisterRequest.cs",
-              "RelativeDocumentMoniker": "PCBuilder.DAL\\DTO\\Requests\\RegisterRequest.cs",
-              "ToolTip": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\DTO\\Requests\\RegisterRequest.cs",
-              "RelativeToolTip": "PCBuilder.DAL\\DTO\\Requests\\RegisterRequest.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-13T15:26:35.055Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "ISeedData.cs",
-              "DocumentMoniker": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\Utilities\\ISeedData.cs",
-              "RelativeDocumentMoniker": "PCBuilder.DAL\\Utilities\\ISeedData.cs",
-              "ToolTip": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\Utilities\\ISeedData.cs",
-              "RelativeToolTip": "PCBuilder.DAL\\Utilities\\ISeedData.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAeAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-13T13:56:59.213Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "SeedData.cs",
-              "DocumentMoniker": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\Utilities\\SeedData.cs",
-              "RelativeDocumentMoniker": "PCBuilder.DAL\\Utilities\\SeedData.cs",
-              "ToolTip": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\Utilities\\SeedData.cs",
-              "RelativeToolTip": "PCBuilder.DAL\\Utilities\\SeedData.cs",
-              "ViewState": "AgIAABsAAAAAAAAAAAA5wBEAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-13T13:55:59.03Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.PL\\Program.cs",
               "RelativeDocumentMoniker": "PCBuilder.PL\\Program.cs",
@@ -200,58 +133,6 @@
               "ViewState": "AgIAAA4AAAAAAAAAAAAAACAAAABEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-12-13T13:51:19.317Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "appsettings.json",
-              "DocumentMoniker": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.PL\\appsettings.json",
-              "RelativeDocumentMoniker": "PCBuilder.PL\\appsettings.json",
-              "ToolTip": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.PL\\appsettings.json",
-              "RelativeToolTip": "PCBuilder.PL\\appsettings.json",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2025-12-13T13:32:05.767Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "LoginRequest.cs",
-              "DocumentMoniker": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\DTO\\Requests\\LoginRequest.cs",
-              "RelativeDocumentMoniker": "PCBuilder.DAL\\DTO\\Requests\\LoginRequest.cs",
-              "ToolTip": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\DTO\\Requests\\LoginRequest.cs",
-              "RelativeToolTip": "PCBuilder.DAL\\DTO\\Requests\\LoginRequest.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAsAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-13T15:27:22.426Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "ApplicationUser.cs",
-              "DocumentMoniker": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\Models\\ApplicationUser.cs",
-              "RelativeDocumentMoniker": "PCBuilder.DAL\\Models\\ApplicationUser.cs",
-              "ToolTip": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\Models\\ApplicationUser.cs",
-              "RelativeToolTip": "PCBuilder.DAL\\Models\\ApplicationUser.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAeAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-13T13:37:19.25Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "ApplicationDbContext.cs",
-              "DocumentMoniker": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\Data\\ApplicationDbContext.cs",
-              "RelativeDocumentMoniker": "PCBuilder.DAL\\Data\\ApplicationDbContext.cs",
-              "ToolTip": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.DAL\\Data\\ApplicationDbContext.cs",
-              "RelativeToolTip": "PCBuilder.DAL\\Data\\ApplicationDbContext.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAASAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-12-13T13:18:54.027Z",
               "EditorCaption": ""
             }
           ]

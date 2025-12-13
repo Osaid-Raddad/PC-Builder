@@ -13,5 +13,8 @@ namespace PCBuilder.BLL.Services.Interfaces
     {
         Task<RegisterResponse> RegisterAsync(RegisterRequest registerRequest, HttpRequest httpRequest);
         Task<UserResponse> LoginAsync(LoginRequest loginRequest);
+        Task<string> ConfirmEmail(string userId, string token);
+        Task<bool> ForgotPassword(ForgotPasswordRequest request);
+        Task<bool> ResetPassword(ResetPasswordRequest request);
     }
 }

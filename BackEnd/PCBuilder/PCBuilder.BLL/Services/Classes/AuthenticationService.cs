@@ -32,9 +32,53 @@ namespace PCBuilder.BLL.Services.Classes
             _signInManager = signInManager;
         }
 
-        public Task<UserResponse> LoginAsync(LoginRequest loginRequest)
+        public async Task<string> ConfirmEmail(string userId, string token)
+        {
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                throw new Exception("Invalid user ID.");
+            }
+            var result = await _userManager.ConfirmEmailAsync(user, token);
+            if (!result.Succeeded)
+            {
+                throw new Exception("Email confirmation failed.");
+            }
+            return "Email confirmed successfully.";
+        }
+
+        public Task<bool> ForgotPassword(ForgotPasswordRequest request)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<UserResponse> LoginAsync(LoginRequest loginRequest)
+        {
+            var user = await _userManager.FindByEmailAsync(loginRequest.Email);
+            if (user == null)
+            {
+                throw new Exception("Invalid email or password.");
+            }
+            var result = await _signInManager.CheckPasswordSignInAsync(user, loginRequest.Password, true);
+            if (result.Succeeded)
+            {
+                return new UserResponse()
+                {
+                    Token = await CreateTokenAsync(user)
+                };
+            }
+            else if (result.IsLockedOut)
+            {
+                throw new Exception("User account is locked out.");
+            }
+            else if (result.IsNotAllowed)
+            {
+                throw new Exception("Please Confirm Your Email");
+            }
+            else
+            {
+                throw new Exception("Invalid email or password.");
+            }
         }
 
         public async Task<RegisterResponse> RegisterAsync(RegisterRequest registerRequest, HttpRequest httpRequest)
@@ -51,7 +95,7 @@ namespace PCBuilder.BLL.Services.Classes
             {
                 var token = await _userManager.GenerateEmailConfirmationTokenAsync(newUser);
                 var escapeToken = Uri.EscapeDataString(token);
-                var emailUrl = $"{httpRequest.Scheme}/api/Identity/Account/ConfirmEmail?token={escapeToken}&userId={newUser.Id}";
+                var emailUrl = $"{httpRequest.Scheme}://{httpRequest.Host}/api/Identity/Account/ConfirmEmail?token={escapeToken}&userId={newUser.Id}";
 
                 var roleResult = await _userManager.AddToRoleAsync(newUser, "User");
 
@@ -143,7 +187,35 @@ namespace PCBuilder.BLL.Services.Classes
             }
         }
 
-       
+        public Task<bool> ResetPassword(ResetPasswordRequest request)
+        {
+            throw new NotImplementedException();
+        }
+
+        private async Task<string> CreateTokenAsync(ApplicationUser user)
+        {
+            var Claims = new List<Claim>()
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id),
+                new Claim(ClaimTypes.Name,user.UserName),
+                new Claim(ClaimTypes.Email,user.Email),
+            };
+
+            var Roles = await _userManager.GetRolesAsync(user);
+            foreach (var role in Roles)
+            {
+                Claims.Add(new Claim(ClaimTypes.Role, role));
+            }
+
+            var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_confige.GetSection("JwtOption")["SecretKey"]));
+            var Credentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
+            var Token = new JwtSecurityToken(
+                claims: Claims,
+                expires: DateTime.Now.AddDays(15),
+                signingCredentials: Credentials
+                );
+            return new JwtSecurityTokenHandler().WriteToken(Token);
+        }
 
     }
 }
