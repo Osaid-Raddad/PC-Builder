@@ -1,0 +1,6 @@
+@PCBuilder.PL_HostAddress = http://localhost:5145
+
+GET {{PCBuilder.PL_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

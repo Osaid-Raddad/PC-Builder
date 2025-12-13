@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "D0C3Eymloxo=",
+  "success": true,
+  "projectFilePath": "D:\\PROJECTS\\vsCode projects\\PCBuilder\\BackEnd\\PCBuilder\\PCBuilder.PL\\PCBuilder.PL.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\osaid\\.nuget\\packages\\microsoft.aspnetcore.openapi\\9.0.10\\microsoft.aspnetcore.openapi.9.0.10.nupkg.sha512",
+    "C:\\Users\\osaid\\.nuget\\packages\\microsoft.openapi\\1.6.17\\microsoft.openapi.1.6.17.nupkg.sha512"
+  ],
+  "logs": []
+}
