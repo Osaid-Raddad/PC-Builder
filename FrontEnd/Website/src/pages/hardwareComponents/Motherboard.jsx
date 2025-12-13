@@ -5,18 +5,48 @@ import Footer from '../../components/user/footer/Footer.jsx';
 import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { BsMotherboard } from 'react-icons/bs';
-import { FiArrowLeft, FiFilter, FiSearch } from 'react-icons/fi';
+import { FiArrowLeft, FiSearch } from 'react-icons/fi';
 
 const Motherboard = () => {
   const navigate = useNavigate();
   const [selectedMotherboard, setSelectedMotherboard] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [brandFilter, setBrandFilter] = useState('All');
-  const [socketFilter, setSocketFilter] = useState('All');
-  const [formFactorFilter, setFormFactorFilter] = useState('All');
   const [animationKey, setAnimationKey] = useState(0);
 
-  // Scroll to top when component mounts
+  // Filter states
+  const [filters, setFilters] = useState({
+    priceRange: { min: 0, max: 1000 },
+    manufacturers: [],
+    rating: 0,
+    socket: [],
+    formFactor: [],
+    chipset: [],
+    memoryMax: { min: 0, max: 256 },
+    memoryType: [],
+    memorySlots: [],
+    color: [],
+    sliCrossfire: [],
+    pcieX16Slots: [],
+    pcieX8Slots: [],
+    pcieX4Slots: [],
+    pcieX1Slots: [],
+    pciSlots: [],
+    sata3Ports: [],
+    sata6Ports: [],
+    m2SlotsB: [],
+    m2SlotsE: [],
+    msataSlots: [],
+    onboardEthernet: [],
+    onboardVideo: null,
+    usb2Headers: [],
+    usb3Gen1Headers: [],
+    usb3Gen2Headers: [],
+    usb3Gen2x2Headers: [],
+    supportsECC: null,
+    wirelessNetworking: null,
+    backConnectConnectors: null
+  });
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -30,19 +60,52 @@ const Motherboard = () => {
     { id: 6, name: 'MSI MAG B650 Tomahawk WiFi', brand: 'MSI', chipset: 'B650', socket: 'AM5', price: 229.99, formFactor: 'ATX' },
   ];
 
-  const brands = ['All', 'ASUS', 'MSI', 'Gigabyte', 'ASRock'];
-  const sockets = ['All', 'LGA1700', 'AM5'];
-  const formFactors = ['All', 'ATX', 'Micro-ATX', 'Mini-ITX'];
+  const handleFilterChange = (filterName, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterName]: value
+    }));
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const handleCheckboxToggle = (filterName, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterName]: prev[filterName].includes(value)
+        ? prev[filterName].filter(item => item !== value)
+        : [...prev[filterName], value]
+    }));
+    setAnimationKey(prev => prev + 1);
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      priceRange: { min: 0, max: 1000 },
+      manufacturers: [],
+      rating: 0,
+      socket: [],
+      formFactor: [],
+      chipset: [],
+      memoryMax: { min: 0, max: 256 },
+      memoryType: [],
+      memorySlots: [],
+      color: [],
+      sliCrossfeaders: [],
+      usb3Gen2x2Headers: [],
+      supportsECC: null,
+      wirelessNetworking: null,
+      backConnectConnectors: null
+    });
+    setAnimationKey(prev => prev + 1);
+  };
 
   const filteredMotherboards = motherboardList.filter(mb => {
     const matchesSearch = searchTerm === '' ||
       mb.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       mb.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
       mb.chipset.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesBrand = brandFilter === 'All' || mb.brand === brandFilter;
-    const matchesSocket = socketFilter === 'All' || mb.socket === socketFilter;
-    const matchesFormFactor = formFactorFilter === 'All' || mb.formFactor === formFactorFilter;
-    return matchesSearch && matchesBrand && matchesSocket && matchesFormFactor;
+    // Add more filter logic here when backend data includes these fields
+    return matchesSearch;
   });
 
   const handleSelectMotherboard = (motherboard) => {
@@ -87,12 +150,12 @@ const Motherboard = () => {
       <div className="flex-1 container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <button
-            onClick={() => navigate('/builder')}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:opacity-80 transition-opacity  cursor-pointer"
             style={{ backgroundColor: colors.mainYellow, color: 'white' }}
           >
             <FiArrowLeft size={20} />
-            Back to Builder
+            Back
           </button>
           
           <div className="flex items-center gap-3">
@@ -105,44 +168,707 @@ const Motherboard = () => {
           <div style={{ width: '150px' }}></div>
         </div>
 
-        <div className="mb-6">
-          <div className="relative">
-            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: colors.mainYellow }} size={20} />
-            <input type="text" placeholder="Search motherboards..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-12 pr-4 py-4 rounded-lg font-medium transition-all focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }} />
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <div className="bg-white rounded-lg shadow-lg p-6" style={{ border: `2px solid ${colors.platinum}` }}>
-            <div className="flex items-center gap-3 mb-4">
-              <FiFilter size={20} style={{ color: colors.mainYellow }} />
-              <h3 className="text-xl font-bold" style={{ color: colors.mainBlack }}>Filters</h3>
+        {/* Main Content */}
+        <div className="flex gap-6">
+          {/* Filters Sidebar */}
+          <div 
+            className="w-64 rounded-lg p-6 shadow-md overflow-y-auto"
+            style={{ 
+              backgroundColor: 'white',
+              maxHeight: 'calc(120vh - 250px)',
+              position: 'sticky',
+              top: '20px'
+            }}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold" style={{ color: colors.mainBlack }}>
+                Filters
+              </h2>
+              <button
+                onClick={resetFilters}
+                className="text-sm hover:opacity-80 transition-opacity"
+                style={{ color: colors.mainYellow }}
+              >
+                Reset
+              </button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Brand</label>
-                <select value={brandFilter} onChange={(e) => setBrandFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
-                  {brands.map(b => <option key={b} value={b}>{b}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Socket</label>
-                <select value={socketFilter} onChange={(e) => setSocketFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
-                  {sockets.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Form Factor</label>
-                <select value={formFactorFilter} onChange={(e) => setFormFactorFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer " style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
-                  {formFactors.map(f => <option key={f} value={f}>{f}</option>)}
-                </select>
+
+            {/* Price Range Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Price
+              </h3>
+              <div className="space-y-2">
+                <input
+                  type="range"
+                  min="0"
+                  max="1000"
+                  value={filters.priceRange.max}
+                  onChange={(e) => handleFilterChange('priceRange', { ...filters.priceRange, max: parseInt(e.target.value) })}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-sm" style={{ color: colors.jet }}>
+                  <span>${filters.priceRange.min}</span>
+                  <span>${filters.priceRange.max}</span>
+                </div>
               </div>
             </div>
-            <div className="mt-4 text-sm" style={{ color: colors.jet }}>Showing {filteredMotherboards.length} of {motherboardList.length} motherboards</div>
-          </div>
-        </div>
 
-        {selectedMotherboard && (
+            {/* Manufacturer Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Manufacturer
+              </h3>
+              <div className="space-y-2">
+                {['ASUS', 'MSI', 'Gigabyte', 'ASRock', 'EVGA', 'Biostar'].map(manufacturer => (
+                  <label key={manufacturer} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.manufacturers.includes(manufacturer)}
+                      onChange={() => handleCheckboxToggle('manufacturers', manufacturer)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{manufacturer}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Rating Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Rating
+              </h3>
+              <div className="space-y-2">
+                {[5, 4, 3, 2, 1].map(rating => (
+                  <label key={rating} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="rating"
+                      checked={filters.rating === rating}
+                      onChange={() => handleFilterChange('rating', rating)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>
+                      {'★'.repeat(rating)}{'☆'.repeat(5 - rating)} & Up
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Socket / CPU Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Socket / CPU
+              </h3>
+              <div className="space-y-2">
+                {['LGA1700', 'LGA1200', 'AM5', 'AM4', 'LGA1851', 'TR4'].map(socket => (
+                  <label key={socket} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.socket.includes(socket)}
+                      onChange={() => handleCheckboxToggle('socket', socket)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{socket}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Form Factor Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Form Factor
+              </h3>
+              <div className="space-y-2">
+                {['ATX', 'Micro-ATX', 'Mini-ITX', 'E-ATX', 'XL-ATX'].map(formFactor => (
+                  <label key={formFactor} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.formFactor.includes(formFactor)}
+                      onChange={() => handleCheckboxToggle('formFactor', formFactor)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{formFactor}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Chipset Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Chipset
+              </h3>
+              <div className="space-y-2">
+                {['Z790', 'B760', 'H770', 'X670E', 'B650', 'A620'].map(chipset => (
+                  <label key={chipset} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.chipset.includes(chipset)}
+                      onChange={() => handleCheckboxToggle('chipset', chipset)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{chipset}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Memory Max Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Memory Max
+              </h3>
+              <div className="space-y-2">
+                <input
+                  type="range"
+                  min="0"
+                  max="256"
+                  step="16"
+                  value={filters.memoryMax.max}
+                  onChange={(e) => handleFilterChange('memoryMax', { ...filters.memoryMax, max: parseInt(e.target.value) })}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-sm" style={{ color: colors.jet }}>
+                  <span>{filters.memoryMax.min} GB</span>
+                  <span>{filters.memoryMax.max} GB</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Memory Type Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Memory Type
+              </h3>
+              <div className="space-y-2">
+                {['DDR5', 'DDR4', 'DDR3'].map(type => (
+                  <label key={type} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.memoryType.includes(type)}
+                      onChange={() => handleCheckboxToggle('memoryType', type)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{type}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Memory Slots Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Memory Slots
+              </h3>
+              <div className="space-y-2">
+                {['2', '4', '6', '8'].map(slots => (
+                  <label key={slots} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.memorySlots.includes(slots)}
+                      onChange={() => handleCheckboxToggle('memorySlots', slots)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{slots} Slots</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Color Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Color
+              </h3>
+              <div className="space-y-2">
+                {['Black', 'White', 'Silver', 'Blue', 'Red', 'RGB'].map(color => (
+                  <label key={color} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.color.includes(color)}
+                      onChange={() => handleCheckboxToggle('color', color)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{color}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* SLI/CrossFire Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                SLI/CrossFire
+              </h3>
+              <div className="space-y-2">
+                {['SLI', 'CrossFire', 'Both', 'None'].map(option => (
+                  <label key={option} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.sliCrossfire.includes(option)}
+                      onChange={() => handleCheckboxToggle('sliCrossfire', option)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{option}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* PCIe x16 Slots Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                PCIe x16 Slots
+              </h3>
+              <div className="space-y-2">
+                {['1', '2', '3', '4+'].map(slots => (
+                  <label key={slots} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.pcieX16Slots.includes(slots)}
+                      onChange={() => handleCheckboxToggle('pcieX16Slots', slots)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{slots}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* PCIe x8 Slots Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                PCIe x8 Slots
+              </h3>
+              <div className="space-y-2">
+                {['0', '1', '2', '3+'].map(slots => (
+                  <label key={slots} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.pcieX8Slots.includes(slots)}
+                      onChange={() => handleCheckboxToggle('pcieX8Slots', slots)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{slots}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* PCIe x4 Slots Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                PCIe x4 Slots
+              </h3>
+              <div className="space-y-2">
+                {['0', '1', '2', '3+'].map(slots => (
+                  <label key={slots} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.pcieX4Slots.includes(slots)}
+                      onChange={() => handleCheckboxToggle('pcieX4Slots', slots)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{slots}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* PCIe x1 Slots Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                PCIe x1 Slots
+              </h3>
+              <div className="space-y-2">
+                {['0', '1', '2', '3+'].map(slots => (
+                  <label key={slots} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.pcieX1Slots.includes(slots)}
+                      onChange={() => handleCheckboxToggle('pcieX1Slots', slots)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{slots}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* PCI Slots Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                PCI Slots
+              </h3>
+              <div className="space-y-2">
+                {['0', '1', '2', '3+'].map(slots => (
+                  <label key={slots} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.pciSlots.includes(slots)}
+                      onChange={() => handleCheckboxToggle('pciSlots', slots)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{slots}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* SATA 3Gb/s Ports Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                SATA 3Gb/s Ports
+              </h3>
+              <div className="space-y-2">
+                {['0', '2', '4', '6', '8+'].map(ports => (
+                  <label key={ports} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.sata3Ports.includes(ports)}
+                      onChange={() => handleCheckboxToggle('sata3Ports', ports)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{ports}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* SATA 6Gb/s Ports Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                SATA 6Gb/s Ports
+              </h3>
+              <div className="space-y-2">
+                {['0', '2', '4', '6', '8+'].map(ports => (
+                  <label key={ports} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.sata6Ports.includes(ports)}
+                      onChange={() => handleCheckboxToggle('sata6Ports', ports)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{ports}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* M.2 Slots (B/M) Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                M.2 Slots (B/M)
+              </h3>
+              <div className="space-y-2">
+                {['0', '1', '2', '3', '4+'].map(slots => (
+                  <label key={slots} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.m2SlotsB.includes(slots)}
+                      onChange={() => handleCheckboxToggle('m2SlotsB', slots)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{slots}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* M.2 Slots (E) Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                M.2 Slots (E)
+              </h3>
+              <div className="space-y-2">
+                {['0', '1', '2', '3+'].map(slots => (
+                  <label key={slots} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.m2SlotsE.includes(slots)}
+                      onChange={() => handleCheckboxToggle('m2SlotsE', slots)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{slots}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* mSATA Slots Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                mSATA Slots
+              </h3>
+              <div className="space-y-2">
+                {['0', '1', '2+'].map(slots => (
+                  <label key={slots} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.msataSlots.includes(slots)}
+                      onChange={() => handleCheckboxToggle('msataSlots', slots)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{slots}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Onboard Ethernet Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Onboard Ethernet
+              </h3>
+              <div className="space-y-2">
+                {['1 Gbps', '2.5 Gbps', '5 Gbps', '10 Gbps'].map(speed => (
+                  <label key={speed} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.onboardEthernet.includes(speed)}
+                      onChange={() => handleCheckboxToggle('onboardEthernet', speed)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{speed}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Onboard Video Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Onboard Video
+              </h3>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="onboardVideo"
+                    checked={filters.onboardVideo === true}
+                    onChange={() => handleFilterChange('onboardVideo', true)}
+                    className="cursor-pointer"
+                  />
+                  <span style={{ color: colors.jet }}>Yes</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="onboardVideo"
+                    checked={filters.onboardVideo === false}
+                    onChange={() => handleFilterChange('onboardVideo', false)}
+                    className="cursor-pointer"
+                  />
+                  <span style={{ color: colors.jet }}>No</span>
+                </label>
+              </div>
+            </div>
+
+            {/* USB 2.0 Headers Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                USB 2.0 Headers
+              </h3>
+              <div className="space-y-2">
+                {['0', '1', '2', '3', '4+'].map(headers => (
+                  <label key={headers} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.usb2Headers.includes(headers)}
+                      onChange={() => handleCheckboxToggle('usb2Headers', headers)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{headers}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* USB 3.2 Gen 1 Headers Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                USB 3.2 Gen 1 Headers
+              </h3>
+              <div className="space-y-2">
+                {['0', '1', '2', '3+'].map(headers => (
+                  <label key={headers} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.usb3Gen1Headers.includes(headers)}
+                      onChange={() => handleCheckboxToggle('usb3Gen1Headers', headers)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{headers}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* USB 3.2 Gen 2 Headers Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                USB 3.2 Gen 2 Headers
+              </h3>
+              <div className="space-y-2">
+                {['0', '1', '2', '3+'].map(headers => (
+                  <label key={headers} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.usb3Gen2Headers.includes(headers)}
+                      onChange={() => handleCheckboxToggle('usb3Gen2Headers', headers)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{headers}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* USB 3.2 Gen 2x2 Headers Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                USB 3.2 Gen 2x2 Headers
+              </h3>
+              <div className="space-y-2">
+                {['0', '1', '2+'].map(headers => (
+                  <label key={headers} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.usb3Gen2x2Headers.includes(headers)}
+                      onChange={() => handleCheckboxToggle('usb3Gen2x2Headers', headers)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{headers}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Supports ECC Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Supports ECC
+              </h3>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="supportsECC"
+                    checked={filters.supportsECC === true}
+                    onChange={() => handleFilterChange('supportsECC', true)}
+                    className="cursor-pointer"
+                  />
+                  <span style={{ color: colors.jet }}>Yes</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="supportsECC"
+                    checked={filters.supportsECC === false}
+                    onChange={() => handleFilterChange('supportsECC', false)}
+                    className="cursor-pointer"
+                  />
+                  <span style={{ color: colors.jet }}>No</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Wireless Networking Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Wireless Networking
+              </h3>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="wirelessNetworking"
+                    checked={filters.wirelessNetworking === true}
+                    onChange={() => handleFilterChange('wirelessNetworking', true)}
+                    className="cursor-pointer"
+                  />
+                  <span style={{ color: colors.jet }}>Yes</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="wirelessNetworking"
+                    checked={filters.wirelessNetworking === false}
+                    onChange={() => handleFilterChange('wirelessNetworking', false)}
+                    className="cursor-pointer"
+                  />
+                  <span style={{ color: colors.jet }}>No</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Uses Back-Connect Connectors Filter */}
+            <div className="mb-6">
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Uses Back-Connect Connectors
+              </h3>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="backConnectConnectors"
+                    checked={filters.backConnectConnectors === true}
+                    onChange={() => handleFilterChange('backConnectConnectors', true)}
+                    className="cursor-pointer"
+                  />
+                  <span style={{ color: colors.jet }}>Yes</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="backConnectConnectors"
+                    checked={filters.backConnectConnectors === false}
+                    onChange={() => handleFilterChange('backConnectConnectors', false)}
+                    className="cursor-pointer"
+                  />
+                  <span style={{ color: colors.jet }}>No</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Products Area */}
+          <div className="flex-1">
+            {/* Search Bar */}
+            <div className="mb-6">
+              <div className="relative">
+                <FiSearch 
+                  size={20} 
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2"
+                  style={{ color: colors.platinum }}
+                />
+                <input
+                  type="text"
+                  placeholder="Search motherboards..."
+                  value={searchTerm}
+                  onChange={handleSearch}
+                  className="w-full pl-12 pr-4 py-3 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                  style={{ 
+                    backgroundColor: 'white', 
+                    borderColor: colors.platinum,
+                    color: colors.mainBlack 
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Results Counter */}
+            <div className="mb-4">
+              <p className="text-lg font-semibold" style={{ color: colors.jet }}>
+                Showing {filteredMotherboards.length} of {motherboardList.length} motherboards
+              </p>
+            </div>
+
+            {selectedMotherboard && (
           <div 
             className="rounded-lg shadow-lg p-4 mb-6 flex justify-between items-center"
             style={{ backgroundColor: colors.mainYellow }}
@@ -171,7 +897,7 @@ const Motherboard = () => {
         )}
 
         {/* Product Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredMotherboards.map((motherboard, index) => (
             <BounceCard
               key={motherboard.id}
@@ -263,6 +989,8 @@ const Motherboard = () => {
             <p className="text-lg" style={{ color: colors.jet }}>Try adjusting your filters or search terms</p>
           </div>
         )}
+          </div>
+        </div>
       </div>
 
       <Footer />

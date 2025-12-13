@@ -5,16 +5,30 @@ import Footer from '../../components/user/footer/Footer.jsx';
 import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaMemory } from 'react-icons/fa';
-import { FiArrowLeft, FiFilter, FiSearch } from 'react-icons/fi';
+import { FiArrowLeft, FiSearch } from 'react-icons/fi';
 
 const Memory = () => {
   const navigate = useNavigate();
   const [selectedMemory, setSelectedMemory] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [brandFilter, setBrandFilter] = useState('All');
-  const [capacityFilter, setCapacityFilter] = useState('All');
-  const [speedFilter, setSpeedFilter] = useState('All');
   const [animationKey, setAnimationKey] = useState(0);
+  
+  const [filters, setFilters] = useState({
+    priceRange: { min: 0, max: 500 },
+    manufacturers: [],
+    rating: null,
+    formFactor: [],
+    type: [],
+    speed: [],
+    modules: [],
+    color: [],
+    firstWordLatency: { min: 0, max: 20 },
+    casLatency: [],
+    voltage: [],
+    timing: [],
+    eccRegistered: null,
+    heatSpreader: null
+  });
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -30,17 +44,42 @@ const Memory = () => {
     { id: 6, name: 'G.Skill Ripjaws S5', brand: 'G.Skill', capacity: '32GB (2x16GB)', speed: 'DDR5-6000', price: 139.99 },
   ];
 
-  const brands = ['All', 'Corsair', 'G.Skill', 'Kingston', 'Crucial'];
-  const capacities = ['All', '32GB (2x16GB)', '64GB (2x32GB)'];
-  const speeds = ['All', 'DDR5-5200', 'DDR5-5600', 'DDR5-6000', 'DDR5-6400'];
-
   const filteredMemory = memoryList.filter(mem => {
     const matchesSearch = searchTerm === '' || mem.name.toLowerCase().includes(searchTerm.toLowerCase()) || mem.brand.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesBrand = brandFilter === 'All' || mem.brand === brandFilter;
-    const matchesCapacity = capacityFilter === 'All' || mem.capacity === capacityFilter;
-    const matchesSpeed = speedFilter === 'All' || mem.speed === speedFilter;
-    return matchesSearch && matchesBrand && matchesCapacity && matchesSpeed;
+    return matchesSearch;
   });
+
+  const handleFilterChange = (filterName, value) => {
+    setFilters(prev => ({ ...prev, [filterName]: value }));
+  };
+
+  const handleCheckboxToggle = (filterName, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterName]: prev[filterName].includes(value)
+        ? prev[filterName].filter(item => item !== value)
+        : [...prev[filterName], value]
+    }));
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      priceRange: { min: 0, max: 500 },
+      manufacturers: [],
+      rating: null,
+      formFactor: [],
+      type: [],
+      speed: [],
+      modules: [],
+      color: [],
+      firstWordLatency: { min: 0, max: 20 },
+      casLatency: [],
+      voltage: [],
+      timing: [],
+      eccRegistered: null,
+      heatSpreader: null
+    });
+  };
 
   const handleSelectMemory = (memory) => {
     setSelectedMemory(memory);
@@ -53,28 +92,8 @@ const Memory = () => {
     }
   };
 
-  const handleTypeFilter = (type) => {
-    setSelectedType(type);
-    setCurrentPage(1);
-    setAnimationKey(prev => prev + 1);
-  };
-
-  const handleCapacityFilter = (capacity) => {
-    setSelectedCapacity(capacity);
-    setCurrentPage(1);
-    setAnimationKey(prev => prev + 1);
-  };
-
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-    setCurrentPage(1);
-    setAnimationKey(prev => prev + 1);
-  };
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-    setAnimationKey(prev => prev + 1);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -84,12 +103,12 @@ const Memory = () => {
       <div className="flex-1 container mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <button
-            onClick={() => navigate('/builder')}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg hover:opacity-80 transition-opacity  cursor-pointer"
             style={{ backgroundColor: colors.mainYellow, color: 'white' }}
           >
             <FiArrowLeft size={20} />
-            Back to Builder
+            Back
           </button>
           
           <div className="flex items-center gap-3">
@@ -102,44 +121,378 @@ const Memory = () => {
           <div style={{ width: '150px' }}></div>
         </div>
 
-        <div className="mb-6">
-          <div className="relative">
-            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: colors.mainYellow }} size={20} />
-            <input type="text" placeholder="Search memory..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-12 pr-4 py-4 rounded-lg font-medium transition-all focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }} />
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <div className="bg-white rounded-lg shadow-lg p-6" style={{ border: `2px solid ${colors.platinum}` }}>
-            <div className="flex items-center gap-3 mb-4">
-              <FiFilter size={20} style={{ color: colors.mainYellow }} />
-              <h3 className="text-xl font-bold" style={{ color: colors.mainBlack }}>Filters</h3>
+        {/* Main Content */}
+        <div className="flex gap-6">
+          {/* Filters Sidebar */}
+          <div 
+            className="w-64 rounded-lg p-6 shadow-md overflow-y-auto"
+            style={{ 
+              backgroundColor: 'white',
+              maxHeight: 'calc(120vh - 250px)',
+              position: 'sticky',
+              top: '20px'
+            }}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold" style={{ color: colors.mainBlack }}>
+                Filters
+              </h2>
+              <button
+                onClick={resetFilters}
+                className="text-sm hover:opacity-80 transition-opacity"
+                style={{ color: colors.mainYellow }}
+              >
+                Reset
+              </button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Brand</label>
-                <select value={brandFilter} onChange={(e) => setBrandFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
-                  {brands.map(b => <option key={b} value={b}>{b}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Capacity</label>
-                <select value={capacityFilter} onChange={(e) => setCapacityFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
-                  {capacities.map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Speed</label>
-                <select value={speedFilter} onChange={(e) => setSpeedFilter(e.target.value)} className="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}>
-                  {speeds.map(s => <option key={s} value={s}>{s}</option>)}
-                </select>
+
+            {/* Price Range Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Price
+              </h3>
+              <div className="space-y-2">
+                <input
+                  type="range"
+                  min="0"
+                  max="500"
+                  value={filters.priceRange.max}
+                  onChange={(e) => handleFilterChange('priceRange', { ...filters.priceRange, max: parseInt(e.target.value) })}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-sm" style={{ color: colors.jet }}>
+                  <span>${filters.priceRange.min}</span>
+                  <span>${filters.priceRange.max}</span>
+                </div>
               </div>
             </div>
-            <div className="mt-4 text-sm" style={{ color: colors.jet }}>Showing {filteredMemory.length} of {memoryList.length} memory kits</div>
-          </div>
-        </div>
 
-        {selectedMemory && (
+            {/* Manufacturer Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Manufacturer
+              </h3>
+              <div className="space-y-2">
+                {['Corsair', 'G.Skill', 'Kingston', 'Crucial', 'Team Group', 'ADATA'].map(manufacturer => (
+                  <label key={manufacturer} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.manufacturers.includes(manufacturer)}
+                      onChange={() => handleCheckboxToggle('manufacturers', manufacturer)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{manufacturer}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Rating Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Rating
+              </h3>
+              <div className="space-y-2">
+                {[5, 4, 3, 2, 1].map(rating => (
+                  <label key={rating} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="rating"
+                      checked={filters.rating === rating}
+                      onChange={() => handleFilterChange('rating', rating)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>
+                      {'★'.repeat(rating)}{'☆'.repeat(5 - rating)} & Up
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Form Factor Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Form Factor
+              </h3>
+              <div className="space-y-2">
+                {['DIMM 288-pin', 'SODIMM 260-pin', 'DIMM 240-pin', 'SODIMM 204-pin'].map(formFactor => (
+                  <label key={formFactor} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.formFactor.includes(formFactor)}
+                      onChange={() => handleCheckboxToggle('formFactor', formFactor)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{formFactor}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Type Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Type
+              </h3>
+              <div className="space-y-2">
+                {['DDR5', 'DDR4', 'DDR3'].map(type => (
+                  <label key={type} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.type.includes(type)}
+                      onChange={() => handleCheckboxToggle('type', type)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{type}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Speed Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Speed
+              </h3>
+              <div className="space-y-2">
+                {['DDR5-6400', 'DDR5-6000', 'DDR5-5600', 'DDR4-3600', 'DDR4-3200'].map(speed => (
+                  <label key={speed} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.speed.includes(speed)}
+                      onChange={() => handleCheckboxToggle('speed', speed)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{speed}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Modules Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Modules
+              </h3>
+              <div className="space-y-2">
+                {['1 x 16GB', '2 x 8GB', '2 x 16GB', '2 x 32GB', '4 x 8GB', '4 x 16GB'].map(modules => (
+                  <label key={modules} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.modules.includes(modules)}
+                      onChange={() => handleCheckboxToggle('modules', modules)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{modules}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Color Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Color
+              </h3>
+              <div className="space-y-2">
+                {['Black', 'White', 'Silver', 'RGB', 'Red', 'Blue'].map(color => (
+                  <label key={color} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.color.includes(color)}
+                      onChange={() => handleCheckboxToggle('color', color)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{color}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* First Word Latency Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                First Word Latency
+              </h3>
+              <div className="space-y-2">
+                <input
+                  type="range"
+                  min="0"
+                  max="20"
+                  value={filters.firstWordLatency.max}
+                  onChange={(e) => handleFilterChange('firstWordLatency', { ...filters.firstWordLatency, max: parseInt(e.target.value) })}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-sm" style={{ color: colors.jet }}>
+                  <span>{filters.firstWordLatency.min} ns</span>
+                  <span>{filters.firstWordLatency.max} ns</span>
+                </div>
+              </div>
+            </div>
+
+            {/* CAS Latency Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                CAS Latency
+              </h3>
+              <div className="space-y-2">
+                {['CL14', 'CL16', 'CL18', 'CL30', 'CL32', 'CL36', 'CL40'].map(cas => (
+                  <label key={cas} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.casLatency.includes(cas)}
+                      onChange={() => handleCheckboxToggle('casLatency', cas)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{cas}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Voltage Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Voltage
+              </h3>
+              <div className="space-y-2">
+                {['1.1V', '1.2V', '1.35V', '1.5V'].map(voltage => (
+                  <label key={voltage} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.voltage.includes(voltage)}
+                      onChange={() => handleCheckboxToggle('voltage', voltage)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{voltage}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Timing Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Timing
+              </h3>
+              <div className="space-y-2">
+                {['14-14-14-34', '16-18-18-38', '18-22-22-42', '30-36-36-96', '32-38-38-96'].map(timing => (
+                  <label key={timing} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.timing.includes(timing)}
+                      onChange={() => handleCheckboxToggle('timing', timing)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{timing}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* ECC / Registered Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                ECC / Registered
+              </h3>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="eccRegistered"
+                    checked={filters.eccRegistered === 'ECC'}
+                    onChange={() => handleFilterChange('eccRegistered', 'ECC')}
+                    className="cursor-pointer"
+                  />
+                  <span style={{ color: colors.jet }}>ECC</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="eccRegistered"
+                    checked={filters.eccRegistered === 'Non-ECC'}
+                    onChange={() => handleFilterChange('eccRegistered', 'Non-ECC')}
+                    className="cursor-pointer"
+                  />
+                  <span style={{ color: colors.jet }}>Non-ECC</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="eccRegistered"
+                    checked={filters.eccRegistered === 'Registered'}
+                    onChange={() => handleFilterChange('eccRegistered', 'Registered')}
+                    className="cursor-pointer"
+                  />
+                  <span style={{ color: colors.jet }}>Registered</span>
+                </label>
+              </div>
+            </div>
+
+            {/* Heat Spreader Filter */}
+            <div className="mb-6">
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Heat Spreader
+              </h3>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="heatSpreader"
+                    checked={filters.heatSpreader === true}
+                    onChange={() => handleFilterChange('heatSpreader', true)}
+                    className="cursor-pointer"
+                  />
+                  <span style={{ color: colors.jet }}>Yes</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="heatSpreader"
+                    checked={filters.heatSpreader === false}
+                    onChange={() => handleFilterChange('heatSpreader', false)}
+                    className="cursor-pointer"
+                  />
+                  <span style={{ color: colors.jet }}>No</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          {/* Products Area */}
+          <div className="flex-1">
+            {/* Search Bar */}
+            <div className="mb-6">
+              <div className="relative">
+                <FiSearch 
+                  size={20} 
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2"
+                  style={{ color: colors.platinum }}
+                />
+                <input
+                  type="text"
+                  placeholder="Search memory..."
+                  value={searchTerm}
+                  onChange={handleSearch}
+                  className="w-full pl-12 pr-4 py-3 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                  style={{ 
+                    backgroundColor: 'white', 
+                    borderColor: colors.platinum,
+                    color: colors.mainBlack 
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* Results Counter */}
+            <div className="mb-4">
+              <p className="text-lg font-semibold" style={{ color: colors.jet }}>
+                Showing {filteredMemory.length} of {memoryList.length} memory kits
+              </p>
+            </div>
+
+            {selectedMemory && (
           <div 
             className="rounded-lg shadow-lg p-4 mb-6 flex justify-between items-center"
             style={{ backgroundColor: colors.mainYellow }}
@@ -167,8 +520,8 @@ const Memory = () => {
           </div>
         )}
 
-        {/* Product Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Product Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredMemory.map((memory, index) => (
             <BounceCard
               key={memory.id}
@@ -248,13 +601,15 @@ const Memory = () => {
           ))}
         </div>
 
-        {filteredMemory.length === 0 && (
-          <div className="text-center py-12">
-            <FaMemory size={64} style={{ color: colors.platinum }} className="mx-auto mb-4" />
-            <p className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>No memory kits found</p>
-            <p className="text-lg" style={{ color: colors.jet }}>Try adjusting your filters or search terms</p>
+            {filteredMemory.length === 0 && (
+              <div className="text-center py-12">
+                <FaMemory size={64} style={{ color: colors.platinum }} className="mx-auto mb-4" />
+                <p className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>No memory kits found</p>
+                <p className="text-lg" style={{ color: colors.jet }}>Try adjusting your filters or search terms</p>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
       <Footer />

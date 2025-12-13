@@ -1,6 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
-import MainLayout from './layouts/MainLayout';
 import AuthLayout from './layouts/AuthLayout';
 import Home from './pages/home/Home.jsx';
 import Builder from './pages/user/builder/Builder.jsx';
@@ -31,7 +30,7 @@ import Posts from './pages/user/posts/Posts';
 import TechSupport from './pages/techSupport/TechSupport.jsx';  
 import Profile from './pages/user/profile/Profile.jsx';
 import TechSupportProfile from './pages/TechSupport/TechProfile/TechSupportProfile';
-import ProtectedRoute from './components/ProtectedRoute';
+import ProtectedRoute from './components/protected/ProtectedRoute.jsx';
 import Comparator from './pages/user/comparator/Comparator.jsx';
 
 // Admin Imports
