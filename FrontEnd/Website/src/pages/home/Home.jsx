@@ -3,7 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import GlassIcons from '../../components/ui/GlassIcons/GlassIcons.jsx';
+import BlurText from '../../components/animations/BlurText/BlurText.jsx';
 import colors from '../../config/colors';
+import Setup1 from '../../assets/Images/Setup1.jpg';
+import Setup2 from '../../assets/Images/Setup2.jpg';
 import { 
   FiCpu, 
   FiMonitor, 
@@ -47,31 +50,48 @@ const Home = () => {
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.mainBeige }}>
       <Navbar />
       
-      <div className="flex-1 py-8 mt-10" style={{color: colors.mainBlack}}>
-
-        {/* Section 1: All Products with Glass Icons */}
-        <section className="w-full mb-20 py-16" style={{ backgroundColor: colors.mainBlack, paddingLeft: '1rem', paddingRight: '1rem' }}>
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: colors.mainYellow }}>
-              Explore All Components
-            </h2>
-            <p className="text-lg md:text-xl opacity-90" style={{ color: 'white' }}>
-              Browse our complete collection of PC components
-            </p>
-          </div>
-
-          <div className="flex justify-center items-center" style={{ minHeight: '300px', position: 'relative' }}>
-            <GlassIcons 
-              items={featureItems.map(item => ({
-                ...item,
-                onClick: () => navigate(item.link)
-              }))} 
-              className="custom-features" 
+      {/* Hero Section - Setup Image */}
+      <section className="relative w-full" style={{ height: '600px' }}>
+        <img 
+          src={Setup1} 
+          alt="PC Setup" 
+          style={{ 
+            width: '100%', 
+            height: '100%', 
+            objectFit: 'cover',
+            filter: 'blur(4px)'
+          }}
+        />
+        {/* Overlay with Button */}
+        <div 
+          className="absolute inset-0 flex flex-col items-center justify-center"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}
+        >
+          <div className="mb-8 px-4">
+            <BlurText
+              text="Start Building Your Dream"
+              className="text-5xl md:text-7xl font-bold text-center"
+              style={{ 
+                color: colors.mainYellow,
+                textShadow: '0 4px 20px rgba(0,0,0,0.8)'
+              }}
             />
           </div>
-        </section>
+          <button
+            onClick={() => navigate('/builder')}
+            className="px-10 py-5 text-xl font-semibold rounded-xl transition-all hover:opacity-90 hover:scale-105 shadow-2xl cursor-pointer"
+            style={{ 
+              backgroundColor: colors.mainYellow, 
+              color: colors.mainBlack 
+            }}
+          >
+            Launch Builder →
+          </button>
+        </div>
+      </section>
 
-        {/* Section 2: Performance Showcase */}
+      <div className="flex-1 py-8" style={{color: colors.mainBlack}}>
+        {/* Section 1: Performance Showcase */}
         <section className="container mx-auto mb-20 px-4">
           <div className="text-center mb-12">
             <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: colors.mainYellow }}>
@@ -119,6 +139,61 @@ const Home = () => {
                 </div>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* Section 2: All Products with Glass Icons */}
+        <section 
+          className="relative w-full mb-20 py-16" 
+          style={{ paddingLeft: '1rem', paddingRight: '1rem', overflow: 'hidden' }}
+        >
+          {/* Background Image with Blur */}
+          <div 
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundImage: `url(${Setup2})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              filter: 'blur(4px)',
+              zIndex: 0
+            }}
+          ></div>
+          {/* Dark Overlay */}
+          <div 
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              zIndex: 1
+            }}
+          ></div>
+          {/* Content */}
+          <div style={{ position: 'relative', zIndex: 2 }}>
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: colors.mainYellow }}>
+              Explore All Components
+            </h2>
+            <p className="text-lg md:text-xl opacity-90" style={{ color: 'white' }}>
+              Browse our complete collection of PC components
+            </p>
+          </div>
+
+          <div className="flex justify-center items-center" style={{ minHeight: '300px', position: 'relative' }}>
+            <GlassIcons 
+              items={featureItems.map(item => ({
+                ...item,
+                onClick: () => navigate(item.link)
+              }))} 
+              className="custom-features" 
+            />
+          </div>
           </div>
         </section>
 
