@@ -47,11 +47,190 @@ namespace PCBuilder.BLL.Services.Classes
             return "Email confirmed successfully.";
         }
 
-        public Task<bool> ForgotPassword(ForgotPasswordRequest request)
+        public async Task<bool> ForgotPassword(ForgotPasswordRequest request)
         {
-            throw new NotImplementedException();
-        }
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+            {
+                throw new Exception("User Not Found");
+            }
 
+            var random = new Random();
+            var code = random.Next(1000, 9999).ToString();
+
+            user.CodeResetPassword = code;
+            user.CodeResetPasswordExpiration = DateTime.UtcNow.AddMinutes(15);
+            await _userManager.UpdateAsync(user);
+            await _emailSender.SendEmailAsync(request.Email,
+                    "Password Reset Code - PC Builder",
+                $@"
+                <!DOCTYPE html>
+                <html lang='en'>
+                <head>
+                  <meta charset='UTF-8'>
+                  <title>Password Reset Code</title>
+                </head>
+                <body style='margin:0;padding:0;background-color:#f2f4f7;font-family:Arial,Helvetica,sans-serif;'>
+
+                  <table width='100%' cellpadding='0' cellspacing='0' style='background-color:#f2f4f7;padding:40px 0;'>
+                    <tr>
+                      <td align='center'>
+                        <table width='600' cellpadding='0' cellspacing='0' style='background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.08);'>
+          
+                          <!-- Header -->
+                          <tr>
+                            <td style='background:#0d6efd;padding:30px;text-align:center;'>
+                              <h1 style='margin:0;color:#ffffff;font-size:28px;'>PC Builder</h1>
+                              <p style='margin:8px 0 0;color:#dbe7ff;font-size:14px;'>Secure your account</p>
+                            </td>
+                          </tr>
+
+                          <!-- Body -->
+                          <tr>
+                            <td style='padding:35px 40px;color:#333333;'>
+                              <h2 style='margin-top:0;font-size:22px;'>Password reset request</h2>
+
+                              <p style='font-size:15px;line-height:1.6;'>
+                                We received a request to reset your password.
+                              </p>
+
+                              <p style='font-size:15px;line-height:1.6;'>
+                                Use the verification code below to continue:
+                              </p>
+
+                              <div style='text-align:center;margin:30px 0;'>
+                                <div style='display:inline-block;
+                                            padding:15px 30px;
+                                            background:#f1f5ff;
+                                            border:2px dashed #0d6efd;
+                                            border-radius:10px;
+                                            font-size:26px;
+                                            font-weight:bold;
+                                            letter-spacing:4px;
+                                            color:#0d6efd;'>
+                                  {code}
+                                </div>
+                              </div>
+
+                              <p style='font-size:14px;color:#666666;'>
+                                This code will expire in <strong>15 minutes</strong>.
+                              </p>
+
+                              <p style='font-size:14px;color:#666666;line-height:1.6;'>
+                                If you did not request a password reset, please ignore this email.
+                              </p>
+                            </td>
+                          </tr>
+
+                          <!-- Footer -->
+                          <tr>
+                            <td style='background:#f8f9fb;padding:20px;text-align:center;font-size:12px;color:#888888;'>
+                              © {DateTime.Now.Year} PC Builder. All rights reserved.
+                            </td>
+                          </tr>
+
+                        </table>
+                      </td>
+                    </tr>
+                  </table>
+
+                </body>
+                </html>
+                ");
+
+
+            return true;
+        }
+        public async Task<bool> ResetPassword(ResetPasswordRequest request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+            {
+                throw new Exception("User Not Found");
+            }
+            if (user.CodeResetPassword != request.Code) return false;
+            if (user.CodeResetPasswordExpiration < DateTime.UtcNow) return false;
+
+            user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, request.NewPassword);
+
+            // Clear code
+            user.CodeResetPassword = null;
+            user.CodeResetPasswordExpiration = null;
+
+            await _userManager.UpdateAsync(user);
+            
+                await _emailSender.SendEmailAsync(request.Email,
+                        "Password Changed Successfully - PC Builder",
+                    $@"
+                    <!DOCTYPE html>
+                    <html lang='en'>
+                    <head>
+                      <meta charset='UTF-8'>
+                      <title>Password Changed</title>
+                    </head>
+                    <body style='margin:0;padding:0;background-color:#f2f4f7;font-family:Arial,Helvetica,sans-serif;'>
+
+                      <table width='100%' cellpadding='0' cellspacing='0' style='background-color:#f2f4f7;padding:40px 0;'>
+                        <tr>
+                          <td align='center'>
+                            <table width='600' cellpadding='0' cellspacing='0' style='background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,0.08);'>
+          
+                              <!-- Header -->
+                              <tr>
+                                <td style='background:#0d6efd;padding:30px;text-align:center;'>
+                                  <h1 style='margin:0;color:#ffffff;font-size:28px;'>PC Builder</h1>
+                                  <p style='margin:8px 0 0;color:#dbe7ff;font-size:14px;'>Account security update</p>
+                                </td>
+                              </tr>
+
+                              <!-- Body -->
+                              <tr>
+                                <td style='padding:35px 40px;color:#333333;'>
+                                  <h2 style='margin-top:0;font-size:22px;'>Password changed successfully</h2>
+
+                                  <p style='font-size:15px;line-height:1.6;'>
+                                    Your password has been updated successfully.
+                                  </p>
+
+                                  <p style='font-size:15px;line-height:1.6;'>
+                                    If you made this change, no further action is required.
+                                  </p>
+
+                                  <div style='margin:30px 0;
+                                              padding:15px;
+                                              background:#eafaf1;
+                                              border-left:5px solid #198754;
+                                              border-radius:6px;
+                                              color:#146c43;
+                                              font-size:14px;'>
+                                    ✔ Your account is now secured with the new password.
+                                  </div>
+
+                                  <p style='font-size:14px;color:#666666;line-height:1.6;'>
+                                    If you did not perform this action, please contact support immediately.
+                                  </p>
+                                </td>
+                              </tr>
+
+                              <!-- Footer -->
+                              <tr>
+                                <td style='background:#f8f9fb;padding:20px;text-align:center;font-size:12px;color:#888888;'>
+                                  © {DateTime.Now.Year} PC Builder. All rights reserved.
+                                </td>
+                              </tr>
+
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+
+                    </body>
+                    </html>
+                    ");
+
+            
+            return true;
+        }
         public async Task<UserResponse> LoginAsync(LoginRequest loginRequest)
         {
             var user = await _userManager.FindByEmailAsync(loginRequest.Email);
@@ -75,7 +254,7 @@ namespace PCBuilder.BLL.Services.Classes
             {
                 throw new Exception("Please Confirm Your Email");
             }
-            else
+            else 
             {
                 throw new Exception("Invalid email or password.");
             }
@@ -187,10 +366,7 @@ namespace PCBuilder.BLL.Services.Classes
             }
         }
 
-        public Task<bool> ResetPassword(ResetPasswordRequest request)
-        {
-            throw new NotImplementedException();
-        }
+      
 
         private async Task<string> CreateTokenAsync(ApplicationUser user)
         {
