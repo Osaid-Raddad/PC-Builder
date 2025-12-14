@@ -60,3 +60,5 @@ _ReSharper*/
 # User secrets
 # =========================
 secrets.json
+
+.vs/
