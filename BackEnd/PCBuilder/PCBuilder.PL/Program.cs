@@ -8,6 +8,8 @@ using PCBuilder.BLL.Services.Classes;
 using PCBuilder.BLL.Services.Interfaces;
 using PCBuilder.DAL.Data;
 using PCBuilder.DAL.Models;
+using PCBuilder.DAL.Repositories.Classes;
+using PCBuilder.DAL.Repositories.Interfaces;
 using PCBuilder.DAL.Utilities;
 using PCBuilder.PL.Utilites;
 using System.Text;
@@ -29,6 +31,8 @@ namespace PCBuilder.PL
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<IEmailSender,EmailSetting>();
             builder.Services.AddScoped<ISeedData, SeedData>();
