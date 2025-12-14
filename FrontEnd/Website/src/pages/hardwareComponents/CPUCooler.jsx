@@ -138,7 +138,7 @@ const CPUCooler = () => {
             className="w-64 rounded-lg p-6 shadow-md overflow-y-auto"
             style={{ 
               backgroundColor: 'white',
-              maxHeight: 'calc(150vh - 250px)',
+              maxHeight: 'calc(120vh - 250px)',
               position: 'sticky',
               top: '20px'
             }}

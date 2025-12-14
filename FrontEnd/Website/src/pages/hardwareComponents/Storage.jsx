@@ -5,22 +5,25 @@ import Footer from '../../components/user/footer/Footer.jsx';
 import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaHdd } from 'react-icons/fa';
-import { FiArrowLeft, FiFilter, FiSearch } from 'react-icons/fi';
+import { FiArrowLeft, FiSearch } from 'react-icons/fi';
 
 const Storage = () => {
   const navigate = useNavigate();
   const [selectedStorage, setSelectedStorage] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [typeFilter, setTypeFilter] = useState('All');
-  const [capacityFilter, setCapacityFilter] = useState('All');
-  const [brandFilter, setBrandFilter] = useState('All');
-  const [priceFilter, setPriceFilter] = useState('All');
-  const [ratingFilter, setRatingFilter] = useState('All');
-  const [interfaceFilter, setInterfaceFilter] = useState('All');
-  const [cacheFilter, setCacheFilter] = useState('All');
-  const [formFactorFilter, setFormFactorFilter] = useState('All');
-  const [nvmeFilter, setNvmeFilter] = useState('All');
   const [animationKey, setAnimationKey] = useState(0);
+  
+  const [filters, setFilters] = useState({
+    priceRange: { min: 0, max: 500 },
+    manufacturers: [],
+    rating: null,
+    capacity: [],
+    type: [],
+    interface: [],
+    cache: [],
+    formFactor: [],
+    nvme: null
+  });
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -36,36 +39,37 @@ const Storage = () => {
     { id: 6, name: 'WD Blue', brand: 'Western Digital', capacity: '2TB', type: 'HDD', speed: '7,200 RPM', price: 54.99, rating: 4, interface: 'SATA III', cache: '256MB', formFactor: '3.5"', nvme: 'No' },
   ];
 
-  const types = ['All', 'NVMe SSD', 'SATA SSD', 'HDD'];
-  const capacities = ['All', '1TB', '2TB', '4TB'];
-  const brands = ['All', 'Samsung', 'Western Digital', 'Crucial', 'Seagate'];
-  const priceRanges = ['All', 'Under $100', '$100 - $150', '$150 - $200', 'Over $200'];
-  const ratings = ['All', '5 Stars', '4 Stars', '3 Stars'];
-  const interfaces = ['All', 'PCIe 4.0 x4', 'SATA III'];
-  const caches = ['All', '256MB', '1GB', '2GB'];
-  const formFactors = ['All', 'M.2 2280', '2.5"', '3.5"'];
-  const nvmeOptions = ['All', 'Yes', 'No'];
-
   const filteredStorage = storageList.filter(storage => {
     const matchesSearch = searchTerm === '' || storage.name.toLowerCase().includes(searchTerm.toLowerCase()) || storage.brand.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = typeFilter === 'All' || storage.type === typeFilter;
-    const matchesCapacity = capacityFilter === 'All' || storage.capacity === capacityFilter;
-    const matchesBrand = brandFilter === 'All' || storage.brand === brandFilter;
-    
-    const matchesPrice = priceFilter === 'All' || 
-      (priceFilter === 'Under $100' && storage.price < 100) ||
-      (priceFilter === '$100 - $150' && storage.price >= 100 && storage.price < 150) ||
-      (priceFilter === '$150 - $200' && storage.price >= 150 && storage.price < 200) ||
-      (priceFilter === 'Over $200' && storage.price >= 200);
-    
-    const matchesRating = ratingFilter === 'All' || storage.rating === parseInt(ratingFilter);
-    const matchesInterface = interfaceFilter === 'All' || storage.interface === interfaceFilter;
-    const matchesCache = cacheFilter === 'All' || storage.cache === cacheFilter;
-    const matchesFormFactor = formFactorFilter === 'All' || storage.formFactor === formFactorFilter;
-    const matchesNvme = nvmeFilter === 'All' || storage.nvme === nvmeFilter;
-    
-    return matchesSearch && matchesType && matchesCapacity && matchesBrand && matchesPrice && matchesRating && matchesInterface && matchesCache && matchesFormFactor && matchesNvme;
+    return matchesSearch;
   });
+
+  const handleFilterChange = (filterName, value) => {
+    setFilters(prev => ({ ...prev, [filterName]: value }));
+  };
+
+  const handleCheckboxToggle = (filterName, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterName]: prev[filterName].includes(value)
+        ? prev[filterName].filter(item => item !== value)
+        : [...prev[filterName], value]
+    }));
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      priceRange: { min: 0, max: 500 },
+      manufacturers: [],
+      rating: null,
+      capacity: [],
+      type: [],
+      interface: [],
+      cache: [],
+      formFactor: [],
+      nvme: null
+    });
+  };
 
   const handleSelectStorage = (storage) => {
     setSelectedStorage(storage);
@@ -82,19 +86,8 @@ const Storage = () => {
     navigate(`/product/storage/${productId}`);
   };
 
-  const handleTypeFilter = (type) => {
-    setTypeFilter(type);
-    setAnimationKey(prev => prev + 1);
-  };
-
-  const handleCapacityFilter = (capacity) => {
-    setCapacityFilter(capacity);
-    setAnimationKey(prev => prev + 1);
-  };
-
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-    setAnimationKey(prev => prev + 1);
   };
 
   return (
@@ -132,156 +125,223 @@ const Storage = () => {
         {/* Main Content with Sidebar Filters */}
         <div className="flex gap-6">
           {/* Sidebar Filters */}
-          <div className="w-64 shrink-0">
-            <div className="bg-white rounded-lg shadow-lg p-6 sticky top-4" style={{ border: `2px solid ${colors.platinum}` }}>
-              <div className="flex items-center gap-3 mb-6">
-                <FiFilter size={20} style={{ color: colors.mainYellow }} />
-                <h3 className="text-xl font-bold" style={{ color: colors.mainBlack }}>Filters</h3>
-              </div>
+          <div 
+            className="w-64 rounded-lg p-6 shadow-md overflow-y-auto"
+            style={{ 
+              backgroundColor: 'white',
+              maxHeight: 'calc(100vh - 250px)',
+              position: 'sticky',
+              top: '20px'
+            }}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold" style={{ color: colors.mainBlack }}>
+                Filters
+              </h2>
+              <button
+                onClick={resetFilters}
+                className="text-sm hover:opacity-80 transition-opacity"
+                style={{ color: colors.mainYellow }}
+              >
+                Reset
+              </button>
+            </div>
               
-              <div className="space-y-6">
-                {/* Price Filter */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Price</label>
-                  <select 
-                    value={priceFilter} 
-                    onChange={(e) => {
-                      setPriceFilter(e.target.value);
-                      setAnimationKey(prev => prev + 1);
-                    }} 
-                    className="w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer text-sm" 
-                    style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}
-                  >
-                    {priceRanges.map(p => <option key={p} value={p}>{p}</option>)}
-                  </select>
-                </div>
-
-                {/* Manufacturer Filter */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Manufacturer</label>
-                  <select 
-                    value={brandFilter} 
-                    onChange={(e) => {
-                      setBrandFilter(e.target.value);
-                      setAnimationKey(prev => prev + 1);
-                    }} 
-                    className="w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer text-sm" 
-                    style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}
-                  >
-                    {brands.map(b => <option key={b} value={b}>{b}</option>)}
-                  </select>
-                </div>
-
-                {/* Rating Filter */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Rating</label>
-                  <select 
-                    value={ratingFilter} 
-                    onChange={(e) => {
-                      setRatingFilter(e.target.value);
-                      setAnimationKey(prev => prev + 1);
-                    }} 
-                    className="w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer text-sm" 
-                    style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}
-                  >
-                    {ratings.map(r => <option key={r} value={r}>{r}</option>)}
-                  </select>
-                </div>
-
-                {/* Capacity Filter */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Capacity</label>
-                  <select 
-                    value={capacityFilter} 
-                    onChange={(e) => handleCapacityFilter(e.target.value)} 
-                    className="w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer text-sm" 
-                    style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}
-                  >
-                    {capacities.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </div>
-
-                {/* Interface Filter */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Interface</label>
-                  <select 
-                    value={interfaceFilter} 
-                    onChange={(e) => {
-                      setInterfaceFilter(e.target.value);
-                      setAnimationKey(prev => prev + 1);
-                    }} 
-                    className="w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer text-sm" 
-                    style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}
-                  >
-                    {interfaces.map(i => <option key={i} value={i}>{i}</option>)}
-                  </select>
-                </div>
-
-                {/* Type Filter */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Type</label>
-                  <select 
-                    value={typeFilter} 
-                    onChange={(e) => handleTypeFilter(e.target.value)} 
-                    className="w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer text-sm" 
-                    style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}
-                  >
-                    {types.map(t => <option key={t} value={t}>{t}</option>)}
-                  </select>
-                </div>
-
-                {/* Cache Filter */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Cache</label>
-                  <select 
-                    value={cacheFilter} 
-                    onChange={(e) => {
-                      setCacheFilter(e.target.value);
-                      setAnimationKey(prev => prev + 1);
-                    }} 
-                    className="w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer text-sm" 
-                    style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}
-                  >
-                    {caches.map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </div>
-
-                {/* Form Factor Filter */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>Form Factor</label>
-                  <select 
-                    value={formFactorFilter} 
-                    onChange={(e) => {
-                      setFormFactorFilter(e.target.value);
-                      setAnimationKey(prev => prev + 1);
-                    }} 
-                    className="w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer text-sm" 
-                    style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}
-                  >
-                    {formFactors.map(f => <option key={f} value={f}>{f}</option>)}
-                  </select>
-                </div>
-
-                {/* NVMe Filter */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>NVMe</label>
-                  <select 
-                    value={nvmeFilter} 
-                    onChange={(e) => {
-                      setNvmeFilter(e.target.value);
-                      setAnimationKey(prev => prev + 1);
-                    }} 
-                    className="w-full px-3 py-2 rounded-lg focus:outline-none focus:ring-2 cursor-pointer text-sm" 
-                    style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }}
-                  >
-                    {nvmeOptions.map(n => <option key={n} value={n}>{n}</option>)}
-                  </select>
+            {/* Price Range Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Price
+              </h3>
+              <div className="space-y-2">
+                <input
+                  type="range"
+                  min="0"
+                  max="500"
+                  value={filters.priceRange.max}
+                  onChange={(e) => handleFilterChange('priceRange', { ...filters.priceRange, max: parseInt(e.target.value) })}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-sm" style={{ color: colors.jet }}>
+                  <span>${filters.priceRange.min}</span>
+                  <span>${filters.priceRange.max}</span>
                 </div>
               </div>
+            </div>
 
-              <div className="mt-6 pt-4 border-t text-sm" style={{ borderColor: colors.platinum, color: colors.jet }}>
-                Showing {filteredStorage.length} of {storageList.length} storage devices
+            {/* Manufacturer Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Manufacturer
+              </h3>
+              <div className="space-y-2">
+                {['Samsung', 'Western Digital', 'Crucial', 'Seagate', 'Kingston', 'Corsair'].map(manufacturer => (
+                  <label key={manufacturer} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.manufacturers.includes(manufacturer)}
+                      onChange={() => handleCheckboxToggle('manufacturers', manufacturer)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{manufacturer}</span>
+                  </label>
+                ))}
               </div>
+            </div>
+
+            {/* Rating Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Rating
+              </h3>
+              <div className="space-y-2">
+                {[5, 4, 3, 2, 1].map(rating => (
+                  <label key={rating} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="rating"
+                      checked={filters.rating === rating}
+                      onChange={() => handleFilterChange('rating', rating)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>
+                      {'★'.repeat(rating)}{'☆'.repeat(5 - rating)} & Up
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Capacity Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Capacity
+              </h3>
+              <div className="space-y-2">
+                {['500GB', '1TB', '2TB', '4TB', '8TB'].map(capacity => (
+                  <label key={capacity} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.capacity.includes(capacity)}
+                      onChange={() => handleCheckboxToggle('capacity', capacity)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{capacity}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Type Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Type
+              </h3>
+              <div className="space-y-2">
+                {['NVMe SSD', 'SATA SSD', 'HDD', 'M.2 SSD'].map(type => (
+                  <label key={type} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.type.includes(type)}
+                      onChange={() => handleCheckboxToggle('type', type)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{type}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Interface Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Interface
+              </h3>
+              <div className="space-y-2">
+                {['PCIe 4.0 x4', 'PCIe 3.0 x4', 'SATA III', 'SATA II'].map(interfaceType => (
+                  <label key={interfaceType} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.interface.includes(interfaceType)}
+                      onChange={() => handleCheckboxToggle('interface', interfaceType)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{interfaceType}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Cache Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Cache
+              </h3>
+              <div className="space-y-2">
+                {['64MB', '128MB', '256MB', '512MB', '1GB', '2GB'].map(cache => (
+                  <label key={cache} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.cache.includes(cache)}
+                      onChange={() => handleCheckboxToggle('cache', cache)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{cache}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Form Factor Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Form Factor
+              </h3>
+              <div className="space-y-2">
+                {['M.2 2280', 'M.2 2260', '2.5"', '3.5"'].map(formFactor => (
+                  <label key={formFactor} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.formFactor.includes(formFactor)}
+                      onChange={() => handleCheckboxToggle('formFactor', formFactor)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{formFactor}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* NVMe Filter */}
+            <div className="mb-6">
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                NVMe
+              </h3>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="nvme"
+                    checked={filters.nvme === 'Yes'}
+                    onChange={() => handleFilterChange('nvme', 'Yes')}
+                    className="cursor-pointer"
+                  />
+                  <span style={{ color: colors.jet }}>Yes</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="nvme"
+                    checked={filters.nvme === 'No'}
+                    onChange={() => handleFilterChange('nvme', 'No')}
+                    className="cursor-pointer"
+                  />
+                  <span style={{ color: colors.jet }}>No</span>
+                </label>
+              </div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t text-sm" style={{ borderColor: colors.platinum, color: colors.jet }}>
+              Showing {filteredStorage.length} of {storageList.length} storage devices
             </div>
           </div>
 
