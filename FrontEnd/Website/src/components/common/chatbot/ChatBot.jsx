@@ -102,7 +102,7 @@ const ChatBot = () => {
             </div>
             <button
               onClick={toggleChat}
-              className="p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-all"
+              className="p-2 hover:bg-white hover:bg-opacity-20 rounded-full transition-all cursor-pointer"
             >
               <FaTimes size={20} color="white" />
             </button>
@@ -175,7 +175,7 @@ const ChatBot = () => {
               />
               <button
                 type="submit"
-                className="w-10 h-10 rounded-full flex items-center justify-center hover:opacity-90 transition-opacity"
+                className="w-10 h-10 rounded-full flex items-center justify-center hover:opacity-90 transition-opacity cursor-pointer"
                 style={{ backgroundColor: colors.mainYellow }}
                 disabled={!inputMessage.trim()}
               >
@@ -189,7 +189,7 @@ const ChatBot = () => {
       {/* Circular Chat Button */}
       <button
         onClick={toggleChat}
-        className="fixed bottom-6 left-6 w-16 h-16 rounded-full shadow-2xl flex items-center justify-center z-50 hover:scale-110 transition-transform"
+        className="fixed bottom-6 left-6 w-16 h-16 rounded-full shadow-2xl flex items-center justify-center z-50 hover:scale-110 transition-transform cursor-pointer"
         style={{ backgroundColor: colors.mainYellow }}
       >
         {isOpen ? (
