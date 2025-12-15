@@ -20,7 +20,9 @@ import {
   FaExclamationTriangle,
   FaTimesCircle
 } from 'react-icons/fa';
-import { BsCpuFill, BsMotherboard } from 'react-icons/bs';
+import { BsCpuFill, BsMotherboard, BsGpuCard} from 'react-icons/bs';
+import { GiComputerFan } from 'react-icons/gi';
+import { PiDesktopTowerFill } from 'react-icons/pi';
 
 const Builder = () => {
   const navigate = useNavigate();
@@ -29,12 +31,12 @@ const Builder = () => {
 
   const components = [
     { id: 'cpu', name: 'CPU', icon: <BsCpuFill size={24} />, description: 'Choose your processor' },
-    { id: 'cooler', name: 'CPU Cooler', icon: <FaFan size={24} />, description: 'Keep your CPU cool' },
+    { id: 'cooler', name: 'CPU Cooler', icon: <GiComputerFan size={24} />, description: 'Keep your CPU cool' },
     { id: 'motherboard', name: 'Motherboard', icon: <BsMotherboard size={24} />, description: 'The backbone of your PC' },
     { id: 'memory', name: 'Memory', icon: <FaMemory size={24} />, description: 'RAM for multitasking' },
     { id: 'storage', name: 'Storage', icon: <FaHdd size={24} />, description: 'HDD/SSD for your data' },
-    { id: 'gpu', name: 'GPU', icon: <FaMicrochip size={24} />, description: 'Graphics card for gaming' },
-    { id: 'case', name: 'Case', icon: <FaDesktop size={24} />, description: 'House your components' },
+    { id: 'gpu', name: 'GPU', icon: <BsGpuCard size={24} />, description: 'Graphics card for gaming' },
+    { id: 'case', name: 'Case', icon: <PiDesktopTowerFill size={24} />, description: 'House your components' },
     { id: 'psu', name: 'Power Supply', icon: <FaBolt size={24} />, description: 'Power your build' },
     { id: 'monitor', name: 'Monitor', icon: <FaTv size={24} />, description: 'Display your visuals' },
     { id: 'expansion', name: 'Expansion Cards / Networking', icon: <FaNetworkWired size={24} />, description: 'Wi-Fi, sound cards, etc.' },
