@@ -21,19 +21,21 @@ import {
   FiDisc,
   FiAperture
 } from 'react-icons/fi';
+import {BsMotherboard, BsGpuCard} from 'react-icons/bs';
+import {FaMemory , FaBolt} from 'react-icons/fa';
 
 const Home = () => {
   const navigate = useNavigate();
 
   const featureItems = [
     { icon: <FiCpu />, color: colors.mainYellow, label: 'CPU', link: '/products/cpu' },
-    { icon: <FiZap />, color: colors.mainYellow, label: 'GPU', link: '/products/gpu' },
-    { icon: <FiGrid />, color: colors.mainYellow, label: 'Motherboard', link: '/products/motherboard' },
-    { icon: <FiHardDrive />, color: colors.mainYellow, label: 'Storage', link: '/products/storage' },
-    { icon: <FiCommand />, color: colors.mainYellow, label: 'Memory', link: '/products/memory' },
-    { icon: <FiPackage />, color: colors.mainYellow, label: 'Power Supply', link: '/products/power-supply' },
-    { icon: <FiBox />, color: colors.mainYellow, label: 'Case', link: '/products/case' },
     { icon: <FiWind />, color: colors.mainYellow, label: 'CPU Cooler', link: '/products/cooler' },
+    { icon: <BsMotherboard />, color: colors.mainYellow, label: 'Motherboard', link: '/products/motherboard' },
+    { icon: <FaMemory />, color: colors.mainYellow, label: 'Memory', link: '/products/memory' },
+    { icon: <FiHardDrive />, color: colors.mainYellow, label: 'Storage', link: '/products/storage' },
+    { icon: <BsGpuCard />, color: colors.mainYellow, label: 'GPU', link: '/products/gpu' },
+    { icon: <FiBox />, color: colors.mainYellow, label: 'Case', link: '/products/case' },
+    { icon: <FaBolt />, color: colors.mainYellow, label: 'Power Supply', link: '/products/power-supply' },
     { icon: <FiMonitor />, color: colors.mainYellow, label: 'Monitor', link: '/products/monitor' },
     { icon: <FiDisc />, color: colors.mainYellow, label: 'Peripherals', link: '/products/peripherals' },
     { icon: <FiAperture />, color: colors.mainYellow, label: 'Accessories', link: '/products/accessories' },

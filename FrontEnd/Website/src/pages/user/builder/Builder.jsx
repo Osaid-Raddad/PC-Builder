@@ -6,11 +6,8 @@ import BounceCard from '../../../components/animations/BounceCard/BounceCard.jsx
 import QRCodeModal from '../../../components/user/builder/QRCodeModal.jsx';
 import colors from '../../../config/colors';
 import { 
-  FaMicrochip, 
-  FaFan, 
   FaMemory, 
   FaHdd, 
-  FaDesktop,
   FaBolt,
   FaTv,
   FaNetworkWired,
