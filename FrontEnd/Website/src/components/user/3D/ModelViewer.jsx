@@ -62,7 +62,7 @@ function ModelViewer({
   cameraPosition = [0, 0, 5],
   modelRotation = [0, 0, 0],
   modelScale = 1,
-  modelPosition = [0, 0, 0]
+  modelPosition = [0, 0, 0],
 }) {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -109,9 +109,8 @@ function ModelViewer({
               </Suspense>
               
               <OrbitControls 
-                enablePan={false}
-                minDistance={2}
-                maxDistance={10}
+                enablePan={true}
+                enableZoom={true}
                 autoRotate={false}
                 target={modelPosition}
               />

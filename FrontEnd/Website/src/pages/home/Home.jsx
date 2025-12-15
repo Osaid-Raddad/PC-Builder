@@ -5,6 +5,7 @@ import Footer from '../../components/user/footer/Footer.jsx';
 import GlassIcons from '../../components/ui/GlassIcons/GlassIcons.jsx';
 import BlurText from '../../components/animations/BlurText/BlurText.jsx';
 import ModelViewer from '../../components/user/3D/ModelViewer.jsx';
+import ElectricBorder from '../../components/animations/ElectricBorder/ElectricBorder.jsx';
 import colors from '../../config/colors';
 import Setup1 from '../../assets/Images/Setup1.jpg';
 import Setup2 from '../../assets/Images/Setup2.jpg';
@@ -94,55 +95,62 @@ const Home = () => {
       </section>
 
       <div className="flex-1 py-8" style={{color: colors.mainBlack}}>
-        {/* Section 1: Performance Showcase */}
+        
+        {/* Section 1: 3D Component Showcase */}
         <section className="container mx-auto mb-20 px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: colors.mainYellow }}>
-              Performance Tiers
-            </h2>
-            <p className="text-lg md:text-xl opacity-90" style={{ color: colors.mainBlack }}>
-              Choose your perfect performance level
-            </p>
-          </div>
+            <div className="text-center mb-12">
+              <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: colors.mainYellow }}>
+                Featured Components in 3D
+              </h2>
+              <p className="text-lg md:text-xl opacity-90" style={{ color: colors.mainBlack }}>
+                Explore our components with interactive 3D models
+              </p>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {performanceData.map((build, index) => (
-              <div 
-                key={index}
-                className="relative overflow-hidden rounded-2xl p-8 transition-all hover:scale-105 cursor-pointer group"
-                style={{ backgroundColor: colors.mainBlack }}
-              >
-                <div className="absolute inset-0 bg-linear-to-br from-yellow-400/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div className="relative z-10">
-                  <h3 className="text-3xl font-bold mb-6" style={{ color: colors.mainYellow }}>
-                    {build.title}
-                  </h3>
-                  <div className="space-y-4 mb-6">
-                    <div className="flex items-center gap-3">
-                      <span className="text-4xl">⚡</span>
-                      <div>
-                        <p className="text-sm text-gray-400">Performance</p>
-                        <p className="text-xl font-semibold text-white">{build.fps || build.render}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <span className="text-4xl">🎮</span>
-                      <div>
-                        <p className="text-sm text-gray-400">Capability</p>
-                        <p className="text-xl font-semibold text-white">{build.games || build.cores}</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="pt-6 border-t border-gray-700">
-                    <p className="text-sm text-gray-400 mb-2">Starting at</p>
-                    <p className="text-4xl font-bold" style={{ color: colors.mainYellow }}>
-                      {build.price}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+            {/* Section 5: 3D Models Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {/* GPU Model */}
+              <ElectricBorder color={colors.mainYellow} speed={0.3} chaos={0.3} thickness={2}>
+                <ModelViewer
+                  modelPath="/models/gpu.glb"
+                  title="ROG ASTRAL RTX 5090 Golden Edition"
+                  description="Linmited Edition with 24GB GDDR7X"
+                  componentName="Graphics Card"
+                  cameraPosition={[5, -5, 5]}
+                  modelPosition={[0, 0, 0]}
+                  modelRotation={[0, 0, 0]}
+                  modelScale={2}
+                />
+              </ElectricBorder>
+
+              {/* GPU Model 2 */}
+              <ElectricBorder color={colors.mainYellow} speed={0.3} chaos={0.3} thickness={2}>
+                <ModelViewer
+                  modelPath="/models/gpu2.glb"
+                  title="Asus ROG Geforce RTX 4090 v2.0"
+                  description="Limited Edition with enhanced cooling"
+                  componentName="Graphics Card"
+                  cameraPosition={[-5, -5, 5]}
+                  modelPosition={[0, 0, 0]}
+                  modelRotation={[0, 0, 0]}
+                  modelScale={2}
+                />
+              </ElectricBorder>
+
+              {/* RAM Model */}
+              <ElectricBorder color={colors.mainYellow} speed={0.3} chaos={0.3} thickness={2}>
+                <ModelViewer
+                  modelPath="/models/ram.glb"
+                  title="Corsair DOMINATOR RGB RAM"
+                  description="32GB (2x16GB) DDR5 6000MHz"
+                  componentName="Memory"
+                  cameraPosition={[5, 0, 5]}
+                  modelPosition={[0, 0, 0]}
+                  modelRotation={[0, 0, 0]}
+                  modelScale={0.9}
+                />
+              </ElectricBorder>
+            </div>
         </section>
 
         {/* Section 2: All Products with Glass Icons */}
@@ -240,58 +248,6 @@ const Home = () => {
             </div>
           </div>
         </section>
-
-        {/* Section 4: 3D Component Showcase */}
-        <section className="container mx-auto mb-20 px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4" style={{ color: colors.mainYellow }}>
-              Featured Components in 3D
-            </h2>
-            <p className="text-lg md:text-xl opacity-90" style={{ color: colors.mainBlack }}>
-              Explore our components with interactive 3D models
-            </p>
-          </div>
-
-          {/* All models in a grid row */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* GPU Model */}
-            <ModelViewer
-              modelPath="/models/gpu.glb"
-              title="ROG ASTRAL RTX 5090 Golden Edition"
-              description="Linmited Edition with 24GB GDDR7X"
-              componentName="Graphics Card"
-              cameraPosition={[1, 2, 6]}
-              modelPosition={[2, 0, 1]}
-              modelRotation={[0, 0, 0]}
-              modelScale={1}
-            />
-
-            {/* GPU Model 2 */}
-            <ModelViewer
-              modelPath="/models/gpu2.glb"
-              title="Asus ROG Geforce RTX 4090 v2.0"
-              description="Limited Edition with enhanced cooling"
-              componentName="Graphics Card"
-              cameraPosition={[0, 0, 5]}
-              modelPosition={[0, 2, 1]}
-              modelRotation={[0, 0, 1]}
-              modelScale={1.1}
-            />
-
-            {/* RAM Model */}
-            <ModelViewer
-              modelPath="/models/ram.glb"
-              title="Corsair DOMINATOR RGB RAM"
-              description="32GB (2x16GB) DDR5 6000MHz"
-              componentName="Memory"
-              cameraPosition={[0, 0, 5]}
-              modelPosition={[0, 0, 0]}
-              modelRotation={[0, 0, 0]}
-              modelScale={0.9}
-            />
-          </div>
-        </section>
-
       </div>
 
       <Footer />
