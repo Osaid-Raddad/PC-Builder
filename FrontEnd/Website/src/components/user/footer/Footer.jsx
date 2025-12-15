@@ -82,7 +82,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="/guides" className="text-sm hover:underline transition-colors cursor-pointer" style={{ color: colors.alabaster }}>
+                <a href="/building-guides" className="text-sm hover:underline transition-colors cursor-pointer" style={{ color: colors.alabaster }}>
                   Building Guides
                 </a>
               </li>
@@ -92,7 +92,7 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="/terms" className="text-sm hover:underline transition-colors cursor-pointer" style={{ color: colors.alabaster }}>
+                <a href="/terms-of-service" className="text-sm hover:underline transition-colors cursor-pointer" style={{ color: colors.alabaster }}>
                   Terms of Service
                 </a>
               </li>
