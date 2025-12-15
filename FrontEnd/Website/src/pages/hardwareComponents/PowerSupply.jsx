@@ -11,10 +11,28 @@ const PowerSupply = () => {
   const navigate = useNavigate();
   const [selectedPSU, setSelectedPSU] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [wattageFilter, setWattageFilter] = useState('All');
-  const [efficiencyFilter, setEfficiencyFilter] = useState('All');
-  const [modularFilter, setModularFilter] = useState('All');
   const [animationKey, setAnimationKey] = useState(0);
+  
+  const [filters, setFilters] = useState({
+    priceRange: { min: 0, max: 500 },
+    manufacturers: [],
+    rating: null,
+    type: [],
+    efficiencyRating: [],
+    wattage: [],
+    length: { min: 0, max: 250 },
+    modular: [],
+    color: [],
+    fanless: null,
+    epsAtxConnectors: [],
+    pcie16pin12VHPWR: [],
+    pcie12pin: [],
+    pcie8pin: [],
+    pcie6plus2pin: [],
+    pcie6pin: [],
+    sataConnectors: [],
+    molex4pin: []
+  });
 
   // Scroll to top when component mounts
   useEffect(() => {
@@ -30,17 +48,46 @@ const PowerSupply = () => {
     { id: 6, name: 'Cooler Master V850 SFX', brand: 'Cooler Master', wattage: '850W', efficiency: '80+ Gold', modular: 'Fully Modular', price: 169.99 },
   ];
 
-  const wattages = ['All', '500W', '650W', '750W', '850W', '1000W', '1200W+'];
-  const efficiencies = ['All', '80+ Bronze', '80+ Gold', '80+ Platinum', '80+ Titanium'];
-  const modularTypes = ['All', 'Fully Modular', 'Semi-Modular', 'Non-Modular'];
-
   const filteredPSUs = psuList.filter(psu => {
     const matchesSearch = searchTerm === '' || psu.name.toLowerCase().includes(searchTerm.toLowerCase()) || psu.brand.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesWattage = wattageFilter === 'All' || psu.wattage === wattageFilter;
-    const matchesEfficiency = efficiencyFilter === 'All' || psu.efficiency === efficiencyFilter;
-    const matchesModular = modularFilter === 'All' || psu.modular === modularFilter;
-    return matchesSearch && matchesWattage && matchesEfficiency && matchesModular;
+    return matchesSearch;
   });
+
+  const handleFilterChange = (filterName, value) => {
+    setFilters(prev => ({ ...prev, [filterName]: value }));
+  };
+
+  const handleCheckboxToggle = (filterName, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterName]: prev[filterName].includes(value)
+        ? prev[filterName].filter(item => item !== value)
+        : [...prev[filterName], value]
+    }));
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      priceRange: { min: 0, max: 500 },
+      manufacturers: [],
+      rating: null,
+      type: [],
+      efficiencyRating: [],
+      wattage: [],
+      length: { min: 0, max: 250 },
+      modular: [],
+      color: [],
+      fanless: null,
+      epsAtxConnectors: [],
+      pcie16pin12VHPWR: [],
+      pcie12pin: [],
+      pcie8pin: [],
+      pcie6plus2pin: [],
+      pcie6pin: [],
+      sataConnectors: [],
+      molex4pin: []
+    });
+  };
 
   const handleSelectPSU = (psu) => {
     setSelectedPSU(psu);
@@ -53,19 +100,8 @@ const PowerSupply = () => {
     }
   };
 
-  const handleWattageFilter = (wattage) => {
-    setWattageFilter(wattage);
-    setAnimationKey(prev => prev + 1);
-  };
-
-  const handleEfficiencyFilter = (efficiency) => {
-    setEfficiencyFilter(efficiency);
-    setAnimationKey(prev => prev + 1);
-  };
-
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
-    setAnimationKey(prev => prev + 1);
   };
 
   return (
@@ -93,105 +129,440 @@ const PowerSupply = () => {
           <div className="w-32"></div>
         </div>
 
-        {/* Search Bar */}
-        <div className="mb-6">
-          <div className="relative">
-            <FiSearch 
-              size={20} 
-              className="absolute left-4 top-1/2 transform -translate-y-1/2"
-              style={{ color: colors.platinum }}
-            />
-            <input
-              type="text"
-              placeholder="Search power supplies..."
-              value={searchTerm}
-              onChange={handleSearch}
-              className="w-full pl-12 pr-4 py-3 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
-              style={{ 
-                backgroundColor: 'white', 
-                borderColor: colors.platinum,
-                color: colors.mainBlack 
-              }}
-            />
-          </div>
-        </div>
+        {/* Main Content */}
+        <div className="flex gap-6">
+          {/* Filters Sidebar */}
+          <div 
+            className="w-64 rounded-lg p-6 shadow-md overflow-y-auto"
+            style={{ 
+              backgroundColor: 'white',
+              maxHeight: 'calc(120vh - 250px)',
+              position: 'sticky',
+              top: '20px'
+            }}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-bold" style={{ color: colors.mainBlack }}>
+                Filters
+              </h2>
+              <button
+                onClick={resetFilters}
+                className="text-sm hover:opacity-80 transition-opacity cursor-pointer"
+                style={{ color: colors.mainYellow }}
+              >
+                Reset
+              </button>
+            </div>
 
-        {/* Filters Section */}
-        <div className="mb-6 p-4 rounded-lg" style={{ backgroundColor: 'white' }}>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Price Range Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Price
+              </h3>
+              <div className="space-y-2">
+                <input
+                  type="range"
+                  min="0"
+                  max="500"
+                  value={filters.priceRange.max}
+                  onChange={(e) => handleFilterChange('priceRange', { ...filters.priceRange, max: parseInt(e.target.value) })}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-sm" style={{ color: colors.jet }}>
+                  <span>${filters.priceRange.min}</span>
+                  <span>${filters.priceRange.max}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Manufacturer Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Manufacturer
+              </h3>
+              <div className="space-y-2">
+                {['Corsair', 'EVGA', 'Seasonic', 'be quiet!', 'Thermaltake', 'Cooler Master', 'Silverstone', 'NZXT'].map(manufacturer => (
+                  <label key={manufacturer} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.manufacturers.includes(manufacturer)}
+                      onChange={() => handleCheckboxToggle('manufacturers', manufacturer)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{manufacturer}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Rating Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Rating
+              </h3>
+              <div className="space-y-2">
+                {[5, 4, 3, 2, 1].map(rating => (
+                  <label key={rating} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="radio"
+                      name="rating"
+                      checked={filters.rating === rating}
+                      onChange={() => handleFilterChange('rating', rating)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>
+                      {'★'.repeat(rating)}{'☆'.repeat(5 - rating)} & Up
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Type Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Type
+              </h3>
+              <div className="space-y-2">
+                {['ATX', 'SFX', 'SFX-L', 'TFX', 'Flex ATX'].map(type => (
+                  <label key={type} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.type.includes(type)}
+                      onChange={() => handleCheckboxToggle('type', type)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{type}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Efficiency Rating Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Efficiency Rating
+              </h3>
+              <div className="space-y-2">
+                {['80+ Titanium', '80+ Platinum', '80+ Gold', '80+ Silver', '80+ Bronze'].map(efficiency => (
+                  <label key={efficiency} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.efficiencyRating.includes(efficiency)}
+                      onChange={() => handleCheckboxToggle('efficiencyRating', efficiency)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{efficiency}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
             {/* Wattage Filter */}
-            <div>
-              <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
                 Wattage
-              </label>
-              <select
-                value={wattageFilter}
-                onChange={(e) => handleWattageFilter(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80 cursor-pointer"
-                style={{ 
-                  borderColor: colors.platinum,
-                  color: colors.mainBlack,
-                  backgroundColor: 'white'
-                }}
-              >
-                {wattages.map(wattage => (
-                  <option key={wattage} value={wattage}>{wattage}</option>
+              </h3>
+              <div className="space-y-2">
+                {['450W', '500W', '550W', '650W', '750W', '850W', '1000W', '1200W', '1500W+'].map(wattage => (
+                  <label key={wattage} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.wattage.includes(wattage)}
+                      onChange={() => handleCheckboxToggle('wattage', wattage)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{wattage}</span>
+                  </label>
                 ))}
-              </select>
+              </div>
             </div>
 
-            {/* Efficiency Filter */}
-            <div>
-              <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
-                Efficiency
-              </label>
-              <select
-                value={efficiencyFilter}
-                onChange={(e) => handleEfficiencyFilter(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80 cursor-pointer"
-                style={{ 
-                  borderColor: colors.platinum,
-                  color: colors.mainBlack,
-                  backgroundColor: 'white'
-                }}
-              >
-                {efficiencies.map(efficiency => (
-                  <option key={efficiency} value={efficiency}>{efficiency}</option>
-                ))}
-              </select>
+            {/* Length Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Length
+              </h3>
+              <div className="space-y-2">
+                <input
+                  type="range"
+                  min="0"
+                  max="250"
+                  step="10"
+                  value={filters.length.max}
+                  onChange={(e) => handleFilterChange('length', { ...filters.length, max: parseInt(e.target.value) })}
+                  className="w-full"
+                />
+                <div className="flex justify-between text-sm" style={{ color: colors.jet }}>
+                  <span>{filters.length.min} mm</span>
+                  <span>{filters.length.max} mm</span>
+                </div>
+              </div>
             </div>
 
-            {/* Modular Type Filter */}
-            <div>
-              <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+            {/* Modular Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
                 Modular
-              </label>
-              <select
-                value={modularFilter}
-                onChange={(e) => setModularFilter(e.target.value)}
-                className="w-full px-4 py-2 rounded-lg border-2 focus:outline-none focus:border-opacity-80 cursor-pointer"
-                style={{ 
-                  borderColor: colors.platinum,
-                  color: colors.mainBlack,
-                  backgroundColor: 'white'
-                }}
-              >
-                {modularTypes.map(modular => (
-                  <option key={modular} value={modular}>{modular}</option>
+              </h3>
+              <div className="space-y-2">
+                {['Fully Modular', 'Semi-Modular', 'Non-Modular'].map(modular => (
+                  <label key={modular} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.modular.includes(modular)}
+                      onChange={() => handleCheckboxToggle('modular', modular)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{modular}</span>
+                  </label>
                 ))}
-              </select>
+              </div>
+            </div>
+
+            {/* Color Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Color
+              </h3>
+              <div className="space-y-2">
+                {['Black', 'White', 'Silver', 'Gray', 'RGB'].map(color => (
+                  <label key={color} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.color.includes(color)}
+                      onChange={() => handleCheckboxToggle('color', color)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{color}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* Fanless Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                Fanless
+              </h3>
+              <div className="space-y-2">
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="fanless"
+                    checked={filters.fanless === true}
+                    onChange={() => handleFilterChange('fanless', true)}
+                    className="cursor-pointer"
+                  />
+                  <span style={{ color: colors.jet }}>Yes</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="fanless"
+                    checked={filters.fanless === false}
+                    onChange={() => handleFilterChange('fanless', false)}
+                    className="cursor-pointer"
+                  />
+                  <span style={{ color: colors.jet }}>No</span>
+                </label>
+              </div>
+            </div>
+
+            {/* EPS/ATX Connectors Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                EPS/ATX Connectors
+              </h3>
+              <div className="space-y-2">
+                {['1 x 4+4-pin', '1 x 8-pin', '2 x 4+4-pin', '2 x 8-pin'].map(connector => (
+                  <label key={connector} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.epsAtxConnectors.includes(connector)}
+                      onChange={() => handleCheckboxToggle('epsAtxConnectors', connector)}
+                      className="cursor-pointer"
+                    />
+                    <span className="text-xs" style={{ color: colors.jet }}>{connector}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* PCIe 16-pin 12VHPWR Connectors Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                PCIe 16-pin 12VHPWR/12V-2x6
+              </h3>
+              <div className="space-y-2">
+                {['0', '1', '2', '3+'].map(count => (
+                  <label key={count} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.pcie16pin12VHPWR.includes(count)}
+                      onChange={() => handleCheckboxToggle('pcie16pin12VHPWR', count)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{count}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* PCIe 12-pin Connectors Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                PCIe 12-pin Connectors
+              </h3>
+              <div className="space-y-2">
+                {['0', '1', '2', '3+'].map(count => (
+                  <label key={count} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.pcie12pin.includes(count)}
+                      onChange={() => handleCheckboxToggle('pcie12pin', count)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{count}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* PCIe 8-pin Connectors Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                PCIe 8-pin Connectors
+              </h3>
+              <div className="space-y-2">
+                {['0', '1', '2', '3', '4', '5+'].map(count => (
+                  <label key={count} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.pcie8pin.includes(count)}
+                      onChange={() => handleCheckboxToggle('pcie8pin', count)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{count}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* PCIe 6+2-pin Connectors Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                PCIe 6+2-pin Connectors
+              </h3>
+              <div className="space-y-2">
+                {['0', '1', '2', '3', '4', '5+'].map(count => (
+                  <label key={count} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.pcie6plus2pin.includes(count)}
+                      onChange={() => handleCheckboxToggle('pcie6plus2pin', count)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{count}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* PCIe 6-pin Connectors Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                PCIe 6-pin Connectors
+              </h3>
+              <div className="space-y-2">
+                {['0', '1', '2', '3+'].map(count => (
+                  <label key={count} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.pcie6pin.includes(count)}
+                      onChange={() => handleCheckboxToggle('pcie6pin', count)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{count}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* SATA Connectors Filter */}
+            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                SATA Connectors
+              </h3>
+              <div className="space-y-2">
+                {['0', '2', '4', '6', '8', '10', '12+'].map(count => (
+                  <label key={count} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.sataConnectors.includes(count)}
+                      onChange={() => handleCheckboxToggle('sataConnectors', count)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{count}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* AMP/Molex 4-pin Connectors Filter */}
+            <div className="mb-6">
+              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
+                AMP/Molex 4-pin Connectors
+              </h3>
+              <div className="space-y-2">
+                {['0', '1', '2', '3', '4+'].map(count => (
+                  <label key={count} className="flex items-center gap-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.molex4pin.includes(count)}
+                      onChange={() => handleCheckboxToggle('molex4pin', count)}
+                      className="cursor-pointer"
+                    />
+                    <span style={{ color: colors.jet }}>{count}</span>
+                  </label>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Results Counter */}
-        <div className="mb-4">
-          <p className="text-lg font-semibold" style={{ color: colors.jet }}>
-            Showing {filteredPSUs.length} of {psuList.length} power supplies
-          </p>
-        </div>
+          {/* Products Area */}
+          <div className="flex-1">
+            {/* Search Bar */}
+            <div className="mb-6">
+              <div className="relative">
+                <FiSearch 
+                  size={20} 
+                  className="absolute left-4 top-1/2 transform -translate-y-1/2"
+                  style={{ color: colors.platinum }}
+                />
+                <input
+                  type="text"
+                  placeholder="Search power supplies..."
+                  value={searchTerm}
+                  onChange={handleSearch}
+                  className="w-full pl-12 pr-4 py-3 rounded-lg border-2 focus:outline-none focus:border-opacity-80"
+                  style={{ 
+                    backgroundColor: 'white', 
+                    borderColor: colors.platinum,
+                    color: colors.mainBlack 
+                  }}
+                />
+              </div>
+            </div>
 
-        {selectedPSU && (
+            {/* Results Counter */}
+            <div className="mb-4">
+              <p className="text-lg font-semibold" style={{ color: colors.jet }}>
+                Showing {filteredPSUs.length} of {psuList.length} power supplies
+              </p>
+            </div>
+
+            {selectedPSU && (
           <div 
             className="rounded-lg shadow-lg p-4 mb-6 flex justify-between items-center"
             style={{ backgroundColor: colors.mainYellow }}
@@ -219,8 +590,8 @@ const PowerSupply = () => {
           </div>
         )}
 
-        {/* Product Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Product Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filteredPSUs.map((psu, index) => (
             <BounceCard
               key={`${psu.id}-${animationKey}`}
@@ -308,14 +679,16 @@ const PowerSupply = () => {
           ))}
         </div>
 
-        {/* Empty State */}
-        {filteredPSUs.length === 0 && (
-          <div className="text-center py-12">
-            <FaBolt size={64} style={{ color: colors.platinum }} className="mx-auto mb-4" />
-            <p className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>No power supplies found</p>
-            <p className="text-lg" style={{ color: colors.jet }}>Try adjusting your filters or search terms</p>
+            {/* Empty State */}
+            {filteredPSUs.length === 0 && (
+              <div className="text-center py-12">
+                <FaBolt size={64} style={{ color: colors.platinum }} className="mx-auto mb-4" />
+                <p className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>No power supplies found</p>
+                <p className="text-lg" style={{ color: colors.jet }}>Try adjusting your filters or search terms</p>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
 
       <Footer />

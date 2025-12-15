@@ -186,7 +186,7 @@ const Motherboard = () => {
               </h2>
               <button
                 onClick={resetFilters}
-                className="text-sm hover:opacity-80 transition-opacity"
+                className="text-sm hover:opacity-80 transition-opacity cursor-pointer"
                 style={{ color: colors.mainYellow }}
               >
                 Reset

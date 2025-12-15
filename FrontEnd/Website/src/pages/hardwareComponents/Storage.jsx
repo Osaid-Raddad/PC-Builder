@@ -114,13 +114,7 @@ const Storage = () => {
           
           <div style={{ width: '150px' }}></div>
         </div>
-
-        <div className="mb-6">
-          <div className="relative">
-            <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: colors.mainYellow }} size={20} />
-            <input type="text" placeholder="Search storage..." value={searchTerm} onChange={handleSearch} className="w-full pl-12 pr-4 py-4 rounded-lg font-medium transition-all focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }} />
-          </div>
-        </div>
+       
 
         {/* Main Content with Sidebar Filters */}
         <div className="flex gap-6">
@@ -129,7 +123,7 @@ const Storage = () => {
             className="w-64 rounded-lg p-6 shadow-md overflow-y-auto"
             style={{ 
               backgroundColor: 'white',
-              maxHeight: 'calc(100vh - 250px)',
+              maxHeight: 'calc(120vh - 250px)',
               position: 'sticky',
               top: '20px'
             }}
@@ -140,7 +134,7 @@ const Storage = () => {
               </h2>
               <button
                 onClick={resetFilters}
-                className="text-sm hover:opacity-80 transition-opacity"
+                className="text-sm hover:opacity-80 transition-opacity cursor-pointer"
                 style={{ color: colors.mainYellow }}
               >
                 Reset
@@ -339,10 +333,6 @@ const Storage = () => {
                 </label>
               </div>
             </div>
-
-            <div className="mt-6 pt-4 border-t text-sm" style={{ borderColor: colors.platinum, color: colors.jet }}>
-              Showing {filteredStorage.length} of {storageList.length} storage devices
-            </div>
           </div>
 
           {/* Main Content Area */}
@@ -374,6 +364,20 @@ const Storage = () => {
                 </div>
               </div>
             )}
+
+            <div className="mb-6">
+              <div className="relative">
+                <FiSearch className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: colors.mainYellow }} size={20} />
+                <input type="text" placeholder="Search storage..." value={searchTerm} onChange={handleSearch} className="w-full pl-12 pr-4 py-4 rounded-lg font-medium transition-all focus:outline-none focus:ring-2" style={{ border: `2px solid ${colors.platinum}`, backgroundColor: 'white', color: colors.jet }} />
+              </div>
+            </div>
+
+
+            <div className="mb-4">
+              <p className="text-lg font-semibold" style={{ color: colors.jet }}>
+                Showing {filteredStorage.length} of {storageList.length} storage devices
+              </p>
+            </div>
 
             {/* Product Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
