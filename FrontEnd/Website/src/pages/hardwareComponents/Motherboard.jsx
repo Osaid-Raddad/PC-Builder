@@ -100,12 +100,147 @@ const Motherboard = () => {
   };
 
   const filteredMotherboards = motherboardList.filter(mb => {
+    // Search term
     const matchesSearch = searchTerm === '' ||
       mb.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       mb.brand.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      mb.chipset.toLowerCase().includes(searchTerm.toLowerCase());
-    // Add more filter logic here when backend data includes these fields
-    return matchesSearch;
+      (mb.chipset && mb.chipset.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    // Price range
+    const matchesPrice = mb.price >= filters.priceRange.min && mb.price <= filters.priceRange.max;
+    
+    // Manufacturers
+    const matchesManufacturer = filters.manufacturers.length === 0 || 
+      filters.manufacturers.includes(mb.brand);
+    
+    // Rating
+    const matchesRating = filters.rating === null || 
+      (mb.rating && mb.rating >= filters.rating);
+    
+    // Socket
+    const matchesSocket = filters.socket.length === 0 || 
+      !mb.socket ||
+      filters.socket.includes(mb.socket);
+    
+    // Form Factor
+    const matchesFormFactor = filters.formFactor.length === 0 || 
+      !mb.formFactor ||
+      filters.formFactor.includes(mb.formFactor);
+    
+    // Chipset
+    const matchesChipset = filters.chipset.length === 0 || 
+      !mb.chipset ||
+      filters.chipset.includes(mb.chipset);
+    
+    // Memory Max
+    const matchesMemoryMax = !mb.memoryMax || 
+      (mb.memoryMax >= filters.memoryMax.min && mb.memoryMax <= filters.memoryMax.max);
+    
+    // Memory Type
+    const matchesMemoryType = filters.memoryType.length === 0 || 
+      !mb.memoryType ||
+      filters.memoryType.some(type => 
+        Array.isArray(mb.memoryType) ? mb.memoryType.includes(type) : mb.memoryType === type
+      );
+    
+    // Memory Slots
+    const matchesMemorySlots = filters.memorySlots.length === 0 || 
+      !mb.memorySlots ||
+      filters.memorySlots.includes(mb.memorySlots.toString());
+    
+    // Color
+    const matchesColor = filters.color.length === 0 || 
+      !mb.color ||
+      filters.color.includes(mb.color);
+    
+    // Other filters with similar pattern
+    const matchesSliCrossfire = filters.sliCrossfire.length === 0 || 
+      !mb.sliCrossfire ||
+      filters.sliCrossfire.includes(mb.sliCrossfire);
+    
+    const matchesPcieX16 = filters.pcieX16Slots.length === 0 || 
+      !mb.pcieX16Slots ||
+      filters.pcieX16Slots.includes(mb.pcieX16Slots.toString());
+    
+    const matchesPcieX8 = filters.pcieX8Slots.length === 0 || 
+      !mb.pcieX8Slots ||
+      filters.pcieX8Slots.includes(mb.pcieX8Slots.toString());
+    
+    const matchesPcieX4 = filters.pcieX4Slots.length === 0 || 
+      !mb.pcieX4Slots ||
+      filters.pcieX4Slots.includes(mb.pcieX4Slots.toString());
+    
+    const matchesPcieX1 = filters.pcieX1Slots.length === 0 || 
+      !mb.pcieX1Slots ||
+      filters.pcieX1Slots.includes(mb.pcieX1Slots.toString());
+    
+    const matchesPci = filters.pciSlots.length === 0 || 
+      !mb.pciSlots ||
+      filters.pciSlots.includes(mb.pciSlots.toString());
+    
+    const matchesSata3 = filters.sata3Ports.length === 0 || 
+      !mb.sata3Ports ||
+      filters.sata3Ports.includes(mb.sata3Ports.toString());
+    
+    const matchesSata6 = filters.sata6Ports.length === 0 || 
+      !mb.sata6Ports ||
+      filters.sata6Ports.includes(mb.sata6Ports.toString());
+    
+    const matchesM2B = filters.m2SlotsB.length === 0 || 
+      !mb.m2SlotsB ||
+      filters.m2SlotsB.includes(mb.m2SlotsB.toString());
+    
+    const matchesM2E = filters.m2SlotsE.length === 0 || 
+      !mb.m2SlotsE ||
+      filters.m2SlotsE.includes(mb.m2SlotsE.toString());
+    
+    const matchesMsata = filters.msataSlots.length === 0 || 
+      !mb.msataSlots ||
+      filters.msataSlots.includes(mb.msataSlots.toString());
+    
+    const matchesEthernet = filters.onboardEthernet.length === 0 || 
+      !mb.onboardEthernet ||
+      filters.onboardEthernet.includes(mb.onboardEthernet);
+    
+    const matchesOnboardVideo = filters.onboardVideo === null || 
+      !mb.hasOwnProperty('onboardVideo') ||
+      mb.onboardVideo === filters.onboardVideo;
+    
+    const matchesUsb2 = filters.usb2Headers.length === 0 || 
+      !mb.usb2Headers ||
+      filters.usb2Headers.includes(mb.usb2Headers.toString());
+    
+    const matchesUsb3Gen1 = filters.usb3Gen1Headers.length === 0 || 
+      !mb.usb3Gen1Headers ||
+      filters.usb3Gen1Headers.includes(mb.usb3Gen1Headers.toString());
+    
+    const matchesUsb3Gen2 = filters.usb3Gen2Headers.length === 0 || 
+      !mb.usb3Gen2Headers ||
+      filters.usb3Gen2Headers.includes(mb.usb3Gen2Headers.toString());
+    
+    const matchesUsb3Gen2x2 = filters.usb3Gen2x2Headers.length === 0 || 
+      !mb.usb3Gen2x2Headers ||
+      filters.usb3Gen2x2Headers.includes(mb.usb3Gen2x2Headers.toString());
+    
+    const matchesEcc = filters.supportsECC === null || 
+      !mb.hasOwnProperty('supportsECC') ||
+      mb.supportsECC === filters.supportsECC;
+    
+    const matchesWireless = filters.wirelessNetworking === null || 
+      !mb.hasOwnProperty('wirelessNetworking') ||
+      mb.wirelessNetworking === filters.wirelessNetworking;
+    
+    const matchesBackConnect = filters.backConnectConnectors === null || 
+      !mb.hasOwnProperty('backConnectConnectors') ||
+      mb.backConnectConnectors === filters.backConnectConnectors;
+    
+    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating &&
+           matchesSocket && matchesFormFactor && matchesChipset && matchesMemoryMax &&
+           matchesMemoryType && matchesMemorySlots && matchesColor && matchesSliCrossfire &&
+           matchesPcieX16 && matchesPcieX8 && matchesPcieX4 && matchesPcieX1 && matchesPci &&
+           matchesSata3 && matchesSata6 && matchesM2B && matchesM2E && matchesMsata &&
+           matchesEthernet && matchesOnboardVideo && matchesUsb2 && matchesUsb3Gen1 &&
+           matchesUsb3Gen2 && matchesUsb3Gen2x2 && matchesEcc && matchesWireless && matchesBackConnect;
   });
 
   const handleSelectMotherboard = (motherboard) => {

@@ -51,8 +51,114 @@ const Case = () => {
   ];
 
   const filteredCases = caseList.filter(caseItem => {
-    const matchesSearch = searchTerm === '' || caseItem.name.toLowerCase().includes(searchTerm.toLowerCase()) || caseItem.brand.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch;
+    // Search term
+    const matchesSearch = searchTerm === '' || 
+      caseItem.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      caseItem.brand.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Price range
+    const matchesPrice = caseItem.price >= filters.priceRange.min && caseItem.price <= filters.priceRange.max;
+    
+    // Manufacturers
+    const matchesManufacturer = filters.manufacturers.length === 0 || 
+      filters.manufacturers.includes(caseItem.brand);
+    
+    // Rating
+    const matchesRating = filters.rating === null || 
+      (caseItem.rating && caseItem.rating >= filters.rating);
+    
+    // Type
+    const matchesType = filters.type.length === 0 || 
+      !caseItem.type ||
+      filters.type.includes(caseItem.type);
+    
+    // Color
+    const matchesColor = filters.color.length === 0 || 
+      !caseItem.color ||
+      filters.color.includes(caseItem.color);
+    
+    // Power Supply Included
+    const matchesPowerSupply = filters.powerSupply === null || 
+      !caseItem.hasOwnProperty('powerSupplyIncluded') ||
+      caseItem.powerSupplyIncluded === filters.powerSupply;
+    
+    // Side Panel
+    const matchesSidePanel = filters.sidePanel.length === 0 || 
+      !caseItem.sidePanel ||
+      filters.sidePanel.includes(caseItem.sidePanel);
+    
+    // PSU Shroud
+    const matchesPsuShroud = filters.powerSupplyShroud === null || 
+      !caseItem.hasOwnProperty('powerSupplyShroud') ||
+      caseItem.powerSupplyShroud === filters.powerSupplyShroud;
+    
+    // Front Panel USB
+    const matchesFrontPanelUsb = filters.frontPanelUSB.length === 0 || 
+      !caseItem.frontPanelUSB ||
+      filters.frontPanelUSB.some(usb => 
+        Array.isArray(caseItem.frontPanelUSB) ? caseItem.frontPanelUSB.includes(usb) : caseItem.frontPanelUSB === usb
+      );
+    
+    // Motherboard Form Factor
+    const matchesMoboFormFactor = filters.motherboardFormFactor.length === 0 || 
+      !caseItem.motherboardFormFactor ||
+      filters.motherboardFormFactor.some(ff => 
+        Array.isArray(caseItem.motherboardFormFactor) ? caseItem.motherboardFormFactor.includes(ff) : caseItem.motherboardFormFactor === ff
+      );
+    
+    // Radiator Sizes
+    const matchesRadiatorSizes = filters.supportedRadiatorSizes.length === 0 || 
+      !caseItem.supportedRadiatorSizes ||
+      filters.supportedRadiatorSizes.some(size => 
+        Array.isArray(caseItem.supportedRadiatorSizes) ? caseItem.supportedRadiatorSizes.includes(size) : caseItem.supportedRadiatorSizes === size
+      );
+    
+    // External Volume
+    const matchesExternalVolume = !caseItem.externalVolume || 
+      (caseItem.externalVolume >= filters.externalVolume.min && 
+       caseItem.externalVolume <= filters.externalVolume.max);
+    
+    // Bay filters
+    const matchesExternal525 = filters.external525Bays.length === 0 || 
+      !caseItem.external525Bays ||
+      filters.external525Bays.includes(caseItem.external525Bays.toString());
+    
+    const matchesExternal35 = filters.external35Bays.length === 0 || 
+      !caseItem.external35Bays ||
+      filters.external35Bays.includes(caseItem.external35Bays.toString());
+    
+    const matchesInternal35 = filters.internal35Bays.length === 0 || 
+      !caseItem.internal35Bays ||
+      filters.internal35Bays.includes(caseItem.internal35Bays.toString());
+    
+    const matchesInternal25 = filters.internal25Bays.length === 0 || 
+      !caseItem.internal25Bays ||
+      filters.internal25Bays.includes(caseItem.internal25Bays.toString());
+    
+    // Expansion Slot filters
+    const matchesFullHeight = filters.fullHeightExpansionSlots.length === 0 || 
+      !caseItem.fullHeightExpansionSlots ||
+      filters.fullHeightExpansionSlots.includes(caseItem.fullHeightExpansionSlots.toString());
+    
+    const matchesHalfHeight = filters.halfHeightExpansionSlots.length === 0 || 
+      !caseItem.halfHeightExpansionSlots ||
+      filters.halfHeightExpansionSlots.includes(caseItem.halfHeightExpansionSlots.toString());
+    
+    const matchesFullHeightRiser = filters.fullHeightRiserExpansionSlots.length === 0 || 
+      !caseItem.fullHeightRiserExpansionSlots ||
+      filters.fullHeightRiserExpansionSlots.includes(caseItem.fullHeightRiserExpansionSlots.toString());
+    
+    // Maximum Video Card Length
+    const matchesMaxGpuLength = !caseItem.maximumVideoCardLength || 
+      (caseItem.maximumVideoCardLength >= filters.maximumVideoCardLength.min && 
+       caseItem.maximumVideoCardLength <= filters.maximumVideoCardLength.max);
+    
+    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating &&
+           matchesType && matchesColor && matchesPowerSupply && matchesSidePanel &&
+           matchesPsuShroud && matchesFrontPanelUsb && matchesMoboFormFactor && matchesRadiatorSizes &&
+           matchesExternalVolume && matchesExternal525 && matchesExternal35 && matchesInternal35 &&
+           matchesInternal25 && matchesFullHeight && matchesHalfHeight && matchesFullHeightRiser &&
+           matchesMaxGpuLength;
   });
 
   const handleFilterChange = (filterName, value) => {

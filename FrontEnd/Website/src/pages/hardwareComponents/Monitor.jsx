@@ -50,8 +50,111 @@ const Monitor = () => {
   ];
 
   const filteredMonitors = monitorList.filter(monitor => {
-    const matchesSearch = searchTerm === '' || monitor.name.toLowerCase().includes(searchTerm.toLowerCase()) || monitor.brand.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch;
+    // Search term
+    const matchesSearch = searchTerm === '' || 
+      monitor.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      monitor.brand.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Price range
+    const matchesPrice = monitor.price >= filters.priceRange.min && monitor.price <= filters.priceRange.max;
+    
+    // Manufacturers
+    const matchesManufacturer = filters.manufacturers.length === 0 || 
+      filters.manufacturers.includes(monitor.brand);
+    
+    // Rating
+    const matchesRating = filters.rating === null || 
+      (monitor.rating && monitor.rating >= filters.rating);
+    
+    // Screen Size
+    const matchesScreenSize = filters.screenSize.length === 0 || 
+      !monitor.size ||
+      filters.screenSize.includes(monitor.size);
+    
+    // Resolution
+    const matchesResolution = filters.resolution.length === 0 || 
+      !monitor.resolution ||
+      filters.resolution.includes(monitor.resolution);
+    
+    // Refresh Rate
+    const matchesRefreshRate = filters.refreshRate.length === 0 || 
+      !monitor.refreshRate ||
+      filters.refreshRate.includes(monitor.refreshRate);
+    
+    // Response Time
+    const matchesResponseTime = !monitor.responseTime || 
+      (monitor.responseTime >= filters.responseTime.min && 
+       monitor.responseTime <= filters.responseTime.max);
+    
+    // Panel Type
+    const matchesPanelType = filters.panelType.length === 0 || 
+      !monitor.panelType ||
+      filters.panelType.includes(monitor.panelType);
+    
+    // Aspect Ratio
+    const matchesAspectRatio = filters.aspectRatio.length === 0 || 
+      !monitor.aspectRatio ||
+      filters.aspectRatio.includes(monitor.aspectRatio);
+    
+    // Color
+    const matchesColor = filters.color.length === 0 || 
+      !monitor.color ||
+      filters.color.includes(monitor.color);
+    
+    // Brightness
+    const matchesBrightness = !monitor.brightness || 
+      (monitor.brightness >= filters.brightness.min && 
+       monitor.brightness <= filters.brightness.max);
+    
+    // Pixel Pitch
+    const matchesPixelPitch = !monitor.pixelPitch || 
+      (monitor.pixelPitch >= filters.pixelPitch.min && 
+       monitor.pixelPitch <= filters.pixelPitch.max);
+    
+    // Widescreen
+    const matchesWidescreen = filters.widescreen === null || 
+      !monitor.hasOwnProperty('widescreen') ||
+      monitor.widescreen === filters.widescreen;
+    
+    // Curved Screen
+    const matchesCurvedScreen = filters.curvedScreen === null || 
+      !monitor.hasOwnProperty('curvedScreen') ||
+      monitor.curvedScreen === filters.curvedScreen;
+    
+    // Interface
+    const matchesInterface = filters.interface.length === 0 || 
+      !monitor.interface ||
+      filters.interface.some(iface => 
+        Array.isArray(monitor.interface) ? monitor.interface.includes(iface) : monitor.interface === iface
+      );
+    
+    // Frame Sync
+    const matchesFrameSync = filters.frameSync.length === 0 || 
+      !monitor.frameSync ||
+      filters.frameSync.some(sync => 
+        Array.isArray(monitor.frameSync) ? monitor.frameSync.includes(sync) : monitor.frameSync === sync
+      );
+    
+    // Built-in Speakers
+    const matchesSpeakers = filters.builtInSpeakers === null || 
+      !monitor.hasOwnProperty('builtInSpeakers') ||
+      monitor.builtInSpeakers === filters.builtInSpeakers;
+    
+    // VESA Mounting
+    const matchesVesa = filters.vesaMounting === null || 
+      !monitor.hasOwnProperty('vesaMounting') ||
+      monitor.vesaMounting === filters.vesaMounting;
+    
+    // HDR Tier
+    const matchesHdr = filters.hdrTier.length === 0 || 
+      !monitor.hdrTier ||
+      filters.hdrTier.includes(monitor.hdrTier);
+    
+    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating &&
+           matchesScreenSize && matchesResolution && matchesRefreshRate && matchesResponseTime &&
+           matchesPanelType && matchesAspectRatio && matchesColor && matchesBrightness &&
+           matchesPixelPitch && matchesWidescreen && matchesCurvedScreen && matchesInterface &&
+           matchesFrameSync && matchesSpeakers && matchesVesa && matchesHdr;
   });
 
   const handleFilterChange = (filterName, value) => {

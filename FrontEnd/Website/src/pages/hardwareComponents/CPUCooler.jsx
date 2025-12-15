@@ -78,9 +78,56 @@ const CPUCooler = () => {
   };
 
   const filteredCoolers = coolerList.filter(cooler => {
-    const matchesSearch = searchTerm === '' || cooler.name.toLowerCase().includes(searchTerm.toLowerCase()) || cooler.brand.toLowerCase().includes(searchTerm.toLowerCase());
-    // Add more filter logic here when backend data includes these fields
-    return matchesSearch;
+    // Search term
+    const matchesSearch = searchTerm === '' || 
+      cooler.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      cooler.brand.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Price range
+    const matchesPrice = cooler.price >= filters.priceRange.min && cooler.price <= filters.priceRange.max;
+    
+    // Manufacturers
+    const matchesManufacturer = filters.manufacturers.length === 0 || 
+      filters.manufacturers.includes(cooler.brand);
+    
+    // Rating
+    const matchesRating = filters.rating === null || 
+      (cooler.rating && cooler.rating >= filters.rating);
+    
+    // Color
+    const matchesColor = filters.color.length === 0 || 
+      !cooler.color ||
+      filters.color.includes(cooler.color);
+    
+    // Height
+    const matchesHeight = !cooler.height || 
+      (cooler.height >= filters.height.min && cooler.height <= filters.height.max);
+    
+    // Bearing
+    const matchesBearing = filters.bearing.length === 0 || 
+      !cooler.bearing ||
+      filters.bearing.includes(cooler.bearing);
+    
+    // CPU Socket
+    const matchesSocket = filters.cpuSocket.length === 0 || 
+      !cooler.socket ||
+      filters.cpuSocket.some(socket => 
+        Array.isArray(cooler.socket) ? cooler.socket.includes(socket) : cooler.socket === socket
+      );
+    
+    // Water Cooled
+    const matchesWaterCooled = filters.waterCooled === null || 
+      !cooler.hasOwnProperty('waterCooled') ||
+      cooler.waterCooled === filters.waterCooled;
+    
+    // Fanless
+    const matchesFanless = filters.fanless === null || 
+      !cooler.hasOwnProperty('fanless') ||
+      cooler.fanless === filters.fanless;
+    
+    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating &&
+           matchesColor && matchesHeight && matchesBearing && matchesSocket &&
+           matchesWaterCooled && matchesFanless;
   });
 
   const handleSelectCooler = (cooler) => {

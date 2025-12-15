@@ -49,8 +49,94 @@ const PowerSupply = () => {
   ];
 
   const filteredPSUs = psuList.filter(psu => {
-    const matchesSearch = searchTerm === '' || psu.name.toLowerCase().includes(searchTerm.toLowerCase()) || psu.brand.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch;
+    // Search term
+    const matchesSearch = searchTerm === '' || 
+      psu.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      psu.brand.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Price range
+    const matchesPrice = psu.price >= filters.priceRange.min && psu.price <= filters.priceRange.max;
+    
+    // Manufacturers
+    const matchesManufacturer = filters.manufacturers.length === 0 || 
+      filters.manufacturers.includes(psu.brand);
+    
+    // Rating
+    const matchesRating = filters.rating === null || 
+      (psu.rating && psu.rating >= filters.rating);
+    
+    // Type
+    const matchesType = filters.type.length === 0 || 
+      !psu.type ||
+      filters.type.includes(psu.type);
+    
+    // Efficiency Rating
+    const matchesEfficiency = filters.efficiencyRating.length === 0 || 
+      !psu.efficiency ||
+      filters.efficiencyRating.includes(psu.efficiency);
+    
+    // Wattage
+    const matchesWattage = filters.wattage.length === 0 || 
+      !psu.wattage ||
+      filters.wattage.includes(psu.wattage);
+    
+    // Length
+    const matchesLength = !psu.length || 
+      (psu.length >= filters.length.min && psu.length <= filters.length.max);
+    
+    // Modular
+    const matchesModular = filters.modular.length === 0 || 
+      !psu.modular ||
+      filters.modular.includes(psu.modular);
+    
+    // Color
+    const matchesColor = filters.color.length === 0 || 
+      !psu.color ||
+      filters.color.includes(psu.color);
+    
+    // Fanless
+    const matchesFanless = filters.fanless === null || 
+      !psu.hasOwnProperty('fanless') ||
+      psu.fanless === filters.fanless;
+    
+    // Connector filters
+    const matchesEpsAtx = filters.epsAtxConnectors.length === 0 || 
+      !psu.epsAtxConnectors ||
+      filters.epsAtxConnectors.includes(psu.epsAtxConnectors);
+    
+    const matchesPcie16pin = filters.pcie16pin12VHPWR.length === 0 || 
+      !psu.pcie16pin12VHPWR ||
+      filters.pcie16pin12VHPWR.includes(psu.pcie16pin12VHPWR.toString());
+    
+    const matchesPcie12pin = filters.pcie12pin.length === 0 || 
+      !psu.pcie12pin ||
+      filters.pcie12pin.includes(psu.pcie12pin.toString());
+    
+    const matchesPcie8pin = filters.pcie8pin.length === 0 || 
+      !psu.pcie8pin ||
+      filters.pcie8pin.includes(psu.pcie8pin.toString());
+    
+    const matchesPcie6plus2 = filters.pcie6plus2pin.length === 0 || 
+      !psu.pcie6plus2pin ||
+      filters.pcie6plus2pin.includes(psu.pcie6plus2pin.toString());
+    
+    const matchesPcie6pin = filters.pcie6pin.length === 0 || 
+      !psu.pcie6pin ||
+      filters.pcie6pin.includes(psu.pcie6pin.toString());
+    
+    const matchesSata = filters.sataConnectors.length === 0 || 
+      !psu.sataConnectors ||
+      filters.sataConnectors.includes(psu.sataConnectors.toString());
+    
+    const matchesMolex = filters.molex4pin.length === 0 || 
+      !psu.molex4pin ||
+      filters.molex4pin.includes(psu.molex4pin.toString());
+    
+    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating &&
+           matchesType && matchesEfficiency && matchesWattage && matchesLength &&
+           matchesModular && matchesColor && matchesFanless && matchesEpsAtx &&
+           matchesPcie16pin && matchesPcie12pin && matchesPcie8pin && matchesPcie6plus2 &&
+           matchesPcie6pin && matchesSata && matchesMolex;
   });
 
   const handleFilterChange = (filterName, value) => {

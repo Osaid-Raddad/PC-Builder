@@ -40,8 +40,55 @@ const Storage = () => {
   ];
 
   const filteredStorage = storageList.filter(storage => {
-    const matchesSearch = searchTerm === '' || storage.name.toLowerCase().includes(searchTerm.toLowerCase()) || storage.brand.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch;
+    // Search term
+    const matchesSearch = searchTerm === '' || 
+      storage.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      storage.brand.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Price range
+    const matchesPrice = storage.price >= filters.priceRange.min && storage.price <= filters.priceRange.max;
+    
+    // Manufacturers
+    const matchesManufacturer = filters.manufacturers.length === 0 || 
+      filters.manufacturers.includes(storage.brand);
+    
+    // Rating
+    const matchesRating = filters.rating === null || 
+      (storage.rating && storage.rating >= filters.rating);
+    
+    // Capacity
+    const matchesCapacity = filters.capacity.length === 0 || 
+      !storage.capacity ||
+      filters.capacity.includes(storage.capacity);
+    
+    // Type
+    const matchesType = filters.type.length === 0 || 
+      !storage.type ||
+      filters.type.includes(storage.type);
+    
+    // Interface
+    const matchesInterface = filters.interface.length === 0 || 
+      !storage.interface ||
+      filters.interface.includes(storage.interface);
+    
+    // Cache
+    const matchesCache = filters.cache.length === 0 || 
+      !storage.cache ||
+      filters.cache.includes(storage.cache);
+    
+    // Form Factor
+    const matchesFormFactor = filters.formFactor.length === 0 || 
+      !storage.formFactor ||
+      filters.formFactor.includes(storage.formFactor);
+    
+    // NVMe
+    const matchesNvme = filters.nvme === null || 
+      !storage.hasOwnProperty('nvme') ||
+      storage.nvme === filters.nvme;
+    
+    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating &&
+           matchesCapacity && matchesType && matchesInterface && matchesCache &&
+           matchesFormFactor && matchesNvme;
   });
 
   const handleFilterChange = (filterName, value) => {
