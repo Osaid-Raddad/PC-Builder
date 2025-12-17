@@ -32,22 +32,19 @@ const MOCK_PRODUCTS = [
   { id: "4", name: "AMD Ryzen 7 7700X", price: 399, brand: "AMD", rating: 4.6 },
 ];
 
-export default function MonitorScreen({ navigation }) {
+export default function PowerSupplyScreen({ navigation }) {
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [filters, setFilters] = useState({
-    priceRange: { min: 0, max: 2000 },
+    priceRange: { min: 0, max: 500 },
     manufacturers: [],
     rating: 0,
-    screenSize: [],
-    resolution: [],
-    refreshRate: [],
-    responseTime: { min: 0, max: 10 },
-    panelType: [],
-    aspectRatio: [],
-    curvedScreen: null,
-    interface: [],
-    frameSync: [],
-    builtInSpeakers: null,
+    type: [],
+    efficiencyRating: [],
+    wattage: [],
+    modular: [],
+    fanless: null,
+    pcie8pin: [],
+    sataConnectors: [],
   });
 
   const handleCheckboxToggle = (filterName, value) => {
@@ -61,26 +58,23 @@ export default function MonitorScreen({ navigation }) {
 
   const resetFilters = () => {
     setFilters({
-      priceRange: { min: 0, max: 2000 },
+      priceRange: { min: 0, max: 500 },
       manufacturers: [],
       rating: 0,
-      screenSize: [],
-      resolution: [],
-      refreshRate: [],
-      responseTime: { min: 0, max: 10 },
-      panelType: [],
-      aspectRatio: [],
-      curvedScreen: null,
-      interface: [],
-      frameSync: [],
-      builtInSpeakers: null,
+      type: [],
+      efficiencyRating: [],
+      wattage: [],
+      modular: [],
+      fanless: null,
+      pcie8pin: [],
+      sataConnectors: [],
     });
   };
 
   const renderProduct = ({ item }) => (
     <TouchableOpacity style={styles.productCard}>
       <View style={styles.productImage}>
-        <Feather name="monitor" size={48} color={colors.mainYellow} />
+        <Feather name="battery-charging" size={48} color={colors.mainYellow} />
       </View>
       <View style={styles.productInfo}>
         <Text style={styles.productName}>{item.name}</Text>
@@ -112,40 +106,38 @@ export default function MonitorScreen({ navigation }) {
                 <TouchableOpacity onPress={() => navigation.goBack()}>
                   <Feather name="arrow-left" size={24} color={colors.mainBlack} />
                 </TouchableOpacity>
-                <Text style={styles.title}>Monitors</Text>
+                <Text style={styles.title}>Power Supplies</Text>
                 <TouchableOpacity onPress={() => setShowFilterModal(true)}>
                   <Feather name="filter" size={24} color={colors.mainBlack} />
                 </TouchableOpacity>
               </View>
 
               <View style={styles.quickFilters}>
-                {["1440p", "4K", "144Hz"].map((filter) => (
+                {["80+ Gold", "80+ Platinum", "Fully Modular"].map((filter) => (
                   <TouchableOpacity
                     key={filter}
                     style={[
                       styles.quickFilterButton,
-                      (filter === "1440p" && filters.resolution.includes("1440p")) ||
-                      (filter === "4K" && filters.resolution.includes("4K")) ||
-                      (filter === "144Hz" && filters.refreshRate.includes("144Hz"))
-                        ? styles.quickFilterButtonActive
-                        : null,
+                      (filter === "80+ Gold" && filters.efficiencyRating.includes("80+ Gold")) ||
+                      (filter === "80+ Platinum" && filters.efficiencyRating.includes("80+ Platinum")) ||
+                      (filter === "Fully Modular" && filters.modular.includes("Full"))
+                        ? styles.quickFilterButtonActive : null,
                     ]}
                     onPress={() => {
-                      if (filter === "1440p" || filter === "4K") {
-                        handleCheckboxToggle('resolution', filter);
-                      } else if (filter === "144Hz") {
-                        handleCheckboxToggle('refreshRate', filter);
+                      if (filter === "Fully Modular") {
+                        handleCheckboxToggle('modular', 'Full');
+                      } else {
+                        handleCheckboxToggle('efficiencyRating', filter);
                       }
                     }}
                   >
                     <Text
                       style={[
                         styles.quickFilterText,
-                        (filter === "1440p" && filters.resolution.includes("1440p")) ||
-                        (filter === "4K" && filters.resolution.includes("4K")) ||
-                        (filter === "144Hz" && filters.refreshRate.includes("144Hz"))
-                          ? styles.quickFilterTextActive
-                          : null,
+                        (filter === "80+ Gold" && filters.efficiencyRating.includes("80+ Gold")) ||
+                        (filter === "80+ Platinum" && filters.efficiencyRating.includes("80+ Platinum")) ||
+                        (filter === "Fully Modular" && filters.modular.includes("Full"))
+                          ? styles.quickFilterTextActive : null,
                       ]}
                     >
                       {filter}
@@ -191,7 +183,7 @@ export default function MonitorScreen({ navigation }) {
                       style={styles.rangeButton}
                       onPress={() => setFilters(prev => ({
                         ...prev,
-                        priceRange: { ...prev.priceRange, min: Math.max(0, prev.priceRange.min - 50) }
+                        priceRange: { ...prev.priceRange, min: Math.max(0, prev.priceRange.min - 25) }
                       }))}
                     >
                       <Feather name="minus" size={16} color={colors.mainBlack} />
@@ -201,7 +193,7 @@ export default function MonitorScreen({ navigation }) {
                       style={styles.rangeButton}
                       onPress={() => setFilters(prev => ({
                         ...prev,
-                        priceRange: { ...prev.priceRange, min: Math.min(prev.priceRange.max - 50, prev.priceRange.min + 50) }
+                        priceRange: { ...prev.priceRange, min: Math.min(prev.priceRange.max - 25, prev.priceRange.min + 25) }
                       }))}
                     >
                       <Feather name="plus" size={16} color={colors.mainBlack} />
@@ -213,7 +205,7 @@ export default function MonitorScreen({ navigation }) {
                       style={styles.rangeButton}
                       onPress={() => setFilters(prev => ({
                         ...prev,
-                        priceRange: { ...prev.priceRange, max: Math.max(prev.priceRange.min + 50, prev.priceRange.max - 50) }
+                        priceRange: { ...prev.priceRange, max: Math.max(prev.priceRange.min + 25, prev.priceRange.max - 25) }
                       }))}
                     >
                       <Feather name="minus" size={16} color={colors.mainBlack} />
@@ -223,7 +215,7 @@ export default function MonitorScreen({ navigation }) {
                       style={styles.rangeButton}
                       onPress={() => setFilters(prev => ({
                         ...prev,
-                        priceRange: { ...prev.priceRange, max: prev.priceRange.max + 50 }
+                        priceRange: { ...prev.priceRange, max: prev.priceRange.max + 25 }
                       }))}
                     >
                       <Feather name="plus" size={16} color={colors.mainBlack} />
@@ -235,7 +227,7 @@ export default function MonitorScreen({ navigation }) {
               {/* Manufacturer */}
               <View style={styles.filterSection}>
                 <Text style={styles.filterSectionTitle}>Manufacturer</Text>
-                {['ASUS', 'LG', 'Samsung', 'Dell'].map(brand => (
+                {['Corsair', 'EVGA', 'Seasonic', 'Thermaltake', 'be quiet!', 'Cooler Master'].map(brand => (
                   <TouchableOpacity
                     key={brand}
                     style={styles.checkboxRow}
@@ -272,155 +264,85 @@ export default function MonitorScreen({ navigation }) {
                 ))}
               </View>
 
-              {/* Screen Size */}
+              {/* Type */}
               <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>Screen Size</Text>
-                {['24"', '27"', '32"', '34"'].map(size => (
+                <Text style={styles.filterSectionTitle}>Type</Text>
+                {['ATX', 'SFX', 'TFX'].map(type => (
                   <TouchableOpacity
-                    key={size}
+                    key={type}
                     style={styles.checkboxRow}
-                    onPress={() => handleCheckboxToggle('screenSize', size)}
+                    onPress={() => handleCheckboxToggle('type', type)}
                   >
                     <MaterialCommunityIcons
-                      name={filters.screenSize.includes(size) ? "checkbox-marked" : "checkbox-blank-outline"}
+                      name={filters.type.includes(type) ? "checkbox-marked" : "checkbox-blank-outline"}
                       size={24}
-                      color={filters.screenSize.includes(size) ? colors.mainYellow : colors.text}
+                      color={filters.type.includes(type) ? colors.mainYellow : colors.text}
                     />
-                    <Text style={styles.checkboxLabel}>{size}</Text>
+                    <Text style={styles.checkboxLabel}>{type}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
 
-              {/* Resolution */}
+              {/* Efficiency Rating */}
               <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>Resolution</Text>
-                {['1080p', '1440p', '4K'].map(res => (
+                <Text style={styles.filterSectionTitle}>Efficiency Rating</Text>
+                {['80+ Titanium', '80+ Platinum', '80+ Gold', '80+ Silver', '80+ Bronze'].map(rating => (
                   <TouchableOpacity
-                    key={res}
+                    key={rating}
                     style={styles.checkboxRow}
-                    onPress={() => handleCheckboxToggle('resolution', res)}
+                    onPress={() => handleCheckboxToggle('efficiencyRating', rating)}
                   >
                     <MaterialCommunityIcons
-                      name={filters.resolution.includes(res) ? "checkbox-marked" : "checkbox-blank-outline"}
+                      name={filters.efficiencyRating.includes(rating) ? "checkbox-marked" : "checkbox-blank-outline"}
                       size={24}
-                      color={filters.resolution.includes(res) ? colors.mainYellow : colors.text}
+                      color={filters.efficiencyRating.includes(rating) ? colors.mainYellow : colors.text}
                     />
-                    <Text style={styles.checkboxLabel}>{res}</Text>
+                    <Text style={styles.checkboxLabel}>{rating}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
 
-              {/* Refresh Rate */}
+              {/* Wattage */}
               <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>Refresh Rate</Text>
-                {['60Hz', '144Hz', '240Hz'].map(rate => (
+                <Text style={styles.filterSectionTitle}>Wattage</Text>
+                {['450W', '550W', '650W', '750W', '850W', '1000W', '1200W'].map(watts => (
                   <TouchableOpacity
-                    key={rate}
+                    key={watts}
                     style={styles.checkboxRow}
-                    onPress={() => handleCheckboxToggle('refreshRate', rate)}
+                    onPress={() => handleCheckboxToggle('wattage', watts)}
                   >
                     <MaterialCommunityIcons
-                      name={filters.refreshRate.includes(rate) ? "checkbox-marked" : "checkbox-blank-outline"}
+                      name={filters.wattage.includes(watts) ? "checkbox-marked" : "checkbox-blank-outline"}
                       size={24}
-                      color={filters.refreshRate.includes(rate) ? colors.mainYellow : colors.text}
+                      color={filters.wattage.includes(watts) ? colors.mainYellow : colors.text}
                     />
-                    <Text style={styles.checkboxLabel}>{rate}</Text>
+                    <Text style={styles.checkboxLabel}>{watts}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
 
-              {/* Response Time */}
+              {/* Modular */}
               <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>Response Time (ms)</Text>
-                <View style={styles.rangeControl}>
-                  <View style={styles.rangeInput}>
-                    <Text style={styles.rangeLabel}>Min:</Text>
-                    <TouchableOpacity 
-                      style={styles.rangeButton}
-                      onPress={() => setFilters(prev => ({
-                        ...prev,
-                        responseTime: { ...prev.responseTime, min: Math.max(0, prev.responseTime.min - 1) }
-                      }))}
-                    >
-                      <Feather name="minus" size={16} color={colors.mainBlack} />
-                    </TouchableOpacity>
-                    <Text style={styles.rangeValue}>{filters.responseTime.min}ms</Text>
-                    <TouchableOpacity 
-                      style={styles.rangeButton}
-                      onPress={() => setFilters(prev => ({
-                        ...prev,
-                        responseTime: { ...prev.responseTime, min: Math.min(prev.responseTime.max - 1, prev.responseTime.min + 1) }
-                      }))}
-                    >
-                      <Feather name="plus" size={16} color={colors.mainBlack} />
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.rangeInput}>
-                    <Text style={styles.rangeLabel}>Max:</Text>
-                    <TouchableOpacity 
-                      style={styles.rangeButton}
-                      onPress={() => setFilters(prev => ({
-                        ...prev,
-                        responseTime: { ...prev.responseTime, max: Math.max(prev.responseTime.min + 1, prev.responseTime.max - 1) }
-                      }))}
-                    >
-                      <Feather name="minus" size={16} color={colors.mainBlack} />
-                    </TouchableOpacity>
-                    <Text style={styles.rangeValue}>{filters.responseTime.max}ms</Text>
-                    <TouchableOpacity 
-                      style={styles.rangeButton}
-                      onPress={() => setFilters(prev => ({
-                        ...prev,
-                        responseTime: { ...prev.responseTime, max: prev.responseTime.max + 1 }
-                      }))}
-                    >
-                      <Feather name="plus" size={16} color={colors.mainBlack} />
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-
-              {/* Panel Type */}
-              <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>Panel Type</Text>
-                {['IPS', 'VA', 'TN'].map(panel => (
+                <Text style={styles.filterSectionTitle}>Modular</Text>
+                {['Full', 'Semi', 'No'].map(mod => (
                   <TouchableOpacity
-                    key={panel}
+                    key={mod}
                     style={styles.checkboxRow}
-                    onPress={() => handleCheckboxToggle('panelType', panel)}
+                    onPress={() => handleCheckboxToggle('modular', mod)}
                   >
                     <MaterialCommunityIcons
-                      name={filters.panelType.includes(panel) ? "checkbox-marked" : "checkbox-blank-outline"}
+                      name={filters.modular.includes(mod) ? "checkbox-marked" : "checkbox-blank-outline"}
                       size={24}
-                      color={filters.panelType.includes(panel) ? colors.mainYellow : colors.text}
+                      color={filters.modular.includes(mod) ? colors.mainYellow : colors.text}
                     />
-                    <Text style={styles.checkboxLabel}>{panel}</Text>
+                    <Text style={styles.checkboxLabel}>{mod === 'Full' ? 'Fully Modular' : mod === 'Semi' ? 'Semi Modular' : 'Non-Modular'}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
 
-              {/* Aspect Ratio */}
+              {/* Fanless */}
               <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>Aspect Ratio</Text>
-                {['16:9', '21:9'].map(ratio => (
-                  <TouchableOpacity
-                    key={ratio}
-                    style={styles.checkboxRow}
-                    onPress={() => handleCheckboxToggle('aspectRatio', ratio)}
-                  >
-                    <MaterialCommunityIcons
-                      name={filters.aspectRatio.includes(ratio) ? "checkbox-marked" : "checkbox-blank-outline"}
-                      size={24}
-                      color={filters.aspectRatio.includes(ratio) ? colors.mainYellow : colors.text}
-                    />
-                    <Text style={styles.checkboxLabel}>{ratio}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-
-              {/* Curved Screen */}
-              <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>Curved Screen</Text>
+                <Text style={styles.filterSectionTitle}>Fanless</Text>
                 {[
                   { label: 'Yes', value: true },
                   { label: 'No', value: false },
@@ -429,75 +351,52 @@ export default function MonitorScreen({ navigation }) {
                   <TouchableOpacity
                     key={option.label}
                     style={styles.checkboxRow}
-                    onPress={() => setFilters(prev => ({ ...prev, curvedScreen: option.value }))}
+                    onPress={() => setFilters(prev => ({ ...prev, fanless: option.value }))}
                   >
                     <MaterialCommunityIcons
-                      name={filters.curvedScreen === option.value ? "radiobox-marked" : "radiobox-blank"}
+                      name={filters.fanless === option.value ? "radiobox-marked" : "radiobox-blank"}
                       size={24}
-                      color={filters.curvedScreen === option.value ? colors.mainYellow : colors.text}
+                      color={filters.fanless === option.value ? colors.mainYellow : colors.text}
                     />
                     <Text style={styles.checkboxLabel}>{option.label}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
 
-              {/* Interface */}
+              {/* PCIe 8-Pin Connectors */}
               <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>Interface</Text>
-                {['HDMI', 'DisplayPort'].map(port => (
+                <Text style={styles.filterSectionTitle}>PCIe 8-Pin Connectors</Text>
+                {[2, 3, 4, 5, 6].map(pins => (
                   <TouchableOpacity
-                    key={port}
+                    key={pins}
                     style={styles.checkboxRow}
-                    onPress={() => handleCheckboxToggle('interface', port)}
+                    onPress={() => handleCheckboxToggle('pcie8pin', pins)}
                   >
                     <MaterialCommunityIcons
-                      name={filters.interface.includes(port) ? "checkbox-marked" : "checkbox-blank-outline"}
+                      name={filters.pcie8pin.includes(pins) ? "checkbox-marked" : "checkbox-blank-outline"}
                       size={24}
-                      color={filters.interface.includes(port) ? colors.mainYellow : colors.text}
+                      color={filters.pcie8pin.includes(pins) ? colors.mainYellow : colors.text}
                     />
-                    <Text style={styles.checkboxLabel}>{port}</Text>
+                    <Text style={styles.checkboxLabel}>{pins} Connector{pins > 1 ? 's' : ''}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
 
-              {/* Frame Sync */}
+              {/* SATA Connectors */}
               <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>Frame Sync</Text>
-                {['G-Sync', 'FreeSync'].map(sync => (
+                <Text style={styles.filterSectionTitle}>SATA Connectors</Text>
+                {[4, 6, 8, 10, 12].map(sata => (
                   <TouchableOpacity
-                    key={sync}
+                    key={sata}
                     style={styles.checkboxRow}
-                    onPress={() => handleCheckboxToggle('frameSync', sync)}
+                    onPress={() => handleCheckboxToggle('sataConnectors', sata)}
                   >
                     <MaterialCommunityIcons
-                      name={filters.frameSync.includes(sync) ? "checkbox-marked" : "checkbox-blank-outline"}
+                      name={filters.sataConnectors.includes(sata) ? "checkbox-marked" : "checkbox-blank-outline"}
                       size={24}
-                      color={filters.frameSync.includes(sync) ? colors.mainYellow : colors.text}
+                      color={filters.sataConnectors.includes(sata) ? colors.mainYellow : colors.text}
                     />
-                    <Text style={styles.checkboxLabel}>{sync}</Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-
-              {/* Built-in Speakers */}
-              <View style={styles.filterSection}>
-                <Text style={styles.filterSectionTitle}>Built-in Speakers</Text>
-                {[
-                  { label: 'Yes', value: true },
-                  { label: 'No', value: false },
-                  { label: 'Any', value: null }
-                ].map(option => (
-                  <TouchableOpacity
-                    key={option.label}
-                    style={styles.checkboxRow}
-                    onPress={() => setFilters(prev => ({ ...prev, builtInSpeakers: option.value }))}
-                  >
-                    <MaterialCommunityIcons
-                      name={filters.builtInSpeakers === option.value ? "radiobox-marked" : "radiobox-blank"}
-                      size={24}
-                      color={filters.builtInSpeakers === option.value ? colors.mainYellow : colors.text}
-                    />
-                    <Text style={styles.checkboxLabel}>{option.label}</Text>
+                    <Text style={styles.checkboxLabel}>{sata} Connector{sata > 1 ? 's' : ''}</Text>
                   </TouchableOpacity>
                 ))}
               </View>
@@ -659,32 +558,6 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     minWidth: 80,
     textAlign: "center",
-  },
-  filters: {
-    flexDirection: "row",
-    marginBottom: 20,
-    gap: 8,
-  },
-  filterButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    backgroundColor: "white",
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  filterButtonActive: {
-    backgroundColor: colors.mainYellow,
-    borderColor: colors.mainYellow,
-  },
-  filterText: {
-    fontSize: 14,
-    color: colors.text,
-    fontWeight: "500",
-  },
-  filterTextActive: {
-    color: colors.mainBlack,
-    fontWeight: "600",
   },
   listContainer: {
     paddingBottom: 20,

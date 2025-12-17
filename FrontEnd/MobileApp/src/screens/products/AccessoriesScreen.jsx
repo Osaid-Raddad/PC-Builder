@@ -6,8 +6,10 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  Modal,
+  ScrollView,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ScreenLayout from "../../components/ScreenLayout";
 import colors from "../../config/colors";
 
@@ -31,7 +33,33 @@ const MOCK_PRODUCTS = [
 ];
 
 export default function AccessoriesScreen({ navigation }) {
-  const [selectedFilter, setSelectedFilter] = useState("all");
+  const [showFilterModal, setShowFilterModal] = useState(false);
+  const [filters, setFilters] = useState({
+    priceRange: { min: 0, max: 300 },
+    manufacturers: [],
+    rating: 0,
+    type: [],
+    color: [],
+  });
+
+  const handleCheckboxToggle = (filterName, value) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterName]: prev[filterName].includes(value)
+        ? prev[filterName].filter(item => item !== value)
+        : [...prev[filterName], value]
+    }));
+  };
+
+  const resetFilters = () => {
+    setFilters({
+      priceRange: { min: 0, max: 300 },
+      manufacturers: [],
+      rating: 0,
+      type: [],
+      color: [],
+    });
+  };
 
   const renderProduct = ({ item }) => (
     <TouchableOpacity style={styles.productCard}>
@@ -69,28 +97,28 @@ export default function AccessoriesScreen({ navigation }) {
                   <Feather name="arrow-left" size={24} color={colors.mainBlack} />
                 </TouchableOpacity>
                 <Text style={styles.title}>Accessories</Text>
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => setShowFilterModal(true)}>
                   <Feather name="filter" size={24} color={colors.mainBlack} />
                 </TouchableOpacity>
               </View>
 
-              <View style={styles.filters}>
-                {["all", "intel", "amd"].map((filter) => (
+              <View style={styles.quickFilters}>
+                {["RGB Lighting", "Cables", "Thermal Paste"].map((filter) => (
                   <TouchableOpacity
                     key={filter}
                     style={[
-                      styles.filterButton,
-                      selectedFilter === filter && styles.filterButtonActive,
+                      styles.quickFilterButton,
+                      filters.type.includes(filter) && styles.quickFilterButtonActive,
                     ]}
-                    onPress={() => setSelectedFilter(filter)}
+                    onPress={() => handleCheckboxToggle('type', filter)}
                   >
                     <Text
                       style={[
-                        styles.filterText,
-                        selectedFilter === filter && styles.filterTextActive,
+                        styles.quickFilterText,
+                        filters.type.includes(filter) && styles.quickFilterTextActive,
                       ]}
                     >
-                      {filter.toUpperCase()}
+                      {filter}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -100,6 +128,168 @@ export default function AccessoriesScreen({ navigation }) {
           contentContainerStyle={styles.listContainer}
         />
       </View>
+
+      {/* Filter Modal */}
+      <Modal
+        visible={showFilterModal}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setShowFilterModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.filterModal}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Filters</Text>
+              <View style={styles.modalActions}>
+                <TouchableOpacity onPress={resetFilters}>
+                  <Text style={styles.resetText}>Reset</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => setShowFilterModal(false)}>
+                  <Feather name="x" size={24} color={colors.mainBlack} />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <ScrollView style={styles.filterContent}>
+              {/* Price Range */}
+              <View style={styles.filterSection}>
+                <Text style={styles.filterSectionTitle}>Price Range</Text>
+                <View style={styles.rangeControl}>
+                  <View style={styles.rangeInput}>
+                    <Text style={styles.rangeLabel}>Min:</Text>
+                    <TouchableOpacity 
+                      style={styles.rangeButton}
+                      onPress={() => setFilters(prev => ({
+                        ...prev,
+                        priceRange: { ...prev.priceRange, min: Math.max(0, prev.priceRange.min - 10) }
+                      }))}
+                    >
+                      <Feather name="minus" size={16} color={colors.mainBlack} />
+                    </TouchableOpacity>
+                    <Text style={styles.rangeValue}>${filters.priceRange.min}</Text>
+                    <TouchableOpacity 
+                      style={styles.rangeButton}
+                      onPress={() => setFilters(prev => ({
+                        ...prev,
+                        priceRange: { ...prev.priceRange, min: Math.min(prev.priceRange.max - 10, prev.priceRange.min + 10) }
+                      }))}
+                    >
+                      <Feather name="plus" size={16} color={colors.mainBlack} />
+                    </TouchableOpacity>
+                  </View>
+                  <View style={styles.rangeInput}>
+                    <Text style={styles.rangeLabel}>Max:</Text>
+                    <TouchableOpacity 
+                      style={styles.rangeButton}
+                      onPress={() => setFilters(prev => ({
+                        ...prev,
+                        priceRange: { ...prev.priceRange, max: Math.max(prev.priceRange.min + 10, prev.priceRange.max - 10) }
+                      }))}
+                    >
+                      <Feather name="minus" size={16} color={colors.mainBlack} />
+                    </TouchableOpacity>
+                    <Text style={styles.rangeValue}>${filters.priceRange.max}</Text>
+                    <TouchableOpacity 
+                      style={styles.rangeButton}
+                      onPress={() => setFilters(prev => ({
+                        ...prev,
+                        priceRange: { ...prev.priceRange, max: prev.priceRange.max + 10 }
+                      }))}
+                    >
+                      <Feather name="plus" size={16} color={colors.mainBlack} />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+
+              {/* Manufacturer */}
+              <View style={styles.filterSection}>
+                <Text style={styles.filterSectionTitle}>Manufacturer</Text>
+                {['Corsair', 'NZXT', 'Lian Li'].map(brand => (
+                  <TouchableOpacity
+                    key={brand}
+                    style={styles.checkboxRow}
+                    onPress={() => handleCheckboxToggle('manufacturers', brand)}
+                  >
+                    <MaterialCommunityIcons
+                      name={filters.manufacturers.includes(brand) ? "checkbox-marked" : "checkbox-blank-outline"}
+                      size={24}
+                      color={filters.manufacturers.includes(brand) ? colors.mainYellow : colors.text}
+                    />
+                    <Text style={styles.checkboxLabel}>{brand}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {/* Rating */}
+              <View style={styles.filterSection}>
+                <Text style={styles.filterSectionTitle}>Minimum Rating</Text>
+                {[5, 4, 3, 2, 1].map(rating => (
+                  <TouchableOpacity
+                    key={rating}
+                    style={styles.checkboxRow}
+                    onPress={() => setFilters(prev => ({ ...prev, rating }))}
+                  >
+                    <MaterialCommunityIcons
+                      name={filters.rating === rating ? "radiobox-marked" : "radiobox-blank"}
+                      size={24}
+                      color={filters.rating === rating ? colors.mainYellow : colors.text}
+                    />
+                    <Text style={styles.checkboxLabel}>
+                      {'★'.repeat(rating)}{'☆'.repeat(5 - rating)} & Up
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {/* Type */}
+              <View style={styles.filterSection}>
+                <Text style={styles.filterSectionTitle}>Type</Text>
+                {['RGB Lighting', 'Cables', 'Thermal Paste', 'Fan Controller', 'Tools'].map(type => (
+                  <TouchableOpacity
+                    key={type}
+                    style={styles.checkboxRow}
+                    onPress={() => handleCheckboxToggle('type', type)}
+                  >
+                    <MaterialCommunityIcons
+                      name={filters.type.includes(type) ? "checkbox-marked" : "checkbox-blank-outline"}
+                      size={24}
+                      color={filters.type.includes(type) ? colors.mainYellow : colors.text}
+                    />
+                    <Text style={styles.checkboxLabel}>{type}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {/* Color */}
+              <View style={styles.filterSection}>
+                <Text style={styles.filterSectionTitle}>Color</Text>
+                {['Black', 'White', 'RGB'].map(color => (
+                  <TouchableOpacity
+                    key={color}
+                    style={styles.checkboxRow}
+                    onPress={() => handleCheckboxToggle('color', color)}
+                  >
+                    <MaterialCommunityIcons
+                      name={filters.color.includes(color) ? "checkbox-marked" : "checkbox-blank-outline"}
+                      size={24}
+                      color={filters.color.includes(color) ? colors.mainYellow : colors.text}
+                    />
+                    <Text style={styles.checkboxLabel}>{color}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </ScrollView>
+
+            <TouchableOpacity
+              style={styles.applyButton}
+              onPress={() => setShowFilterModal(false)}
+            >
+              <Text style={styles.applyButtonText}>Apply Filters</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </ScreenLayout>
   );
 }
@@ -108,6 +298,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: colors.mainBeige,
   },
   header: {
     flexDirection: "row",
@@ -119,6 +310,133 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: colors.mainBlack,
+  },
+  quickFilters: {
+    flexDirection: "row",
+    marginBottom: 20,
+    gap: 8,
+  },
+  quickFilterButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  quickFilterButtonActive: {
+    backgroundColor: colors.mainYellow,
+    borderColor: colors.mainYellow,
+  },
+  quickFilterText: {
+    fontSize: 14,
+    color: colors.text,
+    fontWeight: "500",
+  },
+  quickFilterTextActive: {
+    color: colors.mainBlack,
+    fontWeight: "600",
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
+  },
+  filterModal: {
+    backgroundColor: "white",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    maxHeight: "90%",
+    paddingBottom: 20,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.platinum,
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: colors.mainBlack,
+  },
+  modalActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+  },
+  resetText: {
+    fontSize: 16,
+    color: colors.mainYellow,
+    fontWeight: "600",
+  },
+  filterContent: {
+    padding: 20,
+  },
+  filterSection: {
+    marginBottom: 24,
+    paddingBottom: 24,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.platinum,
+  },
+  filterSectionTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.mainBlack,
+    marginBottom: 12,
+  },
+  checkboxRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+    gap: 12,
+  },
+  checkboxLabel: {
+    fontSize: 15,
+    color: colors.text,
+  },
+  applyButton: {
+    backgroundColor: colors.mainYellow,
+    marginHorizontal: 20,
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: "center",
+  },
+  applyButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.mainBlack,
+  },
+  rangeControl: {
+    gap: 12,
+  },
+  rangeInput: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  rangeLabel: {
+    fontSize: 14,
+    color: colors.text,
+    fontWeight: "500",
+    width: 40,
+  },
+  rangeButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+    backgroundColor: colors.mainYellow,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  rangeValue: {
+    fontSize: 14,
+    color: colors.mainBlack,
+    fontWeight: "600",
+    minWidth: 80,
+    textAlign: "center",
   },
   filters: {
     flexDirection: "row",

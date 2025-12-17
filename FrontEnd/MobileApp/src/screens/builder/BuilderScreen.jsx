@@ -4,7 +4,6 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  ScrollView,
 } from "react-native";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import ScreenLayout from "../../components/ScreenLayout";
@@ -66,6 +65,28 @@ export default function BuilderScreen({ navigation }) {
           </View>
         </View>
 
+        {/* Compatibility Status */}
+        <View style={styles.compatibilityCard}>
+          <View style={styles.compatibilityHeader}>
+            <MaterialCommunityIcons
+              name="check-decagram"
+              size={24}
+              color={colors.success}
+            />
+            <Text style={styles.compatibilityTitle}>Compatibility Status</Text>
+          </View>
+          <View style={styles.compatibilityContent}>
+            <View style={styles.compatibilityItem}>
+              <Feather name="check-circle" size={18} color={colors.success} />
+              <Text style={styles.compatibilityText}>All components compatible</Text>
+            </View>
+            <View style={styles.compatibilityItem}>
+              <Feather name="info" size={18} color={colors.primary} />
+              <Text style={styles.compatibilityTextInfo}>Add components to check compatibility</Text>
+            </View>
+          </View>
+        </View>
+
         <Text style={styles.sectionTitle}>Select Components</Text>
 
         <View style={styles.componentsList}>
@@ -123,6 +144,7 @@ export default function BuilderScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    backgroundColor: colors.mainBeige,
   },
   header: {
     alignItems: "center",
@@ -170,6 +192,49 @@ const styles = StyleSheet.create({
     width: 1,
     backgroundColor: colors.border,
     marginHorizontal: 16,
+  },
+  compatibilityCard: {
+    backgroundColor: "white",
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 24,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.success,
+  },
+  compatibilityHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  compatibilityTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: colors.mainBlack,
+    marginLeft: 8,
+  },
+  compatibilityContent: {
+    gap: 8,
+  },
+  compatibilityItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 4,
+  },
+  compatibilityText: {
+    fontSize: 14,
+    color: colors.success,
+    marginLeft: 10,
+    fontWeight: "500",
+  },
+  compatibilityTextInfo: {
+    fontSize: 14,
+    color: colors.text,
+    marginLeft: 10,
   },
   sectionTitle: {
     fontSize: 20,
