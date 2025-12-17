@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   FlatList,
+  ScrollView,
   Image,
   Linking,
 } from "react-native";
@@ -301,45 +302,49 @@ export default function ShopsScreen({ navigation }) {
   );
 
   return (
-    <ScreenLayout navigation={navigation}>
+    <ScreenLayout navigation={navigation} scrollable={false} showFooter={false}>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>Local Shops</Text>
-          <Text style={styles.subtitle}>Find PC shops near you ({filteredShops.length} shops)</Text>
-        </View>
-
-        {/* City Filter */}
-        <View style={styles.filterContainer}>
-          <FlatList
-            horizontal
-            data={cities}
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={(item) => item}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={[
-                  styles.cityButton,
-                  selectedCity === item && styles.cityButtonActive
-                ]}
-                onPress={() => setSelectedCity(item)}
-              >
-                <Text
-                  style={[
-                    styles.cityButtonText,
-                    selectedCity === item && styles.cityButtonTextActive
-                  ]}
-                >
-                  {item}
-                </Text>
-              </TouchableOpacity>
-            )}
-          />
-        </View>
-
         <FlatList
           data={filteredShops}
           renderItem={renderShop}
           keyExtractor={(item) => item.id.toString()}
+          ListHeaderComponent={
+            <>
+              <View style={styles.header}>
+                <Text style={styles.title}>Local Shops</Text>
+                <Text style={styles.subtitle}>Find PC shops near you ({filteredShops.length} shops)</Text>
+              </View>
+
+              {/* City Filter */}
+              <View style={styles.filterContainer}>
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={styles.cityFilterContent}
+                >
+                  {cities.map((item) => (
+                    <TouchableOpacity
+                      key={item}
+                      style={[
+                        styles.cityButton,
+                        selectedCity === item && styles.cityButtonActive
+                      ]}
+                      onPress={() => setSelectedCity(item)}
+                    >
+                      <Text
+                        style={[
+                          styles.cityButtonText,
+                          selectedCity === item && styles.cityButtonTextActive
+                        ]}
+                      >
+                        {item}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              </View>
+            </>
+          }
           contentContainerStyle={styles.listContainer}
         />
       </View>
@@ -370,6 +375,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 15,
     backgroundColor: colors.alabaster,
+  },
+  cityFilterContent: {
+    paddingRight: 20,
   },
   cityButton: {
     paddingHorizontal: 20,
