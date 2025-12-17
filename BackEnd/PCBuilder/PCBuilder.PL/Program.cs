@@ -55,6 +55,9 @@ namespace PCBuilder.PL
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<IEmailSender,EmailSetting>();
             builder.Services.AddScoped<ISeedData, SeedData>();
+            builder.Services.AddScoped<IFileService, FileService>();
+            builder.Services.AddScoped<IShopRepository,ShopRepository>();
+            builder.Services.AddScoped<IShopService,ShopService>();
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
             {
                 option.Password.RequireDigit = true;
