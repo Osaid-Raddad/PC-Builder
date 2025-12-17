@@ -355,7 +355,7 @@ export default function ShopsScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background,
+    backgroundColor: colors.mainBeige,
   },
   header: {
     padding: 20,
@@ -372,9 +372,9 @@ const styles = StyleSheet.create({
     color: colors.text,
   },
   filterContainer: {
-    paddingHorizontal: 20,
+    paddingHorizontal: 2,
     paddingVertical: 15,
-    backgroundColor: colors.alabaster,
+    backgroundColor: colors.mainBeige,
   },
   cityFilterContent: {
     paddingRight: 20,

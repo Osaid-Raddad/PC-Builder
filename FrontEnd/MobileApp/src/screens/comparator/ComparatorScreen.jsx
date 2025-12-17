@@ -33,7 +33,7 @@ export default function ComparatorScreen({ navigation }) {
             <MaterialCommunityIcons
               name="compare-horizontal"
               size={120}
-              color={colors.platinum}
+              color={colors.mainYellow}
             />
             <Text style={styles.emptyTitle}>No Products Selected</Text>
             <Text style={styles.emptyText}>
@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: colors.mainBeige,
   },
   header: {
     alignItems: "center",

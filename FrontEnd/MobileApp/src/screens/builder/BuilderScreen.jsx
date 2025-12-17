@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
+  Image,
 } from "react-native";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import ScreenLayout from "../../components/ScreenLayout";
@@ -39,10 +40,9 @@ export default function BuilderScreen({ navigation }) {
     <ScreenLayout navigation={navigation}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <MaterialCommunityIcons
-            name="hammer-wrench"
-            size={60}
-            color={colors.mainYellow}
+          <Image
+            source={require("../../../assets/LogoBig.png")}
+            style={styles.logoImage}
           />
           <Text style={styles.title}>PC Builder</Text>
           <Text style={styles.subtitle}>Build your custom PC step by step</Text>
@@ -149,6 +149,11 @@ const styles = StyleSheet.create({
   header: {
     alignItems: "center",
     marginBottom: 24,
+  },
+  logoImage: {
+    width: 180,
+    height: 180,
+    resizeMode: "contain",
   },
   title: {
     fontSize: 28,

@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
   statsSection: {
-    padding: 20,
+    paddingBottom: 30,
     backgroundColor: colors.mainBlack,
   },
   statsContainer: {
