@@ -29,7 +29,7 @@ export default function RegisterScreen({ navigation }) {
       <View style={styles.container}>
         <View style={styles.logoContainer}>
           <Image
-            source={require("../../../assets/LogoBig.png")}
+            source={require("../../../assets/LogoIcon.png")}
             style={styles.logo}
             resizeMode="contain"
           />

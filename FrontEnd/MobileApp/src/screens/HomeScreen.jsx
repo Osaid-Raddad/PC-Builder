@@ -28,11 +28,11 @@ export default function HomeScreen({ navigation }) {
       screen: "Comparator",
     },
     {
-      title: "Community",
-      description: "Join our builder community",
-      icon: "account-group",
+      title: "Shops",
+      description: "Browse local PC shops",
+      icon: "store",
       color: colors.accent,
-      screen: "Posts",
+      screen: "Shops",
     },
     {
       title: "Guides",

@@ -19,6 +19,7 @@ const { width } = Dimensions.get("window");
 export default function Navbar({ navigation }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isCommunityExpanded, setIsCommunityExpanded] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // TODO: Replace with actual auth state
   const [userName, setUserName] = useState("John Doe"); // TODO: Get from auth context
 
@@ -51,7 +52,27 @@ export default function Navbar({ navigation }) {
       label: "Community",
       icon: "users",
       iconSet: "Feather",
-      screen: "Posts",
+      hasSubmenu: true,
+      submenu: [
+        {
+          label: "Posts",
+          icon: "message-square",
+          iconSet: "Feather",
+          screen: "Posts",
+        },
+        {
+          label: "News",
+          icon: "newspaper",
+          iconSet: "Ionicons",
+          screen: "News",
+        },
+        {
+          label: "Shops",
+          icon: "shopping-bag",
+          iconSet: "Feather",
+          screen: "Shops",
+        },
+      ],
     },
     {
       label: "Chat",
@@ -160,20 +181,178 @@ export default function Navbar({ navigation }) {
             {/* Menu Items */}
             <ScrollView style={styles.menuItems}>
               {menuItems.map((item, index) => (
+                <View key={index}>
+                  <TouchableOpacity
+                    style={styles.menuItem}
+                    onPress={() => {
+                      if (item.hasSubmenu) {
+                        setIsCommunityExpanded(!isCommunityExpanded);
+                      } else {
+                        handleNavigation(item.screen);
+                      }
+                    }}
+                  >
+                    {renderIcon(item.icon, item.iconSet, 22, colors.mainYellow)}
+                    <Text style={styles.menuItemText}>{item.label}</Text>
+                    {item.hasSubmenu ? (
+                      <Feather
+                        name={isCommunityExpanded ? "chevron-down" : "chevron-right"}
+                        size={20}
+                        color={colors.platinum}
+                      />
+                    ) : (
+                      <Feather
+                        name="chevron-right"
+                        size={20}
+                        color={colors.platinum}
+                      />
+                    )}
+                  </TouchableOpacity>
+                  
+                  {/* Community Submenu */}
+                  {item.hasSubmenu && isCommunityExpanded && (
+                    <View style={styles.submenuContainer}>
+                      {item.submenu.map((subitem, subindex) => (
+                        <TouchableOpacity
+                          key={subindex}
+                          style={styles.submenuItem}
+                          onPress={() => handleNavigation(subitem.screen)}
+                        >
+                          {renderIcon(subitem.icon, subitem.iconSet, 20, colors.mainYellow)}
+                          <Text style={styles.submenuItemText}>{subitem.label}</Text>
+                          <Feather
+                            name="chevron-right"
+                            size={18}
+                            color={colors.platinum}
+                          />
+                        </TouchableOpacity>
+                      ))}
+                    </View>
+                  )}
+                </View>
+              ))}
+
+              {/* Settings Section */}
+              <View style={styles.settingsSection}>
+                <Text style={styles.sectionTitle}>Settings</Text>
+                
                 <TouchableOpacity
-                  key={index}
                   style={styles.menuItem}
-                  onPress={() => handleNavigation(item.screen)}
+                  onPress={() => handleNavigation("Profile")}
                 >
-                  {renderIcon(item.icon, item.iconSet, 22, colors.mainYellow)}
-                  <Text style={styles.menuItemText}>{item.label}</Text>
+                  <Feather name="user" size={22} color={colors.mainYellow} />
+                  <Text style={styles.menuItemText}>Profile</Text>
                   <Feather
                     name="chevron-right"
                     size={20}
                     color={colors.platinum}
                   />
                 </TouchableOpacity>
-              ))}
+
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => handleNavigation("AccountSettings")}
+                >
+                  <Feather name="settings" size={22} color={colors.mainYellow} />
+                  <Text style={styles.menuItemText}>Account Settings</Text>
+                  <Feather
+                    name="chevron-right"
+                    size={20}
+                    color={colors.platinum}
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => handleNavigation("Privacy")}
+                >
+                  <Feather name="lock" size={22} color={colors.mainYellow} />
+                  <Text style={styles.menuItemText}>Privacy & Security</Text>
+                  <Feather
+                    name="chevron-right"
+                    size={20}
+                    color={colors.platinum}
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => handleNavigation("Notifications")}
+                >
+                  <Feather name="bell" size={22} color={colors.mainYellow} />
+                  <Text style={styles.menuItemText}>Notifications</Text>
+                  <Feather
+                    name="chevron-right"
+                    size={20}
+                    color={colors.platinum}
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => handleNavigation("Language")}
+                >
+                  <Feather name="globe" size={22} color={colors.mainYellow} />
+                  <Text style={styles.menuItemText}>Language & Region</Text>
+                  <Feather
+                    name="chevron-right"
+                    size={20}
+                    color={colors.platinum}
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => handleNavigation("Appearance")}
+                >
+                  <Feather name="moon" size={22} color={colors.mainYellow} />
+                  <Text style={styles.menuItemText}>Appearance</Text>
+                  <Feather
+                    name="chevron-right"
+                    size={20}
+                    color={colors.platinum}
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => handleNavigation("DataUsage")}
+                >
+                  <Feather name="database" size={22} color={colors.mainYellow} />
+                  <Text style={styles.menuItemText}>Data & Storage</Text>
+                  <Feather
+                    name="chevron-right"
+                    size={20}
+                    color={colors.platinum}
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => handleNavigation("Help")}
+                >
+                  <Feather name="help-circle" size={22} color={colors.mainYellow} />
+                  <Text style={styles.menuItemText}>Help & Support</Text>
+                  <Feather
+                    name="chevron-right"
+                    size={20}
+                    color={colors.platinum}
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => handleNavigation("About")}
+                >
+                  <Feather name="info" size={22} color={colors.mainYellow} />
+                  <Text style={styles.menuItemText}>About</Text>
+                  <Feather
+                    name="chevron-right"
+                    size={20}
+                    color={colors.platinum}
+                  />
+                </TouchableOpacity>
+              </View>
             </ScrollView>
           </View>
         </View>
@@ -343,6 +522,44 @@ const styles = StyleSheet.create({
     fontWeight: "500",
     marginLeft: 16,
     flex: 1,
+  },
+  submenuContainer: {
+    backgroundColor: colors.jet,
+    marginLeft: 20,
+    marginRight: 10,
+    marginTop: 5,
+    marginBottom: 5,
+    borderRadius: 8,
+    overflow: "hidden",
+  },
+  submenuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.mainBlack,
+  },
+  submenuItemText: {
+    color: colors.alabaster,
+    fontSize: 15,
+    fontWeight: "400",
+    marginLeft: 12,
+    flex: 1,
+  },
+  settingsSection: {
+    marginTop: 20,
+    paddingTop: 20,
+    borderTopWidth: 2,
+    borderTopColor: colors.jet,
+  },
+  sectionTitle: {
+    color: colors.mainYellow,
+    fontSize: 18,
+    fontWeight: "bold",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginBottom: 8,
   },
   userMenuContainer: {
     backgroundColor: colors.mainBlack,
