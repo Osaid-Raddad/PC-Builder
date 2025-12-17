@@ -14,28 +14,26 @@ export default function BuilderScreen({ navigation }) {
   const [selectedComponents, setSelectedComponents] = useState({});
 
   const components = [
-    { id: "cpu", name: "CPU", icon: "cpu-64-bit", required: true },
-    { id: "gpu", name: "GPU", icon: "expansion-card", required: false },
-    { id: "motherboard", name: "Motherboard", icon: "chip", required: true },
-    { id: "memory", name: "RAM", icon: "memory", required: true },
-    { id: "storage", name: "Storage", icon: "harddisk", required: true },
-    { id: "power-supply", name: "Power Supply", icon: "flash", required: true },
-    { id: "case", name: "Case", icon: "desktop-tower", required: true },
-    { id: "cooler", name: "Cooling", icon: "fan", required: false },
-    { id: "monitor", name: "Monitor", icon: "monitor", required: false },
+    { id: "cpu", name: "CPU", icon: "cpu-64-bit", required: true, screen: "CPU" },
+    { id: "gpu", name: "GPU", icon: "expansion-card", required: false, screen: "GPU" },
+    { id: "motherboard", name: "Motherboard", icon: "chip", required: true, screen: "Motherboard" },
+    { id: "memory", name: "RAM", icon: "memory", required: true, screen: "Memory" },
+    { id: "storage", name: "Storage", icon: "harddisk", required: true, screen: "Storage" },
+    { id: "power-supply", name: "Power Supply", icon: "flash", required: true, screen: "PowerSupply" },
+    { id: "case", name: "Case", icon: "desktop-tower", required: true, screen: "Case" },
+    { id: "cooler", name: "Cooling", icon: "fan", required: false, screen: "Cooler" },
+    { id: "monitor", name: "Monitor", icon: "monitor", required: false, screen: "Monitor" },
     {
       id: "accessories",
       name: "Accessories",
       icon: "cable-data",
       required: false,
+      screen: "Accessories",
     },
   ];
 
-  const handleSelectComponent = (componentId) => {
-    navigation.navigate(
-      componentId.charAt(0).toUpperCase() +
-        componentId.slice(1).replace("-", "")
-    );
+  const handleSelectComponent = (screen) => {
+    navigation.navigate(screen);
   };
 
   return (
@@ -75,7 +73,7 @@ export default function BuilderScreen({ navigation }) {
             <TouchableOpacity
               key={component.id}
               style={styles.componentCard}
-              onPress={() => handleSelectComponent(component.id)}
+              onPress={() => handleSelectComponent(component.screen)}
             >
               <View style={styles.componentIcon}>
                 <MaterialCommunityIcons

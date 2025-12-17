@@ -56,44 +56,47 @@ export default function CaseScreen({ navigation }) {
   );
 
   return (
-    <ScreenLayout navigation={navigation}>
+    <ScreenLayout navigation={navigation} scrollable={false} showFooter={false}>
       <View style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Feather name="arrow-left" size={24} color={colors.mainBlack} />
-          </TouchableOpacity>
-          <Text style={styles.title}>Cases</Text>
-          <TouchableOpacity>
-            <Feather name="filter" size={24} color={colors.mainBlack} />
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.filters}>
-          {["all", "intel", "amd"].map((filter) => (
-            <TouchableOpacity
-              key={filter}
-              style={[
-                styles.filterButton,
-                selectedFilter === filter && styles.filterButtonActive,
-              ]}
-              onPress={() => setSelectedFilter(filter)}
-            >
-              <Text
-                style={[
-                  styles.filterText,
-                  selectedFilter === filter && styles.filterTextActive,
-                ]}
-              >
-                {filter.toUpperCase()}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
         <FlatList
           data={MOCK_PRODUCTS}
           renderItem={renderProduct}
           keyExtractor={(item) => item.id}
+          ListHeaderComponent={
+            <>
+              <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
+                  <Feather name="arrow-left" size={24} color={colors.mainBlack} />
+                </TouchableOpacity>
+                <Text style={styles.title}>Cases</Text>
+                <TouchableOpacity>
+                  <Feather name="filter" size={24} color={colors.mainBlack} />
+                </TouchableOpacity>
+              </View>
+
+              <View style={styles.filters}>
+                {["all", "intel", "amd"].map((filter) => (
+                  <TouchableOpacity
+                    key={filter}
+                    style={[
+                      styles.filterButton,
+                      selectedFilter === filter && styles.filterButtonActive,
+                    ]}
+                    onPress={() => setSelectedFilter(filter)}
+                  >
+                    <Text
+                      style={[
+                        styles.filterText,
+                        selectedFilter === filter && styles.filterTextActive,
+                      ]}
+                    >
+                      {filter.toUpperCase()}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </>
+          }
           contentContainerStyle={styles.listContainer}
         />
       </View>
