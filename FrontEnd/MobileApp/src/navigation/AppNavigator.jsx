@@ -23,6 +23,11 @@ import BuildingGuidesScreen from "../screens/buildingGuides/BuildingGuidesScreen
 import TermsOfServiceScreen from "../screens/termsOfService/TermsOfServiceScreen";
 import NotificationsScreen from "../screens/notifications/NotificationsScreen";
 
+// Profile Feature Screens
+import MyBuildsScreen from "../screens/profile/MyBuildsScreen";
+import SavedScreen from "../screens/profile/SavedScreen";
+import SettingsScreen from "../screens/profile/SettingsScreen";
+
 // Product Category Screens
 import CPUScreen from "../screens/products/CPUScreen";
 import GPUScreen from "../screens/products/GPUScreen";
@@ -97,6 +102,9 @@ export default function AppNavigator() {
         {/* User */}
         <Stack.Screen name="Profile" component={ProfileScreen} />
         <Stack.Screen name="Notifications" component={NotificationsScreen} />
+        <Stack.Screen name="MyBuilds" component={MyBuildsScreen} />
+        <Stack.Screen name="Saved" component={SavedScreen} />
+        <Stack.Screen name="Settings" component={SettingsScreen} />
 
         {/* Support */}
         <Stack.Screen name="TechSupport" component={TechSupportScreen} />
