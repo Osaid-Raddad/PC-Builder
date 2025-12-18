@@ -20,8 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\TechSupport\Controllers\" />
-    <Folder Include="Areas\User\Controllers\" />
+    <Folder Include="wwwroot\images\users\" />
     <Folder Include="wwwroot\images\shop\" />
   </ItemGroup>
 
