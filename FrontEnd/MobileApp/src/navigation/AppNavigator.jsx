@@ -41,10 +41,25 @@ export default function AppNavigator() {
     <NavigationContainer>
       <Stack.Navigator
         initialRouteName="Home"
-        screenOptions={{
+        screenOptions={({ route }) => ({
           headerShown: false,
           cardStyle: { backgroundColor: colors.background },
-        }}
+          animation: route.params?.animation === 'horizontal-inverted' ? 'slide_from_left' : 'slide_from_right',
+          transitionSpec: {
+            open: {
+              animation: 'timing',
+              config: {
+                duration: 200,
+              },
+            },
+            close: {
+              animation: 'timing',
+              config: {
+                duration: 200,
+              },
+            },
+          },
+        })}
       >
         {/* Main Screens */}
         <Stack.Screen name="Home" component={HomeScreen} />

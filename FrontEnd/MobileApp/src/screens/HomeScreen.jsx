@@ -6,10 +6,13 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  Dimensions,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ScreenLayout from "../components/ScreenLayout";
 import colors from "../config/colors";
+
+const { width } = Dimensions.get("window");
 
 export default function HomeScreen({ navigation }) {
   const features = [
@@ -41,7 +44,62 @@ export default function HomeScreen({ navigation }) {
       color: colors.success,
       screen: "BuildingGuides",
     },
+    {
+      title: "Completed Builds",
+      description: "Explore community builds",
+      icon: "check-decagram",
+      color: colors.mainYellow,
+      screen: "CompletedBuilds",
+    },
+    {
+      title: "Posts",
+      description: "Share and discuss builds",
+      icon: "post",
+      color: colors.primary,
+      screen: "Posts",
+    },
+    {
+      title: "News",
+      description: "Latest PC hardware news",
+      icon: "newspaper",
+      color: colors.secondary,
+      screen: "News",
+    },
+    {
+      title: "Chat",
+      description: "Connect with builders",
+      icon: "chat",
+      color: colors.accent,
+      screen: "Chat",
+    },
+    {
+      title: "Tech Support",
+      description: "Get expert assistance",
+      icon: "tools",
+      color: colors.success,
+      screen: "TechSupport",
+    },
+    {
+      title: "FAQ",
+      description: "Frequently asked questions",
+      icon: "help-circle",
+      color: colors.mainYellow,
+      screen: "FAQ",
+    },
+    {
+      title: "Contact",
+      description: "Get in touch with us",
+      icon: "email",
+      color: colors.primary,
+      screen: "Contact",
+    },
   ];
+
+  // Group features into chunks of 4
+  const groupedFeatures = [];
+  for (let i = 0; i < features.length; i += 4) {
+    groupedFeatures.push(features.slice(i, i + 4));
+  }
 
   return (
     <ScreenLayout navigation={navigation}>
@@ -68,32 +126,44 @@ export default function HomeScreen({ navigation }) {
         {/* Features Grid */}
         <View style={styles.featuresSection}>
           <Text style={styles.sectionTitle}>Features</Text>
-          <View style={styles.featuresGrid}>
-            {features.map((feature, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.featureCard}
-                onPress={() => navigation.navigate(feature.screen)}
-              >
-                <View
-                  style={[
-                    styles.featureIconContainer,
-                    { backgroundColor: feature.color + "20" },
-                  ]}
-                >
-                  <MaterialCommunityIcons
-                    name={feature.icon}
-                    size={32}
-                    color={feature.color}
-                  />
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            pagingEnabled
+            decelerationRate="fast"
+            contentContainerStyle={styles.featuresScrollContent}
+          >
+            {groupedFeatures.map((group, pageIndex) => (
+              <View key={pageIndex} style={styles.featurePage}>
+                <View style={styles.featuresGrid}>
+                  {group.map((feature, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      style={styles.featureCard}
+                      onPress={() => navigation.navigate(feature.screen)}
+                    >
+                      <View
+                        style={[
+                          styles.featureIconContainer,
+                          { backgroundColor: feature.color + "20" },
+                        ]}
+                      >
+                        <MaterialCommunityIcons
+                          name={feature.icon}
+                          size={32}
+                          color={feature.color}
+                        />
+                      </View>
+                      <Text style={styles.featureTitle}>{feature.title}</Text>
+                      <Text style={styles.featureDescription}>
+                        {feature.description}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
                 </View>
-                <Text style={styles.featureTitle}>{feature.title}</Text>
-                <Text style={styles.featureDescription}>
-                  {feature.description}
-                </Text>
-              </TouchableOpacity>
+              </View>
             ))}
-          </View>
+          </ScrollView>
         </View>
 
         {/* Stats Section */}
@@ -182,23 +252,31 @@ const styles = StyleSheet.create({
     color: colors.mainBlack,
     marginBottom: 20,
   },
+  featuresScrollContent: {
+    paddingRight: 10,
+  },
+  featurePage: {
+    width: width - 45,
+    paddingHorizontal: 0,
+    marginRight: 10,
+  },
   featuresGrid: {
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    gap: 16,
   },
   featureCard: {
-    width: "47%",
+    width: "48%",
     backgroundColor: "white",
     borderRadius: 12,
-    padding: 20,
+    padding: 16,
     alignItems: "center",
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    marginBottom: 12,
   },
   featureIconContainer: {
     width: 64,

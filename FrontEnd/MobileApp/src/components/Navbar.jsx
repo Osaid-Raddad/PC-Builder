@@ -10,6 +10,7 @@ import {
   Modal,
   Dimensions,
   Image,
+  Linking,
 } from "react-native";
 import { Feather, MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 import colors from "../config/colors";
@@ -353,6 +354,120 @@ export default function Navbar({ navigation }) {
                   />
                 </TouchableOpacity>
               </View>
+              
+              {/* Support Section from Footer */}
+              <View style={styles.footerSection}>
+                <Text style={styles.sectionTitle}>Support</Text>
+                
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => handleNavigation("TechSupport")}
+                >
+                  <Feather name="headphones" size={22} color={colors.mainYellow} />
+                  <Text style={styles.menuItemText}>Tech Support</Text>
+                  <Feather name="chevron-right" size={20} color={colors.platinum} />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => handleNavigation("FAQ")}
+                >
+                  <Feather name="help-circle" size={22} color={colors.mainYellow} />
+                  <Text style={styles.menuItemText}>FAQ</Text>
+                  <Feather name="chevron-right" size={20} color={colors.platinum} />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => handleNavigation("BuildingGuides")}
+                >
+                  <Feather name="book-open" size={22} color={colors.mainYellow} />
+                  <Text style={styles.menuItemText}>Building Guides</Text>
+                  <Feather name="chevron-right" size={20} color={colors.platinum} />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => handleNavigation("Contact")}
+                >
+                  <Feather name="mail" size={22} color={colors.mainYellow} />
+                  <Text style={styles.menuItemText}>Contact Us</Text>
+                  <Feather name="chevron-right" size={20} color={colors.platinum} />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.menuItem}
+                  onPress={() => handleNavigation("TermsOfService")}
+                >
+                  <Feather name="file-text" size={22} color={colors.mainYellow} />
+                  <Text style={styles.menuItemText}>Terms of Service</Text>
+                  <Feather name="chevron-right" size={20} color={colors.platinum} />
+                </TouchableOpacity>
+              </View>
+
+              {/* Contact Information Section from Footer */}
+              <View style={styles.footerSection}>
+                <Text style={styles.sectionTitle}>Contact</Text>
+                
+                <View style={styles.contactInfoItem}>
+                  <Feather name="mail" size={20} color={colors.mainYellow} />
+                  <Text style={styles.contactInfoText}>support@pcbuilder.com</Text>
+                </View>
+
+                <View style={styles.contactInfoItem}>
+                  <Feather name="phone" size={20} color={colors.mainYellow} />
+                  <Text style={styles.contactInfoText}>+972 52 275 8700</Text>
+                </View>
+
+                <View style={styles.contactInfoItem}>
+                  <Feather name="map-pin" size={20} color={colors.mainYellow} />
+                  <View>
+                    <Text style={styles.contactInfoText}>Rafidia St</Text>
+                    <Text style={styles.contactInfoText}>Almajeen, Nablus</Text>
+                  </View>
+                </View>
+              </View>
+
+              {/* Social Links Section from Footer */}
+              <View style={styles.footerSection}>
+                <Text style={styles.sectionTitle}>Follow Us</Text>
+                <View style={styles.socialLinksContainer}>
+                  <TouchableOpacity
+                    style={styles.socialIcon}
+                    onPress={() => Linking.openURL("https://facebook.com")}
+                  >
+                    <Feather name="facebook" size={24} color={colors.mainYellow} />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.socialIcon}
+                    onPress={() => Linking.openURL("https://twitter.com")}
+                  >
+                    <Feather name="twitter" size={24} color={colors.mainYellow} />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.socialIcon}
+                    onPress={() => Linking.openURL("https://instagram.com")}
+                  >
+                    <Feather name="instagram" size={24} color={colors.mainYellow} />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.socialIcon}
+                    onPress={() => Linking.openURL("https://www.linkedin.com/in/omar-maher-khatib/")}
+                  >
+                    <Feather name="linkedin" size={24} color={colors.mainYellow} />
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.socialIcon}
+                    onPress={() => Linking.openURL("https://github.com/Omar-Maher-Khatib")}
+                  >
+                    <Feather name="github" size={24} color={colors.mainYellow} />
+                  </TouchableOpacity>
+                </View>
+              </View>
             </ScrollView>
           </View>
         </View>
@@ -603,5 +718,38 @@ const styles = StyleSheet.create({
   },
   logoutText: {
     color: colors.error,
+  },
+  footerSection: {
+    marginTop: 20,
+    paddingTop: 20,
+    borderTopWidth: 2,
+    borderTopColor: colors.jet,
+  },
+  contactInfoItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    gap: 12,
+  },
+  contactInfoText: {
+    color: colors.alabaster,
+    fontSize: 14,
+    marginLeft: 8,
+  },
+  socialLinksContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    gap: 12,
+  },
+  socialIcon: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: colors.jet,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
