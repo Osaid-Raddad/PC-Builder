@@ -1,19 +1,17 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiSearch, FiMenu, FiX, FiUser, FiChevronDown, FiShoppingBag, FiLogOut, FiHeart, FiMessageCircle } from 'react-icons/fi';
-import { FaTools, FaBoxOpen, FaNewspaper, FaEdit, FaUserCircle, FaMicrochip, FaMemory, FaHdd, FaDesktop } from 'react-icons/fa';
+import { FaTools, FaBoxOpen, FaNewspaper, FaEdit, FaUserCircle, FaMemory, FaHdd, FaDesktop } from 'react-icons/fa';
 import { PiDesktopTowerFill } from 'react-icons/pi';
-import { HiCog } from 'react-icons/hi';
 import { BsFillMotherboardFill, BsGpuCard } from 'react-icons/bs';
 import { GiComputerFan } from 'react-icons/gi';
 import { MdPowerSettingsNew, MdCable, MdCompareArrows } from 'react-icons/md';
 import { Tooltip } from 'react-tooltip';
 import colors from '../../../config/colors';
-import { openSidebar } from '../../../utils/sidebarHelper';
+import { BsCpuFill} from 'react-icons/bs';
 export default function Navbar() {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState(null);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isProductsDropdownOpen, setIsProductsDropdownOpen] = useState(false);
   const [isCommunityDropdownOpen, setIsCommunityDropdownOpen] = useState(false);
@@ -24,7 +22,7 @@ export default function Navbar() {
 
   // Product categories with icons
   const productCategories = [
-    { label: 'CPU', path: '/products/cpu', icon: <FaMicrochip size={18} /> },
+    { label: 'CPU', path: '/products/cpu', icon: <BsCpuFill size={18} /> },
     { label: 'GPU', path: '/products/gpu', icon: <BsGpuCard size={18} /> },
     { label: 'Motherboard', path: '/products/motherboard', icon: <BsFillMotherboardFill size={18} /> },
     { label: 'RAM', path: '/products/memory', icon: <FaMemory size={18} /> },

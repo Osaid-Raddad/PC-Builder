@@ -32,6 +32,9 @@ import Profile from './pages/user/profile/Profile.jsx';
 import TechSupportProfile from './pages/TechSupport/TechProfile/TechSupportProfile';
 import ProtectedRoute from './components/protected/ProtectedRoute.jsx';
 import Comparator from './pages/user/comparator/Comparator.jsx';
+import TermsOfService from './pages/user/termsOfService/TermsOfService.jsx';
+import FAQ from './pages/user/faq/FAQ.jsx';
+import BuildingGuides from './pages/user/buildingGuides/BuildingGuides.jsx';
 
 // Admin Imports
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -89,6 +92,9 @@ function AppContent() {
           <Route path="/profile" element={<Profile />} />
           <Route path="/tech-support/profile" element={<TechSupportProfile />} />
           <Route path="/comparator" element={<Comparator />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/building-guides" element={<BuildingGuides />} />
           {/* Product Category Routes */}
           <Route path="/products/cpu" element={<CPU />} />
           <Route path="/products/gpu" element={<GPU />} />

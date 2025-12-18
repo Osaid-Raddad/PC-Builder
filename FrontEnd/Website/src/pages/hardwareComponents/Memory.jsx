@@ -45,8 +45,81 @@ const Memory = () => {
   ];
 
   const filteredMemory = memoryList.filter(mem => {
-    const matchesSearch = searchTerm === '' || mem.name.toLowerCase().includes(searchTerm.toLowerCase()) || mem.brand.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesSearch;
+    // Search term
+    const matchesSearch = searchTerm === '' || 
+      mem.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      mem.brand.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Price range
+    const matchesPrice = mem.price >= filters.priceRange.min && mem.price <= filters.priceRange.max;
+    
+    // Manufacturers
+    const matchesManufacturer = filters.manufacturers.length === 0 || 
+      filters.manufacturers.includes(mem.brand);
+    
+    // Rating
+    const matchesRating = filters.rating === null || 
+      (mem.rating && mem.rating >= filters.rating);
+    
+    // Form Factor
+    const matchesFormFactor = filters.formFactor.length === 0 || 
+      !mem.formFactor ||
+      filters.formFactor.includes(mem.formFactor);
+    
+    // Type
+    const matchesType = filters.type.length === 0 || 
+      !mem.type ||
+      filters.type.includes(mem.type);
+    
+    // Speed
+    const matchesSpeed = filters.speed.length === 0 || 
+      !mem.speed ||
+      filters.speed.includes(mem.speed);
+    
+    // Modules
+    const matchesModules = filters.modules.length === 0 || 
+      !mem.modules ||
+      filters.modules.includes(mem.modules);
+    
+    // Color
+    const matchesColor = filters.color.length === 0 || 
+      !mem.color ||
+      filters.color.includes(mem.color);
+    
+    // First Word Latency
+    const matchesFirstWordLatency = !mem.firstWordLatency || 
+      (mem.firstWordLatency >= filters.firstWordLatency.min && 
+       mem.firstWordLatency <= filters.firstWordLatency.max);
+    
+    // CAS Latency
+    const matchesCasLatency = filters.casLatency.length === 0 || 
+      !mem.casLatency ||
+      filters.casLatency.includes(mem.casLatency);
+    
+    // Voltage
+    const matchesVoltage = filters.voltage.length === 0 || 
+      !mem.voltage ||
+      filters.voltage.includes(mem.voltage);
+    
+    // Timing
+    const matchesTiming = filters.timing.length === 0 || 
+      !mem.timing ||
+      filters.timing.includes(mem.timing);
+    
+    // ECC / Registered
+    const matchesEccRegistered = filters.eccRegistered === null || 
+      !mem.eccRegistered ||
+      mem.eccRegistered === filters.eccRegistered;
+    
+    // Heat Spreader
+    const matchesHeatSpreader = filters.heatSpreader === null || 
+      !mem.hasOwnProperty('heatSpreader') ||
+      mem.heatSpreader === filters.heatSpreader;
+    
+    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating &&
+           matchesFormFactor && matchesType && matchesSpeed && matchesModules &&
+           matchesColor && matchesFirstWordLatency && matchesCasLatency && matchesVoltage &&
+           matchesTiming && matchesEccRegistered && matchesHeatSpreader;
   });
 
   const handleFilterChange = (filterName, value) => {
@@ -139,7 +212,7 @@ const Memory = () => {
               </h2>
               <button
                 onClick={resetFilters}
-                className="text-sm hover:opacity-80 transition-opacity"
+                className="text-sm hover:opacity-80 transition-opacity cursor-pointer"
                 style={{ color: colors.mainYellow }}
               >
                 Reset
