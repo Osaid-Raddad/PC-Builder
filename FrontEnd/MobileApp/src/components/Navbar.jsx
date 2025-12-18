@@ -292,58 +292,6 @@ export default function Navbar({ navigation }) {
 
                 <TouchableOpacity
                   style={styles.menuItem}
-                  onPress={() => handleNavigation("Language")}
-                >
-                  <Feather name="globe" size={22} color={colors.mainYellow} />
-                  <Text style={styles.menuItemText}>Language & Region</Text>
-                  <Feather
-                    name="chevron-right"
-                    size={20}
-                    color={colors.platinum}
-                  />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.menuItem}
-                  onPress={() => handleNavigation("Appearance")}
-                >
-                  <Feather name="moon" size={22} color={colors.mainYellow} />
-                  <Text style={styles.menuItemText}>Appearance</Text>
-                  <Feather
-                    name="chevron-right"
-                    size={20}
-                    color={colors.platinum}
-                  />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.menuItem}
-                  onPress={() => handleNavigation("DataUsage")}
-                >
-                  <Feather name="database" size={22} color={colors.mainYellow} />
-                  <Text style={styles.menuItemText}>Data & Storage</Text>
-                  <Feather
-                    name="chevron-right"
-                    size={20}
-                    color={colors.platinum}
-                  />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.menuItem}
-                  onPress={() => handleNavigation("Help")}
-                >
-                  <Feather name="help-circle" size={22} color={colors.mainYellow} />
-                  <Text style={styles.menuItemText}>Help & Support</Text>
-                  <Feather
-                    name="chevron-right"
-                    size={20}
-                    color={colors.platinum}
-                  />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  style={styles.menuItem}
                   onPress={() => handleNavigation("About")}
                 >
                   <Feather name="info" size={22} color={colors.mainYellow} />
