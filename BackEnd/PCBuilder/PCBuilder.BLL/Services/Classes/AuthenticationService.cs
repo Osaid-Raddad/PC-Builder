@@ -136,7 +136,7 @@ namespace PCBuilder.BLL.Services.Classes
 
                 </body>
                 </html>
-                ");
+                "); 
 
 
             return true;

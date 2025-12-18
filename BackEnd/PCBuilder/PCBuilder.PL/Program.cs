@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PCBuilder.BLL.Services.Classes;
@@ -11,6 +12,8 @@ using PCBuilder.DAL.Models;
 using PCBuilder.DAL.Repositories.Classes;
 using PCBuilder.DAL.Repositories.Interfaces;
 using PCBuilder.DAL.Utilities;
+using PCBuilder.PL.Hubs;
+using PCBuilder.PL.SignalR;
 using PCBuilder.PL.Utilites;
 using System.Text;
 
@@ -25,17 +28,36 @@ namespace PCBuilder.PL
             // Add services to the container.
 
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+          
             builder.Services.AddOpenApi();
+            var userPolicy = "AllowReactApp";
+            builder.Services.AddCors(option =>
+            {
+                option.AddPolicy(name : userPolicy, policy =>
+                {
+                    policy.WithOrigins("http://localhost:5173", "http://localhost:5174")
+                     .AllowAnyHeader()
+                     .AllowAnyMethod()
+                    .AllowCredentials();
+                });
+            });
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             {
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
             });
+            builder.Services.AddSignalR();
+            builder.Services.AddSingleton<IUserIdProvider, CustomUserIdProvider>();
+            builder.Services.AddScoped<IChatService, ChatService>();
+            builder.Services.AddScoped<IChatPermissionService, ChatPermissionService>();
+            builder.Services.AddScoped<IChatRepository, ChatRepository>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
             builder.Services.AddScoped<IEmailSender,EmailSetting>();
             builder.Services.AddScoped<ISeedData, SeedData>();
+            builder.Services.AddScoped<IFileService, FileService>();
+            builder.Services.AddScoped<IShopRepository,ShopRepository>();
+            builder.Services.AddScoped<IShopService,ShopService>();
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
             {
                 option.Password.RequireDigit = true;
@@ -65,27 +87,45 @@ namespace PCBuilder.PL
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("JwtOption")["SecretKey"]))
                 };
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Query["access_token"];
+                        var path = context.HttpContext.Request.Path;
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chatHub"))
+                        {
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
 
             var app = builder.Build();
-
+             
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.MapOpenApi();
+                
+
             }
 
             var scope = app.Services.CreateScope();
             var objectOfSeedData = scope.ServiceProvider.GetRequiredService<ISeedData>();
             await objectOfSeedData.IdentityDataSeedingAsync();
             app.UseHttpsRedirection();
-
+            app.UseCors(userPolicy);
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseStaticFiles();
 
             app.MapControllers();
+
+            app.MapHub<ChatHub>("/chatHub");
 
             app.Run();
         }

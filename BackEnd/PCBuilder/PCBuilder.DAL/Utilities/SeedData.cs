@@ -32,6 +32,7 @@ namespace PCBuilder.DAL.Utilities
                 await  _roleManager.CreateAsync(new IdentityRole ("Admin"));
                 await _roleManager.CreateAsync(new IdentityRole("SuperAdmin"));
                 await _roleManager.CreateAsync(new IdentityRole("User"));
+                await _roleManager.CreateAsync(new IdentityRole("TechSupport"));
             }
 
             if( ! await _userManager.Users.AnyAsync())
@@ -60,13 +61,23 @@ namespace PCBuilder.DAL.Utilities
                     UserName = "Adam23",
                     EmailConfirmed = true
                 };
+                var user4 = new ApplicationUser
+                {
+                    Email = "Tech@gmail.com",
+                    FullName = "Ahmad Abahre",
+                    PhoneNumber = "1234567598",
+                    UserName = "Ahmad",
+                    EmailConfirmed = true
+                };
                 await _userManager.CreateAsync(user1, "P@ssw0rd1");
                 await _userManager.CreateAsync(user2, "P@ssw0rd2");
                 await _userManager.CreateAsync(user3, "P@ssw0234");
+                await _userManager.CreateAsync(user4, "P@ssw0235");
 
                 await _userManager.AddToRoleAsync(user1, "SuperAdmin");
                 await _userManager.AddToRoleAsync(user2, "Admin");
                 await _userManager.AddToRoleAsync(user3, "User");
+                await _userManager.AddToRoleAsync(user4, "TechSupport");
             }
             await _context.SaveChangesAsync();
         }
