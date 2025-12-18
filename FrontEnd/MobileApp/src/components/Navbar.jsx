@@ -130,20 +130,21 @@ export default function Navbar({ navigation }) {
               <Feather name="search" size={24} color={colors.alabaster} />
             </TouchableOpacity>
 
+            {/* Notification Icon */}
+            <TouchableOpacity
+              style={styles.iconButton}
+              onPress={() => handleNavigation("Notifications")}
+            >
+              <Feather name="bell" size={24} color={colors.alabaster} />
+            </TouchableOpacity>
+
             {/* User Menu Icon */}
-            {isLoggedIn ? (
+            {isLoggedIn && (
               <TouchableOpacity
                 style={styles.iconButton}
                 onPress={() => setIsUserMenuOpen(!isUserMenuOpen)}
               >
                 <Feather name="user" size={24} color={colors.alabaster} />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                style={styles.loginButton}
-                onPress={() => handleNavigation("Login")}
-              >
-                <Text style={styles.loginText}>Login</Text>
               </TouchableOpacity>
             )}
 

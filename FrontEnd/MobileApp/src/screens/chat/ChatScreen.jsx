@@ -63,7 +63,7 @@ export default function ChatScreen({ navigation }) {
   );
 
   return (
-    <ScreenLayout navigation={navigation} showFooter={false}>
+    <ScreenLayout navigation={navigation} scrollable={false} showFooter={false}>
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>Messages</Text>
@@ -98,6 +98,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: colors.mainBeige,
   },
   header: {
     flexDirection: "row",

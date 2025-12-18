@@ -187,13 +187,13 @@ export default function HomeScreen({ navigation }) {
 
         {/* Call to Action */}
         <View style={styles.ctaSection}>
-          <Text style={styles.ctaTitle}>Ready to Build?</Text>
+          <Text style={styles.ctaTitle}>Discover PC Builds!</Text>
           <Text style={styles.ctaText}>
-            Start your PC building journey today and create the perfect setup
+            Explore amazing PC builds from our community!
           </Text>
           <TouchableOpacity
             style={styles.secondaryButton}
-            onPress={() => navigation.navigate("Builder")}
+            onPress={() => navigation.navigate("CompletedBuilds")}
           >
             <Text style={styles.secondaryButtonText}>Get Started</Text>
           </TouchableOpacity>

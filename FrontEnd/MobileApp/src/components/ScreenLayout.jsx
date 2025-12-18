@@ -31,7 +31,7 @@ export default function ScreenLayout({
   const quickMenuItems = [
     { name: "Home", icon: "home", screen: "Home" },
     { name: "Builder", icon: "hammer-wrench", screen: "Builder" },
-    { name: "Shops", icon: "store", screen: "Shops" },
+    { name: "News", icon: "newspaper", screen: "News" },
     { name: "Posts", icon: "post", screen: "Posts" },
     { name: "Profile", icon: "account", screen: "Profile" },
   ];

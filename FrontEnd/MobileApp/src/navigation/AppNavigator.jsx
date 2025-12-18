@@ -21,6 +21,7 @@ import ContactScreen from "../screens/contact/ContactScreen";
 import TechSupportScreen from "../screens/techSupport/TechSupportScreen";
 import BuildingGuidesScreen from "../screens/buildingGuides/BuildingGuidesScreen";
 import TermsOfServiceScreen from "../screens/termsOfService/TermsOfServiceScreen";
+import NotificationsScreen from "../screens/notifications/NotificationsScreen";
 
 // Product Category Screens
 import CPUScreen from "../screens/products/CPUScreen";
@@ -95,6 +96,7 @@ export default function AppNavigator() {
 
         {/* User */}
         <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="Notifications" component={NotificationsScreen} />
 
         {/* Support */}
         <Stack.Screen name="TechSupport" component={TechSupportScreen} />
