@@ -18,7 +18,7 @@ export const colors = {
   warning: "#F59E0B", // Orange
   text: "#1F2937", // Dark Gray
   border: "#E5E7EB", // Light Gray
-  background: "#F9FAFB", // Very Light Gray
+  background: "#efece1", // Beige - main app background
 };
 
 export default colors;

@@ -103,7 +103,7 @@ export default function ProductsScreen({ navigation }) {
   );
 
   return (
-    <ScreenLayout navigation={navigation}>
+    <ScreenLayout navigation={navigation} scrollable={false}>
       <View style={styles.container}>
         <View style={styles.header}>
           <Text style={styles.title}>Products</Text>
