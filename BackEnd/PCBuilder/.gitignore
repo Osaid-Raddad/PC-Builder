@@ -62,3 +62,10 @@ _ReSharper*/
 secrets.json
 
 .vs/
+
+# Visual Studio / .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
