@@ -20,13 +20,14 @@ namespace PCBuilder.DAL.Repositories.Classes
         }
         public async Task<List<ApplicationUser>> GetAllUsersAsync()
         {
-            return await _userManager.Users.ToListAsync();
+            return await _userManager.Users
+                         .Where(u => !u.IsDeleted)
+                         .ToListAsync();
         }
 
         public async Task<ApplicationUser> GetUserByIdAsync(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
-            return user;
+            return await _userManager.Users.FirstOrDefaultAsync(u => u.Id == id && !u.IsDeleted);
         }
 
         public async Task<bool> BlockUserAsync(string id, int days)
@@ -79,6 +80,21 @@ namespace PCBuilder.DAL.Repositories.Classes
             var addResult = await _userManager.AddToRoleAsync(user, newRole);
 
             return addResult.Succeeded;
+        }
+
+        public async Task<bool> UpdateAsync(ApplicationUser user)
+        {
+            var result = await _userManager.UpdateAsync(user);
+            return result.Succeeded;
+        }
+
+        public async Task<bool> SoftDeleteAsync(ApplicationUser user)
+        {
+            user.IsDeleted = true;
+            user.LockoutEnd = DateTimeOffset.MaxValue; 
+
+            var result = await _userManager.UpdateAsync(user);
+            return result.Succeeded;
         }
     }
 }

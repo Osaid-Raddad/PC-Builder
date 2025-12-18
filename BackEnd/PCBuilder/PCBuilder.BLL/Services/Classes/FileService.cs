@@ -10,20 +10,32 @@ namespace PCBuilder.BLL.Services.Classes
 {
     public class FileService : IFileService
     {
-        public async Task<string> UploadAsync(IFormFile file)
+        public async Task<string> UploadAsync(IFormFile file, string folder)
         {
-            if (file != null && file.Length > 0)
-            {
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "shop", fileName);
+            if (file == null || file.Length == 0)
+                throw new Exception("File is empty or null");
 
-                using (var stream = File.Create(filePath))
-                {
-                    await file.CopyToAsync(stream);
-                }
-                return fileName;
+            // تأكد من أن folder صالح
+            folder = string.IsNullOrWhiteSpace(folder) ? "default" : folder;
+
+            // اسم الملف
+            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+
+            // المسار النهائي
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", folder, fileName);
+
+            // تأكد أن الفولدر موجود
+            var directory = Path.GetDirectoryName(filePath);
+            if (!Directory.Exists(directory))
+                Directory.CreateDirectory(directory);
+
+            // رفع الملف
+            using (var stream = File.Create(filePath))
+            {
+                await file.CopyToAsync(stream);
             }
-            throw new Exception("File is empty or null");
+
+            return fileName;
         }
     }
 }

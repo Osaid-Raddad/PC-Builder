@@ -33,10 +33,11 @@ namespace PCBuilder.BLL.Services.Classes
 
         public async Task SubmitShopRequestAsync(ShopRequest request)
         {
+            string folder = "shop";
             string? logoFileName = null;
             if (request.ShopLogo != null)
             {
-                logoFileName = await _fileService.UploadAsync(request.ShopLogo);
+                logoFileName = await _fileService.UploadAsync(request.ShopLogo, folder);
             }
 
             var shopReqEntity = new Shop

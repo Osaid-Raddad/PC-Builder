@@ -1,4 +1,6 @@
-﻿using PCBuilder.DAL.DTO.Responses;
+﻿using Microsoft.AspNetCore.Http;
+using PCBuilder.DAL.DTO.Requests;
+using PCBuilder.DAL.DTO.Responses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,5 +19,13 @@ namespace PCBuilder.BLL.Services.Interfaces
         Task<bool> IsBlockedAsync(string id);
 
         Task<bool> ChangeUserRoleAsync(string userId, string newRole);
+
+        Task<UserProfileResponse> GetProfileAsync(string userId, HttpRequest httpRequest);
+        Task UpdateProfileAsync(string userId, UpdateProfileRequest request, HttpRequest httpRequest);
+        Task DeleteAccountAsync(string userId);
+
+        Task<TechSupportProfileResponse> GetTechSupportProfileAsync(string userId, HttpRequest request);
+        Task UpdateTechSupportProfileAsync(string userId, UpdateTechSupportProfileRequest request, HttpRequest requestHttp);
+        
     }
 }

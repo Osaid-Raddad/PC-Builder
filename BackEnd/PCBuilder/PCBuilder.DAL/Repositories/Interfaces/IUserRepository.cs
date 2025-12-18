@@ -16,5 +16,9 @@ namespace PCBuilder.DAL.Repositories.Interfaces
         Task<bool> IsBlockedAsync(string id);
 
         Task<bool> ChangeUserRoleAsync(string userId, string newRole);
+
+       
+        Task<bool> UpdateAsync(ApplicationUser user);
+        Task<bool> SoftDeleteAsync(ApplicationUser user);
     }
 }
