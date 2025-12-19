@@ -201,7 +201,7 @@ namespace PCBuilder.BLL.Services.Classes
                 Specialization = user.Specialization,
                 YearsOfExperience = user.YearsOfExperience,
                 Rate = user.Rate,
-                NumberOfSessionsDone = user.NumberOfSessionsDone,
+                CompletedSessionsCount = user.CompletedSessionsCount,
                 Role = roles.FirstOrDefault() ?? "TechSupport",
                 CreatedAt = user.CreatedAt
             };

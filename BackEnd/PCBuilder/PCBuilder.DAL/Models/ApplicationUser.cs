@@ -22,7 +22,7 @@ namespace PCBuilder.DAL.Models
 
         
         public double? Rate { get; set; }
-        public int? NumberOfSessionsDone { get; set; }
+       
 
         public bool IsDeleted { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -30,5 +30,6 @@ namespace PCBuilder.DAL.Models
 
         public string? CodeResetPassword { get; set; }
         public DateTime? CodeResetPasswordExpiration { get; set; }
+        public int CompletedSessionsCount { get; set; }
     }
 }

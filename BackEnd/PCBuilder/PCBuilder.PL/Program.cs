@@ -58,6 +58,10 @@ namespace PCBuilder.PL
             builder.Services.AddScoped<IFileService, FileService>();
             builder.Services.AddScoped<IShopRepository,ShopRepository>();
             builder.Services.AddScoped<IShopService,ShopService>();
+            builder.Services.AddScoped<IAvailabilityRepository, AvailabilityRepository>();
+            builder.Services.AddScoped<IAvailabilityService, AvailabilityService>();
+            builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+            builder.Services.AddScoped<IAppointmentService, AppointmentService>();
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
             {
                 option.Password.RequireDigit = true;

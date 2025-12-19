@@ -16,7 +16,10 @@ namespace PCBuilder.DAL.Data
         public DbSet<ChatMessage> ChatMessages { get; set; }
 
         public DbSet<Shop> Shops { get; set; }
-    
+
+        public DbSet<TechSupportAvailability> TechSupportAvailabilities { get; set; }
+
+        public DbSet<Appointment> Appointments { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
@@ -33,6 +36,18 @@ namespace PCBuilder.DAL.Data
             builder.Ignore<IdentityUserLogin<string>>();
             builder.Ignore<IdentityRoleClaim<string>>();
             builder.Ignore<IdentityUserToken<string>>();
+
+            builder.Entity<Appointment>()
+                   .HasOne(a => a.User)
+                   .WithMany()
+                   .HasForeignKey(a => a.UserId)
+                   .OnDelete(DeleteBehavior.NoAction); 
+
+            builder.Entity<Appointment>()
+                .HasOne(a => a.TechSupport)
+                .WithMany()
+                .HasForeignKey(a => a.TechSupportId)
+                .OnDelete(DeleteBehavior.NoAction); 
         }
 
     }
