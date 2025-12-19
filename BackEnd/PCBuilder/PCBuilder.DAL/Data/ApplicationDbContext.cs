@@ -19,6 +19,7 @@ namespace PCBuilder.DAL.Data
 
         public DbSet<TechSupportAvailability> TechSupportAvailabilities { get; set; }
 
+        public DbSet<Post> Posts { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -41,13 +42,38 @@ namespace PCBuilder.DAL.Data
                    .HasOne(a => a.User)
                    .WithMany()
                    .HasForeignKey(a => a.UserId)
-                   .OnDelete(DeleteBehavior.NoAction); 
+                   .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<Appointment>()
                 .HasOne(a => a.TechSupport)
                 .WithMany()
                 .HasForeignKey(a => a.TechSupportId)
-                .OnDelete(DeleteBehavior.NoAction); 
+                .OnDelete(DeleteBehavior.NoAction);
+            // FK PostLike → User
+            builder.Entity<PostLike>()
+                .HasOne(l => l.User)
+                .WithMany()
+                .HasForeignKey(l => l.UserId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            // FK PostLike → Post
+            builder.Entity<PostLike>()
+                .HasOne(l => l.Post)
+                .WithMany(p => p.Likes)
+                .HasForeignKey(l => l.PostId)
+                .OnDelete(DeleteBehavior.Cascade); 
+
+            builder.Entity<PostComment>()
+                  .HasOne(c => c.User)
+                  .WithMany()
+                  .HasForeignKey(c => c.UserId)
+                  .OnDelete(DeleteBehavior.NoAction); 
+
+            builder.Entity<PostComment>()
+                .HasOne(c => c.Post)
+                .WithMany(p => p.Comments)
+                .HasForeignKey(c => c.PostId)
+                .OnDelete(DeleteBehavior.Cascade); 
         }
 
     }
