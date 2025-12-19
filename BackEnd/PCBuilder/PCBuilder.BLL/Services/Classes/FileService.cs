@@ -46,7 +46,7 @@ namespace PCBuilder.BLL.Services.Classes
                 if (file != null && file.Length > 0)
                 {
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
-                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "Posts", fileName);
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "posts", fileName);
 
                     using (var stream = File.Create(filePath))
                     {
