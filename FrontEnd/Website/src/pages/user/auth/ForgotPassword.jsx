@@ -37,35 +37,28 @@ const ForgotPassword = () => {
         return;
       }
       
-      // Check if the error is related to email not being registered
       const errorData = error.response?.data;
       const status = error.response?.status;
-      const errorMessage = errorData?.message || errorData?.error || errorData?.title || '';
+      
+      // Handle the backend response - can be a string or object
+      let errorMessage = '';
+      if (typeof errorData === 'string') {
+        errorMessage = errorData;
+      } else if (errorData) {
+        errorMessage = errorData.message || errorData.error || errorData.title || '';
+      }
       
       console.log('Error status:', status);
       console.log('Error message:', errorMessage);
       console.log('Error data:', errorData);
       
-      // Check for common "user not found" or "email not registered" messages
-      if (
-        status === 404 || 
-        status === 400 ||
-        (errorMessage && (
-          errorMessage.toLowerCase().includes('not found') ||
-          errorMessage.toLowerCase().includes('not registered') ||
-          errorMessage.toLowerCase().includes('does not exist') ||
-          errorMessage.toLowerCase().includes('no user') ||
-          errorMessage.toLowerCase().includes('user does not') ||
-          errorMessage.toLowerCase().includes('email does not') ||
-          errorMessage.toLowerCase().includes('invalid email')
-        )) ||
-        (errorData && JSON.stringify(errorData).toLowerCase().includes('not found'))
-      ) {
-        toast.error('This email is not signed up. Please create an account first.');
+      // Handle 400 error specifically for "This email is not signed up yet."
+      if (status === 400 && errorMessage.includes('This email is not signed up yet')) {
+        toast.error('This email is not signed up yet. Please create an account first.');
       } else if (errorMessage) {
         toast.error(errorMessage);
       } else {
-        toast.error('Failed to send verification code');
+        toast.error('Failed to send verification code. Please try again.');
       }
     } finally {
       setIsLoading(false);
