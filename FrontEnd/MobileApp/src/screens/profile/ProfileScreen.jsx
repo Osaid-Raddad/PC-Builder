@@ -19,7 +19,6 @@ export default function ProfileScreen({ navigation }) {
 
   const menuItems = [
     { icon: "box", label: "My Builds", screen: "MyBuilds" },
-    { icon: "heart", label: "Wishlist", screen: "Wishlist" },
     { icon: "bookmark", label: "Saved", screen: "Saved" },
     { icon: "settings", label: "Settings", screen: "Settings" },
     { icon: "help-circle", label: "Help & Support", screen: "TechSupport" },

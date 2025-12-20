@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 import { FiLock, FiEye, FiEyeOff, FiArrowLeft, FiShield } from 'react-icons/fi';
 
 const ResetPassword = () => {
@@ -22,22 +23,58 @@ const ResetPassword = () => {
   const password = watch('password');
 
   const onSubmit = async (data) => {
+    if (!email) {
+      toast.error('Email is missing. Please restart the password reset process.');
+      navigate('/forgot-password');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      // Replace with your API call
-      // await axios.post('/api/auth/reset-password', {
-      //   email,
-      //   verificationCode: data.code,
-      //   newPassword: data.password,
-      // });
-      
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await axios.patch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/Identity/Account/Reset-Password`,
+        {
+          email: email,
+          Code: data.code,
+          newPassword: data.password,
+        }
+      );
       
       toast.success('Password reset successfully!');
       navigate('/signin');
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to reset password');
+      console.error('Reset password error:', error);
+      console.error('Error response:', error.response);
+      
+      // Handle network errors
+      if (!error.response) {
+        toast.error('Unable to connect to the server. Please check your internet connection.');
+        return;
+      }
+      
+      const errorData = error.response?.data;
+      const status = error.response?.status;
+      
+      // Handle the backend response - can be a string or object
+      let errorMessage = '';
+      if (typeof errorData === 'string') {
+        errorMessage = errorData;
+      } else if (errorData) {
+        errorMessage = errorData.message || errorData.error || errorData.title || '';
+      }
+      
+      console.log('Error status:', status);
+      console.log('Error message:', errorMessage);
+      console.log('Error data:', errorData);
+      
+      // Show specific error messages
+      if (errorMessage) {
+        toast.error(errorMessage);
+      } else if (status === 400) {
+        toast.error('Invalid verification code or password. Please try again.');
+      } else {
+        toast.error('Failed to reset password. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -107,14 +144,14 @@ const ResetPassword = () => {
                 type="text"
                 {...register('code', {
                   required: 'Verification code is required',
-                  minLength: {
-                    value: 6,
-                    message: 'Code must be at least 6 characters',
+                  pattern: {
+                    value: /^[0-9]{4}$/,
+                    message: 'Code must be exactly 4 digits',
                   },
                 })}
                 className="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-lg text-[#1A1A1A] placeholder-gray-400 focus:outline-none focus:border-[#F3BD4A] focus:bg-white transition-colors"
-                placeholder="Enter 6-digit code"
-                maxLength={6}
+                placeholder="Enter 4-digit code"
+                maxLength={4}
               />
               {errors.code && (
                 <p className="mt-1 text-sm text-red-500">{errors.code.message}</p>
@@ -133,16 +170,22 @@ const ResetPassword = () => {
                   {...register('password', {
                     required: 'Password is required',
                     minLength: {
-                      value: 8,
-                      message: 'Password must be at least 8 characters',
+                      value: 9,
+                      message: 'Password must be at least 9 characters',
                     },
-                    pattern: {
-                      value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-                      message: 'Password must contain uppercase, lowercase, and number',
+                    validate: {
+                      hasUpperCase: (value) =>
+                        /[A-Z]/.test(value) || 'Password must contain at least one uppercase letter',
+                      hasLowerCase: (value) =>
+                        /[a-z]/.test(value) || 'Password must contain at least one lowercase letter',
+                      hasNumber: (value) =>
+                        /\d/.test(value) || 'Password must contain at least one number',
+                      hasSymbol: (value) =>
+                        /[!@#$%^&*(),.?":{}|<>]/.test(value) || 'Password must contain at least one symbol (!@#$%^&*...)',
                     },
                   })}
                   className="w-full pl-12 pr-12 py-3 bg-gray-100 border border-gray-200 rounded-lg text-[#1A1A1A] placeholder-gray-400 focus:outline-none focus:border-[#F3BD4A] focus:bg-white transition-colors"
-                  placeholder="Create new password"
+                  placeholder="Create new password (min 9 chars, uppercase, symbol)"
                 />
                 <button
                   type="button"

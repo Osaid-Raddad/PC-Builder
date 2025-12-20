@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 import { FiMail, FiArrowLeft } from 'react-icons/fi';
 
 const ForgotPassword = () => {
@@ -16,17 +17,49 @@ const ForgotPassword = () => {
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
-      // Replace with your API call
-      // await axios.post('/api/auth/forgot-password', { email: data.email });
-      
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/Identity/Account/Forgot-Password`,
+        {
+          email: data.email,
+        }
+      );
       
       toast.success('Verification code sent to your email!');
       // Navigate to reset password with email in state
       navigate('/reset-password', { state: { email: data.email } });
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to send verification code');
+      console.error('Forgot password error:', error);
+      console.error('Error response:', error.response);
+      
+      // Handle network errors (CORS, connection issues, etc.)
+      if (!error.response) {
+        toast.error('Unable to connect to the server. Please check your internet connection.');
+        return;
+      }
+      
+      const errorData = error.response?.data;
+      const status = error.response?.status;
+      
+      // Handle the backend response - can be a string or object
+      let errorMessage = '';
+      if (typeof errorData === 'string') {
+        errorMessage = errorData;
+      } else if (errorData) {
+        errorMessage = errorData.message || errorData.error || errorData.title || '';
+      }
+      
+      console.log('Error status:', status);
+      console.log('Error message:', errorMessage);
+      console.log('Error data:', errorData);
+      
+      // Handle 400 error specifically for "This email is not signed up yet."
+      if (status === 400 && errorMessage.includes('This email is not signed up yet')) {
+        toast.error('This email is not signed up yet. Please create an account first.');
+      } else if (errorMessage) {
+        toast.error(errorMessage);
+      } else {
+        toast.error('Failed to send verification code. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }

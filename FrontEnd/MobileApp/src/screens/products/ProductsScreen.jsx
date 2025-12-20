@@ -105,6 +105,14 @@ export default function ProductsScreen({ navigation }) {
   return (
     <ScreenLayout navigation={navigation} scrollable={false}>
       <View style={styles.container}>
+        {/* Back Button */}
+        <TouchableOpacity 
+          style={styles.backButton}
+          onPress={() => navigation.goBack()}
+        >
+          <Feather name="arrow-left" size={24} color={colors.mainBlack} />
+        </TouchableOpacity>
+
         <View style={styles.header}>
           <Text style={styles.title}>Products</Text>
           <Text style={styles.subtitle}>Browse all PC components</Text>
