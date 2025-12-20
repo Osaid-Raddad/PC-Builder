@@ -1,39 +1,65 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
 import { FaEnvelope, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { FcGoogle } from 'react-icons/fc';
 import { FaSquareFacebook, FaApple } from 'react-icons/fa6';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 import colors from '../../../config/colors';
 
 const SignIn = ({ onSwitchToSignUp }) => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    rememberMe: false,
+  const [isLoading, setIsLoading] = useState(false);
+  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: '',
+      password: '',
+      rememberMe: false,
+    },
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!formData.email || !formData.password) {
-      toast.error('Please fill in all fields');
-      return;
-    }
-    toast.success('Signed in successfully!');
-    // Navigate to home page after successful sign in
-    setTimeout(() => {
-      navigate('/');
-    }, 1000);
-  };
+  const onSubmit = async (data) => {
+    setIsLoading(true);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/Identity/Account/Login`,
+        {
+          email: data.email,
+          password: data.password,
+        }
+      );
+
+      // Store the token in localStorage
+      if (response.data.token) {
+        localStorage.setItem('authToken', response.data.token);
+      }
+      
+      // Store user data if available
+      if (response.data.user) {
+        localStorage.setItem('userData', JSON.stringify(response.data.user));
+      }
+
+      toast.success('Signed in successfully!');
+      
+      // Navigate to home page after successful sign in
+      setTimeout(() => {
+        navigate('/');
+      }, 1000);
+    } catch (error) {
+      console.error('Sign in error:', error);
+      const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Failed to sign in. Please check your credentials.';
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -45,7 +71,7 @@ const SignIn = ({ onSwitchToSignUp }) => {
         Sign in to continue
       </p>
 
-      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
         <div>
           <label htmlFor="email" className="block text-sm font-medium mb-2" style={{ color: colors.mainBlack }}>
             Email
@@ -55,16 +81,23 @@ const SignIn = ({ onSwitchToSignUp }) => {
             <input
               type="email"
               id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
+              {...register('email', {
+                required: 'Email is required',
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: 'Invalid email address',
+                },
+              })}
               className="w-full pl-10 pr-4 py-2 sm:py-3 border-2 rounded-lg focus:outline-none transition-colors text-sm sm:text-base"
-              style={{ borderColor: colors.platinum, backgroundColor: colors.alabaster, outlineColor: colors.mainYellow }}
+              style={{ borderColor: errors.email ? '#ef4444' : colors.platinum, backgroundColor: colors.alabaster, outlineColor: colors.mainYellow }}
               onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
-              onBlur={(e) => e.target.style.borderColor = colors.platinum}
+              onBlur={(e) => e.target.style.borderColor = errors.email ? '#ef4444' : colors.platinum}
               placeholder="Enter your email"
             />
           </div>
+          {errors.email && (
+            <p className="mt-1 text-sm text-red-500">{errors.email.message}</p>
+          )}
         </div>
 
         <div>
@@ -76,13 +109,17 @@ const SignIn = ({ onSwitchToSignUp }) => {
             <input
               type={showPassword ? 'text' : 'password'}
               id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
+              {...register('password', {
+                required: 'Password is required',
+                minLength: {
+                  value: 9,
+                  message: 'Password must be at least 9 characters',
+                },
+              })}
               className="w-full pl-10 pr-12 py-2 sm:py-3 border-2 rounded-lg focus:outline-none transition-colors text-sm sm:text-base"
-              style={{ borderColor: colors.platinum, backgroundColor: colors.alabaster }}
+              style={{ borderColor: errors.password ? '#ef4444' : colors.platinum, backgroundColor: colors.alabaster }}
               onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
-              onBlur={(e) => e.target.style.borderColor = colors.platinum}
+              onBlur={(e) => e.target.style.borderColor = errors.password ? '#ef4444' : colors.platinum}
               placeholder="Enter your password"
             />
             <button
@@ -94,15 +131,16 @@ const SignIn = ({ onSwitchToSignUp }) => {
               {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
             </button>
           </div>
+          {errors.password && (
+            <p className="mt-1 text-sm text-red-500">{errors.password.message}</p>
+          )}
         </div>
 
         <div className="flex items-center justify-between">
           <label className="flex items-center cursor-pointer">
             <input
               type="checkbox"
-              name="rememberMe"
-              checked={formData.rememberMe}
-              onChange={handleChange}
+              {...register('rememberMe')}
               className="w-4 h-4 rounded"
               style={{ accentColor: colors.mainYellow }}
             />
@@ -117,10 +155,11 @@ const SignIn = ({ onSwitchToSignUp }) => {
 
         <button
           type="submit"
-          className="w-full py-2 sm:py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity shadow-lg text-sm sm:text-base cursor-pointer"
+          disabled={isLoading}
+          className="w-full py-2 sm:py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity shadow-lg text-sm sm:text-base cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ backgroundColor: colors.mainYellow }}
         >
-          Sign In
+          {isLoading ? 'Signing in...' : 'Sign In'}
         </button>
       </form>
 

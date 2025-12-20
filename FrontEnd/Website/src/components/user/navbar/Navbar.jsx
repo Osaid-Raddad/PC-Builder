@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiSearch, FiMenu, FiX, FiUser, FiChevronDown, FiShoppingBag, FiLogOut, FiHeart, FiMessageCircle } from 'react-icons/fi';
 import { FaTools, FaBoxOpen, FaNewspaper, FaEdit, FaUserCircle, FaMemory, FaHdd, FaDesktop } from 'react-icons/fa';
@@ -7,6 +7,7 @@ import { BsFillMotherboardFill, BsGpuCard } from 'react-icons/bs';
 import { GiComputerFan } from 'react-icons/gi';
 import { MdPowerSettingsNew, MdCable, MdCompareArrows } from 'react-icons/md';
 import { Tooltip } from 'react-tooltip';
+import toast from 'react-hot-toast';
 import colors from '../../../config/colors';
 import { BsCpuFill} from 'react-icons/bs';
 export default function Navbar() {
@@ -16,9 +17,28 @@ export default function Navbar() {
   const [isProductsDropdownOpen, setIsProductsDropdownOpen] = useState(false);
   const [isCommunityDropdownOpen, setIsCommunityDropdownOpen] = useState(false);
   
-  // TODO: Replace with actual authentication state from your auth context/redux
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // Change this based on actual auth state
-  const [userName, setUserName] = useState('John Doe'); // Get from auth context
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState('');
+
+  // Check authentication status on component mount
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    const userData = localStorage.getItem('userData');
+    
+    if (token) {
+      setIsLoggedIn(true);
+      
+      if (userData) {
+        try {
+          const user = JSON.parse(userData);
+          setUserName(user.name || user.username || user.email || 'User');
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+          setUserName('User');
+        }
+      }
+    }
+  }, []);
 
   // Product categories with icons
   const productCategories = [
@@ -85,9 +105,17 @@ export default function Navbar() {
   ];
 
   const handleNavigation = (path) => {
+    // Protected routes that require authentication
+    const protectedRoutes = ['/chat', '/posts', '/shops'];
+    
+    // Check if the route is protected and user is not logged in
+    if (protectedRoutes.includes(path) && !isLoggedIn) {
+      toast.error('You must login first to access this feature');
+      return;
+    }
+    
     navigate(path);
     setIsMobileMenuOpen(false);
-    setActiveDropdown(null);
     setIsUserMenuOpen(false);
     setIsProductsDropdownOpen(false);
     setIsCommunityDropdownOpen(false);
@@ -106,9 +134,16 @@ export default function Navbar() {
   };
 
   const handleLogout = () => {
-    // TODO: Implement actual logout logic
+    // Clear authentication tokens and user data from localStorage
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userData');
+    
+    // Update local state
     setIsLoggedIn(false);
+    setUserName('');
     setIsUserMenuOpen(false);
+    
+    // Navigate to home page
     navigate('/');
   };
 
@@ -365,8 +400,16 @@ export default function Navbar() {
                         onClick={() => handleNavigation('/profile')}
                         className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.mainYellow;
+                          e.currentTarget.style.color = colors.mainBlack;
+                          e.currentTarget.querySelector('svg').style.color = colors.mainBlack;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'white';
+                          e.currentTarget.querySelector('svg').style.color = colors.mainYellow;
+                        }}
                       >
                         <FaUserCircle size={18} style={{ color: colors.mainYellow }} />
                         <span className="font-medium">Profile</span>
@@ -376,8 +419,16 @@ export default function Navbar() {
                         onClick={() => handleNavigation('/my-builds')}
                         className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.mainYellow;
+                          e.currentTarget.style.color = colors.mainBlack;
+                          e.currentTarget.querySelector('svg').style.color = colors.mainBlack;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'white';
+                          e.currentTarget.querySelector('svg').style.color = colors.mainYellow;
+                        }}
                       >
                         <PiDesktopTowerFill size={18} style={{ color: colors.mainYellow }} />
                         <span className="font-medium">My Builds</span>
@@ -387,8 +438,16 @@ export default function Navbar() {
                         onClick={() => handleNavigation('/favorites')}
                         className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.mainYellow;
+                          e.currentTarget.style.color = colors.mainBlack;
+                          e.currentTarget.querySelector('svg').style.color = colors.mainBlack;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'white';
+                          e.currentTarget.querySelector('svg').style.color = colors.mainYellow;
+                        }}
                       >
                         <FiHeart size={18} style={{ color: colors.mainYellow }} />
                         <span className="font-medium">Favorites</span>
@@ -470,8 +529,16 @@ export default function Navbar() {
                         onClick={() => handleNavigation('/profile')}
                         className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.mainYellow;
+                          e.currentTarget.style.color = colors.mainBlack;
+                          e.currentTarget.querySelector('svg').style.color = colors.mainBlack;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'white';
+                          e.currentTarget.querySelector('svg').style.color = colors.mainYellow;
+                        }}
                       >
                         <FaUserCircle size={18} style={{ color: colors.mainYellow }} />
                         <span className="font-medium">Profile</span>
@@ -481,8 +548,16 @@ export default function Navbar() {
                         onClick={() => handleNavigation('/my-builds')}
                         className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.mainYellow;
+                          e.currentTarget.style.color = colors.mainBlack;
+                          e.currentTarget.querySelector('svg').style.color = colors.mainBlack;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'white';
+                          e.currentTarget.querySelector('svg').style.color = colors.mainYellow;
+                        }}
                       >
                         <PiDesktopTowerFill size={18} style={{ color: colors.mainYellow }} />
                         <span className="font-medium">My Builds</span>
@@ -492,8 +567,16 @@ export default function Navbar() {
                         onClick={() => handleNavigation('/favorites')}
                         className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.mainYellow;
+                          e.currentTarget.style.color = colors.mainBlack;
+                          e.currentTarget.querySelector('svg').style.color = colors.mainBlack;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'white';
+                          e.currentTarget.querySelector('svg').style.color = colors.mainYellow;
+                        }}
                       >
                         <FiHeart size={18} style={{ color: colors.mainYellow }} />
                         <span className="font-medium">Favorites</span>
