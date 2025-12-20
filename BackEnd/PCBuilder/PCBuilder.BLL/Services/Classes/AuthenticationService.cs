@@ -49,18 +49,28 @@ namespace PCBuilder.BLL.Services.Classes
 
         public async Task<bool> ForgotPassword(ForgotPasswordRequest request)
         {
+           
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
             {
-                throw new Exception("User Not Found");
+                
+                throw new InvalidOperationException("This email is not signed up yet.");
             }
 
+            
             var random = new Random();
             var code = random.Next(1000, 9999).ToString();
 
+            
             user.CodeResetPassword = code;
             user.CodeResetPasswordExpiration = DateTime.UtcNow.AddMinutes(15);
-            await _userManager.UpdateAsync(user);
+
+            
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+            {
+                throw new Exception("Failed to update reset code. Please try again.");
+            }
             await _emailSender.SendEmailAsync(request.Email,
                     "Password Reset Code - PC Builder",
                 $@"

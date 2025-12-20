@@ -43,8 +43,21 @@ namespace PCBuilder.PL.Areas.Identity.Controllers
         [HttpPost("Forgot-Password")]
         public async Task<ActionResult<string>> ForgotPassword([FromBody] ForgotPasswordRequest request)
         {
-            var result = await _authenticationService.ForgotPassword(request);
-            return Ok(result);
+            try
+            {
+                var result = await _authenticationService.ForgotPassword(request);
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                
+                return StatusCode(500, ex.Message);
+            }
         }
 
         [HttpPatch("Reset-Password")]
