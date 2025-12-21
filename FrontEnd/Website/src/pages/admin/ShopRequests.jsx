@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MdCheckCircle, MdCancel, MdVisibility } from 'react-icons/md';
+import { MdCheckCircle, MdCancel, MdVisibility, MdDelete } from 'react-icons/md';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
@@ -130,6 +130,52 @@ const ShopRequests = () => {
         toast.success('Shop request rejected');
       } catch (error) {
         toast.error('Failed to reject request');
+      }
+    }
+  };
+
+  const handleDelete = async (requestId, shopName) => {
+    const result = await Swal.fire({
+      title: 'Delete Shop?',
+      text: `Are you sure you want to delete "${shopName}"? This action cannot be undone!`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: colors.error,
+      cancelButtonColor: colors.secondary,
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const token = localStorage.getItem('authToken');
+        
+        if (!token) {
+          toast.error('Authentication required');
+          return;
+        }
+
+        await axios.delete(`/api/Admins/Shop/AdminShops/DeleteShop/${requestId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        // Remove the shop from the state
+        setRequests(requests.filter(req => req.id !== requestId));
+        
+        toast.success('Shop deleted successfully!');
+      } catch (error) {
+        console.error('Error deleting shop:', error);
+        
+        if (error.response?.status === 401) {
+          toast.error('Unauthorized. Please login as admin.');
+        } else if (error.response?.status === 404) {
+          toast.error('Shop not found');
+        } else {
+          toast.error('Failed to delete shop');
+        }
       }
     }
   };
@@ -277,6 +323,20 @@ const ShopRequests = () => {
                 >
                   <MdCancel className="text-xl" />
                   Reject
+                </button>
+              </div>
+            )}
+
+            {/* Delete Button for Approved Shops */}
+            {request.status === 'approved' && (
+              <div className="flex gap-3">
+                <button
+                  onClick={() => handleDelete(request.id, request.shopName)}
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-white font-medium hover:opacity-90 transition-opacity cursor-pointer"
+                  style={{ backgroundColor: colors.error }}
+                >
+                  <MdDelete className="text-xl" />
+                  Delete Shop
                 </button>
               </div>
             )}
