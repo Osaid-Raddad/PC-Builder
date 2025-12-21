@@ -29,7 +29,7 @@ axiosInstance.interceptors.request.use(
 // Get all users
 export const getAllUsers = async () => {
   try {
-    const response = await axiosInstance.get('/Admins/Users/GetAllUsers');
+    const response = await axiosInstance.get('/Public/Public/GetAllUsers');
     return response.data;
   } catch (error) {
     console.error('Error fetching users:', error);
@@ -105,32 +105,47 @@ export const sendMessage = async (recipientId, message) => {
 
 // Filter users based on current user role
 export const filterUsersByRole = (users, currentUserRole) => {
-  if (!users || !Array.isArray(users)) return [];
+  console.log('filterUsersByRole - Input users:', users);
+  console.log('filterUsersByRole - Current user role:', currentUserRole);
+  
+  if (!users || !Array.isArray(users)) {
+    console.log('filterUsersByRole - Invalid users array');
+    return [];
+  }
   
   const normalizedRole = currentUserRole?.toLowerCase();
+  console.log('filterUsersByRole - Normalized role:', normalizedRole);
   
+  let result;
   switch (normalizedRole) {
     case 'user':
       // Users see: Admin, SuperAdmin, TechSupport
-      return users.filter(user => 
-        ['admin', 'superadmin', 'techsupport'].includes(user.role?.toLowerCase())
+      result = users.filter(user => 
+        ['admin', 'superadmin', 'techsupport'].includes(user.userRole?.toLowerCase())
       );
+      break;
     
     case 'admin':
     case 'superadmin':
       // Admin and SuperAdmin see: everyone (Admin, SuperAdmin, TechSupport, User)
-      return users;
+      result = users;
+      break;
     
     case 'techsupport':
       // TechSupport sees: Admin, SuperAdmin, Users only
-      return users.filter(user => 
-        ['admin', 'superadmin', 'user'].includes(user.role?.toLowerCase())
+      result = users.filter(user => 
+        ['admin', 'superadmin', 'user'].includes(user.userRole?.toLowerCase())
       );
+      break;
     
     default:
       // Default: show Admin, SuperAdmin, TechSupport
-      return users.filter(user => 
-        ['admin', 'superadmin', 'techsupport'].includes(user.role?.toLowerCase())
+      result = users.filter(user => 
+        ['admin', 'superadmin', 'techsupport'].includes(user.userRole?.toLowerCase())
       );
+      break;
   }
+  
+  console.log('filterUsersByRole - Filtered result:', result);
+  return result;
 };

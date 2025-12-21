@@ -114,40 +114,35 @@ export default function Chat() {
         
         setCurrentUser(user);
 
-        // Fetch all users (only admins can access this endpoint)
-        try {
-          const usersData = await getAllUsers();
-          setAllUsers(usersData);
+        // Fetch all users from public endpoint
+        const usersData = await getAllUsers();
+        console.log('Fetched users data:', usersData);
+        console.log('Current user:', user);
+        setAllUsers(usersData);
 
-          // Filter users based on current user's role
-          const filteredUsers = filterUsersByRole(usersData, user.role);
-          
-          // Convert users to conversations format
-          const userConversations = filteredUsers
-            .filter(u => u.id !== user.id) // Exclude current user
-            .map(u => ({
-              id: u.id,
-              name: u.firstName && u.lastName ? `${u.firstName} ${u.lastName}` : u.email,
-              lastMessage: 'Start a conversation',
-              timestamp: '',
-              unread: 0,
-              avatar: u.profilePictureUrl || '/api/placeholder/40/40',
-              online: false,
-              role: u.role,
-              email: u.email
-            }));
+        // Filter users based on current user's role
+        const filteredUsers = filterUsersByRole(usersData, user.role);
+        console.log('Filtered users:', filteredUsers);
+        console.log('Current user role:', user.role);
+        
+        // Convert users to conversations format
+        const userConversations = filteredUsers
+          .filter(u => u.id !== user.id) // Exclude current user
+          .map(u => ({
+            id: u.id,
+            name: u.fullName || u.userName || u.email || 'Unknown User',
+            lastMessage: 'Start a conversation',
+            timestamp: '',
+            unread: 0,
+            avatar: u.profilePictureUrl || '/api/placeholder/40/40',
+            online: false,
+            role: u.userRole, // Use userRole from API
+            email: u.email,
+            userName: u.userName
+          }));
 
-          setConversations(userConversations);
-        } catch (error) {
-          // If user doesn't have permission (403), start with empty conversations
-          // Conversations will be populated when users message them or from navigation
-          if (error.response?.status === 403) {
-            console.log('User does not have permission to fetch all users. Starting with empty conversations.');
-            setConversations([]);
-          } else {
-            throw error; // Re-throw other errors
-          }
-        }
+        console.log('User conversations:', userConversations);
+        setConversations(userConversations);
 
         // Connect to SignalR Hub
         const connection = await createHubConnection(token);
@@ -155,14 +150,45 @@ export default function Chat() {
 
         // Listen for incoming messages
         connection.on('ReceiveMessage', (senderId, message, timestamp) => {
-          const newMsg = {
-            id: Date.now(),
-            senderId: senderId,
-            text: message,
-            timestamp: new Date(timestamp).toLocaleTimeString('en-US', { 
+          console.log('Received message - senderId:', senderId, 'message:', message, 'timestamp:', timestamp);
+          
+          // Format timestamp - handle various formats
+          let formattedTime;
+          try {
+            if (timestamp) {
+              const date = new Date(timestamp);
+              if (isNaN(date.getTime())) {
+                // If invalid date, use current time
+                formattedTime = new Date().toLocaleTimeString('en-US', { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                });
+              } else {
+                formattedTime = date.toLocaleTimeString('en-US', { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                });
+              }
+            } else {
+              // If no timestamp provided, use current time
+              formattedTime = new Date().toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+              });
+            }
+          } catch (error) {
+            console.error('Error formatting timestamp:', error);
+            formattedTime = new Date().toLocaleTimeString('en-US', { 
               hour: '2-digit', 
               minute: '2-digit' 
-            }),
+            });
+          }
+
+          const newMsg = {
+            id: `${senderId}-${Date.now()}-${Math.random()}`,
+            senderId: senderId,
+            text: message,
+            timestamp: formattedTime,
             isSent: false,
             isRead: false
           };
@@ -245,7 +271,7 @@ export default function Chat() {
 
     try {
       const newMsg = {
-        id: Date.now(),
+        id: `${currentUser.id}-${Date.now()}-${Math.random()}`,
         senderId: currentUser.id,
         text: newMessage,
         timestamp: new Date().toLocaleTimeString('en-US', { 
@@ -288,19 +314,43 @@ export default function Chat() {
     try {
       // Fetch chat history from API
       const chatHistory = await getChat(conversation.id);
+      console.log('Chat history received:', chatHistory);
       
       // Convert API response to messages format
-      const formattedMessages = chatHistory.map(msg => ({
-        id: msg.id,
-        senderId: msg.senderId,
-        text: msg.message || msg.text,
-        timestamp: new Date(msg.timestamp).toLocaleTimeString('en-US', { 
-          hour: '2-digit', 
-          minute: '2-digit' 
-        }),
-        isSent: msg.senderId === currentUser.id,
-        isRead: msg.isRead || false
-      }));
+      const formattedMessages = chatHistory.map(msg => {
+        console.log('Processing message:', msg);
+        
+        // Format timestamp safely - backend sends 'sentAt'
+        let formattedTime;
+        try {
+          if (msg.sentAt) {
+            const date = new Date(msg.sentAt);
+            if (isNaN(date.getTime())) {
+              console.warn('Invalid timestamp for message:', msg.sentAt);
+              formattedTime = 'Invalid Date';
+            } else {
+              formattedTime = date.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+              });
+            }
+          } else {
+            formattedTime = '';
+          }
+        } catch (error) {
+          console.error('Error formatting timestamp:', error);
+          formattedTime = 'Invalid Date';
+        }
+        
+        return {
+          id: msg.id || `${msg.senderId}-${Date.now()}-${Math.random()}`,
+          senderId: msg.senderId,
+          text: msg.message || msg.text,
+          timestamp: formattedTime,
+          isSent: msg.senderId === currentUser.id,
+          isRead: msg.isRead || false
+        };
+      });
 
       setMessages(formattedMessages);
 
