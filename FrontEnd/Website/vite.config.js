@@ -8,5 +8,12 @@ export default defineConfig({
     host: "localhost",
     port: 5173,
     strictPort: false, // Allow fallback to other ports if 5173 is busy
+    proxy: {
+      '/api': {
+        target: 'https://pcbuilder.runasp.net',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
   },
 });

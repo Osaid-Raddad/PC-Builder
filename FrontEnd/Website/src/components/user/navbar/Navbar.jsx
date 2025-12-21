@@ -100,7 +100,7 @@ export default function Navbar() {
 
   const handleNavigation = (path) => {
     // Protected routes that require authentication
-    const protectedRoutes = ['/chat', '/posts', '/shops'];
+    const protectedRoutes = ['/chat', '/posts'];
     
     // Check if the route is protected and user is not logged in
     if (protectedRoutes.includes(path) && !isLoggedIn) {
@@ -369,8 +369,18 @@ export default function Navbar() {
                         onClick={() => handleNavigation('/signin')}
                         className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.mainYellow;
+                          e.currentTarget.style.color = colors.mainBlack;
+                          const icon = e.currentTarget.querySelector('svg');
+                          if (icon) icon.style.color = colors.mainBlack;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'white';
+                          const icon = e.currentTarget.querySelector('svg');
+                          if (icon) icon.style.color = colors.mainYellow;
+                        }}
                       >
                         <FiUser size={18} style={{ color: colors.mainYellow }} />
                         <span className="font-medium">Login</span>
@@ -380,8 +390,18 @@ export default function Navbar() {
                         onClick={() => handleNavigation('/signup')}
                         className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.mainYellow;
+                          e.currentTarget.style.color = colors.mainBlack;
+                          const icon = e.currentTarget.querySelector('svg');
+                          if (icon) icon.style.color = colors.mainBlack;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'white';
+                          const icon = e.currentTarget.querySelector('svg');
+                          if (icon) icon.style.color = colors.mainYellow;
+                        }}
                       >
                         <FaUserCircle size={18} style={{ color: colors.mainYellow }} />
                         <span className="font-medium">Sign Up</span>
@@ -486,8 +506,18 @@ export default function Navbar() {
                         onClick={() => handleNavigation('/signin')}
                         className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.mainYellow;
+                          e.currentTarget.style.color = colors.mainBlack;
+                          const icon = e.currentTarget.querySelector('svg');
+                          if (icon) icon.style.color = colors.mainBlack;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'white';
+                          const icon = e.currentTarget.querySelector('svg');
+                          if (icon) icon.style.color = colors.mainYellow;
+                        }}
                       >
                         <FiUser size={18} style={{ color: colors.mainYellow }} />
                         <span className="font-medium">Login</span>
@@ -497,8 +527,18 @@ export default function Navbar() {
                         onClick={() => handleNavigation('/signup')}
                         className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.mainYellow;
+                          e.currentTarget.style.color = colors.mainBlack;
+                          const icon = e.currentTarget.querySelector('svg');
+                          if (icon) icon.style.color = colors.mainBlack;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'white';
+                          const icon = e.currentTarget.querySelector('svg');
+                          if (icon) icon.style.color = colors.mainYellow;
+                        }}
                       >
                         <FaUserCircle size={18} style={{ color: colors.mainYellow }} />
                         <span className="font-medium">Sign Up</span>
