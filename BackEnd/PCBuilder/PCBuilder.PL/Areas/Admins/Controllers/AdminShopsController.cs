@@ -80,12 +80,6 @@ namespace PCBuilder.PL.Areas.Admins.Controllers
             return Ok(shop);
         }
 
-        [HttpGet("GetShops")]
-        public async Task<IActionResult> GetAllShops()
-        {
-            var shops = await _shopService.GetAllShopsAsync(Request);
-            return Ok(shops);
-        }
-
+       
     }
 }

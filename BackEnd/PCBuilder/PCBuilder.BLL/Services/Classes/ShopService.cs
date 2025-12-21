@@ -278,7 +278,8 @@ namespace PCBuilder.BLL.Services.Classes
                 ExactLocation = s.ExactLocation,
                 WebURL = s.WebURL,
                 Description = s.Description,
-                Specialities = s.Specialties
+                Specialities = s.Specialties,
+                Status = ShopRequestStatus.Pending
             }).ToList();
         }
 
