@@ -92,13 +92,36 @@ const ShopRequests = () => {
 
     if (result.isConfirmed) {
       try {
-        // await axios.post(`/api/admin/shop-requests/${requestId}/approve`);
+        const token = localStorage.getItem('authToken');
+        
+        if (!token) {
+          toast.error('Authentication required');
+          return;
+        }
+
+        await axios.post(`/api/Admins/Shop/AdminShops/Approve/${requestId}`, {}, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        
+        // Update UI immediately after successful operation
         setRequests(requests.map(req => 
           req.id === requestId ? { ...req, status: 'approved' } : req
         ));
+        
         toast.success('Shop request approved successfully!');
       } catch (error) {
-        toast.error('Failed to approve request');
+        console.error('Error approving shop:', error);
+        
+        if (error.response?.status === 401) {
+          toast.error('Unauthorized. Please login as admin.');
+        } else if (error.response?.status === 404) {
+          toast.error('Shop request not found');
+        } else {
+          toast.error('Failed to approve request');
+        }
       }
     }
   };
@@ -123,13 +146,39 @@ const ShopRequests = () => {
 
     if (result.isConfirmed) {
       try {
-        // await axios.post(`/api/admin/shop-requests/${requestId}/reject`, { reason: result.value });
+        const token = localStorage.getItem('authToken');
+        
+        if (!token) {
+          toast.error('Authentication required');
+          return;
+        }
+
+        await axios.post(`/api/Admins/Shop/AdminShops/Reject/${requestId}`, 
+          { reason: result.value }, 
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          }
+        );
+        
+        // Update UI immediately after successful operation
         setRequests(requests.map(req => 
           req.id === requestId ? { ...req, status: 'rejected' } : req
         ));
-        toast.success('Shop request rejected');
+        
+        toast.success('Shop request rejected successfully!');
       } catch (error) {
-        toast.error('Failed to reject request');
+        console.error('Error rejecting shop:', error);
+        
+        if (error.response?.status === 401) {
+          toast.error('Unauthorized. Please login as admin.');
+        } else if (error.response?.status === 404) {
+          toast.error('Shop request not found');
+        } else {
+          toast.error('Failed to reject request');
+        }
       }
     }
   };
