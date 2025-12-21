@@ -18,13 +18,8 @@ namespace PCBuilder.PL.Areas.Admins.Controllers
         {
             _userservice = userservice;
         }
-
-        [HttpGet("GetAllUsers")]
-        public async Task<IActionResult> GetAllUsers()
-        {
-            var users = await _userservice.GetAllUsersAsync();
-            return Ok(users);
-        }
+        
+       
 
         [HttpGet("GetUser/{id}")]
         public async Task<IActionResult> GetUserById([FromRoute] string id)

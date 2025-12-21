@@ -8,6 +8,8 @@ namespace PCBuilder.DAL.DTO.Responses
 {
     public class UserResponse
     {
+        public string FullName { get; set; }
+        public string Role { get; set; }
         public string Token { get; set; }
     }
 }
