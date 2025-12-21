@@ -18,7 +18,7 @@ namespace PCBuilder.PL.Areas.Admins.Controllers
         {
             _userservice = userservice;
         }
-
+        [Authorize]
         [HttpGet("GetAllUsers")]
         public async Task<IActionResult> GetAllUsers()
         {
