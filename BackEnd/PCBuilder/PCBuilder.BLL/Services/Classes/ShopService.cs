@@ -124,6 +124,7 @@ namespace PCBuilder.BLL.Services.Classes
                 throw new BadHttpRequestException(
                     $"Request cannot be approved because it is {request.Status}"
                 );
+            request.Status = ShopRequestStatus.Approved;
             await _shopRepo.UpdateAsync(request);
             await _emailSender.SendEmailAsync(request.Email,
                  "Shop Request Submited - PC Builder",
@@ -190,6 +191,7 @@ namespace PCBuilder.BLL.Services.Classes
                 throw new BadHttpRequestException(
                     $"Request cannot be rejected because it is {request.Status}"
                 );
+            request.Status = ShopRequestStatus.Rejected;
             await _shopRepo.UpdateAsync(request);
             await _emailSender.SendEmailAsync(request.Email,
                    "Shop Request Response - PC Builder",
