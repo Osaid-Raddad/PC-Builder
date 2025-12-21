@@ -253,6 +253,8 @@ namespace PCBuilder.BLL.Services.Classes
             {
                 return new UserResponse()
                 {
+                    FullName = user.FullName,
+                    Role = (await _userManager.GetRolesAsync(user)).FirstOrDefault(),
                     Token = await CreateTokenAsync(user)
                 };
             }
