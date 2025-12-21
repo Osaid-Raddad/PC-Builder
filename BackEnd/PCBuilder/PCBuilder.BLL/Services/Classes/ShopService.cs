@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using PCBuilder.BLL.Services.Interfaces;
@@ -114,11 +115,15 @@ namespace PCBuilder.BLL.Services.Classes
 
         public async Task ApproveRequestAsync(Guid requestId)
         {
-            var request = await _shopRepo.GetPendingRequestByIdAsync(requestId);
-            if (request == null || request.Status != ShopRequestStatus.Pending)
-                throw new Exception("Invalid request");
+            var request = await _shopRepo.GetShopByIdAsync(requestId);
 
-            request.Status = ShopRequestStatus.Approved;
+            if (request == null)
+                throw new KeyNotFoundException("Request not found");
+
+            if (request.Status != ShopRequestStatus.Pending)
+                throw new BadHttpRequestException(
+                    $"Request cannot be approved because it is {request.Status}"
+                );
             await _shopRepo.UpdateAsync(request);
             await _emailSender.SendEmailAsync(request.Email,
                  "Shop Request Submited - PC Builder",
@@ -176,11 +181,15 @@ namespace PCBuilder.BLL.Services.Classes
 
         public async Task RejectRequestAsync(Guid requestId)
         {
-            var request = await _shopRepo.GetPendingRequestByIdAsync(requestId);
-            if (request == null)
-                throw new Exception("Request not found");
+            var request = await _shopRepo.GetShopByIdAsync(requestId);
 
-            request.Status = ShopRequestStatus.Rejected;
+            if (request == null)
+                throw new KeyNotFoundException("Request not found");
+
+            if (request.Status != ShopRequestStatus.Pending)
+                throw new BadHttpRequestException(
+                    $"Request cannot be rejected because it is {request.Status}"
+                );
             await _shopRepo.UpdateAsync(request);
             await _emailSender.SendEmailAsync(request.Email,
                    "Shop Request Response - PC Builder",
@@ -243,7 +252,7 @@ namespace PCBuilder.BLL.Services.Classes
             var shop = await _shopRepo.GetShopByIdAsync(shopId);
 
             if (shop == null)
-                throw new Exception("Shop not found");
+                throw new BadHttpRequestException("Shop not found");
 
             if (!string.IsNullOrEmpty(shop.ShopLogo))
             {
@@ -279,7 +288,7 @@ namespace PCBuilder.BLL.Services.Classes
                 WebURL = s.WebURL,
                 Description = s.Description,
                 Specialities = s.Specialties,
-                Status = ShopRequestStatus.Pending
+                Status = s.Status
             }).ToList();
         }
 
