@@ -42,10 +42,23 @@ const SignIn = ({ onSwitchToSignUp }) => {
         localStorage.setItem('authToken', response.data.token);
       }
       
-      // Store user data if available
-      if (response.data.user) {
-        localStorage.setItem('userData', JSON.stringify(response.data.user));
+      // Store full name if available
+      if (response.data.fullName) {
+        localStorage.setItem('fullName', response.data.fullName);
       }
+      
+      // Store user role if available
+      if (response.data.role) {
+        localStorage.setItem('userRole', response.data.role);
+      }
+      
+      // Store all user data as a single object
+      /*const userData = {
+        fullName: response.data.fullName,
+        role: response.data.role,
+        token: response.data.token,
+      };*/
+      //localStorage.setItem('userData', JSON.stringify(userData));
 
       toast.success('Signed in successfully!');
       

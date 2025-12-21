@@ -5,7 +5,7 @@ import { FaTools, FaBoxOpen, FaNewspaper, FaEdit, FaUserCircle, FaMemory, FaHdd,
 import { PiDesktopTowerFill } from 'react-icons/pi';
 import { BsFillMotherboardFill, BsGpuCard } from 'react-icons/bs';
 import { GiComputerFan } from 'react-icons/gi';
-import { MdPowerSettingsNew, MdCable, MdCompareArrows } from 'react-icons/md';
+import { MdPowerSettingsNew, MdCable, MdCompareArrows, MdDashboard } from 'react-icons/md';
 import { Tooltip } from 'react-tooltip';
 import toast from 'react-hot-toast';
 import colors from '../../../config/colors';
@@ -19,24 +19,18 @@ export default function Navbar() {
   
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState('');
+  const [userRole, setUserRole] = useState('');
 
   // Check authentication status on component mount
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    const userData = localStorage.getItem('userData');
+    const fullName = localStorage.getItem('fullName');
+    const role = localStorage.getItem('userRole');
     
     if (token) {
       setIsLoggedIn(true);
-      
-      if (userData) {
-        try {
-          const user = JSON.parse(userData);
-          setUserName(user.name || user.username || user.email || 'User');
-        } catch (error) {
-          console.error('Error parsing user data:', error);
-          setUserName('User');
-        }
-      }
+      setUserName(fullName || 'User');
+      setUserRole(role || '');
     }
   }, []);
 
@@ -106,7 +100,7 @@ export default function Navbar() {
 
   const handleNavigation = (path) => {
     // Protected routes that require authentication
-    const protectedRoutes = ['/chat', '/posts', '/shops'];
+    const protectedRoutes = ['/chat', '/posts'];
     
     // Check if the route is protected and user is not logged in
     if (protectedRoutes.includes(path) && !isLoggedIn) {
@@ -375,8 +369,18 @@ export default function Navbar() {
                         onClick={() => handleNavigation('/signin')}
                         className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.mainYellow;
+                          e.currentTarget.style.color = colors.mainBlack;
+                          const icon = e.currentTarget.querySelector('svg');
+                          if (icon) icon.style.color = colors.mainBlack;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'white';
+                          const icon = e.currentTarget.querySelector('svg');
+                          if (icon) icon.style.color = colors.mainYellow;
+                        }}
                       >
                         <FiUser size={18} style={{ color: colors.mainYellow }} />
                         <span className="font-medium">Login</span>
@@ -386,15 +390,25 @@ export default function Navbar() {
                         onClick={() => handleNavigation('/signup')}
                         className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.mainYellow;
+                          e.currentTarget.style.color = colors.mainBlack;
+                          const icon = e.currentTarget.querySelector('svg');
+                          if (icon) icon.style.color = colors.mainBlack;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'white';
+                          const icon = e.currentTarget.querySelector('svg');
+                          if (icon) icon.style.color = colors.mainYellow;
+                        }}
                       >
                         <FaUserCircle size={18} style={{ color: colors.mainYellow }} />
                         <span className="font-medium">Sign Up</span>
                       </button>
                     </>
                   ) : (
-                    // Logged in - Show Profile/My Builds/Favorites/Logout
+                    // Logged in - Show Profile/My Builds/Dashboard(Admin/SuperAdmin)/Logout
                     <>
                       <button
                         onClick={() => handleNavigation('/profile')}
@@ -414,44 +428,31 @@ export default function Navbar() {
                         <FaUserCircle size={18} style={{ color: colors.mainYellow }} />
                         <span className="font-medium">Profile</span>
                       </button>
-                      <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
-                      <button
-                        onClick={() => handleNavigation('/my-builds')}
-                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
-                        style={{ color: 'white' }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.mainYellow;
-                          e.currentTarget.style.color = colors.mainBlack;
-                          e.currentTarget.querySelector('svg').style.color = colors.mainBlack;
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                          e.currentTarget.style.color = 'white';
-                          e.currentTarget.querySelector('svg').style.color = colors.mainYellow;
-                        }}
-                      >
-                        <PiDesktopTowerFill size={18} style={{ color: colors.mainYellow }} />
-                        <span className="font-medium">My Builds</span>
-                      </button>
-                      <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
-                      <button
-                        onClick={() => handleNavigation('/favorites')}
-                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
-                        style={{ color: 'white' }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.mainYellow;
-                          e.currentTarget.style.color = colors.mainBlack;
-                          e.currentTarget.querySelector('svg').style.color = colors.mainBlack;
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                          e.currentTarget.style.color = 'white';
-                          e.currentTarget.querySelector('svg').style.color = colors.mainYellow;
-                        }}
-                      >
-                        <FiHeart size={18} style={{ color: colors.mainYellow }} />
-                        <span className="font-medium">Favorites</span>
-                      </button>
+                     
+                     
+                      {(userRole === 'Admin' || userRole === 'SuperAdmin') && (
+                        <>
+                          <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
+                          <button
+                            onClick={() => handleNavigation('/admin')}
+                            className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
+                            style={{ color: 'white' }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = colors.mainYellow;
+                              e.currentTarget.style.color = colors.mainBlack;
+                              e.currentTarget.querySelector('svg').style.color = colors.mainBlack;
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                              e.currentTarget.style.color = 'white';
+                              e.currentTarget.querySelector('svg').style.color = colors.mainYellow;
+                            }}
+                          >
+                            <MdDashboard size={18} style={{ color: colors.mainYellow }} />
+                            <span className="font-medium">Dashboard</span>
+                          </button>
+                        </>
+                      )}
                       <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
                       <button
                         onClick={handleLogout}
@@ -505,8 +506,18 @@ export default function Navbar() {
                         onClick={() => handleNavigation('/signin')}
                         className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.mainYellow;
+                          e.currentTarget.style.color = colors.mainBlack;
+                          const icon = e.currentTarget.querySelector('svg');
+                          if (icon) icon.style.color = colors.mainBlack;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'white';
+                          const icon = e.currentTarget.querySelector('svg');
+                          if (icon) icon.style.color = colors.mainYellow;
+                        }}
                       >
                         <FiUser size={18} style={{ color: colors.mainYellow }} />
                         <span className="font-medium">Login</span>
@@ -516,8 +527,18 @@ export default function Navbar() {
                         onClick={() => handleNavigation('/signup')}
                         className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = colors.mainYellow;
+                          e.currentTarget.style.color = colors.mainBlack;
+                          const icon = e.currentTarget.querySelector('svg');
+                          if (icon) icon.style.color = colors.mainBlack;
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'white';
+                          const icon = e.currentTarget.querySelector('svg');
+                          if (icon) icon.style.color = colors.mainYellow;
+                        }}
                       >
                         <FaUserCircle size={18} style={{ color: colors.mainYellow }} />
                         <span className="font-medium">Sign Up</span>
@@ -562,25 +583,29 @@ export default function Navbar() {
                         <PiDesktopTowerFill size={18} style={{ color: colors.mainYellow }} />
                         <span className="font-medium">My Builds</span>
                       </button>
-                      <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
-                      <button
-                        onClick={() => handleNavigation('/favorites')}
-                        className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
-                        style={{ color: 'white' }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = colors.mainYellow;
-                          e.currentTarget.style.color = colors.mainBlack;
-                          e.currentTarget.querySelector('svg').style.color = colors.mainBlack;
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = 'transparent';
-                          e.currentTarget.style.color = 'white';
-                          e.currentTarget.querySelector('svg').style.color = colors.mainYellow;
-                        }}
-                      >
-                        <FiHeart size={18} style={{ color: colors.mainYellow }} />
-                        <span className="font-medium">Favorites</span>
-                      </button>
+                      {(userRole === 'Admin' || userRole === 'SuperAdmin') && (
+                        <>
+                          <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
+                          <button
+                            onClick={() => handleNavigation('/admin')}
+                            className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
+                            style={{ color: 'white' }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.backgroundColor = colors.mainYellow;
+                              e.currentTarget.style.color = colors.mainBlack;
+                              e.currentTarget.querySelector('svg').style.color = colors.mainBlack;
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.backgroundColor = 'transparent';
+                              e.currentTarget.style.color = 'white';
+                              e.currentTarget.querySelector('svg').style.color = colors.mainYellow;
+                            }}
+                          >
+                            <MdDashboard size={18} style={{ color: colors.mainYellow }} />
+                            <span className="font-medium">Dashboard</span>
+                          </button>
+                        </>
+                      )}
                       <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
                       <button
                         onClick={handleLogout}

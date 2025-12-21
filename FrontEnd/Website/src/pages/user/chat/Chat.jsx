@@ -6,75 +6,46 @@ import {
 } from 'react-icons/fi';
 import { BsThreeDotsVertical, BsRobot } from 'react-icons/bs';
 import { IoArrowBack } from 'react-icons/io5';
+import { toast } from 'react-toastify';
 import colors from '../../../config/colors';
+import { 
+  createHubConnection, 
+  stopHubConnection, 
+  sendMessage, 
+  getAllUsers, 
+  getChat,
+  filterUsersByRole 
+} from '../../../services/chatService';
+
+// Helper function to decode JWT token
+const decodeJWT = (token) => {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    console.error('Error decoding JWT:', error);
+    return null;
+  }
+};
 
 export default function Chat() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [conversations, setConversations] = useState([
-    {
-      id: 'ai-bot',
-      name: 'PC Builder AI Assistant',
-      lastMessage: 'Hi! I am here to help you with PC building questions 🤖',
-      timestamp: 'Now',
-      unread: 0,
-      avatar: '/api/placeholder/40/40',
-      online: true,
-      isAI: true
-    },
-    {
-      id: 1,
-      name: 'Ahmad Hassan',
-      lastMessage: 'Hey! Did you check out the new RTX 4090 builds?',
-      timestamp: '2m ago',
-      unread: 3,
-      avatar: '/api/placeholder/40/40',
-      online: true
-    },
-    {
-      id: 2,
-      name: 'Sarah Al-Najjar',
-      lastMessage: 'Thanks for the RAM recommendation!',
-      timestamp: '15m ago',
-      unread: 0,
-      avatar: '/api/placeholder/40/40',
-      online: true
-    },
-    {
-      id: 3,
-      name: 'Mohammed Khalil',
-      lastMessage: 'Which motherboard works best with i9-13900K?',
-      timestamp: '1h ago',
-      unread: 1,
-      avatar: '/api/placeholder/40/40',
-      online: false
-    },
-    {
-      id: 4,
-      name: 'Layla Mansour',
-      lastMessage: 'Your build looks amazing! 🔥',
-      timestamp: '3h ago',
-      unread: 0,
-      avatar: '/api/placeholder/40/40',
-      online: false
-    },
-    {
-      id: 5,
-      name: 'Omar Qasim',
-      lastMessage: 'Can you help me with my cooling setup?',
-      timestamp: '1d ago',
-      unread: 0,
-      avatar: '/api/placeholder/40/40',
-      online: true
-    }
-  ]);
-
+  const [conversations, setConversations] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
   const [selectedChat, setSelectedChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
   const [showConversations, setShowConversations] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [hubConnection, setHubConnection] = useState(null);
   const messagesEndRef = useRef(null);
 
   // Handle responsive layout
@@ -95,118 +66,238 @@ export default function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Initialize: Get current user and establish SignalR connection
+  useEffect(() => {
+    const initializeChat = async () => {
+      try {
+        // Get current user data from localStorage
+        const token = localStorage.getItem('authToken');
+        const fullName = localStorage.getItem('fullName');
+        const userRole = localStorage.getItem('userRole');
+        
+        if (!token) {
+          toast.error('Please log in to use chat');
+          navigate('/signin');
+          return;
+        }
+
+        // Decode JWT token to get user ID
+        const decodedToken = decodeJWT(token);
+        if (!decodedToken) {
+          toast.error('Invalid authentication token');
+          navigate('/signin');
+          return;
+        }
+
+        // Extract user ID from token (supporting both standard and Microsoft claim names)
+        const userId = decodedToken.sub 
+          || decodedToken.userId 
+          || decodedToken.id 
+          || decodedToken.nameid
+          || decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+        
+        if (!userId) {
+          console.error('Could not extract user ID from token:', decodedToken);
+          toast.error('Authentication error. Please log in again.');
+          navigate('/signin');
+          return;
+        }
+
+        // Create user object from available data
+        const user = {
+          id: userId,
+          fullName: fullName || 'User',
+          role: userRole || 'User',
+          firstName: fullName ? fullName.split(' ')[0] : 'User',
+          lastName: fullName ? fullName.split(' ').slice(1).join(' ') : '',
+        };
+        
+        setCurrentUser(user);
+
+        // Fetch all users from public endpoint
+        const usersData = await getAllUsers();
+        console.log('Fetched users data:', usersData);
+        console.log('Current user:', user);
+        setAllUsers(usersData);
+
+        // Filter users based on current user's role
+        const filteredUsers = filterUsersByRole(usersData, user.role);
+        console.log('Filtered users:', filteredUsers);
+        console.log('Current user role:', user.role);
+        
+        // Convert users to conversations format
+        const userConversations = filteredUsers
+          .filter(u => u.id !== user.id) // Exclude current user
+          .map(u => ({
+            id: u.id,
+            name: u.fullName || u.userName || u.email || 'Unknown User',
+            lastMessage: 'Start a conversation',
+            timestamp: '',
+            unread: 0,
+            avatar: u.profilePictureUrl || '/api/placeholder/40/40',
+            online: false,
+            role: u.userRole, // Use userRole from API
+            email: u.email,
+            userName: u.userName
+          }));
+
+        console.log('User conversations:', userConversations);
+        setConversations(userConversations);
+
+        // Connect to SignalR Hub
+        const connection = await createHubConnection(token);
+        setHubConnection(connection);
+
+        // Listen for incoming messages
+        connection.on('ReceiveMessage', (senderId, message, timestamp) => {
+          console.log('Received message - senderId:', senderId, 'message:', message, 'timestamp:', timestamp);
+          
+          // Format timestamp - handle various formats
+          let formattedTime;
+          try {
+            if (timestamp) {
+              const date = new Date(timestamp);
+              if (isNaN(date.getTime())) {
+                // If invalid date, use current time
+                formattedTime = new Date().toLocaleTimeString('en-US', { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                });
+              } else {
+                formattedTime = date.toLocaleTimeString('en-US', { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                });
+              }
+            } else {
+              // If no timestamp provided, use current time
+              formattedTime = new Date().toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+              });
+            }
+          } catch (error) {
+            console.error('Error formatting timestamp:', error);
+            formattedTime = new Date().toLocaleTimeString('en-US', { 
+              hour: '2-digit', 
+              minute: '2-digit' 
+            });
+          }
+
+          const newMsg = {
+            id: `${senderId}-${Date.now()}-${Math.random()}`,
+            senderId: senderId,
+            text: message,
+            timestamp: formattedTime,
+            isSent: false,
+            isRead: false
+          };
+
+          setMessages(prev => [...prev, newMsg]);
+
+          // Update conversation's last message
+          setConversations(prev => prev.map(conv => 
+            conv.id === senderId 
+              ? { ...conv, lastMessage: message, timestamp: 'Now', unread: conv.unread + 1 }
+              : conv
+          ));
+        });
+
+        // Listen for user online status
+        connection.on('UserOnline', (userId) => {
+          setConversations(prev => prev.map(conv => 
+            conv.id === userId ? { ...conv, online: true } : conv
+          ));
+        });
+
+        connection.on('UserOffline', (userId) => {
+          setConversations(prev => prev.map(conv => 
+            conv.id === userId ? { ...conv, online: false } : conv
+          ));
+        });
+
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Error initializing chat:', error);
+        toast.error('Failed to initialize chat system');
+        setIsLoading(false);
+      }
+    };
+
+    initializeChat();
+
+    // Cleanup on unmount
+    return () => {
+      stopHubConnection();
+    };
+  }, [navigate]);
+
   // Handle incoming tech support worker from navigation
   useEffect(() => {
     const { recipientId, recipientName, recipientAvatar, recipientType } = location.state || {};
     
     if (recipientId && recipientType === 'techSupport') {
       // Check if tech support conversation already exists
-      const existingConv = conversations.find(c => c.id === `tech-${recipientId}`);
+      const existingConv = conversations.find(c => c.id === recipientId);
       
-      if (!existingConv) {
+      if (existingConv) {
+        handleSelectChat(existingConv);
+      } else {
         // Add new tech support conversation
         const newTechSupport = {
-          id: `tech-${recipientId}`,
+          id: recipientId,
           name: recipientName,
           lastMessage: 'Start chatting with your tech support specialist',
           timestamp: 'Now',
           unread: 0,
           avatar: recipientAvatar,
           online: true,
-          isTechSupport: true
+          isTechSupport: true,
+          role: 'TechSupport'
         };
         
         setConversations(prev => [newTechSupport, ...prev]);
-        setSelectedChat(newTechSupport);
-        setMessages([
-          {
-            id: 1,
-            senderId: `tech-${recipientId}`,
-            text: `Hi! I'm ${recipientName}, your tech support specialist. How can I help you today?`,
-            timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-            isSent: false
-          }
-        ]);
-      } else {
-        // Select existing tech support conversation
-        setSelectedChat(existingConv);
-        // Load existing messages for this tech support
-        setMessages([
-          {
-            id: 1,
-            senderId: `tech-${recipientId}`,
-            text: existingConv.lastMessage,
-            timestamp: '10:30 AM',
-            isSent: false
-          }
-        ]);
+        handleSelectChat(newTechSupport);
       }
       
       if (isMobileView) {
         setShowConversations(false);
       }
-    } else {
-      // Default to AI assistant if no tech support selected
-      setSelectedChat(conversations[0]);
-      setMessages([
-        {
-          id: 1,
-          senderId: 'ai-bot',
-          text: 'Hi! I am your PC Builder AI Assistant. I can help you with component selection, compatibility checks, and building recommendations. How can I assist you today?',
-          timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-          isSent: false
-        }
-      ]);
     }
-  }, [location.state, isMobileView]);
+  }, [location.state, conversations, isMobileView]);
 
-  const handleSendMessage = () => {
-    if (newMessage.trim() === '') return;
+  const handleSendMessage = async () => {
+    if (newMessage.trim() === '' || !selectedChat || !hubConnection) return;
 
-    const newMsg = {
-      id: messages.length + 1,
-      senderId: 'me',
-      text: newMessage,
-      timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-      isSent: true,
-      isRead: false
-    };
+    try {
+      const newMsg = {
+        id: `${currentUser.id}-${Date.now()}-${Math.random()}`,
+        senderId: currentUser.id,
+        text: newMessage,
+        timestamp: new Date().toLocaleTimeString('en-US', { 
+          hour: '2-digit', 
+          minute: '2-digit' 
+        }),
+        isSent: true,
+        isRead: false
+      };
 
-    setMessages([...messages, newMsg]);
-    
-    // If chatting with AI, simulate AI response
-    if (selectedChat?.isAI) {
-      setTimeout(() => {
-        const aiResponse = {
-          id: messages.length + 2,
-          senderId: 'ai-bot',
-          text: generateAIResponse(newMessage),
-          timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-          isSent: false
-        };
-        setMessages(prev => [...prev, aiResponse]);
-      }, 1000);
-    }
-    
-    setNewMessage('');
-  };
+      setMessages(prev => [...prev, newMsg]);
+      
+      // Send message through SignalR
+      await sendMessage(selectedChat.id, newMessage);
 
-  const generateAIResponse = (userMessage) => {
-    const lowerMsg = userMessage.toLowerCase();
-    
-    // Basic AI responses based on keywords
-    if (lowerMsg.includes('cpu') || lowerMsg.includes('processor')) {
-      return 'For CPUs, I recommend considering factors like core count, clock speed, and compatibility with your motherboard. Popular choices are Intel Core i5/i7/i9 or AMD Ryzen 5/7/9. What is your budget and use case?';
-    } else if (lowerMsg.includes('gpu') || lowerMsg.includes('graphics')) {
-      return 'GPU selection depends on your resolution and games. RTX 4070/4080 for 1440p-4K gaming, RTX 4060 for 1080p. AMD RX 7800 XT offers great value. What resolution do you play at?';
-    } else if (lowerMsg.includes('ram') || lowerMsg.includes('memory')) {
-      return '16GB RAM is the sweet spot for gaming, 32GB for content creation. DDR5 is newer but DDR4 still performs great. Look for 3200MHz+ speeds. What are you building for?';
-    } else if (lowerMsg.includes('budget')) {
-      return 'Budget builds start around $600-800, mid-range $1000-1500, high-end $2000+. What is your target budget and what will you use the PC for?';
-    } else if (lowerMsg.includes('compatibility') || lowerMsg.includes('compatible')) {
-      return 'I can help check compatibility! Make sure your CPU socket matches motherboard, PSU wattage is sufficient, RAM is supported, and case fits your GPU/cooler. What components are you considering?';
-    } else {
-      return 'That is a great question! I can help you with component selection, compatibility, performance comparisons, and building tips. Could you provide more details about what you need help with?';
+      // Update conversation's last message
+      setConversations(prev => prev.map(conv => 
+        conv.id === selectedChat.id 
+          ? { ...conv, lastMessage: newMessage, timestamp: 'Now' }
+          : conv
+      ));
+      
+      setNewMessage('');
+    } catch (error) {
+      console.error('Error sending message:', error);
+      toast.error('Failed to send message');
     }
   };
 
@@ -217,42 +308,60 @@ export default function Chat() {
     }
   };
 
-  const handleSelectChat = (conversation) => {
+  const handleSelectChat = async (conversation) => {
     setSelectedChat(conversation);
     
-    // Load different messages based on conversation type
-    if (conversation.isAI) {
-      setMessages([
-        {
-          id: 1,
-          senderId: 'ai-bot',
-          text: 'Hi! I am your PC Builder AI Assistant. I can help you with component selection, compatibility checks, and building recommendations. How can I assist you today?',
-          timestamp: new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
-          isSent: false
+    try {
+      // Fetch chat history from API
+      const chatHistory = await getChat(conversation.id);
+      console.log('Chat history received:', chatHistory);
+      
+      // Convert API response to messages format
+      const formattedMessages = chatHistory.map(msg => {
+        console.log('Processing message:', msg);
+        
+        // Format timestamp safely - backend sends 'sentAt'
+        let formattedTime;
+        try {
+          if (msg.sentAt) {
+            const date = new Date(msg.sentAt);
+            if (isNaN(date.getTime())) {
+              console.warn('Invalid timestamp for message:', msg.sentAt);
+              formattedTime = 'Invalid Date';
+            } else {
+              formattedTime = date.toLocaleTimeString('en-US', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+              });
+            }
+          } else {
+            formattedTime = '';
+          }
+        } catch (error) {
+          console.error('Error formatting timestamp:', error);
+          formattedTime = 'Invalid Date';
         }
-      ]);
-    } else if (conversation.isTechSupport) {
-      // Load tech support messages
-      setMessages([
-        {
-          id: 1,
-          senderId: conversation.id,
-          text: `Hi! I'm ${conversation.name}, your tech support specialist. How can I help you today?`,
-          timestamp: '10:30 AM',
-          isSent: false
-        }
-      ]);
-    } else {
-      // Load regular user messages
-      setMessages([
-        {
-          id: 1,
-          senderId: conversation.id,
-          text: conversation.lastMessage,
-          timestamp: '10:30 AM',
-          isSent: false
-        }
-      ]);
+        
+        return {
+          id: msg.id || `${msg.senderId}-${Date.now()}-${Math.random()}`,
+          senderId: msg.senderId,
+          text: msg.message || msg.text,
+          timestamp: formattedTime,
+          isSent: msg.senderId === currentUser.id,
+          isRead: msg.isRead || false
+        };
+      });
+
+      setMessages(formattedMessages);
+
+      // Mark conversation as read
+      setConversations(prev => prev.map(conv => 
+        conv.id === conversation.id ? { ...conv, unread: 0 } : conv
+      ));
+    } catch (error) {
+      console.error('Error loading chat:', error);
+      // Start with empty messages if no chat history
+      setMessages([]);
     }
     
     if (isMobileView) {
@@ -267,6 +376,19 @@ export default function Chat() {
   const filteredConversations = conversations.filter(conv =>
     conv.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center" style={{ backgroundColor: colors.mainBlack }}>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 mx-auto mb-4" 
+               style={{ borderColor: colors.mainYellow }}></div>
+          <p style={{ color: colors.alabaster }}>Loading chat...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen" style={{ backgroundColor: colors.mainBlack }}>
@@ -352,15 +474,15 @@ export default function Chat() {
               }}
             >
               {/* Avatar */}
-              <div className="relative flex-shrink-0">
+              <div className="relative shrink-0">
                 <div 
                   className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold"
                   style={{ 
-                    backgroundColor: conv.isAI ? colors.mainYellow : colors.mainYellow,
+                    backgroundColor: colors.mainYellow,
                     color: colors.mainBlack
                   }}
                 >
-                  {conv.isAI ? <BsRobot size={24} /> : conv.name.charAt(0)}
+                  {conv.name.charAt(0).toUpperCase()}
                 </div>
                 {conv.online && (
                   <div 
@@ -381,31 +503,28 @@ export default function Chat() {
                     style={{ color: colors.alabaster }}
                   >
                     {conv.name}
-                    {conv.isAI && (
+                    {conv.role && (
                       <span 
                         className="ml-2 text-xs px-2 py-0.5 rounded-full"
                         style={{ 
-                          backgroundColor: colors.mainYellow + '30',
-                          color: colors.mainYellow
+                          backgroundColor: conv.role === 'Admin' || conv.role === 'SuperAdmin' 
+                            ? '#ef4444' + '30' 
+                            : conv.role === 'TechSupport' 
+                              ? '#10b981' + '30' 
+                              : colors.mainYellow + '30',
+                          color: conv.role === 'Admin' || conv.role === 'SuperAdmin' 
+                            ? '#ef4444' 
+                            : conv.role === 'TechSupport' 
+                              ? '#10b981' 
+                              : colors.mainYellow
                         }}
                       >
-                        AI
-                      </span>
-                    )}
-                    {conv.isTechSupport && (
-                      <span 
-                        className="ml-2 text-xs px-2 py-0.5 rounded-full"
-                        style={{ 
-                          backgroundColor: '#10b981' + '30',
-                          color: '#10b981'
-                        }}
-                      >
-                        Tech Support
+                        {conv.role}
                       </span>
                     )}
                   </h3>
                   <span 
-                    className="text-xs ml-2 flex-shrink-0"
+                    className="text-xs ml-2 shrink-0"
                     style={{ color: colors.platinum }}
                   >
                     {conv.timestamp}
@@ -420,7 +539,7 @@ export default function Chat() {
                   </p>
                   {conv.unread > 0 && (
                     <span 
-                      className="ml-2 px-2 py-0.5 rounded-full text-xs font-bold flex-shrink-0"
+                      className="ml-2 px-2 py-0.5 rounded-full text-xs font-bold shrink-0"
                       style={{ 
                         backgroundColor: colors.mainYellow,
                         color: colors.mainBlack
@@ -475,7 +594,7 @@ export default function Chat() {
                       color: colors.mainBlack
                     }}
                   >
-                    {selectedChat.isAI ? <BsRobot size={24} /> : selectedChat.name.charAt(0)}
+                    {selectedChat.name.charAt(0).toUpperCase()}
                   </div>
                   {selectedChat.online && (
                     <div 
@@ -493,26 +612,23 @@ export default function Chat() {
                     style={{ color: colors.alabaster }}
                   >
                     {selectedChat.name}
-                    {selectedChat.isAI && (
+                    {selectedChat.role && (
                       <span 
                         className="text-xs px-2 py-0.5 rounded-full"
                         style={{ 
-                          backgroundColor: colors.mainYellow + '30',
-                          color: colors.mainYellow
+                          backgroundColor: selectedChat.role === 'Admin' || selectedChat.role === 'SuperAdmin' 
+                            ? '#ef4444' + '30' 
+                            : selectedChat.role === 'TechSupport' 
+                              ? '#10b981' + '30' 
+                              : colors.mainYellow + '30',
+                          color: selectedChat.role === 'Admin' || selectedChat.role === 'SuperAdmin' 
+                            ? '#ef4444' 
+                            : selectedChat.role === 'TechSupport' 
+                              ? '#10b981' 
+                              : colors.mainYellow
                         }}
                       >
-                        AI Assistant
-                      </span>
-                    )}
-                    {selectedChat.isTechSupport && (
-                      <span 
-                        className="text-xs px-2 py-0.5 rounded-full"
-                        style={{ 
-                          backgroundColor: '#10b981' + '30',
-                          color: '#10b981'
-                        }}
-                      >
-                        Tech Support
+                        {selectedChat.role}
                       </span>
                     )}
                   </h2>
@@ -520,14 +636,13 @@ export default function Chat() {
                     className="text-sm"
                     style={{ color: selectedChat.online ? '#10b981' : colors.platinum }}
                   >
-                    {selectedChat.isAI ? 'Always Available' : selectedChat.online ? 'Online' : 'Offline'}
+                    {selectedChat.online ? 'Online' : 'Offline'}
                   </p>
                 </div>
               </div>
 
-              {/* Action Buttons - Hide for AI chat */}
-              {!selectedChat.isAI && (
-                <div className="flex items-center space-x-2">
+              {/* Action Buttons */}
+              <div className="flex items-center space-x-2">
                   <button
                     className="p-2 rounded-full transition-all"
                     style={{ color: colors.mainYellow }}
@@ -553,38 +668,37 @@ export default function Chat() {
                     <BsThreeDotsVertical size={20} />
                   </button>
                 </div>
-              )}
-            </div>
+              </div>
 
             {/* Messages Area */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {messages.map((message) => (
                 <div
                   key={message.id}
-                  className={`flex ${message.senderId === 'me' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex ${message.isSent ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
                     className={`max-w-[70%] md:max-w-[60%] lg:max-w-[50%] rounded-2xl px-4 py-2 ${
-                      message.senderId === 'me' ? 'rounded-br-sm' : 'rounded-bl-sm'
+                      message.isSent ? 'rounded-br-sm' : 'rounded-bl-sm'
                     }`}
                     style={{
-                      backgroundColor: message.senderId === 'me' ? colors.mainYellow : colors.jet,
-                      color: message.senderId === 'me' ? colors.mainBlack : colors.alabaster
+                      backgroundColor: message.isSent ? colors.mainYellow : colors.jet,
+                      color: message.isSent ? colors.mainBlack : colors.alabaster
                     }}
                   >
-                    <p className="text-sm md:text-base break-words">{message.text}</p>
+                    <p className="text-sm md:text-base wrap-break-word">{message.text}</p>
                     <div className="flex items-center justify-end mt-1 space-x-1">
                       <span 
                         className="text-xs"
                         style={{ 
-                          color: message.senderId === 'me' 
+                          color: message.isSent 
                             ? colors.mainBlack + '80' 
                             : colors.platinum 
                         }}
                       >
                         {message.timestamp}
                       </span>
-                      {message.senderId === 'me' && (
+                      {message.isSent && (
                         message.isRead ? (
                           <FiCheckCircle size={14} style={{ color: colors.mainBlack + '80' }} />
                         ) : (
@@ -607,27 +721,25 @@ export default function Chat() {
               }}
             >
               <div className="flex items-end space-x-2">
-                {/* Attachment Buttons - Hide for AI chat */}
-                {!selectedChat.isAI && (
-                  <div className="flex space-x-1">
-                    <button
-                      className="p-2 rounded-full transition-all"
-                      style={{ color: colors.mainYellow }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainBlack}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                    >
-                      <FiPaperclip size={20} />
-                    </button>
-                    <button
-                      className="p-2 rounded-full transition-all"
-                      style={{ color: colors.mainYellow }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainBlack}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                    >
-                      <FiImage size={20} />
-                    </button>
-                  </div>
-                )}
+                {/* Attachment Buttons */}
+                <div className="flex space-x-1">
+                  <button
+                    className="p-2 rounded-full transition-all"
+                    style={{ color: colors.mainYellow }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainBlack}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    <FiPaperclip size={20} />
+                  </button>
+                  <button
+                    className="p-2 rounded-full transition-all"
+                    style={{ color: colors.mainYellow }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainBlack}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    <FiImage size={20} />
+                  </button>
+                </div>
 
                 {/* Text Input */}
                 <div className="flex-1 relative">
@@ -635,7 +747,7 @@ export default function Chat() {
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyPress={handleKeyPress}
-                    placeholder={selectedChat.isAI ? "Ask me anything about PC building..." : "Type a message..."}
+                    placeholder="Type a message..."
                     rows={1}
                     className="w-full px-4 py-2.5 pr-12 rounded-full text-sm focus:outline-none focus:ring-2 resize-none overflow-hidden"
                     style={{ 
@@ -651,16 +763,14 @@ export default function Chat() {
                       e.target.style.height = Math.min(e.target.scrollHeight, 100) + 'px';
                     }}
                   />
-                  {!selectedChat.isAI && (
-                    <button
-                      className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-full transition-all"
-                      style={{ color: colors.mainYellow }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainBlack}
-                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-                    >
-                      <FiSmile size={20} />
-                    </button>
-                  )}
+                  <button
+                    className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-full transition-all"
+                    style={{ color: colors.mainYellow }}
+                    onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainBlack}
+                    onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                  >
+                    <FiSmile size={20} />
+                  </button>
                 </div>
 
                 {/* Send Button */}

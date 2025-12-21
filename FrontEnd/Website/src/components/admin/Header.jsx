@@ -1,7 +1,23 @@
 import { MdMenu, MdNotifications, MdSearch } from 'react-icons/md';
+import { useState, useEffect } from 'react';
 import colors from '../../config/colors';
 
 const Header = ({ toggleSidebar }) => {
+  const [fullName, setFullName] = useState('Admin User');
+  const [userRole, setUserRole] = useState('Admin');
+
+  useEffect(() => {
+    // Get user info from localStorage
+    const storedFullName = localStorage.getItem('fullName');
+    const storedUserRole = localStorage.getItem('userRole');
+    
+    if (storedFullName) setFullName(storedFullName);
+    if (storedUserRole) setUserRole(storedUserRole);
+  }, []);
+
+  // Get first letter of name for avatar
+  const avatarLetter = fullName.charAt(0).toUpperCase();
+
   return (
     <header 
       className="h-16 shadow-md flex items-center justify-between px-6"
@@ -64,10 +80,10 @@ const Header = ({ toggleSidebar }) => {
         <div className="flex items-center gap-3">
           <div className="text-right hidden md:block">
             <p className="text-sm font-semibold" style={{ color: colors.mainBlack }}>
-              Admin User
+              {fullName}
             </p>
             <p className="text-xs" style={{ color: colors.jet }}>
-              admin@pcbuilder.com
+              {userRole}
             </p>
           </div>
           <div 
@@ -77,7 +93,7 @@ const Header = ({ toggleSidebar }) => {
               color: colors.mainBlack
             }}
           >
-            A
+            {avatarLetter}
           </div>
         </div>
       </div>

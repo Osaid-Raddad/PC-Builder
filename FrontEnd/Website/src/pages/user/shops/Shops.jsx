@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
 import BounceCard from '../../../components/animations/BounceCard/BounceCard';
@@ -6,27 +6,29 @@ import colors from '../../../config/colors';
 import { FiExternalLink, FiMapPin, FiChevronLeft, FiChevronRight, FiFilter, FiSearch, FiPlus, FiShoppingBag, FiX, FiUpload, FiImage } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 import BlurText from '../../../components/animations/BlurText/BlurText';
+import { useForm } from 'react-hook-form';
+import apiClient from '../../../services/apiService';
 
 const Shops = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCity, setSelectedCity] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [showSubmitModal, setShowSubmitModal] = useState(false);
-  const [shopSubmission, setShopSubmission] = useState({
-    shopName: '',
-    ownerName: '',
-    email: '',
-    phone: '',
-    city: '',
-    location: '',
-    website: '',
-    description: '',
-    specialties: '',
-    logo: null
-  });
   const [logoPreview, setLogoPreview] = useState(null);
   const [animationKey, setAnimationKey] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const shopsPerPage = 6;
+
+  // React Hook Form
+  const { register, handleSubmit, formState: { errors }, reset, setValue, watch } = useForm();
+  const watchLogo = watch('ShopLogo');
+
+  // Check if user is logged in
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    setIsLoggedIn(!!token);
+  }, []);
 
   const allShops = [
     {
@@ -303,14 +305,6 @@ const Shops = () => {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
-  const handleSubmissionChange = (e) => {
-    const { name, value } = e.target;
-    setShopSubmission(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
   const handleLogoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -318,19 +312,18 @@ const Shops = () => {
       const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/svg+xml'];
       if (!validTypes.includes(file.type)) {
         toast.error('Please upload a valid image file (JPG, PNG, WEBP, or SVG)');
+        e.target.value = null;
+        setLogoPreview(null);
         return;
       }
 
       // Validate file size (max 2MB)
       if (file.size > 2 * 1024 * 1024) {
         toast.error('Logo size must be less than 2MB');
+        e.target.value = null;
+        setLogoPreview(null);
         return;
       }
-
-      setShopSubmission(prev => ({
-        ...prev,
-        logo: file
-      }));
 
       // Create preview
       const reader = new FileReader();
@@ -338,41 +331,105 @@ const Shops = () => {
         setLogoPreview(reader.result);
       };
       reader.readAsDataURL(file);
+    } else {
+      setLogoPreview(null);
     }
   };
 
-  const handleSubmitShop = (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
     
-    // Validation
-    if (!shopSubmission.shopName || !shopSubmission.ownerName || !shopSubmission.email || 
-        !shopSubmission.phone || !shopSubmission.city || !shopSubmission.location ||
-        !shopSubmission.website || !shopSubmission.description || !shopSubmission.specialties ||
-        !shopSubmission.logo) {
-      toast.error('Please fill in all required fields including the logo');
-      return;
-    }
+    try {
+      // Get token from localStorage
+      const token = localStorage.getItem('authToken');
+      
+      if (!token) {
+        toast.error('You must be logged in to submit a shop');
+        setIsSubmitting(false);
+        return;
+      }
 
-    // TODO: Send submission to backend/database
-    console.log('Shop Submission:', shopSubmission);
-    
-    toast.success('Your shop has been submitted for review! We will contact you soon.');
-    
-    // Reset form and close modal
-    setShopSubmission({
-      shopName: '',
-      ownerName: '',
-      email: '',
-      phone: '',
-      city: '',
-      location: '',
-      website: '',
-      description: '',
-      specialties: '',
-      logo: null
-    });
-    setLogoPreview(null);
-    setShowSubmitModal(false);
+      // Validate that logo file exists
+      if (!data.ShopLogo || !data.ShopLogo[0]) {
+        toast.error('Please upload a shop logo');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Create FormData object
+      const formData = new FormData();
+      formData.append('ShopName', data.ShopName);
+      formData.append('OwnerName', data.OwnerName);
+      formData.append('Email', data.Email);
+      formData.append('Phone', data.Phone);
+      formData.append('City', data.City);
+      formData.append('ExactLocation', data.ExactLocation);
+      formData.append('WebURL', data.WebURL);
+      formData.append('Description', data.Description);
+      formData.append('Specialties', data.Specialties);
+      
+      // Append logo file (only one file)
+      const logoFile = data.ShopLogo[0];
+      formData.append('ShopLogo', logoFile, logoFile.name);
+
+      // Debug: Log FormData contents
+      console.log('=== Shop Submission Data ===');
+      console.log('ShopName:', data.ShopName);
+      console.log('OwnerName:', data.OwnerName);
+      console.log('Email:', data.Email);
+      console.log('Phone:', data.Phone);
+      console.log('City:', data.City);
+      console.log('ExactLocation:', data.ExactLocation);
+      console.log('WebURL:', data.WebURL);
+      console.log('Description:', data.Description);
+      console.log('Specialties:', data.Specialties);
+      console.log('Logo File:', {
+        name: logoFile.name,
+        size: logoFile.size,
+        type: logoFile.type
+      });
+      console.log('Token exists:', !!token);
+      console.log('===========================');
+
+      // Make API call with apiClient (token automatically added by interceptor)
+      // Note: Don't set Content-Type for FormData - browser sets it automatically with boundary
+      const response = await apiClient.post(
+        '/Shops/Shop/Request',
+        formData
+      );
+
+      console.log('Success response:', response.data);
+
+      // Success handling
+      toast.success('Your shop has been submitted for review! We will contact you soon.');
+      
+      // Reset form and close modal
+      reset();
+      setLogoPreview(null);
+      setShowSubmitModal(false);
+    } catch (error) {
+      console.error('Error submitting shop:', error);
+      console.error('Error details:', {
+        message: error.message,
+        code: error.code,
+        response: error.response?.data,
+        status: error.response?.status
+      });
+      
+      if (error.response) {
+        // Server responded with error
+        const errorMessage = error.response.data?.message || error.response.data || 'Failed to submit shop. Please try again.';
+        toast.error(typeof errorMessage === 'string' ? errorMessage : 'Failed to submit shop. Please try again.');
+      } else if (error.request) {
+        // Request made but no response - likely CORS issue
+        toast.error('Cannot connect to server. This may be a CORS configuration issue. Please contact support.');
+      } else {
+        // Other errors
+        toast.error('An error occurred. Please try again.');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -634,13 +691,39 @@ const Shops = () => {
           <p className="text-lg mb-6" style={{ color: colors.jet }}>
             List your shop on our platform and reach thousands of PC builders and tech enthusiasts across Palestine!
           </p>
+          {!isLoggedIn && (
+            <p className="text-sm mb-4 font-semibold" style={{ color: colors.mainYellow }}>
+              Please sign in to submit your shop
+            </p>
+          )}
           <button
-            onClick={() => setShowSubmitModal(true)}
-            className="px-8 py-4 rounded-lg font-bold text-white hover:opacity-90 transition-opacity text-lg flex items-center gap-2 mx-auto cursor-pointer"
-            style={{ backgroundColor: colors.mainYellow }}
+            onClick={() => {
+              if (isLoggedIn) {
+                setShowSubmitModal(true);
+              } else {
+                toast.error('Please sign in to submit your shop');
+              }
+            }}
+            disabled={!isLoggedIn}
+            className="px-8 py-4 rounded-lg font-bold text-white transition-opacity text-lg flex items-center gap-2 mx-auto"
+            style={{ 
+              backgroundColor: isLoggedIn ? colors.mainYellow : colors.platinum,
+              opacity: isLoggedIn ? 1 : 0.6,
+              cursor: isLoggedIn ? 'pointer' : 'not-allowed'
+            }}
+            onMouseEnter={(e) => {
+              if (isLoggedIn) {
+                e.currentTarget.style.opacity = '0.9';
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (isLoggedIn) {
+                e.currentTarget.style.opacity = '1';
+              }
+            }}
           >
             <FiPlus size={20} />
-            Submit Your Shop
+            {isLoggedIn ? 'Submit Your Shop' : 'Sign In Required'}
           </button>
         </div>
 
@@ -689,7 +772,7 @@ const Shops = () => {
             </div>
 
             {/* Modal Body */}
-            <form onSubmit={handleSubmitShop} className="p-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="p-6" encType="multipart/form-data">
               <div className="mb-4 p-4 rounded-lg" style={{ backgroundColor: colors.mainYellow + '15' }}>
                 <p className="text-sm font-semibold" style={{ color: colors.mainBlack }}>
                   📋 Your submission will be reviewed by our team before being published on the website.
@@ -704,19 +787,17 @@ const Shops = () => {
                   </label>
                   <input
                     type="text"
-                    name="shopName"
-                    value={shopSubmission.shopName}
-                    onChange={handleSubmissionChange}
+                    {...register('ShopName', { required: 'Shop name is required' })}
                     placeholder="e.g., Tech Paradise"
                     className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
                     style={{ 
-                      borderColor: colors.platinum,
+                      borderColor: errors.ShopName ? 'red' : colors.platinum,
                       color: colors.mainBlack
                     }}
                     onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
-                    onBlur={(e) => e.target.style.borderColor = colors.platinum}
-                    required
+                    onBlur={(e) => e.target.style.borderColor = errors.ShopName ? 'red' : colors.platinum}
                   />
+                  {errors.ShopName && <p className="text-red-500 text-xs mt-1">{errors.ShopName.message}</p>}
                 </div>
 
                 {/* Owner Name */}
@@ -726,19 +807,17 @@ const Shops = () => {
                   </label>
                   <input
                     type="text"
-                    name="ownerName"
-                    value={shopSubmission.ownerName}
-                    onChange={handleSubmissionChange}
+                    {...register('OwnerName', { required: 'Owner name is required' })}
                     placeholder="Your full name"
                     className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
                     style={{ 
-                      borderColor: colors.platinum,
+                      borderColor: errors.OwnerName ? 'red' : colors.platinum,
                       color: colors.mainBlack
                     }}
                     onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
-                    onBlur={(e) => e.target.style.borderColor = colors.platinum}
-                    required
+                    onBlur={(e) => e.target.style.borderColor = errors.OwnerName ? 'red' : colors.platinum}
                   />
+                  {errors.OwnerName && <p className="text-red-500 text-xs mt-1">{errors.OwnerName.message}</p>}
                 </div>
 
                 {/* Shop Logo */}
@@ -749,43 +828,62 @@ const Shops = () => {
                   <div className="flex items-start gap-4">
                     <div className="flex-1">
                       <label 
-                        className="flex items-center justify-center w-full px-4 py-8 rounded-lg border-2 border-dashed cursor-pointer transition-all hover:border-solid"
+                        className="flex items-center justify-center w-full px-4 py-12 rounded-lg border-2 border-dashed cursor-pointer transition-all hover:border-solid"
                         style={{ 
-                          borderColor: colors.platinum,
+                          borderColor: errors.ShopLogo ? 'red' : colors.platinum,
                           backgroundColor: colors.mainYellow + '08'
                         }}
                         onMouseEnter={(e) => e.currentTarget.style.borderColor = colors.mainYellow}
-                        onMouseLeave={(e) => e.currentTarget.style.borderColor = colors.platinum}
+                        onMouseLeave={(e) => e.currentTarget.style.borderColor = errors.ShopLogo ? 'red' : colors.platinum}
                       >
                         <input
                           type="file"
                           accept="image/jpeg,image/jpg,image/png,image/webp,image/svg+xml"
-                          onChange={handleLogoChange}
+                          {...register('ShopLogo', { 
+                            required: 'Shop logo is required',
+                            onChange: (e) => handleLogoChange(e),
+                            validate: {
+                              fileType: (files) => {
+                                if (!files || files.length === 0) return 'Shop logo is required';
+                                const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/svg+xml'];
+                                return validTypes.includes(files[0].type) || 'Please upload a valid image file (JPG, PNG, WEBP, or SVG)';
+                              },
+                              fileSize: (files) => {
+                                if (!files || files.length === 0) return 'Shop logo is required';
+                                return files[0].size <= 2 * 1024 * 1024 || 'Logo size must be less than 2MB';
+                              }
+                            }
+                          })}
                           className="hidden"
-                          required
                         />
                         <div className="text-center">
-                          <FiUpload className="mx-auto mb-2" size={32} style={{ color: colors.mainYellow }} />
-                          <p className="text-sm font-semibold" style={{ color: colors.mainBlack }}>
+                          <FiUpload className="mx-auto mb-3" size={48} style={{ color: colors.mainYellow }} />
+                          <p className="text-base font-semibold" style={{ color: colors.mainBlack }}>
                             Click to upload logo
                           </p>
-                          <p className="text-xs mt-1" style={{ color: colors.jet }}>
+                          <p className="text-sm mt-2" style={{ color: colors.jet }}>
                             JPG, PNG, WEBP, or SVG (Max 2MB)
                           </p>
+                          {logoPreview && (
+                            <p className="text-xs mt-2 font-semibold" style={{ color: colors.mainYellow }}>
+                              ✓ Logo uploaded
+                            </p>
+                          )}
                         </div>
                       </label>
                     </div>
                     {logoPreview && (
-                      <div className="w-24 h-24 rounded-lg border-2 overflow-hidden flex items-center justify-center bg-white"
+                      <div className="w-40 h-40 rounded-lg border-2 overflow-hidden flex items-center justify-center bg-white"
                            style={{ borderColor: colors.mainYellow }}>
                         <img 
                           src={logoPreview} 
                           alt="Logo preview" 
-                          className="max-w-full max-h-full object-contain"
+                          className="max-w-full max-h-full object-contain p-2"
                         />
                       </div>
                     )}
                   </div>
+                  {errors.ShopLogo && <p className="text-red-500 text-xs mt-1">{errors.ShopLogo.message}</p>}
                 </div>
 
                 {/* Email & Phone */}
@@ -796,19 +894,23 @@ const Shops = () => {
                     </label>
                     <input
                       type="email"
-                      name="email"
-                      value={shopSubmission.email}
-                      onChange={handleSubmissionChange}
+                      {...register('Email', { 
+                        required: 'Email is required',
+                        pattern: {
+                          value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                          message: 'Invalid email address'
+                        }
+                      })}
                       placeholder="shop@example.com"
                       className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
                       style={{ 
-                        borderColor: colors.platinum,
+                        borderColor: errors.Email ? 'red' : colors.platinum,
                         color: colors.mainBlack
                       }}
                       onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
-                      onBlur={(e) => e.target.style.borderColor = colors.platinum}
-                      required
+                      onBlur={(e) => e.target.style.borderColor = errors.Email ? 'red' : colors.platinum}
                     />
+                    {errors.Email && <p className="text-red-500 text-xs mt-1">{errors.Email.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
@@ -816,19 +918,17 @@ const Shops = () => {
                     </label>
                     <input
                       type="tel"
-                      name="phone"
-                      value={shopSubmission.phone}
-                      onChange={handleSubmissionChange}
+                      {...register('Phone', { required: 'Phone number is required' })}
                       placeholder="+970 XX XXX XXXX"
                       className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
                       style={{ 
-                        borderColor: colors.platinum,
+                        borderColor: errors.Phone ? 'red' : colors.platinum,
                         color: colors.mainBlack
                       }}
                       onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
-                      onBlur={(e) => e.target.style.borderColor = colors.platinum}
-                      required
+                      onBlur={(e) => e.target.style.borderColor = errors.Phone ? 'red' : colors.platinum}
                     />
+                    {errors.Phone && <p className="text-red-500 text-xs mt-1">{errors.Phone.message}</p>}
                   </div>
                 </div>
 
@@ -839,17 +939,14 @@ const Shops = () => {
                       City <span style={{ color: 'red' }}>*</span>
                     </label>
                     <select
-                      name="city"
-                      value={shopSubmission.city}
-                      onChange={handleSubmissionChange}
+                      {...register('City', { required: 'City is required' })}
                       className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors cursor-pointer"
                       style={{ 
-                        borderColor: colors.platinum,
+                        borderColor: errors.City ? 'red' : colors.platinum,
                         color: colors.mainBlack
                       }}
                       onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
-                      onBlur={(e) => e.target.style.borderColor = colors.platinum}
-                      required
+                      onBlur={(e) => e.target.style.borderColor = errors.City ? 'red' : colors.platinum}
                     >
                       <option value="">Select a city</option>
                       <option value="Ramallah">Ramallah</option>
@@ -862,6 +959,7 @@ const Shops = () => {
                       <option value="Qalqilya">Qalqilya</option>
                       <option value="Jericho">Jericho</option>
                     </select>
+                    {errors.City && <p className="text-red-500 text-xs mt-1">{errors.City.message}</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
@@ -869,19 +967,17 @@ const Shops = () => {
                     </label>
                     <input
                       type="text"
-                      name="location"
-                      value={shopSubmission.location}
-                      onChange={handleSubmissionChange}
+                      {...register('ExactLocation', { required: 'Exact location is required' })}
                       placeholder="Street address, area"
                       className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
                       style={{ 
-                        borderColor: colors.platinum,
+                        borderColor: errors.ExactLocation ? 'red' : colors.platinum,
                         color: colors.mainBlack
                       }}
                       onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
-                      onBlur={(e) => e.target.style.borderColor = colors.platinum}
-                      required
+                      onBlur={(e) => e.target.style.borderColor = errors.ExactLocation ? 'red' : colors.platinum}
                     />
+                    {errors.ExactLocation && <p className="text-red-500 text-xs mt-1">{errors.ExactLocation.message}</p>}
                   </div>
                 </div>
 
@@ -892,19 +988,23 @@ const Shops = () => {
                   </label>
                   <input
                     type="url"
-                    name="website"
-                    value={shopSubmission.website}
-                    onChange={handleSubmissionChange}
+                    {...register('WebURL', { 
+                      required: 'Website URL is required',
+                      pattern: {
+                        value: /^https?:\/\/.+/,
+                        message: 'Please enter a valid URL starting with http:// or https://'
+                      }
+                    })}
                     placeholder="https://..."
                     className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
                     style={{ 
-                      borderColor: colors.platinum,
+                      borderColor: errors.WebURL ? 'red' : colors.platinum,
                       color: colors.mainBlack
                     }}
                     onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
-                    onBlur={(e) => e.target.style.borderColor = colors.platinum}
-                    required
+                    onBlur={(e) => e.target.style.borderColor = errors.WebURL ? 'red' : colors.platinum}
                   />
+                  {errors.WebURL && <p className="text-red-500 text-xs mt-1">{errors.WebURL.message}</p>}
                 </div>
 
                 {/* Description */}
@@ -913,20 +1013,18 @@ const Shops = () => {
                     Shop Description <span style={{ color: 'red' }}>*</span>
                   </label>
                   <textarea
-                    name="description"
-                    value={shopSubmission.description}
-                    onChange={handleSubmissionChange}
+                    {...register('Description', { required: 'Shop description is required' })}
                     placeholder="Brief description of your shop and services..."
                     rows={4}
                     className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors resize-none"
                     style={{ 
-                      borderColor: colors.platinum,
+                      borderColor: errors.Description ? 'red' : colors.platinum,
                       color: colors.mainBlack
                     }}
                     onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
-                    onBlur={(e) => e.target.style.borderColor = colors.platinum}
-                    required
+                    onBlur={(e) => e.target.style.borderColor = errors.Description ? 'red' : colors.platinum}
                   />
+                  {errors.Description && <p className="text-red-500 text-xs mt-1">{errors.Description.message}</p>}
                 </div>
 
                 {/* Specialties */}
@@ -936,19 +1034,17 @@ const Shops = () => {
                   </label>
                   <input
                     type="text"
-                    name="specialties"
-                    value={shopSubmission.specialties}
-                    onChange={handleSubmissionChange}
+                    {...register('Specialties', { required: 'Specialties are required' })}
                     placeholder="e.g., Gaming PCs, Components, Repairs (comma-separated)"
                     className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
                     style={{ 
-                      borderColor: colors.platinum,
+                      borderColor: errors.Specialties ? 'red' : colors.platinum,
                       color: colors.mainBlack
                     }}
                     onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
-                    onBlur={(e) => e.target.style.borderColor = colors.platinum}
-                    required
+                    onBlur={(e) => e.target.style.borderColor = errors.Specialties ? 'red' : colors.platinum}
                   />
+                  {errors.Specialties && <p className="text-red-500 text-xs mt-1">{errors.Specialties.message}</p>}
                   <p className="text-xs mt-1" style={{ color: colors.jet }}>
                     Separate multiple specialties with commas
                   </p>
@@ -959,22 +1055,34 @@ const Shops = () => {
               <div className="flex gap-4 mt-6">
                 <button
                   type="button"
-                  onClick={() => setShowSubmitModal(false)}
+                  onClick={() => {
+                    setShowSubmitModal(false);
+                    reset();
+                    setLogoPreview(null);
+                  }}
+                  disabled={isSubmitting}
                   className="flex-1 px-6 py-3 rounded-lg font-semibold transition-colors border-2 cursor-pointer"
                   style={{ 
                     borderColor: colors.platinum,
                     color: colors.jet,
-                    backgroundColor: 'white'
+                    backgroundColor: 'white',
+                    opacity: isSubmitting ? 0.5 : 1,
+                    cursor: isSubmitting ? 'not-allowed' : 'pointer'
                   }}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
+                  disabled={isSubmitting}
                   className="flex-1 px-6 py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity cursor-pointer"
-                  style={{ backgroundColor: colors.mainYellow }}
+                  style={{ 
+                    backgroundColor: colors.mainYellow,
+                    opacity: isSubmitting ? 0.5 : 1,
+                    cursor: isSubmitting ? 'not-allowed' : 'pointer'
+                  }}
                 >
-                  Submit for Review
+                  {isSubmitting ? 'Submitting...' : 'Submit for Review'}
                 </button>
               </div>
             </form>
