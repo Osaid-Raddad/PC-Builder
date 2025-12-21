@@ -17,6 +17,21 @@ import {
   filterUsersByRole 
 } from '../../../services/chatService';
 
+// Helper function to decode JWT token
+const decodeJWT = (token) => {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+    return JSON.parse(jsonPayload);
+  } catch (error) {
+    console.error('Error decoding JWT:', error);
+    return null;
+  }
+};
+
 export default function Chat() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -55,42 +70,84 @@ export default function Chat() {
   useEffect(() => {
     const initializeChat = async () => {
       try {
-        // Get current user from localStorage
-        const userStr = localStorage.getItem('userData');
+        // Get current user data from localStorage
         const token = localStorage.getItem('authToken');
+        const fullName = localStorage.getItem('fullName');
+        const userRole = localStorage.getItem('userRole');
         
-        if (!userStr || !token) {
+        if (!token) {
           toast.error('Please log in to use chat');
           navigate('/signin');
           return;
         }
 
-        const user = JSON.parse(userStr);
+        // Decode JWT token to get user ID
+        const decodedToken = decodeJWT(token);
+        if (!decodedToken) {
+          toast.error('Invalid authentication token');
+          navigate('/signin');
+          return;
+        }
+
+        // Extract user ID from token (supporting both standard and Microsoft claim names)
+        const userId = decodedToken.sub 
+          || decodedToken.userId 
+          || decodedToken.id 
+          || decodedToken.nameid
+          || decodedToken['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier'];
+        
+        if (!userId) {
+          console.error('Could not extract user ID from token:', decodedToken);
+          toast.error('Authentication error. Please log in again.');
+          navigate('/signin');
+          return;
+        }
+
+        // Create user object from available data
+        const user = {
+          id: userId,
+          fullName: fullName || 'User',
+          role: userRole || 'User',
+          firstName: fullName ? fullName.split(' ')[0] : 'User',
+          lastName: fullName ? fullName.split(' ').slice(1).join(' ') : '',
+        };
+        
         setCurrentUser(user);
 
-        // Fetch all users
-        const usersData = await getAllUsers();
-        setAllUsers(usersData);
+        // Fetch all users (only admins can access this endpoint)
+        try {
+          const usersData = await getAllUsers();
+          setAllUsers(usersData);
 
-        // Filter users based on current user's role
-        const filteredUsers = filterUsersByRole(usersData, user.role);
-        
-        // Convert users to conversations format
-        const userConversations = filteredUsers
-          .filter(u => u.id !== user.id) // Exclude current user
-          .map(u => ({
-            id: u.id,
-            name: u.firstName && u.lastName ? `${u.firstName} ${u.lastName}` : u.email,
-            lastMessage: 'Start a conversation',
-            timestamp: '',
-            unread: 0,
-            avatar: u.profilePictureUrl || '/api/placeholder/40/40',
-            online: false,
-            role: u.role,
-            email: u.email
-          }));
+          // Filter users based on current user's role
+          const filteredUsers = filterUsersByRole(usersData, user.role);
+          
+          // Convert users to conversations format
+          const userConversations = filteredUsers
+            .filter(u => u.id !== user.id) // Exclude current user
+            .map(u => ({
+              id: u.id,
+              name: u.firstName && u.lastName ? `${u.firstName} ${u.lastName}` : u.email,
+              lastMessage: 'Start a conversation',
+              timestamp: '',
+              unread: 0,
+              avatar: u.profilePictureUrl || '/api/placeholder/40/40',
+              online: false,
+              role: u.role,
+              email: u.email
+            }));
 
-        setConversations(userConversations);
+          setConversations(userConversations);
+        } catch (error) {
+          // If user doesn't have permission (403), start with empty conversations
+          // Conversations will be populated when users message them or from navigation
+          if (error.response?.status === 403) {
+            console.log('User does not have permission to fetch all users. Starting with empty conversations.');
+            setConversations([]);
+          } else {
+            throw error; // Re-throw other errors
+          }
+        }
 
         // Connect to SignalR Hub
         const connection = await createHubConnection(token);

@@ -23,20 +23,11 @@ export default function Navbar() {
   // Check authentication status on component mount
   useEffect(() => {
     const token = localStorage.getItem('authToken');
-    const userData = localStorage.getItem('userData');
+    const fullName = localStorage.getItem('fullName');
     
     if (token) {
       setIsLoggedIn(true);
-      
-      if (userData) {
-        try {
-          const user = JSON.parse(userData);
-          setUserName(user.name || user.username || user.email || 'User');
-        } catch (error) {
-          console.error('Error parsing user data:', error);
-          setUserName('User');
-        }
-      }
+      setUserName(fullName || 'User');
     }
   }, []);
 
