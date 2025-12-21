@@ -4,11 +4,13 @@ import axios from 'axios';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
 import colors from '../../config/colors';
+import { useNavigate } from 'react-router-dom';
 
 const ShopRequests = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // all, pending, approved, rejected
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchRequests();
@@ -16,38 +18,63 @@ const ShopRequests = () => {
 
   const fetchRequests = async () => {
     try {
-      // Replace with your API endpoint
-      // const response = await axios.get('/api/admin/shop-requests');
-      // setRequests(response.data);
+      // Get token from localStorage
+      const token = localStorage.getItem('authToken');
       
-      // Mock data for demonstration
-      setRequests([
-        {
-          id: 1,
-          shopName: 'TechStore Pro',
-          ownerName: 'John Doe',
-          email: 'john@techstore.com',
-          phone: '+1234567890',
-          address: '123 Tech Street, City',
-          status: 'pending',
-          submittedAt: '2024-01-15',
-          documents: ['license.pdf', 'tax_id.pdf']
-        },
-        {
-          id: 2,
-          shopName: 'PC Components Hub',
-          ownerName: 'Jane Smith',
-          email: 'jane@pchub.com',
-          phone: '+0987654321',
-          address: '456 Hardware Ave, Town',
-          status: 'pending',
-          submittedAt: '2024-01-14',
-          documents: ['registration.pdf']
+      if (!token) {
+        toast.error('Please login to access this page');
+        navigate('/signin');
+        return;
+      }
+
+      console.log('Token:', token ? 'Present' : 'Missing');
+      console.log('Fetching from:', '/api/Public/Public/GetShops');
+
+      const response = await axios.get('/api/Public/Public/GetShops', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
-      ]);
+      });
+      
+      console.log('Response data:', response.data);
+      
+      // Map the API response to match our component structure
+      const mappedData = response.data.map(shop => ({
+        id: shop.id,
+        shopName: shop.shopName,
+        ownerName: shop.ownerName,
+        email: shop.email,
+        phone: shop.phone,
+        city: shop.city,
+        exactLocation: shop.exactLocation,
+        webURL: shop.webURL,
+        description: shop.description,
+        specialities: shop.specialities,
+        shopLogoUrl: shop.shopLogoUrl,
+        // Map status: 0 = pending, 1 = approved, 2 = rejected
+        status: shop.status === 0 ? 'pending' : shop.status === 1 ? 'approved' : 'rejected'
+      }));
+      
+      setRequests(mappedData);
       setLoading(false);
     } catch (error) {
-      toast.error('Failed to fetch shop requests');
+      console.error('Error fetching shop requests:', error);
+      console.error('Error details:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        headers: error.response?.headers
+      });
+      
+      if (error.response?.status === 401) {
+        toast.error('Unauthorized access. Please ensure you are logged in as an admin.');
+        // Don't redirect immediately, let the user see the error
+        // localStorage.removeItem('authToken');
+        // navigate('/signin');
+      } else {
+        toast.error('Failed to fetch shop requests');
+      }
+      
       setLoading(false);
     }
   };
@@ -171,31 +198,66 @@ const ShopRequests = () => {
               >
                 {request.status}
               </span>
-              <span className="text-sm text-gray-500">{request.submittedAt}</span>
             </div>
 
+            {/* Shop Logo */}
+            {request.shopLogoUrl && (
+              <div className="flex justify-center mb-6">
+                <div className="relative">
+                  <img 
+                    src={request.shopLogoUrl} 
+                    alt={`${request.shopName} logo`}
+                    className="h-32 w-32 object-contain rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 p-4 shadow-md border-2 border-gray-200 hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+              </div>
+            )}
+
             {/* Shop Info */}
-            <h3 className="text-xl font-bold mb-2" style={{ color: colors.text }}>
+            <h3 className="text-xl font-bold mb-2 text-center" style={{ color: colors.text }}>
               {request.shopName}
             </h3>
             <div className="space-y-2 text-sm text-gray-600 mb-4">
               <p><span className="font-semibold">Owner:</span> {request.ownerName}</p>
               <p><span className="font-semibold">Email:</span> {request.email}</p>
               <p><span className="font-semibold">Phone:</span> {request.phone}</p>
-              <p><span className="font-semibold">Address:</span> {request.address}</p>
+              <p><span className="font-semibold">Location:</span> {request.city}, {request.exactLocation}</p>
+              {request.webURL && (
+                <p>
+                  <span className="font-semibold">Website:</span>{' '}
+                  <a 
+                    href={request.webURL} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:underline"
+                  >
+                    Visit Website
+                  </a>
+                </p>
+              )}
             </div>
 
-            {/* Documents */}
-            <div className="mb-4">
-              <p className="text-sm font-semibold text-gray-700 mb-2">Documents:</p>
-              <div className="flex flex-wrap gap-2">
-                {request.documents.map((doc, index) => (
-                  <span key={index} className="px-3 py-1 bg-gray-100 rounded-lg text-xs">
-                    {doc}
-                  </span>
-                ))}
+            {/* Description */}
+            {request.description && (
+              <div className="mb-4">
+                <p className="text-sm font-semibold text-gray-700 mb-1">Description:</p>
+                <p className="text-sm text-gray-600">{request.description}</p>
               </div>
-            </div>
+            )}
+
+            {/* Specialities */}
+            {request.specialities && (
+              <div className="mb-4">
+                <p className="text-sm font-semibold text-gray-700 mb-2">Specialities:</p>
+                <div className="flex flex-wrap gap-2">
+                  {request.specialities.split(',').map((spec, index) => (
+                    <span key={index} className="px-3 py-1 bg-gray-100 rounded-lg text-xs">
+                      {spec.trim()}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Actions */}
             {request.status === 'pending' && (
