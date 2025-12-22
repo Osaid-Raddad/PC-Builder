@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 const EditProfileModal = ({ userData, onClose, onSave }) => {
   const [editFormData, setEditFormData] = useState({ ...userData });
   const [avatarPreview, setAvatarPreview] = useState(null);
+  const [avatarFile, setAvatarFile] = useState(null);
 
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
@@ -15,10 +16,13 @@ const EditProfileModal = ({ userData, onClose, onSave }) => {
         return;
       }
 
+      // Store the actual file object
+      setAvatarFile(file);
+      
+      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setAvatarPreview(reader.result);
-        setEditFormData({ ...editFormData, avatar: reader.result });
       };
       reader.readAsDataURL(file);
     }
@@ -27,11 +31,8 @@ const EditProfileModal = ({ userData, onClose, onSave }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (avatarPreview) {
-      editFormData.avatar = avatarPreview;
-    }
-    
-    onSave(editFormData);
+    // Pass both form data and the file
+    onSave(editFormData, avatarFile);
   };
 
   return (

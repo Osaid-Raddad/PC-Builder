@@ -172,10 +172,69 @@ const Profile = () => {
     }
   ];
 
-  const handleEditProfile = (updatedData) => {
-    setUserData(updatedData);
-    setShowEditModal(false);
-    toast.success('Profile updated successfully!');
+  const handleEditProfile = async (updatedData, avatarFile) => {
+    try {
+      // Create FormData for the API request
+      const formData = new FormData();
+      
+      // Add text fields (only if they are not '-' or empty)
+      formData.append('FullName', updatedData.name && updatedData.name !== '-' ? updatedData.name : '');
+      formData.append('Email', updatedData.email && updatedData.email !== '-' ? updatedData.email : '');
+      formData.append('Phone', updatedData.phone && updatedData.phone !== '-' ? updatedData.phone : '');
+      formData.append('City', updatedData.city && updatedData.city !== '-' ? updatedData.city : '');
+      formData.append('Street', updatedData.street && updatedData.street !== '-' ? updatedData.street : '');
+      formData.append('Bio', updatedData.bio && updatedData.bio !== '-' ? updatedData.bio : '');
+      
+      // Add profile image if a new one was selected
+      if (avatarFile) {
+        formData.append('ProfileImage', avatarFile);
+      }
+      
+      // Call the API
+      await apiClient.put('/Profile/UserProfile/update', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      // Refresh profile data after successful update
+      const response = await apiClient.get('/Profile/UserProfile/profile');
+      const profileData = response.data;
+      
+      // Transform updated data
+      const transformedData = {
+        id: profileData.id,
+        name: profileData.fullName || '-',
+        email: profileData.email || '-',
+        phone: profileData.phone || '-',
+        city: profileData.city || '-',
+        street: profileData.street || '-',
+        location: profileData.city && profileData.street 
+          ? `${profileData.street}, ${profileData.city}` 
+          : profileData.city || profileData.street || '-',
+        bio: profileData.bio || '-',
+        role: profileData.role || '-',
+        joinDate: profileData.createdAt 
+          ? new Date(profileData.createdAt).toLocaleDateString('en-US', { 
+              year: 'numeric', 
+              month: 'long' 
+            })
+          : '-',
+        avatar: profileData.profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.fullName || 'User')}&background=F9B233&color=fff&size=200`,
+        stats: {
+          builds: 0,
+          favorites: 0,
+          posts: 0
+        }
+      };
+      
+      setUserData(transformedData);
+      setShowEditModal(false);
+      toast.success('Profile updated successfully!');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error('Failed to update profile');
+    }
   };
 
   const handleSaveSettings = (updatedSettings) => {
