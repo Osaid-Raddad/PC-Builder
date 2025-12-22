@@ -10,6 +10,7 @@ import { Tooltip } from 'react-tooltip';
 import toast from 'react-hot-toast';
 import colors from '../../../config/colors';
 import { BsCpuFill} from 'react-icons/bs';
+import apiClient from '../../../services/apiService';
 export default function Navbar() {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -20,6 +21,7 @@ export default function Navbar() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState('');
   const [userRole, setUserRole] = useState('');
+  const [profileImage, setProfileImage] = useState(null);
 
   // Check authentication status on component mount
   useEffect(() => {
@@ -31,8 +33,22 @@ export default function Navbar() {
       setIsLoggedIn(true);
       setUserName(fullName || 'User');
       setUserRole(role || '');
+      
+      // Fetch profile image
+      fetchProfileImage();
     }
   }, []);
+
+  const fetchProfileImage = async () => {
+    try {
+      const response = await apiClient.get('/Profile/UserProfile/profile');
+      if (response.data.profileImageUrl) {
+        setProfileImage(response.data.profileImageUrl);
+      }
+    } catch (error) {
+      console.error('Error fetching profile image:', error);
+    }
+  };
 
   // Product categories with icons
   const productCategories = [
@@ -302,35 +318,6 @@ export default function Navbar() {
 
           {/* Right Side - Search & User - Max Right */}
           <div className="hidden 2xl:flex items-center space-x-3 shrink-0 z-10">
-            {/* Search Bar */}
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Search..."
-                className="pl-10 pr-4 py-2 rounded-full text-sm focus:outline-none focus:ring-2 transition-all duration-200 w-44 cursor-text"
-                style={{ 
-                  backgroundColor: colors.jet,
-                  border: `1px solid ${colors.platinum}`,
-                  color: colors.alabaster,
-                }}
-                onFocus={(e) => {
-                  e.target.style.borderColor = colors.mainYellow;
-                  e.target.style.boxShadow = `0 0 0 3px rgba(243, 189, 74, 0.1)`;
-                }}
-                onBlur={(e) => {
-                  e.target.style.borderColor = colors.platinum;
-                  e.target.style.boxShadow = 'none';
-                }}
-                data-tooltip-id="search-tooltip"
-                data-tooltip-content="Search for products, builds, or posts"
-              />
-              <FiSearch 
-                className="absolute left-3 top-1/2 transform -translate-y-1/2" 
-                style={{ color: colors.mainYellow }}
-                size={18}
-              />
-            </div>
-
             {/* User Avatar with Dropdown */}
             <div className="relative user-menu-container">
               <button 
@@ -342,7 +329,15 @@ export default function Navbar() {
                 data-tooltip-id="user-tooltip"
                 data-tooltip-content={isLoggedIn ? `Logged in as ${userName}` : "Sign in to your account"}
               >
-                <FiUser style={{ color: colors.mainYellow }} size={20} />
+                {isLoggedIn && profileImage ? (
+                  <img 
+                    src={profileImage} 
+                    alt="User Avatar" 
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <FiUser style={{ color: colors.mainYellow }} size={20} />
+                )}
                 <FiChevronDown 
                   style={{ 
                     color: colors.mainYellow,
@@ -411,7 +406,7 @@ export default function Navbar() {
                     // Logged in - Show Profile/My Builds/Dashboard(Admin/SuperAdmin)/Logout
                     <>
                       <button
-                        onClick={() => handleNavigation('/profile')}
+                        onClick={() => handleNavigation(userRole === 'TechSupport' ? '/tech-support/profile' : '/profile')}
                         className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
                         onMouseEnter={(e) => {
@@ -488,7 +483,15 @@ export default function Navbar() {
                 className="flex items-center space-x-2 px-2 py-2 rounded-full transition-all duration-200 cursor-pointer"
                 style={{ border: `2px solid ${colors.mainYellow}` }}
               >
-                <FiUser style={{ color: colors.mainYellow }} size={20} />
+                {isLoggedIn && profileImage ? (
+                  <img 
+                    src={profileImage} 
+                    alt="User Avatar" 
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                ) : (
+                  <FiUser style={{ color: colors.mainYellow }} size={20} />
+                )}
               </button>
 
               {/* User Dropdown for mobile/tablet */}
@@ -547,7 +550,7 @@ export default function Navbar() {
                   ) : (
                     <>
                       <button
-                        onClick={() => handleNavigation('/profile')}
+                        onClick={() => handleNavigation(userRole === 'TechSupport' ? '/tech-support/profile' : '/profile')}
                         className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
                         onMouseEnter={(e) => {

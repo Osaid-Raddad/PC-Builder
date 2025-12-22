@@ -6,7 +6,7 @@ import {
   MdArticle, 
   MdPeople, 
   MdInventory, 
-  MdSettings,
+  MdHome,
   MdLogout
 } from 'react-icons/md';
 import colors from '../../config/colors';
@@ -19,7 +19,6 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     { name: 'Posts', path: '/admin/posts', icon: MdArticle },
     { name: 'Users', path: '/admin/users', icon: MdPeople },
     { name: 'Products', path: '/admin/products', icon: MdInventory },
-    { name: 'Settings', path: '/admin/settings', icon: MdSettings },
   ];
 
   return (
@@ -89,8 +88,24 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
         ))}
       </nav>
 
-      {/* Logout */}
-      <div className="absolute bottom-6 w-full px-3">
+      {/* Bottom Actions */}
+      <div className="absolute bottom-6 w-full px-3 space-y-2">
+        {/* Home Button */}
+        <NavLink
+          to="/"
+          className="flex items-center px-4 py-3 w-full rounded-lg transition-all duration-200"
+          style={{ 
+            color: colors.mainYellow,
+            backgroundColor: 'transparent'
+          }}
+          onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${colors.mainYellow}20`}
+          onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+        >
+          <MdHome className="text-2xl" />
+          {isOpen && <span className="ml-3 font-medium">Back to Home</span>}
+        </NavLink>
+        
+        {/* Logout */}
         <button
           className="flex items-center px-4 py-3 w-full rounded-lg transition-all duration-200"
           style={{ 

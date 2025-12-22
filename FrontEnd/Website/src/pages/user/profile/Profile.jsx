@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
 import BlurText from '../../../components/animations/BlurText/BlurText';
@@ -9,44 +9,68 @@ import BuildsTab from './profileComponents/BuildsTab';
 import FavoritesTab from './profileComponents/FavoritesTab';
 import ActivityTab from './profileComponents/ActivityTab';
 import EditProfileModal from './profileComponents/EditProfileModal';
-import SettingsModal from './profileComponents/SettingsModal';
 import colors from '../../../config/colors';
 import { FiHeart, FiMessageSquare } from 'react-icons/fi';
 import { FaDesktop } from 'react-icons/fa';
 import toast from 'react-hot-toast';
+import apiClient from '../../../services/apiService';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Mock user data
-  const [userData, setUserData] = useState({
-    id: 1,
-    name: 'Ahmad Hassan',
-    email: 'ahmad.hassan@example.com',
-    phone: '+970 59 123 4567',
-    location: 'Nablus, Palestine',
-    joinDate: 'January 2024',
-    avatar: 'https://ui-avatars.com/api/?name=Ahmad+Hassan&background=F9B233&color=fff&size=200',
-    bio: 'PC enthusiast and gaming lover. Always looking for the latest hardware!',
-    stats: {
-      builds: 5,
-      favorites: 12,
-      posts: 8,
-      followers: 45
-    }
-  });
+  // User data from API
+  const [userData, setUserData] = useState(null);
 
-  const [settings, setSettings] = useState({
-    emailNotifications: true,
-    buildUpdates: true,
-    priceAlerts: false,
-    newsletter: true,
-    profileVisibility: 'public',
-    showEmail: false,
-    showPhone: false
-  });
+  // Fetch user profile data
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        setLoading(true);
+        const response = await apiClient.get('/Profile/UserProfile/profile');
+        const profileData = response.data;
+        
+        // Transform API data to match component structure
+        const transformedData = {
+          id: profileData.id,
+          name: profileData.fullName || '-',
+          email: profileData.email || '-',
+          phone: profileData.phone || '-',
+          city: profileData.city || '-',
+          street: profileData.street || '-',
+          location: profileData.city && profileData.street 
+            ? `${profileData.street}, ${profileData.city}` 
+            : profileData.city || profileData.street || '-',
+          bio: profileData.bio || '-',
+          role: profileData.role || '-',
+          joinDate: profileData.createdAt 
+            ? new Date(profileData.createdAt).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long' 
+              })
+            : '-',
+          avatar: profileData.profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.fullName || 'User')}&background=F9B233&color=fff&size=200`,
+          stats: {
+            builds: 0, // Will be handled later
+            favorites: 0, // Will be handled later
+            posts: 0
+          }
+        };
+        
+        setUserData(transformedData);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+        toast.error('Failed to load profile data');
+        setLoading(false);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
 
   // Mock data
   const savedBuilds = [
@@ -138,20 +162,126 @@ const Profile = () => {
     }
   ];
 
-  const handleEditProfile = (updatedData) => {
-    setUserData(updatedData);
-    setShowEditModal(false);
-    toast.success('Profile updated successfully!');
+  const handleEditProfile = async (updatedData, avatarFile) => {
+    try {
+      // Create FormData for the API request
+      const formData = new FormData();
+      
+      // Add text fields (only if they are not '-' or empty)
+      formData.append('FullName', updatedData.name && updatedData.name !== '-' ? updatedData.name : '');
+      formData.append('Email', updatedData.email && updatedData.email !== '-' ? updatedData.email : '');
+      formData.append('Phone', updatedData.phone && updatedData.phone !== '-' ? updatedData.phone : '');
+      formData.append('City', updatedData.city && updatedData.city !== '-' ? updatedData.city : '');
+      formData.append('Street', updatedData.street && updatedData.street !== '-' ? updatedData.street : '');
+      formData.append('Bio', updatedData.bio && updatedData.bio !== '-' ? updatedData.bio : '');
+      
+      // Add profile image if a new one was selected
+      if (avatarFile) {
+        formData.append('ProfileImage', avatarFile);
+      }
+      
+      // Call the API
+      await apiClient.put('/Profile/UserProfile/update', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      // Refresh profile data after successful update
+      const response = await apiClient.get('/Profile/UserProfile/profile');
+      const profileData = response.data;
+      
+      // Transform updated data
+      const transformedData = {
+        id: profileData.id,
+        name: profileData.fullName || '-',
+        email: profileData.email || '-',
+        phone: profileData.phone || '-',
+        city: profileData.city || '-',
+        street: profileData.street || '-',
+        location: profileData.city && profileData.street 
+          ? `${profileData.street}, ${profileData.city}` 
+          : profileData.city || profileData.street || '-',
+        bio: profileData.bio || '-',
+        role: profileData.role || '-',
+        joinDate: profileData.createdAt 
+          ? new Date(profileData.createdAt).toLocaleDateString('en-US', { 
+              year: 'numeric', 
+              month: 'long' 
+            })
+          : '-',
+        avatar: profileData.profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.fullName || 'User')}&background=F9B233&color=fff&size=200`,
+        stats: {
+          builds: 0,
+          favorites: 0,
+          posts: 0
+        }
+      };
+      
+      setUserData(transformedData);
+      setShowEditModal(false);
+      toast.success('Profile updated successfully!');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error('Failed to update profile');
+    }
   };
 
-  const handleSaveSettings = (updatedSettings) => {
-    setSettings(updatedSettings);
-    setShowSettingsModal(false);
-    toast.success('Settings saved successfully!');
-  };
-
-  const handleDeleteAccount = () => {
-    toast.error('This feature will be implemented with backend');
+  const handleDeleteAccount = async () => {
+    // Ask for confirmation with SweetAlert
+    const result = await Swal.fire({
+      title: 'Delete Account?',
+      text: 'Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true
+    });
+    
+    if (!result.isConfirmed) {
+      return;
+    }
+    
+    try {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+      const token = localStorage.getItem('authToken');
+      
+      await axios.delete(
+        `${API_BASE_URL}/api/Profile/Profile/delete`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      
+      // Clear local storage and show success
+      localStorage.removeItem('authToken');
+      
+      await Swal.fire({
+        title: 'Deleted!',
+        text: 'Your account has been deleted successfully.',
+        icon: 'success',
+        confirmButtonColor: '#F9B233',
+        timer: 2000,
+        timerProgressBar: true
+      });
+      
+      // Redirect to home page
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      
+      await Swal.fire({
+        title: 'Error!',
+        text: error.response?.data?.message || 'Failed to delete account. Please try again.',
+        icon: 'error',
+        confirmButtonColor: '#F9B233'
+      });
+    }
   };
 
   return (
@@ -170,41 +300,45 @@ const Profile = () => {
           />
         </div>
 
-        {/* Profile Header */}
-        <ProfileHeader
-          userData={userData}
-          onEditClick={() => setShowEditModal(true)}
-          onSettingsClick={() => setShowSettingsModal(true)}
-        />
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2" 
+                 style={{ borderColor: colors.mainYellow }}></div>
+          </div>
+        ) : userData ? (
+          <>
+            {/* Profile Header */}
+            <ProfileHeader
+              userData={userData}
+              onEditClick={() => setShowEditModal(true)}
+              onDeleteAccountClick={handleDeleteAccount}
+            />
 
-        {/* Tabs */}
-        <ProfileTabs 
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
+            {/* Tabs */}
+            <ProfileTabs 
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+            />
 
-        {/* Tab Content */}
-        {activeTab === 'overview' && <OverviewTab />}
-        {activeTab === 'builds' && <BuildsTab builds={savedBuilds} />}
-        {activeTab === 'favorites' && <FavoritesTab products={favoriteProducts} />}
-        {activeTab === 'activity' && <ActivityTab activities={activityHistory} />}
+            {/* Tab Content */}
+            {activeTab === 'overview' && <OverviewTab />}
+            {activeTab === 'builds' && <BuildsTab builds={savedBuilds} />}
+            {activeTab === 'favorites' && <FavoritesTab products={favoriteProducts} />}
+            {activeTab === 'activity' && <ActivityTab activities={activityHistory} />}
+          </>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">Failed to load profile data</p>
+          </div>
+        )}
       </div>
 
       {/* Modals */}
-      {showEditModal && (
+      {showEditModal && userData && (
         <EditProfileModal
           userData={userData}
           onClose={() => setShowEditModal(false)}
           onSave={handleEditProfile}
-        />
-      )}
-
-      {showSettingsModal && (
-        <SettingsModal
-          initialSettings={settings}
-          onClose={() => setShowSettingsModal(false)}
-          onSave={handleSaveSettings}
-          onDeleteAccount={handleDeleteAccount}
         />
       )}
 

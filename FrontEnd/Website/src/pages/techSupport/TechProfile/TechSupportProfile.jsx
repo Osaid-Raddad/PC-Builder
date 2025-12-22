@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
 import BlurText from '../../../components/animations/BlurText/BlurText';
@@ -9,35 +9,72 @@ import AppointmentsTab from './techComponents/AppointmentsTab';
 import ScheduleTab from './techComponents/ScheduleTab.jsx';
 import StatsTab from './techComponents/StatsTab';
 import EditProfileModal from './techComponents/EditProfileModal';
-import SettingsModal from './techComponents/SettingsModal';
 import colors from '../../../config/colors';
 import toast from 'react-hot-toast';
+import apiClient from '../../../services/apiService';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const TechSupportProfile = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Mock user data - Replace with actual data from context/API
-  const [userData, setUserData] = useState({
-    id: 1,
-    name: 'Khaled Ibrahim',
-    email: 'khaled.tech@pcbuilder.ps',
-    phone: '+970 59 987 6543',
-    location: 'Ramallah, Palestine',
-    joinDate: 'June 2023',
-    avatar: 'https://ui-avatars.com/api/?name=Khaled+Ibrahim&background=F9B233&color=fff&size=200',
-    bio: 'Experienced tech support specialist helping users build and maintain their dream PCs.',
-    specialization: 'Gaming PCs & Hardware',
-    experience: '5 years',
-    isOnline: true,
-    stats: {
-      totalAppointments: 127,
-      rating: 4.8,
-      reviews: 89,
-      responseTime: '< 2hrs'
-    }
-  });
+  // User data from API
+  const [userData, setUserData] = useState(null);
+
+  // Fetch tech support profile data
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        setLoading(true);
+        const response = await apiClient.get('/Profile/TechProfile/profile');
+        const profileData = response.data;
+        
+        // Transform API data to match component structure
+        const transformedData = {
+          id: profileData.id,
+          name: profileData.fullName || '-',
+          email: profileData.email || '-',
+          phone: profileData.phone || '-',
+          city: profileData.city || '-',
+          street: profileData.street || '-',
+          location: profileData.city && profileData.street 
+            ? `${profileData.street}, ${profileData.city}` 
+            : profileData.city || profileData.street || '-',
+          bio: profileData.bio || '-',
+          specialization: profileData.specialization || '-',
+          experience: profileData.yearsOfExperience ? `${profileData.yearsOfExperience} years` : '-',
+          yearsOfExperience: profileData.yearsOfExperience || '',
+          rate: profileData.rate || '-',
+          role: profileData.role || '-',
+          joinDate: profileData.createdAt 
+            ? new Date(profileData.createdAt).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long' 
+              })
+            : '-',
+          avatar: profileData.profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.fullName || 'User')}&background=F9B233&color=fff&size=200`,
+          isOnline: true, // Default
+          stats: {
+            totalAppointments: profileData.completedSessionsCount || 0,
+            rating: 0, // Will be handled later
+            reviews: 0, // Will be handled later
+            responseTime: '-' // Will be handled later
+          }
+        };
+        
+        setUserData(transformedData);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching tech profile data:', error);
+        toast.error('Failed to load profile data');
+        setLoading(false);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
 
   // Mock appointments data
   const [appointments, setAppointments] = useState([
@@ -188,14 +225,7 @@ const TechSupportProfile = () => {
     }
   ];
 
-  const [settings, setSettings] = useState({
-    emailNotifications: true,
-    appointmentReminders: true,
-    newRequestAlerts: true,
-    reviewNotifications: true,
-    profileVisibility: 'public',
-    showContactInfo: true
-  });
+
 
   // Handlers
   const handleUpdateAppointmentStatus = (appointmentId, newStatus) => {
@@ -228,20 +258,134 @@ const TechSupportProfile = () => {
     toast.success('Schedule updated successfully!');
   };
 
-  const handleEditProfile = (updatedData) => {
-    setUserData(updatedData);
-    setShowEditModal(false);
-    toast.success('Profile updated successfully!');
+  const handleEditProfile = async (updatedData, avatarFile) => {
+    try {
+      // Create FormData for the API request
+      const formData = new FormData();
+      
+      // Add text fields (only if they are not '-' or empty)
+      formData.append('FullName', updatedData.name && updatedData.name !== '-' ? updatedData.name : '');
+      formData.append('Email', updatedData.email && updatedData.email !== '-' ? updatedData.email : '');
+      formData.append('Phone', updatedData.phone && updatedData.phone !== '-' ? updatedData.phone : '');
+      formData.append('City', updatedData.city && updatedData.city !== '-' ? updatedData.city : '');
+      formData.append('Street', updatedData.street && updatedData.street !== '-' ? updatedData.street : '');
+      formData.append('Bio', updatedData.bio && updatedData.bio !== '-' ? updatedData.bio : '');
+      formData.append('Specialization', updatedData.specialization || '');
+      formData.append('YearsOfExperience', updatedData.yearsOfExperience ? updatedData.yearsOfExperience.toString() : '0');
+      
+      // Add profile image if a new one was selected
+      if (avatarFile) {
+        formData.append('ProfileImage', avatarFile);
+      }
+      
+      // Call the API
+      await apiClient.put('/Profile/TechProfile/update', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
+      // Refresh profile data after successful update
+      const response = await apiClient.get('/Profile/TechProfile/profile');
+      const profileData = response.data;
+      
+      // Transform updated data
+      const transformedData = {
+        id: profileData.id,
+        name: profileData.fullName || '-',
+        email: profileData.email || '-',
+        phone: profileData.phone || '-',
+        city: profileData.city || '-',
+        street: profileData.street || '-',
+        location: profileData.city && profileData.street 
+          ? `${profileData.street}, ${profileData.city}` 
+          : profileData.city || profileData.street || '-',
+        bio: profileData.bio || '-',
+        specialization: profileData.specialization || '-',
+        experience: profileData.yearsOfExperience ? `${profileData.yearsOfExperience} years` : '-',
+        yearsOfExperience: profileData.yearsOfExperience || '',
+        rate: profileData.rate || '-',
+        role: profileData.role || '-',
+        joinDate: profileData.createdAt 
+          ? new Date(profileData.createdAt).toLocaleDateString('en-US', { 
+              year: 'numeric', 
+              month: 'long' 
+            })
+          : '-',
+        avatar: profileData.profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.fullName || 'User')}&background=F9B233&color=fff&size=200`,
+        isOnline: true,
+        stats: {
+          totalAppointments: profileData.completedSessionsCount || 0,
+          rating: 0,
+          reviews: 0,
+          responseTime: '-'
+        }
+      };
+      
+      setUserData(transformedData);
+      setShowEditModal(false);
+      toast.success('Profile updated successfully!');
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast.error('Failed to update profile');
+    }
   };
 
-  const handleSaveSettings = (updatedSettings) => {
-    setSettings(updatedSettings);
-    setShowSettingsModal(false);
-    toast.success('Settings saved successfully!');
-  };
-
-  const handleDeleteAccount = () => {
-    toast.error('This feature will be implemented with backend');
+  const handleDeleteAccount = async () => {
+    // Ask for confirmation with SweetAlert
+    const result = await Swal.fire({
+      title: 'Delete Account?',
+      text: 'Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true
+    });
+    
+    if (!result.isConfirmed) {
+      return;
+    }
+    
+    try {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+      const token = localStorage.getItem('authToken');
+      
+      await axios.delete(
+        `${API_BASE_URL}/api/Profile/Profile/delete`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      
+      // Clear local storage and show success
+      localStorage.removeItem('authToken');
+      
+      await Swal.fire({
+        title: 'Deleted!',
+        text: 'Your account has been deleted successfully.',
+        icon: 'success',
+        confirmButtonColor: '#F9B233',
+        timer: 2000,
+        timerProgressBar: true
+      });
+      
+      // Redirect to home page
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      
+      await Swal.fire({
+        title: 'Error!',
+        text: error.response?.data?.message || 'Failed to delete account. Please try again.',
+        icon: 'error',
+        confirmButtonColor: '#F9B233'
+      });
+    }
   };
 
   return (
@@ -260,62 +404,66 @@ const TechSupportProfile = () => {
           />
         </div>
 
-        {/* Profile Header */}
-        <TechSupportHeader
-          userData={userData}
-          onEditClick={() => setShowEditModal(true)}
-          onSettingsClick={() => setShowSettingsModal(true)}
-        />
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2" 
+                 style={{ borderColor: colors.mainYellow }}></div>
+          </div>
+        ) : userData ? (
+          <>
+            {/* Profile Header */}
+            <TechSupportHeader
+              userData={userData}
+              onEditClick={() => setShowEditModal(true)}
+              onDeleteAccountClick={handleDeleteAccount}
+            />
 
-        {/* Tabs */}
-        <TechSupportTabs 
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
+            {/* Tabs */}
+            <TechSupportTabs 
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+            />
 
-        {/* Tab Content */}
-        {activeTab === 'overview' && (
-          <OverviewTab 
-            upcomingAppointments={upcomingAppointments}
-            todaySchedule={todaySchedule}
-          />
-        )}
-        
-        {activeTab === 'appointments' && (
-          <AppointmentsTab 
-            appointments={appointments}
-            onUpdateStatus={handleUpdateAppointmentStatus}
-            onGenerateMeeting={handleGenerateMeeting}
-          />
-        )}
-        
-        {activeTab === 'schedule' && (
-          <ScheduleTab 
-            schedule={schedule}
-            onSaveSchedule={handleSaveSchedule}
-          />
-        )}
-        
-        {activeTab === 'stats' && (
-          <StatsTab stats={stats} />
+            {/* Tab Content */}
+            {activeTab === 'overview' && (
+              <OverviewTab 
+                upcomingAppointments={upcomingAppointments}
+                todaySchedule={todaySchedule}
+              />
+            )}
+            
+            {activeTab === 'appointments' && (
+              <AppointmentsTab 
+                appointments={appointments}
+                onUpdateStatus={handleUpdateAppointmentStatus}
+                onGenerateMeeting={handleGenerateMeeting}
+              />
+            )}
+            
+            {activeTab === 'schedule' && (
+              <ScheduleTab 
+                schedule={schedule}
+                onSaveSchedule={handleSaveSchedule}
+              />
+            )}
+            
+            {activeTab === 'stats' && (
+              <StatsTab stats={stats} />
+            )}
+          </>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">Failed to load profile data</p>
+          </div>
         )}
       </div>
 
       {/* Modals */}
-      {showEditModal && (
+      {showEditModal && userData && (
         <EditProfileModal
           userData={userData}
           onClose={() => setShowEditModal(false)}
           onSave={handleEditProfile}
-        />
-      )}
-
-      {showSettingsModal && (
-        <SettingsModal
-          initialSettings={settings}
-          onClose={() => setShowSettingsModal(false)}
-          onSave={handleSaveSettings}
-          onDeleteAccount={handleDeleteAccount}
         />
       )}
 

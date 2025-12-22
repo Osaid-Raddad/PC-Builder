@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 const EditProfileModal = ({ userData, onClose, onSave }) => {
   const [editFormData, setEditFormData] = useState({ ...userData });
   const [avatarPreview, setAvatarPreview] = useState(null);
+  const [avatarFile, setAvatarFile] = useState(null);
 
   const specializations = [
     'Gaming PCs & Hardware',
@@ -20,15 +21,18 @@ const EditProfileModal = ({ userData, onClose, onSave }) => {
   const handleAvatarChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        toast.error('Avatar size must be less than 2MB');
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('Avatar size must be less than 5MB');
         return;
       }
 
+      // Store the actual file object
+      setAvatarFile(file);
+      
+      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         setAvatarPreview(reader.result);
-        setEditFormData({ ...editFormData, avatar: reader.result });
       };
       reader.readAsDataURL(file);
     }
@@ -37,11 +41,8 @@ const EditProfileModal = ({ userData, onClose, onSave }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     
-    if (avatarPreview) {
-      editFormData.avatar = avatarPreview;
-    }
-    
-    onSave(editFormData);
+    // Pass both form data and the file
+    onSave(editFormData, avatarFile);
   };
 
   return (
@@ -96,7 +97,7 @@ const EditProfileModal = ({ userData, onClose, onSave }) => {
               </label>
             </div>
             <p className="text-sm mt-2" style={{ color: colors.jet }}>
-              Click to upload new avatar (Max 2MB)
+              Click to upload new avatar (Max 5MB)
             </p>
           </div>
 
@@ -142,10 +143,11 @@ const EditProfileModal = ({ userData, onClose, onSave }) => {
                 Years of Experience
               </label>
               <input
-                type="text"
-                value={editFormData.experience}
-                onChange={(e) => setEditFormData({ ...editFormData, experience: e.target.value })}
-                placeholder="e.g., 5 years"
+                type="number"
+                value={editFormData.yearsOfExperience || ''}
+                onChange={(e) => setEditFormData({ ...editFormData, yearsOfExperience: e.target.value })}
+                placeholder="e.g., 5"
+                min="0"
                 className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
                 style={{ borderColor: colors.platinum }}
                 onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
@@ -185,15 +187,31 @@ const EditProfileModal = ({ userData, onClose, onSave }) => {
               />
             </div>
 
-            {/* Location */}
+            {/* City */}
             <div>
               <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
-                Location
+                City
               </label>
               <input
                 type="text"
-                value={editFormData.location}
-                onChange={(e) => setEditFormData({ ...editFormData, location: e.target.value })}
+                value={editFormData.city || ''}
+                onChange={(e) => setEditFormData({ ...editFormData, city: e.target.value })}
+                className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
+                style={{ borderColor: colors.platinum }}
+                onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
+                onBlur={(e) => e.target.style.borderColor = colors.platinum}
+              />
+            </div>
+
+            {/* Street */}
+            <div>
+              <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                Street
+              </label>
+              <input
+                type="text"
+                value={editFormData.street || ''}
+                onChange={(e) => setEditFormData({ ...editFormData, street: e.target.value })}
                 className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
                 style={{ borderColor: colors.platinum }}
                 onFocus={(e) => e.target.style.borderColor = colors.mainYellow}

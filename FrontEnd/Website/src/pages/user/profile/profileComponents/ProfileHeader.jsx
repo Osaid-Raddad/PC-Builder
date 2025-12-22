@@ -1,9 +1,9 @@
 import React from 'react';
-import { FiMail, FiPhone, FiMapPin, FiCalendar, FiEdit, FiSettings } from 'react-icons/fi';
+import { FiMail, FiPhone, FiMapPin, FiCalendar, FiEdit, FiTrash2 } from 'react-icons/fi';
 import BounceCard from '../../../../components/animations/BounceCard/BounceCard';
 import colors from '../../../../config/colors';
 
-const ProfileHeader = ({ userData, onEditClick, onSettingsClick }) => {
+const ProfileHeader = ({ userData, onEditClick, onDeleteAccountClick }) => {
   return (
     <BounceCard>
       <div 
@@ -55,6 +55,20 @@ const ProfileHeader = ({ userData, onEditClick, onSettingsClick }) => {
               </div>
             </div>
 
+            {/* Role Badge */}
+            <div className="mb-4">
+              <span 
+                className="inline-block px-4 py-2 rounded-full text-sm font-semibold"
+                style={{ 
+                  backgroundColor: `${colors.mainYellow}20`,
+                  color: colors.mainYellow,
+                  border: `2px solid ${colors.mainYellow}`
+                }}
+              >
+                {userData.role}
+              </span>
+            </div>
+
             {/* Stats */}
             <div className="flex flex-wrap justify-center md:justify-start gap-6">
               <div className="text-center">
@@ -75,12 +89,6 @@ const ProfileHeader = ({ userData, onEditClick, onSettingsClick }) => {
                 </p>
                 <p className="text-sm" style={{ color: colors.jet }}>Posts</p>
               </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold" style={{ color: colors.mainYellow }}>
-                  {userData.stats.followers}
-                </p>
-                <p className="text-sm" style={{ color: colors.jet }}>Followers</p>
-              </div>
             </div>
           </div>
 
@@ -95,16 +103,16 @@ const ProfileHeader = ({ userData, onEditClick, onSettingsClick }) => {
               Edit Profile
             </button>
             <button
-              onClick={onSettingsClick}
+              onClick={onDeleteAccountClick}
               className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer"
               style={{ 
-                backgroundColor: 'white',
-                color: colors.mainYellow,
-                border: `2px solid ${colors.mainYellow}`
+                backgroundColor: '#dc2626',
+                color: 'white',
+                border: '2px solid #dc2626'
               }}
             >
-              <FiSettings size={18} />
-              Settings
+              <FiTrash2 size={18} />
+              Delete Account
             </button>
           </div>
         </div>
