@@ -76,154 +76,86 @@ const TechSupportProfile = () => {
     fetchProfileData();
   }, []);
 
-  // Mock appointments data
-  const [appointments, setAppointments] = useState([
-    {
-      id: 1,
-      userName: 'Ahmad Hassan',
-      userEmail: 'ahmad@example.com',
-      date: 'December 28, 2024',
-      time: '10:00 AM',
-      duration: '1 hour',
-      status: 'pending',
-      message: 'I need help choosing components for a gaming PC build. Budget is around $1500.',
-      meetingLink: null
-    },
-    {
-      id: 2,
-      userName: 'Sara Mohammed',
-      userEmail: 'sara@example.com',
-      date: 'December 28, 2024',
-      time: '2:00 PM',
-      duration: '45 minutes',
-      status: 'accepted',
-      message: 'My PC is running slow and I think I need to upgrade my RAM. Can you help?',
-      meetingLink: 'https://meet.jit.si/TechSupport-2-1234567890'
-    },
-    {
-      id: 3,
-      userName: 'Omar Khalil',
-      userEmail: 'omar@example.com',
-      date: 'December 29, 2024',
-      time: '11:00 AM',
-      duration: '30 minutes',
-      status: 'pending',
-      message: 'Need advice on cooling solutions for my new build.',
-      meetingLink: null
-    },
-    {
-      id: 4,
-      userName: 'Layla Mansour',
-      userEmail: 'layla@example.com',
-      date: 'December 27, 2024',
-      time: '3:00 PM',
-      duration: '1 hour',
-      status: 'completed',
-      message: 'Troubleshooting boot issues with my new PC.',
-      meetingLink: null
-    },
-    {
-      id: 5,
-      userName: 'Yusuf Ali',
-      userEmail: 'yusuf@example.com',
-      date: 'December 26, 2024',
-      time: '1:00 PM',
-      duration: '45 minutes',
-      status: 'rejected',
-      message: 'Need help with BIOS settings.',
-      meetingLink: null
-    }
-  ]);
+  // Appointments data
+  const [appointments, setAppointments] = useState([]);
 
-  // Mock schedule data
+  // Schedule data - Backend expects: 0=Saturday, 1=Sunday, 2=Monday, 3=Tuesday, 4=Wednesday, 5=Thursday, 6=Friday
   const [schedule, setSchedule] = useState({
-    monday: [{ start: '09:00', end: '12:00' }, { start: '14:00', end: '18:00' }],
-    tuesday: [{ start: '09:00', end: '12:00' }, { start: '14:00', end: '18:00' }],
-    wednesday: [{ start: '09:00', end: '12:00' }, { start: '14:00', end: '18:00' }],
-    thursday: [{ start: '09:00', end: '12:00' }, { start: '14:00', end: '18:00' }],
-    friday: [{ start: '09:00', end: '13:00' }],
-    saturday: [{ start: '10:00', end: '14:00' }],
-    sunday: []
+    saturday: [],
+    sunday: [],
+    monday: [],
+    tuesday: [],
+    wednesday: [],
+    thursday: [],
+    friday: []
   });
+  const [scheduleLoading, setScheduleLoading] = useState(true);
 
-  // Mock stats data
-  const stats = {
-    totalSessions: 127,
-    thisMonth: 23,
-    averageRating: 4.8,
-    totalReviews: 89,
-    avgResponseTime: '< 2hrs',
-    successRate: 95,
-    monthlyData: [
-      { month: 'July', sessions: 18 },
-      { month: 'August', sessions: 25 },
-      { month: 'September', sessions: 22 },
-      { month: 'October', sessions: 28 },
-      { month: 'November', sessions: 21 },
-      { month: 'December', sessions: 23 }
-    ],
-    recentReviews: [
-      {
-        id: 1,
-        userName: 'Ahmad Hassan',
-        rating: 5,
-        comment: 'Very knowledgeable and patient! Helped me build my first gaming PC.',
-        date: '3 days ago'
-      },
-      {
-        id: 2,
-        userName: 'Sara Mohammed',
-        rating: 5,
-        comment: 'Excellent service! Solved my PC issues quickly and professionally.',
-        date: '1 week ago'
-      },
-      {
-        id: 3,
-        userName: 'Omar Khalil',
-        rating: 4,
-        comment: 'Great advice on component selection. Very responsive!',
-        date: '2 weeks ago'
+  // Fetch schedule data from API
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      try {
+        setScheduleLoading(true);
+        const response = await apiClient.get('/TechSupport/Availability/Schedule');
+        const scheduleData = response.data;
+        
+        // Transform API data to component format
+        const dayNames = ['saturday', 'sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+        const transformedSchedule = {
+          saturday: [],
+          sunday: [],
+          monday: [],
+          tuesday: [],
+          wednesday: [],
+          thursday: [],
+          friday: []
+        };
+        
+        // Group schedule items by day
+        scheduleData.forEach(item => {
+          const dayName = dayNames[item.day];
+          if (dayName) {
+            // Convert HH:mm:ss to HH:mm format
+            const startTime = item.startTime.substring(0, 5);
+            const endTime = item.endTime.substring(0, 5);
+            
+            transformedSchedule[dayName].push({
+              id: item.id,
+              start: startTime,
+              end: endTime
+            });
+          }
+        });
+        
+        setSchedule(transformedSchedule);
+        setScheduleLoading(false);
+      } catch (error) {
+        console.error('Error fetching schedule:', error);
+        toast.error('Failed to load schedule');
+        setScheduleLoading(false);
       }
-    ]
+    };
+
+    fetchSchedule();
+  }, []);
+
+  // Stats data
+  const stats = {
+    totalSessions: 0,
+    thisMonth: 0,
+    averageRating: 0,
+    totalReviews: 0,
+    avgResponseTime: '-',
+    successRate: 0,
+    monthlyData: [],
+    recentReviews: []
   };
 
-  // Today's schedule (mock)
-  const todaySchedule = [
-    {
-      id: 2,
-      time: '10:00 AM',
-      userName: 'Ahmad Hassan',
-      status: 'pending'
-    },
-    {
-      id: 3,
-      time: '2:00 PM',
-      userName: 'Sara Mohammed',
-      status: 'confirmed'
-    }
-  ];
+  // Today's schedule
+  const todaySchedule = [];
 
-  // Upcoming appointments (mock)
-  const upcomingAppointments = [
-    {
-      date: 'Tomorrow',
-      time: '11:00 AM',
-      userName: 'Omar Khalil',
-      daysUntil: 1
-    },
-    {
-      date: 'Dec 30',
-      time: '3:00 PM',
-      userName: 'Layla Mansour',
-      daysUntil: 2
-    },
-    {
-      date: 'Dec 31',
-      time: '10:00 AM',
-      userName: 'Yusuf Ali',
-      daysUntil: 3
-    }
-  ];
+  // Upcoming appointments
+  const upcomingAppointments = [];
 
 
 
@@ -443,6 +375,7 @@ const TechSupportProfile = () => {
             {activeTab === 'schedule' && (
               <ScheduleTab 
                 schedule={schedule}
+                scheduleLoading={scheduleLoading}
                 onSaveSchedule={handleSaveSchedule}
               />
             )}
