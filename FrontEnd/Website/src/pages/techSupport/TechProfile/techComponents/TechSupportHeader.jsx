@@ -42,9 +42,23 @@ const TechSupportHeader = ({ userData, onEditClick, onSettingsClick }) => {
                 {userData.role}
               </div>
             </div>
-            <p className="text-lg mb-3" style={{ color: colors.jet }}>
-              {userData.specialization}
-            </p>
+            
+            {/* Specialization Badge */}
+            {userData.specialization && userData.specialization !== '-' && (
+              <div className="mb-3 flex justify-center md:justify-start">
+                <span 
+                  className="px-4 py-2 rounded-full text-sm font-semibold"
+                  style={{ 
+                    backgroundColor: `${colors.mainYellow}20`,
+                    color: colors.mainYellow,
+                    border: `1px solid ${colors.mainYellow}`
+                  }}
+                >
+                  {userData.specialization}
+                </span>
+              </div>
+            )}
+            
             <p className="text-sm mb-3" style={{ color: colors.jet }}>
               {userData.bio}
             </p>
