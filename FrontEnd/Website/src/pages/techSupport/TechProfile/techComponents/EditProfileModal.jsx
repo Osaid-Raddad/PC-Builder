@@ -142,10 +142,30 @@ const EditProfileModal = ({ userData, onClose, onSave }) => {
                 Years of Experience
               </label>
               <input
-                type="text"
-                value={editFormData.experience}
-                onChange={(e) => setEditFormData({ ...editFormData, experience: e.target.value })}
-                placeholder="e.g., 5 years"
+                type="number"
+                value={editFormData.yearsOfExperience || ''}
+                onChange={(e) => setEditFormData({ ...editFormData, yearsOfExperience: e.target.value })}
+                placeholder="e.g., 5"
+                min="0"
+                className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
+                style={{ borderColor: colors.platinum }}
+                onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
+                onBlur={(e) => e.target.style.borderColor = colors.platinum}
+              />
+            </div>
+
+            {/* Rate */}
+            <div>
+              <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                Hourly Rate ($)
+              </label>
+              <input
+                type="number"
+                value={editFormData.rate || ''}
+                onChange={(e) => setEditFormData({ ...editFormData, rate: e.target.value })}
+                placeholder="e.g., 50"
+                min="0"
+                step="0.01"
                 className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
                 style={{ borderColor: colors.platinum }}
                 onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
@@ -185,15 +205,31 @@ const EditProfileModal = ({ userData, onClose, onSave }) => {
               />
             </div>
 
-            {/* Location */}
+            {/* City */}
             <div>
               <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
-                Location
+                City
               </label>
               <input
                 type="text"
-                value={editFormData.location}
-                onChange={(e) => setEditFormData({ ...editFormData, location: e.target.value })}
+                value={editFormData.city || ''}
+                onChange={(e) => setEditFormData({ ...editFormData, city: e.target.value })}
+                className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
+                style={{ borderColor: colors.platinum }}
+                onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
+                onBlur={(e) => e.target.style.borderColor = colors.platinum}
+              />
+            </div>
+
+            {/* Street */}
+            <div>
+              <label className="block text-sm font-semibold mb-2" style={{ color: colors.mainBlack }}>
+                Street
+              </label>
+              <input
+                type="text"
+                value={editFormData.street || ''}
+                onChange={(e) => setEditFormData({ ...editFormData, street: e.target.value })}
                 className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors"
                 style={{ borderColor: colors.platinum }}
                 onFocus={(e) => e.target.style.borderColor = colors.mainYellow}

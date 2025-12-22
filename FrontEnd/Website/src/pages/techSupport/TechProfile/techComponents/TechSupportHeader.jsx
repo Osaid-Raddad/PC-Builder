@@ -39,7 +39,7 @@ const TechSupportHeader = ({ userData, onEditClick, onSettingsClick }) => {
                 className="px-3 py-1 rounded-full text-xs font-bold"
                 style={{ backgroundColor: colors.mainYellow, color: 'white' }}
               >
-                Tech Support
+                {userData.role}
               </div>
             </div>
             <p className="text-lg mb-3" style={{ color: colors.jet }}>

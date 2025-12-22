@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
 import BlurText from '../../../components/animations/BlurText/BlurText';
@@ -12,32 +12,69 @@ import EditProfileModal from './techComponents/EditProfileModal';
 import SettingsModal from './techComponents/SettingsModal';
 import colors from '../../../config/colors';
 import toast from 'react-hot-toast';
+import apiClient from '../../../services/apiService';
 
 const TechSupportProfile = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [showEditModal, setShowEditModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Mock user data - Replace with actual data from context/API
-  const [userData, setUserData] = useState({
-    id: 1,
-    name: 'Khaled Ibrahim',
-    email: 'khaled.tech@pcbuilder.ps',
-    phone: '+970 59 987 6543',
-    location: 'Ramallah, Palestine',
-    joinDate: 'June 2023',
-    avatar: 'https://ui-avatars.com/api/?name=Khaled+Ibrahim&background=F9B233&color=fff&size=200',
-    bio: 'Experienced tech support specialist helping users build and maintain their dream PCs.',
-    specialization: 'Gaming PCs & Hardware',
-    experience: '5 years',
-    isOnline: true,
-    stats: {
-      totalAppointments: 127,
-      rating: 4.8,
-      reviews: 89,
-      responseTime: '< 2hrs'
-    }
-  });
+  // User data from API
+  const [userData, setUserData] = useState(null);
+
+  // Fetch tech support profile data
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        setLoading(true);
+        const response = await apiClient.get('/Profile/TechProfile/profile');
+        const profileData = response.data;
+        
+        // Transform API data to match component structure
+        const transformedData = {
+          id: profileData.id,
+          name: profileData.fullName || '-',
+          email: profileData.email || '-',
+          phone: profileData.phone || '-',
+          city: profileData.city || '-',
+          street: profileData.street || '-',
+          location: profileData.city && profileData.street 
+            ? `${profileData.street}, ${profileData.city}` 
+            : profileData.city || profileData.street || '-',
+          bio: profileData.bio || '-',
+          specialization: profileData.specialization || '-',
+          experience: profileData.yearsOfExperience ? `${profileData.yearsOfExperience} years` : '-',
+          yearsOfExperience: profileData.yearsOfExperience || '',
+          rate: profileData.rate || '-',
+          role: profileData.role || '-',
+          joinDate: profileData.createdAt 
+            ? new Date(profileData.createdAt).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long' 
+              })
+            : '-',
+          avatar: profileData.profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.fullName || 'User')}&background=F9B233&color=fff&size=200`,
+          isOnline: true, // Default
+          stats: {
+            totalAppointments: profileData.completedSessionsCount || 0,
+            rating: 0, // Will be handled later
+            reviews: 0, // Will be handled later
+            responseTime: '-' // Will be handled later
+          }
+        };
+        
+        setUserData(transformedData);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching tech profile data:', error);
+        toast.error('Failed to load profile data');
+        setLoading(false);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
 
   // Mock appointments data
   const [appointments, setAppointments] = useState([
@@ -260,49 +297,62 @@ const TechSupportProfile = () => {
           />
         </div>
 
-        {/* Profile Header */}
-        <TechSupportHeader
-          userData={userData}
-          onEditClick={() => setShowEditModal(true)}
-          onSettingsClick={() => setShowSettingsModal(true)}
-        />
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2" 
+                 style={{ borderColor: colors.mainYellow }}></div>
+          </div>
+        ) : userData ? (
+          <>
+            {/* Profile Header */}
+            <TechSupportHeader
+              userData={userData}
+              onEditClick={() => setShowEditModal(true)}
+              onSettingsClick={() => setShowSettingsModal(true)}
+            />
 
-        {/* Tabs */}
-        <TechSupportTabs 
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
+            {/* Tabs */}
+            <TechSupportTabs 
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+            />
 
-        {/* Tab Content */}
-        {activeTab === 'overview' && (
-          <OverviewTab 
-            upcomingAppointments={upcomingAppointments}
-            todaySchedule={todaySchedule}
-          />
-        )}
-        
-        {activeTab === 'appointments' && (
-          <AppointmentsTab 
-            appointments={appointments}
-            onUpdateStatus={handleUpdateAppointmentStatus}
-            onGenerateMeeting={handleGenerateMeeting}
-          />
-        )}
-        
-        {activeTab === 'schedule' && (
-          <ScheduleTab 
-            schedule={schedule}
-            onSaveSchedule={handleSaveSchedule}
-          />
-        )}
-        
-        {activeTab === 'stats' && (
-          <StatsTab stats={stats} />
+            {/* Tab Content */}
+            {activeTab === 'overview' && (
+              <OverviewTab 
+                upcomingAppointments={upcomingAppointments}
+                todaySchedule={todaySchedule}
+              />
+            )}
+            
+            {activeTab === 'appointments' && (
+              <AppointmentsTab 
+                appointments={appointments}
+                onUpdateStatus={handleUpdateAppointmentStatus}
+                onGenerateMeeting={handleGenerateMeeting}
+              />
+            )}
+            
+            {activeTab === 'schedule' && (
+              <ScheduleTab 
+                schedule={schedule}
+                onSaveSchedule={handleSaveSchedule}
+              />
+            )}
+            
+            {activeTab === 'stats' && (
+              <StatsTab stats={stats} />
+            )}
+          </>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">Failed to load profile data</p>
+          </div>
         )}
       </div>
 
       {/* Modals */}
-      {showEditModal && (
+      {showEditModal && userData && (
         <EditProfileModal
           userData={userData}
           onClose={() => setShowEditModal(false)}
