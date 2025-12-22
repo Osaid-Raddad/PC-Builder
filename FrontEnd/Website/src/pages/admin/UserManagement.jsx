@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MdBlock, MdCheckCircle, MdDelete, MdEdit } from 'react-icons/md';
+import { MdBlock, MdCheckCircle, MdEdit } from 'react-icons/md';
 import apiClient from '../../services/apiService';
 import toast from 'react-hot-toast';
 import Swal from 'sweetalert2';
@@ -175,26 +175,7 @@ const UserManagement = () => {
     }
   };
 
-  const handleDelete = async (user) => {
-    const result = await Swal.fire({
-      title: `Delete ${user.name}?`,
-      text: 'This will permanently delete the user and all their data!',
-      icon: 'error',
-      showCancelButton: true,
-      confirmButtonColor: colors.error,
-      cancelButtonColor: colors.secondary,
-      confirmButtonText: 'Yes, delete permanently!'
-    });
 
-    if (result.isConfirmed) {
-      try {
-        setUsers(users.filter(u => u.id !== user.id));
-        toast.success('User deleted successfully');
-      } catch (error) {
-        toast.error('Failed to delete user');
-      }
-    }
-  };
 
   const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -327,13 +308,6 @@ const UserManagement = () => {
                           <MdCheckCircle className="text-xl" />
                         </button>
                       )}
-                      <button
-                        onClick={() => handleDelete(user)}
-                        className="p-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
-                        title="Delete User"
-                      >
-                        <MdDelete className="text-xl" />
-                      </button>
                     </div>
                   </td>
                 </tr>
