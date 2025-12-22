@@ -9,15 +9,15 @@ import AppointmentsTab from './techComponents/AppointmentsTab';
 import ScheduleTab from './techComponents/ScheduleTab.jsx';
 import StatsTab from './techComponents/StatsTab';
 import EditProfileModal from './techComponents/EditProfileModal';
-import SettingsModal from './techComponents/SettingsModal';
 import colors from '../../../config/colors';
 import toast from 'react-hot-toast';
 import apiClient from '../../../services/apiService';
+import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const TechSupportProfile = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // User data from API
@@ -225,14 +225,7 @@ const TechSupportProfile = () => {
     }
   ];
 
-  const [settings, setSettings] = useState({
-    emailNotifications: true,
-    appointmentReminders: true,
-    newRequestAlerts: true,
-    reviewNotifications: true,
-    profileVisibility: 'public',
-    showContactInfo: true
-  });
+
 
   // Handlers
   const handleUpdateAppointmentStatus = (appointmentId, newStatus) => {
@@ -338,14 +331,61 @@ const TechSupportProfile = () => {
     }
   };
 
-  const handleSaveSettings = (updatedSettings) => {
-    setSettings(updatedSettings);
-    setShowSettingsModal(false);
-    toast.success('Settings saved successfully!');
-  };
-
-  const handleDeleteAccount = () => {
-    toast.error('This feature will be implemented with backend');
+  const handleDeleteAccount = async () => {
+    // Ask for confirmation with SweetAlert
+    const result = await Swal.fire({
+      title: 'Delete Account?',
+      text: 'Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#dc2626',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Yes, delete it!',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true
+    });
+    
+    if (!result.isConfirmed) {
+      return;
+    }
+    
+    try {
+      const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+      const token = localStorage.getItem('authToken');
+      
+      await axios.delete(
+        `${API_BASE_URL}/api/Profile/Profile/delete`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      
+      // Clear local storage and show success
+      localStorage.removeItem('authToken');
+      
+      await Swal.fire({
+        title: 'Deleted!',
+        text: 'Your account has been deleted successfully.',
+        icon: 'success',
+        confirmButtonColor: '#F9B233',
+        timer: 2000,
+        timerProgressBar: true
+      });
+      
+      // Redirect to home page
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Error deleting account:', error);
+      
+      await Swal.fire({
+        title: 'Error!',
+        text: error.response?.data?.message || 'Failed to delete account. Please try again.',
+        icon: 'error',
+        confirmButtonColor: '#F9B233'
+      });
+    }
   };
 
   return (
@@ -375,7 +415,7 @@ const TechSupportProfile = () => {
             <TechSupportHeader
               userData={userData}
               onEditClick={() => setShowEditModal(true)}
-              onSettingsClick={() => setShowSettingsModal(true)}
+              onDeleteAccountClick={handleDeleteAccount}
             />
 
             {/* Tabs */}
@@ -424,15 +464,6 @@ const TechSupportProfile = () => {
           userData={userData}
           onClose={() => setShowEditModal(false)}
           onSave={handleEditProfile}
-        />
-      )}
-
-      {showSettingsModal && (
-        <SettingsModal
-          initialSettings={settings}
-          onClose={() => setShowSettingsModal(false)}
-          onSave={handleSaveSettings}
-          onDeleteAccount={handleDeleteAccount}
         />
       )}
 

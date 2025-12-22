@@ -1,9 +1,9 @@
 import React from 'react';
-import { FiMail, FiPhone, FiMapPin, FiCalendar, FiEdit, FiSettings, FiAward } from 'react-icons/fi';
+import { FiMail, FiPhone, FiMapPin, FiCalendar, FiEdit, FiTrash2, FiAward } from 'react-icons/fi';
 import BounceCard from '../../../../components/animations/BounceCard/BounceCard';
 import colors from '../../../../config/colors';
 
-const TechSupportHeader = ({ userData, onEditClick, onSettingsClick }) => {
+const TechSupportHeader = ({ userData, onEditClick, onDeleteAccountClick }) => {
   return (
     <BounceCard>
       <div 
@@ -128,16 +128,16 @@ const TechSupportHeader = ({ userData, onEditClick, onSettingsClick }) => {
               Edit Profile
             </button>
             <button
-              onClick={onSettingsClick}
+              onClick={onDeleteAccountClick}
               className="flex items-center gap-2 px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer"
               style={{ 
-                backgroundColor: 'white',
-                color: colors.mainYellow,
-                border: `2px solid ${colors.mainYellow}`
+                backgroundColor: '#dc2626',
+                color: 'white',
+                border: '2px solid #dc2626'
               }}
             >
-              <FiSettings size={18} />
-              Settings
+              <FiTrash2 size={18} />
+              Delete Account
             </button>
           </div>
         </div>
