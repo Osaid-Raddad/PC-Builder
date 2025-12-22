@@ -411,7 +411,7 @@ export default function Navbar() {
                     // Logged in - Show Profile/My Builds/Dashboard(Admin/SuperAdmin)/Logout
                     <>
                       <button
-                        onClick={() => handleNavigation('/profile')}
+                        onClick={() => handleNavigation(userRole === 'TechSupport' ? '/tech-support/profile' : '/profile')}
                         className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
                         onMouseEnter={(e) => {
@@ -547,7 +547,7 @@ export default function Navbar() {
                   ) : (
                     <>
                       <button
-                        onClick={() => handleNavigation('/profile')}
+                        onClick={() => handleNavigation(userRole === 'TechSupport' ? '/tech-support/profile' : '/profile')}
                         className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                         style={{ color: 'white' }}
                         onMouseEnter={(e) => {

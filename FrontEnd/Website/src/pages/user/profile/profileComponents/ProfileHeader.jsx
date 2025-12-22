@@ -55,6 +55,20 @@ const ProfileHeader = ({ userData, onEditClick, onSettingsClick }) => {
               </div>
             </div>
 
+            {/* Role Badge */}
+            <div className="mb-4">
+              <span 
+                className="inline-block px-4 py-2 rounded-full text-sm font-semibold"
+                style={{ 
+                  backgroundColor: `${colors.mainYellow}20`,
+                  color: colors.mainYellow,
+                  border: `2px solid ${colors.mainYellow}`
+                }}
+              >
+                {userData.role}
+              </span>
+            </div>
+
             {/* Stats */}
             <div className="flex flex-wrap justify-center md:justify-start gap-6">
               <div className="text-center">
@@ -74,12 +88,6 @@ const ProfileHeader = ({ userData, onEditClick, onSettingsClick }) => {
                   {userData.stats.posts}
                 </p>
                 <p className="text-sm" style={{ color: colors.jet }}>Posts</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold" style={{ color: colors.mainYellow }}>
-                  {userData.stats.followers}
-                </p>
-                <p className="text-sm" style={{ color: colors.jet }}>Followers</p>
               </div>
             </div>
           </div>

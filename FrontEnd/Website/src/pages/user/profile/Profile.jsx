@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
 import BlurText from '../../../components/animations/BlurText/BlurText';
@@ -14,29 +14,63 @@ import colors from '../../../config/colors';
 import { FiHeart, FiMessageSquare } from 'react-icons/fi';
 import { FaDesktop } from 'react-icons/fa';
 import toast from 'react-hot-toast';
+import apiClient from '../../../services/apiService';
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('overview');
   const [showEditModal, setShowEditModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Mock user data
-  const [userData, setUserData] = useState({
-    id: 1,
-    name: 'Ahmad Hassan',
-    email: 'ahmad.hassan@example.com',
-    phone: '+970 59 123 4567',
-    location: 'Nablus, Palestine',
-    joinDate: 'January 2024',
-    avatar: 'https://ui-avatars.com/api/?name=Ahmad+Hassan&background=F9B233&color=fff&size=200',
-    bio: 'PC enthusiast and gaming lover. Always looking for the latest hardware!',
-    stats: {
-      builds: 5,
-      favorites: 12,
-      posts: 8,
-      followers: 45
-    }
-  });
+  // User data from API
+  const [userData, setUserData] = useState(null);
+
+  // Fetch user profile data
+  useEffect(() => {
+    const fetchProfileData = async () => {
+      try {
+        setLoading(true);
+        const response = await apiClient.get('/Profile/UserProfile/profile');
+        const profileData = response.data;
+        
+        // Transform API data to match component structure
+        const transformedData = {
+          id: profileData.id,
+          name: profileData.fullName || '-',
+          email: profileData.email || '-',
+          phone: profileData.phone || '-',
+          city: profileData.city || '-',
+          street: profileData.street || '-',
+          location: profileData.city && profileData.street 
+            ? `${profileData.street}, ${profileData.city}` 
+            : profileData.city || profileData.street || '-',
+          bio: profileData.bio || '-',
+          role: profileData.role || '-',
+          joinDate: profileData.createdAt 
+            ? new Date(profileData.createdAt).toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'long' 
+              })
+            : '-',
+          avatar: profileData.profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.fullName || 'User')}&background=F9B233&color=fff&size=200`,
+          stats: {
+            builds: 0, // Will be handled later
+            favorites: 0, // Will be handled later
+            posts: 0
+          }
+        };
+        
+        setUserData(transformedData);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching profile data:', error);
+        toast.error('Failed to load profile data');
+        setLoading(false);
+      }
+    };
+
+    fetchProfileData();
+  }, []);
 
   const [settings, setSettings] = useState({
     emailNotifications: true,
@@ -170,28 +204,41 @@ const Profile = () => {
           />
         </div>
 
-        {/* Profile Header */}
-        <ProfileHeader
-          userData={userData}
-          onEditClick={() => setShowEditModal(true)}
-          onSettingsClick={() => setShowSettingsModal(true)}
-        />
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2" 
+                 style={{ borderColor: colors.mainYellow }}></div>
+          </div>
+        ) : userData ? (
+          <>
+            {/* Profile Header */}
+            <ProfileHeader
+              userData={userData}
+              onEditClick={() => setShowEditModal(true)}
+              onSettingsClick={() => setShowSettingsModal(true)}
+            />
 
-        {/* Tabs */}
-        <ProfileTabs 
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-        />
+            {/* Tabs */}
+            <ProfileTabs 
+              activeTab={activeTab}
+              onTabChange={setActiveTab}
+            />
 
-        {/* Tab Content */}
-        {activeTab === 'overview' && <OverviewTab />}
-        {activeTab === 'builds' && <BuildsTab builds={savedBuilds} />}
-        {activeTab === 'favorites' && <FavoritesTab products={favoriteProducts} />}
-        {activeTab === 'activity' && <ActivityTab activities={activityHistory} />}
+            {/* Tab Content */}
+            {activeTab === 'overview' && <OverviewTab />}
+            {activeTab === 'builds' && <BuildsTab builds={savedBuilds} />}
+            {activeTab === 'favorites' && <FavoritesTab products={favoriteProducts} />}
+            {activeTab === 'activity' && <ActivityTab activities={activityHistory} />}
+          </>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-500 text-lg">Failed to load profile data</p>
+          </div>
+        )}
       </div>
 
       {/* Modals */}
-      {showEditModal && (
+      {showEditModal && userData && (
         <EditProfileModal
           userData={userData}
           onClose={() => setShowEditModal(false)}
