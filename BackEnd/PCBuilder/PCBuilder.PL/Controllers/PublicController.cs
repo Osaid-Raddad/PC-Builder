@@ -17,12 +17,14 @@ namespace PCBuilder.PL.Controllers
         private readonly IUserService _userservice;
         private readonly IShopService _shopService;
         private readonly IUpgradeUserRoleService _upgradeUserRoleService;
+        private readonly IContactUsService _contactService;
 
-        public PublicController(IUserService userservice, IShopService shopService,IUpgradeUserRoleService upgradeUserRoleService)
+        public PublicController(IUserService userservice, IShopService shopService,IUpgradeUserRoleService upgradeUserRoleService, IContactUsService contactService)
         {
             _userservice = userservice;
             _shopService = shopService;
             _upgradeUserRoleService = upgradeUserRoleService;
+            _contactService = contactService;
         }
 
         
@@ -49,6 +51,14 @@ namespace PCBuilder.PL.Controllers
             await _upgradeUserRoleService.CreateRequestAsync(userId, request);
 
             return Ok(new { message = "Request sent successfully" });
+        }
+
+        [AllowAnonymous]
+        [HttpPost("ContactUs")]
+        public async Task<IActionResult> Send([FromBody] ContactUsRequest request)
+        {
+            await _contactService.SendAsync(request);
+            return Ok(new { message = "Message sent successfully" });
         }
 
     }

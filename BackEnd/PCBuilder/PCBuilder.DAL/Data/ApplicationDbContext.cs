@@ -24,6 +24,8 @@ namespace PCBuilder.DAL.Data
 
         public DbSet<UpgradeUserRole> UpgradeUserRoles { get; set; }
 
+        public DbSet<ContactMessage> ContactMessages { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
 
