@@ -8,7 +8,7 @@ namespace PCBuilder.PL.Areas.TechSupport.Controllers
 {
     [Route("api/[area]/[controller]")]
     [ApiController]
-    [Authorize(Roles = "TechSupport,User")]
+    [Authorize(Roles = "TechSupport,User,Admin,SuperAdmin")]
     [Area("TechSupport")]
     public class AppointmentController : ControllerBase
     {
@@ -55,7 +55,7 @@ namespace PCBuilder.PL.Areas.TechSupport.Controllers
             return Ok(new { message = "Appointment completed successfully" });
         }
 
-        [Authorize(Roles = "TechSupport,User")]
+        [Authorize(Roles = "User,Admin,SuperAdmin")]
         [HttpPost("rate/{id}")]
         public async Task<IActionResult> Rate([FromRoute] int id, [FromBody] RateAppointmentRequest request)
         {
@@ -64,7 +64,7 @@ namespace PCBuilder.PL.Areas.TechSupport.Controllers
             return Ok(new { message = "Appointment rated successfully" });
         }
 
-        [Authorize(Roles = "TechSupport,User")]
+        [Authorize(Roles = "User,Admin,SuperAdmin")]
         [HttpGet("myAppointment")]
         public async Task<IActionResult> GetUserAppointments()
         {
