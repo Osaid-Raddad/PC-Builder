@@ -64,6 +64,8 @@ namespace PCBuilder.PL
             builder.Services.AddScoped<IAppointmentService, AppointmentService>();
             builder.Services.AddScoped<IPostRepository, PostRepository>();
             builder.Services.AddScoped<IPostService, PostService>();
+            builder.Services.AddScoped<IUpgradeUserRoleRepository, UpgradeUserRoleRepository>();
+            builder.Services.AddScoped<IUpgradeUserRoleService,UpgradeUserRoleService>();
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(option =>
             {
                 option.Password.RequireDigit = true;

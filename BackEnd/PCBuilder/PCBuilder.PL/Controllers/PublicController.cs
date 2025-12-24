@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PCBuilder.BLL.Services.Classes;
 using PCBuilder.BLL.Services.Interfaces;
+using PCBuilder.DAL.DTO.Requests;
+using System.Security.Claims;
 
 namespace PCBuilder.PL.Controllers
 {
@@ -14,11 +16,13 @@ namespace PCBuilder.PL.Controllers
     {
         private readonly IUserService _userservice;
         private readonly IShopService _shopService;
+        private readonly IUpgradeUserRoleService _upgradeUserRoleService;
 
-        public PublicController(IUserService userservice, IShopService shopService)
+        public PublicController(IUserService userservice, IShopService shopService,IUpgradeUserRoleService upgradeUserRoleService)
         {
             _userservice = userservice;
             _shopService = shopService;
+            _upgradeUserRoleService = upgradeUserRoleService;
         }
 
         
@@ -34,6 +38,17 @@ namespace PCBuilder.PL.Controllers
         {
             var shops = await _shopService.GetAllShopsAsync(Request);
             return Ok(shops);
+        }
+
+        [Authorize(Roles = "User")]
+        [HttpPost("upgrade-to-tech-support")]
+        public async Task<IActionResult> RequestUpgrade([FromBody] UpgradeUserRoleRequest request)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            await _upgradeUserRoleService.CreateRequestAsync(userId, request);
+
+            return Ok(new { message = "Request sent successfully" });
         }
 
     }

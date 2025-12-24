@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PCBuilder.BLL.Services.Classes;
 using PCBuilder.BLL.Services.Interfaces;
 using PCBuilder.DAL.DTO.Requests;
+using PCBuilder.DAL.DTO.Responses;
 
 namespace PCBuilder.PL.Areas.Admins.Controllers
 {
@@ -13,10 +15,12 @@ namespace PCBuilder.PL.Areas.Admins.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userservice;
+        private readonly IUpgradeUserRoleService _upgradeUserRoleService;
 
-        public UsersController(IUserService userservice)
+        public UsersController(IUserService userservice, IUpgradeUserRoleService _upgradeUserRoleService)
         {
             _userservice = userservice;
+            this._upgradeUserRoleService = _upgradeUserRoleService;
         }
         
        
@@ -69,5 +73,16 @@ namespace PCBuilder.PL.Areas.Admins.Controllers
             var result = await _userservice.ChangeUserRoleAsync(id, request.NewRole);
             return Ok(new { message = "Role Changed Successfylly" });
         }
+
+
+        [Authorize(Roles = "SuperAdmin")]
+        [HttpPatch("upgrade-requests/{id}")]
+        public async Task<IActionResult> Decide(int id,[FromBody] UpgradeUserRoleResponse response)
+        {
+            await _upgradeUserRoleService.DecideAsync(id, response);
+
+            return Ok(new { message = "Decision saved successfully" });
+        }
+
     }
 }
