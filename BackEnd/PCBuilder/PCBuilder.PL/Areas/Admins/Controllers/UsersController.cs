@@ -75,14 +75,7 @@ namespace PCBuilder.PL.Areas.Admins.Controllers
         }
 
 
-        [Authorize(Roles = "SuperAdmin")]
-        [HttpPatch("upgrade-requests/{id}")]
-        public async Task<IActionResult> Decide(int id,[FromBody] UpgradeUserRoleResponse response)
-        {
-            await _upgradeUserRoleService.DecideAsync(id, response);
-
-            return Ok(new { message = "Decision saved successfully" });
-        }
+      
 
     }
 }

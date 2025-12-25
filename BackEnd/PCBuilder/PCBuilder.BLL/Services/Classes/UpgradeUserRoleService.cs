@@ -27,7 +27,7 @@ namespace PCBuilder.BLL.Services.Classes
 
         public async Task CreateRequestAsync(string userId, UpgradeUserRoleRequest request)
         {
-            
+
             var existingRequest = await _upgradeRepo.GetPendingByUserIdAsync(userId);
 
             if (existingRequest != null)
@@ -36,7 +36,16 @@ namespace PCBuilder.BLL.Services.Classes
             var entity = new UpgradeUserRole
             {
                 UserId = userId,
+
+                FullName = request.FullName,
+                Email = request.Email,
+                PhoneNumber = request.PhoneNumber,
+
+                AreaOfSpecialization = request.AreaOfSpecialization,
+                YearsOfExperience = request.YearsOfExperience,
+
                 Reason = request.Reason,
+
                 CreatedAt = DateTime.UtcNow,
                 IsApproved = null
             };
@@ -63,6 +72,11 @@ namespace PCBuilder.BLL.Services.Classes
             }
 
             await _upgradeRepo.SaveChangesAsync();
+        }
+
+        public async Task<List<UpgradeUserRole>> GetAllPendingRequestsAsync()
+        {
+            return await _upgradeRepo.GetAllPendingAsync();
         }
     }
 }

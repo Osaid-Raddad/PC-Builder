@@ -14,5 +14,8 @@ namespace PCBuilder.DAL.Repositories.Interfaces
         Task<UpgradeUserRole?> GetByIdAsync(int id);
         Task AddAsync(UpgradeUserRole request);
         Task SaveChangesAsync();
+
+        Task<List<UpgradeUserRole>> GetAllPendingAsync();
+
     }
 }

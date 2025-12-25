@@ -41,6 +41,14 @@ namespace PCBuilder.DAL.Repositories.Classes
               x.IsApproved == null);
         }
 
+        public async Task<List<UpgradeUserRole>> GetAllPendingAsync()
+        {
+            return await _context.UpgradeUserRoles
+                .Where(x => x.IsApproved == null)
+                .OrderByDescending(x => x.CreatedAt)
+                .ToListAsync();
+        }
+
         public async Task SaveChangesAsync()
         {
             await _context.SaveChangesAsync();
