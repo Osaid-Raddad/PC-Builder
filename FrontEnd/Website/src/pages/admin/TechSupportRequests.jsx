@@ -58,16 +58,118 @@ const TechSupportRequests = () => {
     }
   };
 
-  const handleAccept = async (requestId) => {
-    // TODO: Implement accept API call
-    console.log('Accept request:', requestId);
-    toast.success('Accept functionality will be implemented next');
+  const handleAccept = async (requestId, userId) => {
+    try {
+      const token = localStorage.getItem('authToken');
+      
+      if (!token) {
+        toast.error('Authentication required');
+        return;
+      }
+
+      // Step 1: Approve the request
+      const approveResponse = await axios.patch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/Admin/TechSupport/upgrade-requests/${requestId}`,
+        {
+          isApproved: true
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      // Step 2: Change user role to TechSupport
+      const roleResponse = await axios.patch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/Admins/Users/changeRole/${userId}`,
+        {
+          newRole: "TechSupport"
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      // Show success messages
+      if (approveResponse.data.message) {
+        toast.success(approveResponse.data.message);
+      }
+      
+      if (roleResponse.data.message) {
+        toast.success(roleResponse.data.message);
+      } else {
+        toast.success('User role updated to TechSupport successfully!');
+      }
+      
+      // Remove the accepted request from the list
+      setRequests(requests.filter(req => req.id !== requestId));
+      
+    } catch (error) {
+      console.error('Error accepting request:', error);
+      
+      if (error.response) {
+        const errorMessage = error.response.data?.message || 
+                           error.response.data?.title || 
+                           'Failed to process application';
+        toast.error(errorMessage);
+      } else if (error.request) {
+        toast.error('Network error. Please check your connection.');
+      } else {
+        toast.error('An unexpected error occurred');
+      }
+    }
   };
 
   const handleReject = async (requestId) => {
-    // TODO: Implement reject API call
-    console.log('Reject request:', requestId);
-    toast.error('Reject functionality will be implemented next');
+    try {
+      const token = localStorage.getItem('authToken');
+      
+      if (!token) {
+        toast.error('Authentication required');
+        return;
+      }
+
+      const response = await axios.patch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/Admin/TechSupport/upgrade-requests/${requestId}`,
+        {
+          isApproved: false
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      if (response.data.message) {
+        toast.success(response.data.message);
+      } else {
+        toast.success('Application rejected successfully!');
+      }
+      
+      // Remove the rejected request from the list
+      setRequests(requests.filter(req => req.id !== requestId));
+      
+    } catch (error) {
+      console.error('Error rejecting request:', error);
+      
+      if (error.response) {
+        const errorMessage = error.response.data?.message || 
+                           error.response.data?.title || 
+                           'Failed to reject application';
+        toast.error(errorMessage);
+      } else if (error.request) {
+        toast.error('Network error. Please check your connection.');
+      } else {
+        toast.error('An unexpected error occurred');
+      }
+    }
   };
 
   const formatDate = (dateString) => {
@@ -247,7 +349,7 @@ const TechSupportRequests = () => {
               {/* Action Buttons */}
               <div className="flex gap-4">
                 <button
-                  onClick={() => handleAccept(request.id)}
+                  onClick={() => handleAccept(request.id, request.userId)}
                   className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-bold text-white hover:opacity-90 transition-opacity cursor-pointer"
                   style={{ backgroundColor: '#10B981' }}
                 >
