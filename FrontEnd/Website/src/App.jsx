@@ -41,6 +41,7 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import Overview from './pages/admin/Overview';
 import ShopRequests from './pages/admin/ShopRequests';
 import TechSupportRequests from './pages/admin/TechSupportRequests';
+import ChangeRoles from './pages/admin/ChangeRoles';
 import PostManagement from './pages/admin/PostManagement';
 import UserManagement from './pages/admin/UserManagement';
 import ProductManagement from './pages/admin/ProductManagement';
@@ -123,6 +124,7 @@ function AppContent() {
             <Route index element={<Overview />} />
             <Route path="shop-requests" element={<ShopRequests />} />
             <Route path="tech-support" element={<TechSupportRequests />} />
+            <Route path="change-roles" element={<ChangeRoles />} />
             <Route path="posts" element={<PostManagement />} />
             <Route path="users" element={<UserManagement />} />
             <Route path="products" element={<ProductManagement />} />

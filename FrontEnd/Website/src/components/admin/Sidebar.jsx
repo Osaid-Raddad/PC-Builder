@@ -8,7 +8,8 @@ import {
   MdPeople, 
   MdInventory, 
   MdHome,
-  MdLogout
+  MdLogout,
+  MdAdminPanelSettings
 } from 'react-icons/md';
 import colors from '../../config/colors';
 
@@ -23,6 +24,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     { name: 'Overview', path: '/admin', icon: MdDashboard, end: true },
     { name: 'Shop Requests', path: '/admin/shop-requests', icon: MdStore },
     { name: 'Tech Support', path: '/admin/tech-support', icon: MdSupport, superAdminOnly: true },
+    { name: 'Change Roles', path: '/admin/change-roles', icon: MdAdminPanelSettings, superAdminOnly: true },
     { name: 'Posts', path: '/admin/posts', icon: MdArticle },
     { name: 'Users', path: '/admin/users', icon: MdPeople },
     { name: 'Products', path: '/admin/products', icon: MdInventory },
