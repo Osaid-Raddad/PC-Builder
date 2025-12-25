@@ -9,7 +9,7 @@ namespace PCBuilder.PL.Areas.TechSupport.Controllers
 {
     [Route("api/[area]/[controller]")]
     [ApiController]
-    [Authorize(Roles = "TechSupport")]
+    [Authorize(Roles = "TechSupport,User,Admin,SuperAdmin")]
     [Area("TechSupport")]
     public class AvailabilityController : ControllerBase
     {
@@ -20,6 +20,7 @@ namespace PCBuilder.PL.Areas.TechSupport.Controllers
             _service = service;
         }
 
+        [Authorize(Roles = "TechSupport")]
         [HttpPost("Add-Availabile")]
         public async Task<IActionResult> Add([FromBody] AvailabilityRequest request)
         {
@@ -28,6 +29,7 @@ namespace PCBuilder.PL.Areas.TechSupport.Controllers
             return Ok(new{ message="Added Successfully"});
         }
 
+        [Authorize(Roles = "TechSupport,User,Admin,SuperAdmin")]
         [HttpGet("Schedule")]
         public async Task<IActionResult> Get()
         {
@@ -35,6 +37,7 @@ namespace PCBuilder.PL.Areas.TechSupport.Controllers
             return Ok(await _service.GetMyAsync(techId));
         }
 
+        [Authorize(Roles = "TechSupport")]
         [HttpDelete("Delete-Availabile/{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id)
         {
