@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
 import colors from '../../../config/colors';
@@ -7,47 +9,50 @@ import { FaFacebook, FaTwitter, FaInstagram, FaLinkedin } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 
 const ContactUs = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset
+  } = useForm();
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
+    setIsSubmitting(true);
     
-    // Basic validation
-    if (!formData.name || !formData.email || !formData.subject || !formData.message) {
-      toast.error('Please fill in all fields');
-      return;
-    }
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/Public/Public/ContactUs`,
+        {
+          name: data.name,
+          email: data.email,
+          subject: data.subject,
+          message: data.message
+        }
+      );
 
-    // Email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      toast.error('Please enter a valid email address');
-      return;
+      toast.success('Message sent successfully! We will get back to you soon.');
+      reset(); // Reset form after successful submission
+    } catch (error) {
+      console.error('Error sending message:', error);
+      
+      if (error.response) {
+        // Server responded with error
+        const errorMessage = error.response.data?.message || 
+                           error.response.data?.title || 
+                           'Failed to send message. Please try again.';
+        toast.error(errorMessage);
+      } else if (error.request) {
+        // Request made but no response
+        toast.error('Network error. Please check your connection and try again.');
+      } else {
+        // Other errors
+        toast.error('An unexpected error occurred. Please try again.');
+      }
+    } finally {
+      setIsSubmitting(false);
     }
-
-    // TODO: Send form data to backend
-    console.log('Form submitted:', formData);
-    toast.success('Message sent successfully! We will get back to you soon.');
-    
-    // Reset form
-    setFormData({
-      name: '',
-      email: '',
-      subject: '',
-      message: ''
-    });
   };
 
   const contactInfo = [
@@ -104,7 +109,7 @@ const ContactUs = () => {
                 Send us a Message
               </h2>
               
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {/* Name Field */}
                 <div>
                   <label 
@@ -123,19 +128,26 @@ const ContactUs = () => {
                     <input
                       type="text"
                       id="name"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
+                      {...register('name', { 
+                        required: 'Name is required',
+                        minLength: {
+                          value: 2,
+                          message: 'Name must be at least 2 characters'
+                        }
+                      })}
                       placeholder="Enter your full name"
                       className="w-full pl-12 pr-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all"
                       style={{ 
-                        border: `2px solid ${colors.platinum}`,
+                        border: `2px solid ${errors.name ? '#ef4444' : colors.platinum}`,
                         color: colors.mainBlack
                       }}
-                      onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
-                      onBlur={(e) => e.target.style.borderColor = colors.platinum}
+                      onFocus={(e) => !errors.name && (e.target.style.borderColor = colors.mainYellow)}
+                      onBlur={(e) => !errors.name && (e.target.style.borderColor = colors.platinum)}
                     />
                   </div>
+                  {errors.name && (
+                    <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+                  )}
                 </div>
 
                 {/* Email Field */}
@@ -156,19 +168,26 @@ const ContactUs = () => {
                     <input
                       type="email"
                       id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
+                      {...register('email', {
+                        required: 'Email is required',
+                        pattern: {
+                          value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                          message: 'Please enter a valid email address'
+                        }
+                      })}
                       placeholder="your.email@example.com"
                       className="w-full pl-12 pr-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all"
                       style={{ 
-                        border: `2px solid ${colors.platinum}`,
+                        border: `2px solid ${errors.email ? '#ef4444' : colors.platinum}`,
                         color: colors.mainBlack
                       }}
-                      onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
-                      onBlur={(e) => e.target.style.borderColor = colors.platinum}
+                      onFocus={(e) => !errors.email && (e.target.style.borderColor = colors.mainYellow)}
+                      onBlur={(e) => !errors.email && (e.target.style.borderColor = colors.platinum)}
                     />
                   </div>
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                  )}
                 </div>
 
                 {/* Subject Field */}
@@ -189,19 +208,26 @@ const ContactUs = () => {
                     <input
                       type="text"
                       id="subject"
-                      name="subject"
-                      value={formData.subject}
-                      onChange={handleChange}
+                      {...register('subject', {
+                        required: 'Subject is required',
+                        minLength: {
+                          value: 3,
+                          message: 'Subject must be at least 3 characters'
+                        }
+                      })}
                       placeholder="What is this about?"
                       className="w-full pl-12 pr-4 py-3 rounded-lg focus:outline-none focus:ring-2 transition-all"
                       style={{ 
-                        border: `2px solid ${colors.platinum}`,
+                        border: `2px solid ${errors.subject ? '#ef4444' : colors.platinum}`,
                         color: colors.mainBlack
                       }}
-                      onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
-                      onBlur={(e) => e.target.style.borderColor = colors.platinum}
+                      onFocus={(e) => !errors.subject && (e.target.style.borderColor = colors.mainYellow)}
+                      onBlur={(e) => !errors.subject && (e.target.style.borderColor = colors.platinum)}
                     />
                   </div>
+                  {errors.subject && (
+                    <p className="text-red-500 text-sm mt-1">{errors.subject.message}</p>
+                  )}
                 </div>
 
                 {/* Message Field */}
@@ -215,29 +241,37 @@ const ContactUs = () => {
                   </label>
                   <textarea
                     id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleChange}
+                    {...register('message', {
+                      required: 'Message is required',
+                      minLength: {
+                        value: 10,
+                        message: 'Message must be at least 10 characters'
+                      }
+                    })}
                     placeholder="Write your message here..."
                     rows="7"
                     className="w-full px-4 py-3 mb-3 rounded-lg focus:outline-none focus:ring-2 transition-all resize-none"
                     style={{ 
-                      border: `2px solid ${colors.platinum}`,
+                      border: `2px solid ${errors.message ? '#ef4444' : colors.platinum}`,
                       color: colors.mainBlack
                     }}
-                    onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
-                    onBlur={(e) => e.target.style.borderColor = colors.platinum}
+                    onFocus={(e) => !errors.message && (e.target.style.borderColor = colors.mainYellow)}
+                    onBlur={(e) => !errors.message && (e.target.style.borderColor = colors.platinum)}
                   />
+                  {errors.message && (
+                    <p className="text-red-500 text-sm mt-1">{errors.message.message}</p>
+                  )}
                 </div>
 
                 {/* Submit Button */}
                 <button
                   type="submit"
-                  className="w-full py-4 rounded-lg font-bold text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2 text-lg cursor-pointer"
+                  disabled={isSubmitting}
+                  className="w-full py-4 rounded-lg font-bold text-white hover:opacity-90 transition-opacity flex items-center justify-center gap-2 text-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
                   style={{ backgroundColor: colors.mainYellow }}
                 >
                   <FiSend size={20} />
-                  Send Message
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
                 </button>
               </form>
             </div>

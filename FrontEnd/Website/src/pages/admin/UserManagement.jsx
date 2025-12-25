@@ -268,8 +268,22 @@ const UserManagement = () => {
                     <span 
                       className="px-3 py-1 rounded-full text-xs font-semibold"
                       style={{
-                        backgroundColor: user.role === 'shop_owner' ? `${colors.secondary}20` : `${colors.primary}20`,
-                        color: user.role === 'shop_owner' ? colors.secondary : colors.primary
+                        backgroundColor: (() => {
+                          switch (user.role) {
+                            case 'SuperAdmin': return '#EF444420';
+                            case 'Admin': return '#F59E0B20';
+                            case 'TechSupport': return '#10B98120';
+                            default: return '#6B728020';
+                          }
+                        })(),
+                        color: (() => {
+                          switch (user.role) {
+                            case 'SuperAdmin': return '#EF4444';
+                            case 'Admin': return '#F59E0B';
+                            case 'TechSupport': return '#10B981';
+                            default: return '#6B7280';
+                          }
+                        })()
                       }}
                     >
                       {user.role.replace('_', ' ').toUpperCase()}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiSearch, FiMenu, FiX, FiUser, FiChevronDown, FiShoppingBag, FiLogOut, FiHeart, FiMessageCircle } from 'react-icons/fi';
+import { FiSearch, FiMenu, FiX, FiUser, FiChevronDown, FiShoppingBag, FiLogOut, FiHeart, FiMessageCircle, FiHeadphones } from 'react-icons/fi';
 import { FaTools, FaBoxOpen, FaNewspaper, FaEdit, FaUserCircle, FaMemory, FaHdd, FaDesktop } from 'react-icons/fa';
 import { PiDesktopTowerFill } from 'react-icons/pi';
 import { BsFillMotherboardFill, BsGpuCard } from 'react-icons/bs';
@@ -111,12 +111,18 @@ export default function Navbar() {
       path: '/chat', 
       icon: <FiMessageCircle size={18} />,
       tooltip: 'Message other users and shop owners'
+    },
+    { 
+      label: 'Tech Support', 
+      path: '/tech-support', 
+      icon: <FiHeadphones size={18} />,
+      tooltip: 'Get technical support and assistance'
     }
   ];
 
   const handleNavigation = (path) => {
     // Protected routes that require authentication
-    const protectedRoutes = ['/chat', '/posts'];
+    const protectedRoutes = ['/chat', '/posts', '/tech-support'];
     
     // Check if the route is protected and user is not logged in
     if (protectedRoutes.includes(path) && !isLoggedIn) {

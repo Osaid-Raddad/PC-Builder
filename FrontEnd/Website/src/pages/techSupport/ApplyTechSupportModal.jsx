@@ -1,17 +1,18 @@
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
+import toast from 'react-hot-toast';
 import colors from '../../config/colors';
 import { FiX, FiUser, FiMail, FiPhone, FiFileText, FiBriefcase } from 'react-icons/fi';
 
 const ApplyTechSupportModal = ({ onClose, onSubmit }) => {
-  const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    specialization: 'Gaming PCs & Hardware',
-    experience: '',
-    reason: '',
-    additionalInfo: ''
-  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
 
   const specializations = [
     'Gaming PCs & Hardware',
@@ -23,14 +24,54 @@ const ApplyTechSupportModal = ({ onClose, onSubmit }) => {
     'General Support'
   ];
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  const onSubmitForm = async (data) => {
+    setIsSubmitting(true);
+    
+    try {
+      const token = localStorage.getItem('authToken');
+      
+      if (!token) {
+        toast.error('You must be logged in to apply');
+        return;
+      }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(formData);
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/Public/Public/upgrade-to-tech-support`,
+        {
+          fullName: data.fullName,
+          email: data.email,
+          phoneNumber: data.phoneNumber,
+          areaOfSpecialization: data.areaOfSpecialization,
+          yearsOfExperience: parseInt(data.yearsOfExperience),
+          reason: data.reason
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      toast.success('Application submitted successfully! We will review it shortly.');
+      onSubmit && onSubmit(data);
+      onClose();
+    } catch (error) {
+      console.error('Error submitting application:', error);
+      
+      if (error.response) {
+        const errorMessage = error.response.data?.message || 
+                           error.response.data?.title || 
+                           'Failed to submit application. Please try again.';
+        toast.error(errorMessage);
+      } else if (error.request) {
+        toast.error('Network error. Please check your connection and try again.');
+      } else {
+        toast.error('An unexpected error occurred. Please try again.');
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -61,7 +102,7 @@ const ApplyTechSupportModal = ({ onClose, onSubmit }) => {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit(onSubmitForm)} className="p-6 space-y-6">
           {/* Full Name */}
           <div>
             <label className="flex items-center gap-2 mb-2 font-semibold" style={{ color: colors.mainBlack }}>
@@ -70,18 +111,24 @@ const ApplyTechSupportModal = ({ onClose, onSubmit }) => {
             </label>
             <input
               type="text"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
+              {...register('fullName', { 
+                required: 'Full name is required',
+                minLength: {
+                  value: 3,
+                  message: 'Name must be at least 3 characters'
+                }
+              })}
               placeholder="Enter your full name"
               className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2"
               style={{
-                border: `2px solid ${colors.platinum}`,
+                border: `2px solid ${errors.fullName ? '#ef4444' : colors.platinum}`,
                 backgroundColor: 'white',
                 color: colors.jet
               }}
-              required
             />
+            {errors.fullName && (
+              <p className="text-red-500 text-sm mt-1">{errors.fullName.message}</p>
+            )}
           </div>
 
           {/* Email */}
@@ -92,18 +139,24 @@ const ApplyTechSupportModal = ({ onClose, onSubmit }) => {
             </label>
             <input
               type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
+              {...register('email', {
+                required: 'Email is required',
+                pattern: {
+                  value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: 'Please enter a valid email address'
+                }
+              })}
               placeholder="your.email@example.com"
               className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2"
               style={{
-                border: `2px solid ${colors.platinum}`,
+                border: `2px solid ${errors.email ? '#ef4444' : colors.platinum}`,
                 backgroundColor: 'white',
                 color: colors.jet
               }}
-              required
             />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+            )}
           </div>
 
           {/* Phone */}
@@ -114,18 +167,24 @@ const ApplyTechSupportModal = ({ onClose, onSubmit }) => {
             </label>
             <input
               type="tel"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              placeholder="+1 (555) 123-4567"
+              {...register('phoneNumber', {
+                required: 'Phone number is required',
+                pattern: {
+                  value: /^[0-9+\-\s()]+$/,
+                  message: 'Please enter a valid phone number'
+                }
+              })}
+              placeholder="0599999999"
               className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2"
               style={{
-                border: `2px solid ${colors.platinum}`,
+                border: `2px solid ${errors.phoneNumber ? '#ef4444' : colors.platinum}`,
                 backgroundColor: 'white',
                 color: colors.jet
               }}
-              required
             />
+            {errors.phoneNumber && (
+              <p className="text-red-500 text-sm mt-1">{errors.phoneNumber.message}</p>
+            )}
           </div>
 
           {/* Specialization */}
@@ -135,16 +194,16 @@ const ApplyTechSupportModal = ({ onClose, onSubmit }) => {
               Area of Specialization *
             </label>
             <select
-              name="specialization"
-              value={formData.specialization}
-              onChange={handleChange}
+              {...register('areaOfSpecialization', {
+                required: 'Area of specialization is required'
+              })}
+              defaultValue="Gaming PCs & Hardware"
               className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2"
               style={{
-                border: `2px solid ${colors.platinum}`,
+                border: `2px solid ${errors.areaOfSpecialization ? '#ef4444' : colors.platinum}`,
                 backgroundColor: 'white',
                 color: colors.jet
               }}
-              required
             >
               {specializations.map((spec) => (
                 <option key={spec} value={spec}>
@@ -152,6 +211,9 @@ const ApplyTechSupportModal = ({ onClose, onSubmit }) => {
                 </option>
               ))}
             </select>
+            {errors.areaOfSpecialization && (
+              <p className="text-red-500 text-sm mt-1">{errors.areaOfSpecialization.message}</p>
+            )}
           </div>
 
           {/* Experience */}
@@ -161,19 +223,29 @@ const ApplyTechSupportModal = ({ onClose, onSubmit }) => {
               Years of Experience *
             </label>
             <input
-              type="text"
-              name="experience"
-              value={formData.experience}
-              onChange={handleChange}
-              placeholder="e.g., 5 years"
+              type="number"
+              {...register('yearsOfExperience', {
+                required: 'Years of experience is required',
+                min: {
+                  value: 0,
+                  message: 'Years of experience cannot be negative'
+                },
+                max: {
+                  value: 50,
+                  message: 'Please enter a valid number of years'
+                }
+              })}
+              placeholder="e.g., 4"
               className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2"
               style={{
-                border: `2px solid ${colors.platinum}`,
+                border: `2px solid ${errors.yearsOfExperience ? '#ef4444' : colors.platinum}`,
                 backgroundColor: 'white',
                 color: colors.jet
               }}
-              required
             />
+            {errors.yearsOfExperience && (
+              <p className="text-red-500 text-sm mt-1">{errors.yearsOfExperience.message}</p>
+            )}
           </div>
 
           {/* Reason */}
@@ -183,40 +255,25 @@ const ApplyTechSupportModal = ({ onClose, onSubmit }) => {
               Why do you want to become a Tech Support? *
             </label>
             <textarea
-              name="reason"
-              value={formData.reason}
-              onChange={handleChange}
+              {...register('reason', {
+                required: 'Reason is required',
+                minLength: {
+                  value: 20,
+                  message: 'Please provide at least 20 characters explaining your reason'
+                }
+              })}
               placeholder="Tell us why you're passionate about helping others with their PC problems..."
               rows="4"
               className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 resize-none"
               style={{
-                border: `2px solid ${colors.platinum}`,
-                backgroundColor: 'white',
-                color: colors.jet
-              }}
-              required
-            />
-          </div>
-
-          {/* Additional Info */}
-          <div>
-            <label className="flex items-center gap-2 mb-2 font-semibold" style={{ color: colors.mainBlack }}>
-              <FiFileText size={18} style={{ color: colors.mainYellow }} />
-              Additional Information
-            </label>
-            <textarea
-              name="additionalInfo"
-              value={formData.additionalInfo}
-              onChange={handleChange}
-              placeholder="Certifications, special skills, portfolio links, or anything else you'd like us to know..."
-              rows="4"
-              className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 resize-none"
-              style={{
-                border: `2px solid ${colors.platinum}`,
+                border: `2px solid ${errors.reason ? '#ef4444' : colors.platinum}`,
                 backgroundColor: 'white',
                 color: colors.jet
               }}
             />
+            {errors.reason && (
+              <p className="text-red-500 text-sm mt-1">{errors.reason.message}</p>
+            )}
           </div>
 
           {/* Buttons */}
@@ -224,7 +281,8 @@ const ApplyTechSupportModal = ({ onClose, onSubmit }) => {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-6 py-3 rounded-lg font-bold border-2 hover:opacity-80 transition-opacity cursor-pointer"
+              disabled={isSubmitting}
+              className="flex-1 px-6 py-3 rounded-lg font-bold border-2 hover:opacity-80 transition-opacity cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               style={{
                 borderColor: colors.platinum,
                 color: colors.jet,
@@ -235,10 +293,11 @@ const ApplyTechSupportModal = ({ onClose, onSubmit }) => {
             </button>
             <button
               type="submit"
-              className="flex-1 px-6 py-3 rounded-lg font-bold text-white hover:opacity-90 transition-opacity cursor-pointer"
+              disabled={isSubmitting}
+              className="flex-1 px-6 py-3 rounded-lg font-bold text-white hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ backgroundColor: colors.mainYellow }}
             >
-              Submit Application
+              {isSubmitting ? 'Submitting...' : 'Submit Application'}
             </button>
           </div>
 
