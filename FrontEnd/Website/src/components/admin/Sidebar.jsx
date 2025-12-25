@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
   MdDashboard, 
@@ -12,14 +13,28 @@ import {
 import colors from '../../config/colors';
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
-  const menuItems = [
+  const [userRole, setUserRole] = useState('');
+
+  useEffect(() => {
+    const role = localStorage.getItem('userRole');
+    setUserRole(role || '');
+  }, []);
+  const allMenuItems = [
     { name: 'Overview', path: '/admin', icon: MdDashboard, end: true },
     { name: 'Shop Requests', path: '/admin/shop-requests', icon: MdStore },
-    { name: 'Tech Support', path: '/admin/tech-support', icon: MdSupport },
+    { name: 'Tech Support', path: '/admin/tech-support', icon: MdSupport, superAdminOnly: true },
     { name: 'Posts', path: '/admin/posts', icon: MdArticle },
     { name: 'Users', path: '/admin/users', icon: MdPeople },
     { name: 'Products', path: '/admin/products', icon: MdInventory },
   ];
+
+  // Filter menu items based on user role
+  const menuItems = allMenuItems.filter(item => {
+    if (item.superAdminOnly) {
+      return userRole === 'SuperAdmin';
+    }
+    return true;
+  });
 
   return (
     <aside 
