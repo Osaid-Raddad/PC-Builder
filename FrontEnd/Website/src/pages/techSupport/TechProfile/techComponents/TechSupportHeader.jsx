@@ -94,11 +94,11 @@ const TechSupportHeader = ({ userData, onEditClick, onDeleteAccountClick }) => {
                 <p className="text-2xl font-bold" style={{ color: colors.mainYellow }}>
                   {userData.stats.totalAppointments}
                 </p>
-                <p className="text-sm" style={{ color: colors.jet }}>Total Sessions</p>
+                <p className="text-sm" style={{ color: colors.jet }}>Completed Sessions</p>
               </div>
               <div className="text-center">
                 <p className="text-2xl font-bold" style={{ color: colors.mainYellow }}>
-                  {userData.stats.rating}⭐
+                  {userData.stats.rating || 0}⭐
                 </p>
                 <p className="text-sm" style={{ color: colors.jet }}>Rating</p>
               </div>
@@ -107,12 +107,6 @@ const TechSupportHeader = ({ userData, onEditClick, onDeleteAccountClick }) => {
                   {userData.stats.reviews}
                 </p>
                 <p className="text-sm" style={{ color: colors.jet }}>Reviews</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold" style={{ color: colors.mainYellow }}>
-                  {userData.stats.responseTime}
-                </p>
-                <p className="text-sm" style={{ color: colors.jet }}>Avg Response</p>
               </div>
             </div>
           </div>

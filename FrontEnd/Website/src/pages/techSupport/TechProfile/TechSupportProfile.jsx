@@ -31,6 +31,32 @@ const TechSupportProfile = () => {
         const response = await apiClient.get('/Profile/TechProfile/profile');
         const profileData = response.data;
         
+        // Fetch appointments to calculate stats
+        let completedCount = 0;
+        let averageRating = 0;
+        let reviewsCount = 0;
+        
+        try {
+          const appointmentsResponse = await apiClient.get('/TechSupport/Appointment/tech/schedule');
+          
+          const appointments = appointmentsResponse.data;
+          
+          // Count completed sessions (status === 3)
+          const completedAppointments = appointments.filter(apt => apt.status === 3);
+          completedCount = completedAppointments.length;
+          
+          // Calculate average rating from appointments with ratings
+          const ratedAppointments = completedAppointments.filter(apt => apt.rating !== null && apt.rating !== undefined);
+          reviewsCount = ratedAppointments.length;
+          
+          if (ratedAppointments.length > 0) {
+            const totalRating = ratedAppointments.reduce((sum, apt) => sum + apt.rating, 0);
+            averageRating = (totalRating / ratedAppointments.length).toFixed(1);
+          }
+        } catch (appointmentError) {
+          console.error('Error fetching appointments for stats:', appointmentError);
+        }
+        
         // Transform API data to match component structure
         const transformedData = {
           id: profileData.id,
@@ -57,10 +83,9 @@ const TechSupportProfile = () => {
           avatar: profileData.profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.fullName || 'User')}&background=F9B233&color=fff&size=200`,
           isOnline: true, // Default
           stats: {
-            totalAppointments: profileData.completedSessionsCount || 0,
-            rating: 0, // Will be handled later
-            reviews: 0, // Will be handled later
-            responseTime: '-' // Will be handled later
+            totalAppointments: completedCount,
+            rating: averageRating || 0,
+            reviews: reviewsCount
           }
         };
         
@@ -247,10 +272,9 @@ const TechSupportProfile = () => {
         avatar: profileData.profileImageUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData.fullName || 'User')}&background=F9B233&color=fff&size=200`,
         isOnline: true,
         stats: {
-          totalAppointments: profileData.completedSessionsCount || 0,
-          rating: 0,
-          reviews: 0,
-          responseTime: '-'
+          totalAppointments: userData.stats.totalAppointments,
+          rating: userData.stats.rating,
+          reviews: userData.stats.reviews
         }
       };
       

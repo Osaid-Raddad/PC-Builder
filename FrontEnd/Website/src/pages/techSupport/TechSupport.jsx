@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import Navbar from '../../components/user/navbar/Navbar';
 import Footer from '../../components/user/footer/Footer';
 import BlurText from '../../components/animations/BlurText/BlurText';
@@ -29,71 +30,95 @@ const TechSupport = () => {
   const [showAppointmentModal, setShowAppointmentModal] = useState(false);
   const [selectedSupport, setSelectedSupport] = useState(null);
   const [techSupporters, setTechSupporters] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState('');
 
-  // Mock data - Replace with API call
-  const mockTechSupport = [
-    {
-      id: 1,
-      name: 'Ahmad Hassan',
-      avatar: 'https://ui-avatars.com/api/?name=Ahmad+Hassan&background=F9B233&color=fff',
-      specialization: 'Gaming PCs & Hardware',
-      rating: 4.9,
-      reviews: 124,
-      experience: '5 years',
-      availability: {
-        monday: ['9:00 AM - 12:00 PM', '2:00 PM - 6:00 PM'],
-        tuesday: ['9:00 AM - 12:00 PM', '2:00 PM - 6:00 PM'],
-        wednesday: ['9:00 AM - 12:00 PM'],
-        thursday: ['9:00 AM - 12:00 PM', '2:00 PM - 6:00 PM'],
-        friday: ['9:00 AM - 12:00 PM', '2:00 PM - 6:00 PM'],
-        saturday: ['10:00 AM - 2:00 PM'],
-        sunday: []
-      },
-      status: 'available'
-    },
-    {
-      id: 2,
-      name: 'Sarah Mohammed',
-      avatar: 'https://ui-avatars.com/api/?name=Sarah+Mohammed&background=F9B233&color=fff',
-      specialization: 'Software & Troubleshooting',
-      rating: 4.8,
-      reviews: 98,
-      experience: '4 years',
-      availability: {
-        monday: ['10:00 AM - 2:00 PM', '4:00 PM - 8:00 PM'],
-        tuesday: ['10:00 AM - 2:00 PM'],
-        wednesday: ['10:00 AM - 2:00 PM', '4:00 PM - 8:00 PM'],
-        thursday: ['10:00 AM - 2:00 PM', '4:00 PM - 8:00 PM'],
-        friday: ['10:00 AM - 2:00 PM'],
-        saturday: [],
-        sunday: ['12:00 PM - 4:00 PM']
-      },
-      status: 'busy'
-    },
-    {
-      id: 3,
-      name: 'Khaled Ali',
-      avatar: 'https://ui-avatars.com/api/?name=Khaled+Ali&background=F9B233&color=fff',
-      specialization: 'Network & Servers',
-      rating: 4.7,
-      reviews: 87,
-      experience: '6 years',
-      availability: {
-        monday: ['9:00 AM - 5:00 PM'],
-        tuesday: ['9:00 AM - 5:00 PM'],
-        wednesday: ['9:00 AM - 5:00 PM'],
-        thursday: ['9:00 AM - 5:00 PM'],
-        friday: ['9:00 AM - 1:00 PM'],
+  // Function to format time from 24h to 12h format
+  const formatTime = (time24) => {
+    const [hours, minutes] = time24.split(':');
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour % 12 || 12;
+    return `${hour12}:${minutes} ${ampm}`;
+  };
+
+  // Function to convert day number to day name
+  const getDayNameFromNumber = (dayNum) => {
+    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    return days[dayNum];
+  };
+
+  // Transform backend data to match component structure
+  const transformTechSupportData = (backendData) => {
+    return backendData.map((tech) => {
+      // Initialize availability object with all days empty
+      const availability = {
+        monday: [],
+        tuesday: [],
+        wednesday: [],
+        thursday: [],
+        friday: [],
         saturday: [],
         sunday: []
-      },
-      status: 'available'
-    }
-  ];
+      };
 
+      // Populate availability from backend data
+      tech.availabilities.forEach((slot) => {
+        const dayName = getDayNameFromNumber(slot.day);
+        const timeSlot = `${formatTime(slot.startTime)} - ${formatTime(slot.endTime)}`;
+        availability[dayName].push(timeSlot);
+      });
+
+      return {
+        id: tech.techSupportId,
+        name: tech.fullName,
+        email: tech.email,
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(tech.fullName)}&background=F9B233&color=fff`,
+        specialization: 'PC Building & Support',
+        rating: 4.8,
+        reviews: 0,
+        experience: 'Certified',
+        availability,
+        status: tech.availabilities.length > 0 ? 'available' : 'busy'
+      };
+    });
+  };
+
+  // Fetch tech support data from API
   useEffect(() => {
-    // Simulate API call
-    setTechSupporters(mockTechSupport);
+    // Get user role from localStorage
+    const role = localStorage.getItem('userRole');
+    setUserRole(role);
+
+    const fetchTechSupport = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/api/TechSupport/Availability/tech-supports`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+        
+        const transformedData = transformTechSupportData(response.data);
+        setTechSupporters(transformedData);
+        toast.success('Tech support team loaded successfully!');
+      } catch (error) {
+        console.error('Error fetching tech support:', error);
+        if (error.response?.status === 401) {
+          toast.error('Please log in to view tech support team');
+        } else {
+          toast.error('Failed to load tech support team. Please try again later.');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTechSupport();
   }, []);
 
   const handleApply = (formData) => {
@@ -104,6 +129,10 @@ const TechSupport = () => {
   };
 
   const handleRequestAppointment = (supporter) => {
+    if (userRole === 'TechSupport') {
+      toast.error('Tech Support members cannot request appointments');
+      return;
+    }
     setSelectedSupport(supporter);
     setShowAppointmentModal(true);
   };
@@ -212,6 +241,18 @@ const TechSupport = () => {
             Our Tech Support Team
           </h2>
 
+          {loading ? (
+            <div className="flex justify-center items-center py-20">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-16 w-16 border-b-4 mx-auto mb-4" style={{ borderColor: colors.mainYellow }}></div>
+                <p className="text-xl font-semibold" style={{ color: colors.mainBlack }}>Loading tech support team...</p>
+              </div>
+            </div>
+          ) : techSupporters.length === 0 ? (
+            <div className="text-center py-20">
+              <p className="text-xl font-semibold" style={{ color: colors.jet }}>No tech support specialists available at the moment.</p>
+            </div>
+          ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {techSupporters.map((supporter, index) => (
               <BounceCard key={supporter.id} index={index}>
@@ -247,15 +288,6 @@ const TechSupport = () => {
                             {supporter.experience} experience
                           </div>
                         </div>
-                      </div>
-                      <div 
-                        className={`px-3 py-1 rounded-full text-sm font-bold ${
-                          supporter.status === 'available' 
-                            ? 'bg-green-100 text-green-700' 
-                            : 'bg-red-100 text-red-700'
-                        }`}
-                      >
-                        {supporter.status === 'available' ? 'Available' : 'Busy'}
                       </div>
                     </div>
                   </div>
@@ -304,32 +336,45 @@ const TechSupport = () => {
 
                   {/* Actions */}
                   <div className="p-6 border-t-2 flex gap-3" style={{ borderColor: colors.platinum }}>
-                    <button
-                      onClick={() => handleChatWithSupport(supporter)}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-bold border-2 hover:opacity-80 transition-opacity cursor-pointer"
-                      style={{ 
-                        borderColor: colors.mainYellow,
-                        color: colors.mainYellow,
-                        backgroundColor: 'white'
-                      }}
-                      disabled={supporter.status === 'busy'}
-                    >
-                      <FiMessageCircle size={20} />
-                      Chat Now
-                    </button>
-                    <button
-                      onClick={() => handleRequestAppointment(supporter)}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-bold text-white hover:opacity-90 transition-opacity cursor-pointer"
-                      style={{ backgroundColor: colors.mainYellow }}
-                    >
-                      <FiCalendar size={20} />
-                      Request Appointment
-                    </button>
+                    {userRole !== 'TechSupport' && (
+                      <>
+                        <button
+                          onClick={() => handleChatWithSupport(supporter)}
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-bold border-2 hover:opacity-80 transition-opacity cursor-pointer"
+                          style={{ 
+                            borderColor: colors.mainYellow,
+                            color: colors.mainYellow,
+                            backgroundColor: 'white'
+                          }}
+                          disabled={supporter.status === 'busy'}
+                        >
+                          <FiMessageCircle size={20} />
+                          Chat Now
+                        </button>
+                        <button
+                          onClick={() => handleRequestAppointment(supporter)}
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-bold text-white hover:opacity-90 transition-opacity cursor-pointer"
+                          style={{ backgroundColor: colors.mainYellow }}
+                        >
+                          <FiCalendar size={20} />
+                          Request Appointment
+                        </button>
+                      </>
+                    )}
+                    {userRole === 'TechSupport' && (
+                      <div 
+                        className="flex-1 px-4 py-3 rounded-lg text-center font-semibold"
+                        style={{ backgroundColor: colors.mainBeige, color: colors.jet }}
+                      >
+                        Tech Support View Only
+                      </div>
+                    )}
                   </div>
                 </div>
               </BounceCard>
             ))}
           </div>
+          )}
         </div>
 
         {/* How It Works Section */}

@@ -1,31 +1,29 @@
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
 import colors from '../../config/colors';
-import { FiX, FiCalendar, FiClock, FiFileText, FiAlertCircle } from 'react-icons/fi';
+import { FiX, FiCalendar, FiClock, FiAlertCircle } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 const AppointmentModal = ({ supporter, onClose, onSubmit }) => {
-  const [formData, setFormData] = useState({
-    date: '',
-    timeSlot: '',
-    problemDescription: '',
-    urgency: 'normal'
+  const { register, handleSubmit, watch, setValue, formState: { errors, isSubmitting } } = useForm({
+    defaultValues: {
+      date: '',
+      timeSlot: ''
+    }
   });
 
   const [selectedDay, setSelectedDay] = useState('');
   const [availableSlots, setAvailableSlots] = useState([]);
-
-  const urgencyLevels = [
-    { value: 'low', label: 'Low Priority', color: 'bg-blue-100 text-blue-700' },
-    { value: 'normal', label: 'Normal', color: 'bg-green-100 text-green-700' },
-    { value: 'high', label: 'High Priority', color: 'bg-orange-100 text-orange-700' },
-    { value: 'urgent', label: 'Urgent', color: 'bg-red-100 text-red-700' }
-  ];
+  const watchDate = watch('date');
+  const watchTimeSlot = watch('timeSlot');
 
   const handleDateChange = (e) => {
     const selectedDate = new Date(e.target.value);
     const dayName = selectedDate.toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
     
-    setFormData({ ...formData, date: e.target.value, timeSlot: '' });
+    setValue('date', e.target.value);
+    setValue('timeSlot', ''); // Reset time slot when date changes
     setSelectedDay(dayName);
     
     // Get available slots for selected day
@@ -37,24 +35,72 @@ const AppointmentModal = ({ supporter, onClose, onSubmit }) => {
     }
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    if (!formData.timeSlot) {
+  const onSubmitForm = async (data) => {
+    if (!data.timeSlot) {
       toast.error('Please select a time slot');
       return;
     }
-    
-    onSubmit({
-      ...formData,
-      supporterId: supporter.id,
-      supporterName: supporter.name
-    });
+
+    try {
+      // Parse the time slot (e.g., "9:00 AM - 5:00 PM")
+      const [startTime, endTime] = data.timeSlot.split(' - ');
+      
+      // Convert time to 24-hour format
+      const convertTo24Hour = (time12h) => {
+        const [time, modifier] = time12h.split(' ');
+        let [hours, minutes] = time.split(':');
+        
+        if (hours === '12') {
+          hours = modifier === 'AM' ? '00' : '12';
+        } else {
+          hours = modifier === 'PM' ? String(parseInt(hours, 10) + 12) : hours.padStart(2, '0');
+        }
+        
+        return `${hours}:${minutes}:00`;
+      };
+
+      const startTime24 = convertTo24Hour(startTime);
+      const endTime24 = convertTo24Hour(endTime);
+
+      // Create ISO datetime strings
+      const startDateTime = `${data.date}T${startTime24}`;
+      const endDateTime = `${data.date}T${endTime24}`;
+
+      // Prepare request payload
+      const requestPayload = {
+        techSupportId: supporter.id,
+        startDateTime,
+        endDateTime
+      };
+
+      const token = localStorage.getItem('authToken');
+
+      // Make API call
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/TechSupport/Appointment/create`,
+        requestPayload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      toast.success('Appointment request sent successfully!');
+      onClose();
+      
+    } catch (error) {
+      console.error('Error creating appointment:', error);
+      
+      if (error.response?.status === 401) {
+        toast.error('Please log in to request an appointment');
+      } else if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('Failed to send appointment request. Please try again.');
+      }
+    }
   };
 
   // Get min date (today)
@@ -107,7 +153,7 @@ const AppointmentModal = ({ supporter, onClose, onSubmit }) => {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+        <form onSubmit={handleSubmit(onSubmitForm)} className="p-6 space-y-6">
           {/* Date Selection */}
           <div>
             <label className="flex items-center gap-2 mb-2 font-semibold" style={{ color: colors.mainBlack }}>
@@ -116,22 +162,33 @@ const AppointmentModal = ({ supporter, onClose, onSubmit }) => {
             </label>
             <input
               type="date"
-              name="date"
-              value={formData.date}
+              {...register('date', { 
+                required: 'Date is required',
+                validate: (value) => {
+                  const selected = new Date(value);
+                  const min = new Date(today);
+                  const max = new Date(maxDate);
+                  if (selected < min) return 'Date must be today or later';
+                  if (selected > max) return 'Date must be within 30 days';
+                  return true;
+                }
+              })}
               onChange={handleDateChange}
               min={today}
               max={maxDate}
               className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2"
               style={{
-                border: `2px solid ${colors.platinum}`,
+                border: `2px solid ${errors.date ? 'red' : colors.platinum}`,
                 backgroundColor: 'white',
                 color: colors.jet
               }}
-              required
             />
-            {formData.date && (
+            {errors.date && (
+              <p className="text-sm mt-1 text-red-600">{errors.date.message}</p>
+            )}
+            {watchDate && (
               <p className="text-sm mt-2" style={{ color: colors.jet }}>
-                Selected: {new Date(formData.date + 'T00:00:00').toLocaleDateString('en-US', { 
+                Selected: {new Date(watchDate + 'T00:00:00').toLocaleDateString('en-US', { 
                   weekday: 'long', 
                   year: 'numeric', 
                   month: 'long', 
@@ -142,28 +199,29 @@ const AppointmentModal = ({ supporter, onClose, onSubmit }) => {
           </div>
 
           {/* Time Slot Selection */}
-          {formData.date && (
+          {watchDate && (
             <div>
               <label className="flex items-center gap-2 mb-2 font-semibold" style={{ color: colors.mainBlack }}>
                 <FiClock size={18} style={{ color: colors.mainYellow }} />
                 Select Time Slot *
               </label>
+              <input type="hidden" {...register('timeSlot', { required: 'Time slot is required' })} />
               {availableSlots.length > 0 ? (
                 <div className="grid grid-cols-2 gap-3">
                   {availableSlots.map((slot, index) => (
                     <button
                       key={index}
                       type="button"
-                      onClick={() => setFormData({ ...formData, timeSlot: slot })}
+                      onClick={() => setValue('timeSlot', slot)}
                       className={`px-4 py-3 rounded-lg font-semibold border-2 transition-all ${
-                        formData.timeSlot === slot
+                        watchTimeSlot === slot
                           ? 'text-white'
                           : 'hover:opacity-80'
                       }`}
                       style={{
                         borderColor: colors.mainYellow,
-                        backgroundColor: formData.timeSlot === slot ? colors.mainYellow : 'white',
-                        color: formData.timeSlot === slot ? 'white' : colors.jet
+                        backgroundColor: watchTimeSlot === slot ? colors.mainYellow : 'white',
+                        color: watchTimeSlot === slot ? 'white' : colors.jet
                       }}
                     >
                       {slot}
@@ -181,58 +239,11 @@ const AppointmentModal = ({ supporter, onClose, onSubmit }) => {
                   </p>
                 </div>
               )}
+              {errors.timeSlot && (
+                <p className="text-sm mt-2 text-red-600">{errors.timeSlot.message}</p>
+              )}
             </div>
           )}
-
-          {/* Problem Description */}
-          <div>
-            <label className="flex items-center gap-2 mb-2 font-semibold" style={{ color: colors.mainBlack }}>
-              <FiFileText size={18} style={{ color: colors.mainYellow }} />
-              Describe Your Problem *
-            </label>
-            <textarea
-              name="problemDescription"
-              value={formData.problemDescription}
-              onChange={handleChange}
-              placeholder="Please describe the issue you're experiencing with your PC..."
-              rows="5"
-              className="w-full px-4 py-3 rounded-lg focus:outline-none focus:ring-2 resize-none"
-              style={{
-                border: `2px solid ${colors.platinum}`,
-                backgroundColor: 'white',
-                color: colors.jet
-              }}
-              required
-            />
-          </div>
-
-          {/* Urgency Level */}
-          <div>
-            <label className="flex items-center gap-2 mb-2 font-semibold" style={{ color: colors.mainBlack }}>
-              <FiAlertCircle size={18} style={{ color: colors.mainYellow }} />
-              Urgency Level *
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              {urgencyLevels.map((level) => (
-                <button
-                  key={level.value}
-                  type="button"
-                  onClick={() => setFormData({ ...formData, urgency: level.value })}
-                  className={`px-4 py-3 rounded-lg font-semibold border-2 transition-all ${
-                    formData.urgency === level.value
-                      ? level.color
-                      : 'bg-white hover:opacity-80'
-                  }`}
-                  style={{
-                    borderColor: formData.urgency === level.value ? 'transparent' : colors.platinum,
-                    color: formData.urgency === level.value ? undefined : colors.jet
-                  }}
-                >
-                  {level.label}
-                </button>
-              ))}
-            </div>
-          </div>
 
           {/* Info Box */}
           <div 
@@ -243,7 +254,7 @@ const AppointmentModal = ({ supporter, onClose, onSubmit }) => {
               📝 Note:
             </p>
             <p className="text-sm" style={{ color: colors.jet }}>
-              Your appointment request will be sent to {supporter.name}. You will receive a notification once they accept or decline your request. If declined, you'll receive a reason and can request another time slot.
+              Your appointment request will be sent to {supporter.name}. You will receive a notification once they accept or decline your request.
             </p>
           </div>
 
@@ -263,10 +274,11 @@ const AppointmentModal = ({ supporter, onClose, onSubmit }) => {
             </button>
             <button
               type="submit"
-              className="flex-1 px-6 py-3 rounded-lg font-bold text-white hover:opacity-90 transition-opacity cursor-pointer"
+              disabled={isSubmitting}
+              className="flex-1 px-6 py-3 rounded-lg font-bold text-white hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ backgroundColor: colors.mainYellow }}
             >
-              Send Request
+              {isSubmitting ? 'Sending...' : 'Send Request'}
             </button>
           </div>
         </form>

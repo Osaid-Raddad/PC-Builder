@@ -1,16 +1,206 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { FiCheck, FiX, FiClock, FiUser, FiMessageSquare, FiExternalLink, FiCalendar } from 'react-icons/fi';
 import BounceCard from '../../../../components/animations/BounceCard/BounceCard';
+import MeetingLinkGenerator from './MeetingLinkGenerator';
 import colors from '../../../../config/colors';
 import toast from 'react-hot-toast';
 
 const AppointmentsTab = ({ appointments, onUpdateStatus, onGenerateMeeting }) => {
   const [filter, setFilter] = useState('all'); // all, pending, accepted, completed
+  const [appointmentsData, setAppointmentsData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const filteredAppointments = appointments.filter(apt => {
+  // Fetch appointments from API
+  useEffect(() => {
+    const fetchAppointments = async () => {
+      setLoading(true);
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_BASE_URL}/api/TechSupport/Appointment/tech/schedule`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+
+        // Transform backend data to component format
+        const transformedData = response.data.map(apt => {
+          // Convert status number to string
+          const statusMap = {
+            0: 'pending',
+            1: 'accepted',
+            2: 'rejected',
+            3: 'completed'
+          };
+
+          // Format dates
+          const startDate = new Date(apt.startDateTime);
+          const endDate = new Date(apt.endDateTime);
+          const date = startDate.toLocaleDateString('en-US', {
+            weekday: 'short',
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          });
+          const startTime = startDate.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+          const endTime = endDate.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit'
+          });
+          const time = `${startTime} - ${endTime}`;
+
+          return {
+            id: apt.id,
+            userId: apt.userId,
+            userName: apt.userName,
+            techSupportId: apt.techSupportId,
+            techSupportName: apt.techSupportName,
+            userEmail: apt.userEmail || 'N/A',
+            date,
+            time,
+            status: statusMap[apt.status] || 'pending',
+            rating: apt.rating,
+            startDateTime: apt.startDateTime,
+            endDateTime: apt.endDateTime,
+            message: apt.message || null,
+            meetingLink: apt.meetingLink || null
+          };
+        });
+
+        setAppointmentsData(transformedData);
+        toast.success('Appointments loaded successfully!');
+      } catch (error) {
+        console.error('Error fetching appointments:', error);
+        if (error.response?.status === 401) {
+          toast.error('Please log in to view appointments');
+        } else {
+          toast.error('Failed to load appointments');
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAppointments();
+  }, []);
+
+  const filteredAppointments = appointmentsData.filter(apt => {
     if (filter === 'all') return true;
     return apt.status === filter;
   });
+
+  // Handle Accept Appointment
+  const handleAcceptAppointment = async (appointmentId) => {
+    try {
+      const token = localStorage.getItem('authToken');
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/TechSupport/Appointment/approve/${appointmentId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      // Update local state
+      setAppointmentsData(prev => 
+        prev.map(apt => 
+          apt.id === appointmentId 
+            ? { ...apt, status: 'accepted' } 
+            : apt
+        )
+      );
+
+      toast.success('Appointment accepted successfully!');
+    } catch (error) {
+      console.error('Error accepting appointment:', error);
+      if (error.response?.status === 401) {
+        toast.error('Please log in to perform this action');
+      } else {
+        toast.error(error.response?.data?.message || 'Failed to accept appointment');
+      }
+    }
+  };
+
+  // Handle Reject Appointment
+  const handleRejectAppointment = async (appointmentId) => {
+    try {
+      const token = localStorage.getItem('authToken');
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/TechSupport/Appointment/reject/${appointmentId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      // Update local state to rejected
+      setAppointmentsData(prev => 
+        prev.map(apt => 
+          apt.id === appointmentId 
+            ? { ...apt, status: 'rejected' } 
+            : apt
+        )
+      );
+
+      toast.success('Appointment rejected');
+
+      // Remove from list after 5 seconds
+      setTimeout(() => {
+        setAppointmentsData(prev => prev.filter(apt => apt.id !== appointmentId));
+      }, 5000);
+    } catch (error) {
+      console.error('Error rejecting appointment:', error);
+      if (error.response?.status === 401) {
+        toast.error('Please log in to perform this action');
+      } else {
+        toast.error(error.response?.data?.message || 'Failed to reject appointment');
+      }
+    }
+  };
+
+  // Handle Complete Appointment
+  const handleCompleteAppointment = async (appointmentId) => {
+    try {
+      const token = localStorage.getItem('authToken');
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/TechSupport/Appointment/complete/${appointmentId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      // Update local state
+      setAppointmentsData(prev => 
+        prev.map(apt => 
+          apt.id === appointmentId 
+            ? { ...apt, status: 'completed' } 
+            : apt
+        )
+      );
+
+      toast.success('Appointment marked as completed!');
+    } catch (error) {
+      console.error('Error completing appointment:', error);
+      if (error.response?.status === 401) {
+        toast.error('Please log in to perform this action');
+      } else {
+        toast.error(error.response?.data?.message || 'Failed to mark appointment as completed');
+      }
+    }
+  };
 
   const getStatusColor = (status) => {
     switch(status) {
@@ -28,29 +218,38 @@ const AppointmentsTab = ({ appointments, onUpdateStatus, onGenerateMeeting }) =>
 
   return (
     <div>
-      {/* Filter Buttons */}
-      <div className="flex gap-3 mb-6">
-        {['all', 'pending', 'accepted', 'completed'].map(filterType => (
-          <button
-            key={filterType}
-            onClick={() => setFilter(filterType)}
-            className="px-4 py-2 rounded-lg font-semibold transition-all cursor-pointer capitalize"
-            style={{
-              backgroundColor: filter === filterType ? colors.mainYellow : 'white',
-              color: filter === filterType ? 'white' : colors.jet,
-              border: `2px solid ${filter === filterType ? colors.mainYellow : colors.platinum}`
-            }}
-          >
-            {filterType}
-            <span className="ml-2">
-              ({appointments.filter(a => filterType === 'all' || a.status === filterType).length})
-            </span>
-          </button>
-        ))}
-      </div>
+      {loading ? (
+        <div className="flex justify-center items-center py-20">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-4 mx-auto mb-4" style={{ borderColor: colors.mainYellow }}></div>
+            <p className="text-xl font-semibold" style={{ color: colors.mainBlack }}>Loading appointments...</p>
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Filter Buttons */}
+          <div className="flex gap-3 mb-6">
+            {['all', 'pending', 'accepted', 'completed'].map(filterType => (
+              <button
+                key={filterType}
+                onClick={() => setFilter(filterType)}
+                className="px-4 py-2 rounded-lg font-semibold transition-all cursor-pointer capitalize"
+                style={{
+                  backgroundColor: filter === filterType ? colors.mainYellow : 'white',
+                  color: filter === filterType ? 'white' : colors.jet,
+                  border: `2px solid ${filter === filterType ? colors.mainYellow : colors.platinum}`
+                }}
+              >
+                {filterType}
+                <span className="ml-2">
+                  ({appointmentsData.filter(a => filterType === 'all' || a.status === filterType).length})
+                </span>
+              </button>
+            ))}
+          </div>
 
-      {/* Appointments List */}
-      <div className="space-y-4">
+          {/* Appointments List */}
+          <div className="space-y-4">
         {filteredAppointments.length === 0 ? (
           <div 
             className="bg-white rounded-lg shadow-lg p-8 text-center"
@@ -108,12 +307,6 @@ const AppointmentsTab = ({ appointments, onUpdateStatus, onGenerateMeeting }) =>
                             {appointment.userEmail}
                           </span>
                         </div>
-                        <div className="flex items-center gap-2">
-                          <FiClock size={16} style={{ color: colors.mainYellow }} />
-                          <span className="text-sm" style={{ color: colors.jet }}>
-                            Duration: {appointment.duration}
-                          </span>
-                        </div>
                       </div>
                       {appointment.message && (
                         <div 
@@ -141,7 +334,7 @@ const AppointmentsTab = ({ appointments, onUpdateStatus, onGenerateMeeting }) =>
                     {appointment.status === 'pending' && (
                       <>
                         <button
-                          onClick={() => onUpdateStatus(appointment.id, 'accepted')}
+                          onClick={() => handleAcceptAppointment(appointment.id)}
                           className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer"
                           style={{ backgroundColor: '#10b981', color: 'white' }}
                         >
@@ -149,7 +342,7 @@ const AppointmentsTab = ({ appointments, onUpdateStatus, onGenerateMeeting }) =>
                           Accept
                         </button>
                         <button
-                          onClick={() => onUpdateStatus(appointment.id, 'rejected')}
+                          onClick={() => handleRejectAppointment(appointment.id)}
                           className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer"
                           style={{ 
                             backgroundColor: 'white',
@@ -163,43 +356,23 @@ const AppointmentsTab = ({ appointments, onUpdateStatus, onGenerateMeeting }) =>
                       </>
                     )}
                     {appointment.status === 'accepted' && (
-                      <>
+                      <div className="space-y-2">
+                        <MeetingLinkGenerator 
+                          appointmentId={appointment.id}
+                          userName={appointment.userName}
+                        />
                         <button
-                          onClick={() => onGenerateMeeting(appointment.id)}
-                          className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer"
-                          style={{ backgroundColor: colors.mainYellow, color: 'white' }}
-                        >
-                          <FiExternalLink size={18} />
-                          Generate Meeting
-                        </button>
-                        {appointment.meetingLink && (
-                          <a
-                            href={appointment.meetingLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer text-center"
-                            style={{ 
-                              backgroundColor: 'white',
-                              color: colors.mainYellow,
-                              border: `2px solid ${colors.mainYellow}`
-                            }}
-                          >
-                            <FiExternalLink size={18} />
-                            Join Meeting
-                          </a>
-                        )}
-                        <button
-                          onClick={() => onUpdateStatus(appointment.id, 'completed')}
-                          className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer"
+                          onClick={() => handleCompleteAppointment(appointment.id)}
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer"
                           style={{ 
-                            backgroundColor: 'white',
-                            color: colors.jet,
-                            border: `2px solid ${colors.platinum}`
+                            backgroundColor: colors.mainYellow,
+                            color: 'white'
                           }}
                         >
+                          <FiCheck size={18} />
                           Mark Complete
                         </button>
-                      </>
+                      </div>
                     )}
                     {appointment.status === 'completed' && (
                       <div 
@@ -224,6 +397,8 @@ const AppointmentsTab = ({ appointments, onUpdateStatus, onGenerateMeeting }) =>
           ))
         )}
       </div>
+        </>
+      )}
     </div>
   );
 };
