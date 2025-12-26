@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import axios from 'axios';
-import { FiCalendar, FiClock, FiUser, FiMessageSquare } from 'react-icons/fi';
+import { FiCalendar, FiClock, FiUser, FiMessageSquare, FiStar } from 'react-icons/fi';
 import BounceCard from '../../../../components/animations/BounceCard/BounceCard';
 import colors from '../../../../config/colors';
 import toast from 'react-hot-toast';
@@ -9,6 +10,8 @@ const AppointmentsTab = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); // all, pending, accepted, completed
+  const [ratingAppointment, setRatingAppointment] = useState(null);
+  const [submittingRating, setSubmittingRating] = useState(false);
 
   // Fetch appointments from API
   useEffect(() => {
@@ -103,6 +106,45 @@ const AppointmentsTab = () => {
 
   const getStatusLabel = (status) => {
     return status.charAt(0).toUpperCase() + status.slice(1);
+  };
+
+  // Handle Rate Appointment
+  const handleRateAppointment = async (appointmentId, rating) => {
+    setSubmittingRating(true);
+    try {
+      const token = localStorage.getItem('authToken');
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/TechSupport/Appointment/rate/${appointmentId}`,
+        { rating: parseFloat(rating) },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      // Update local state
+      setAppointments(prev => 
+        prev.map(apt => 
+          apt.id === appointmentId 
+            ? { ...apt, rating: parseFloat(rating) } 
+            : apt
+        )
+      );
+
+      setRatingAppointment(null);
+      toast.success('Rating submitted successfully!');
+    } catch (error) {
+      console.error('Error rating appointment:', error);
+      if (error.response?.status === 401) {
+        toast.error('Please log in to rate this appointment');
+      } else {
+        toast.error(error.response?.data?.message || 'Failed to submit rating');
+      }
+    } finally {
+      setSubmittingRating(false);
+    }
   };
 
   return (
@@ -219,11 +261,73 @@ const AppointmentsTab = () => {
                           </div>
                         )}
                         {appointment.status === 'completed' && (
-                          <div 
-                            className="px-4 py-3 rounded-lg text-center font-semibold"
-                            style={{ backgroundColor: '#10b981' + '20', color: '#10b981' }}
-                          >
-                            ✓ Completed
+                          <div className="space-y-2">
+                            <div 
+                              className="px-4 py-3 rounded-lg text-center font-semibold"
+                              style={{ backgroundColor: '#10b981' + '20', color: '#10b981' }}
+                            >
+                              ✓ Completed
+                            </div>
+                            {appointment.rating ? (
+                              <div 
+                                className="px-4 py-3 rounded-lg text-center"
+                                style={{ backgroundColor: colors.mainBeige }}
+                              >
+                                <div className="flex items-center justify-center gap-1 mb-1">
+                                  {[...Array(5)].map((_, i) => (
+                                    <FiStar
+                                      key={i}
+                                      size={16}
+                                      style={{ 
+                                        color: colors.mainYellow,
+                                        fill: i < appointment.rating ? colors.mainYellow : 'none'
+                                      }}
+                                    />
+                                  ))}
+                                </div>
+                                <p className="text-xs font-semibold" style={{ color: colors.jet }}>
+                                  Your Rating: {appointment.rating}/5
+                                </p>
+                              </div>
+                            ) : (
+                              <div 
+                                className="px-4 py-3 rounded-lg"
+                                style={{ backgroundColor: colors.mainBeige }}
+                              >
+                                <p className="text-sm font-semibold mb-2 text-center" style={{ color: colors.mainBlack }}>
+                                  Rate your experience
+                                </p>
+                                <div className="flex items-center justify-center gap-1 mb-3">
+                                  {[1, 2, 3, 4, 5].map((star) => (
+                                    <button
+                                      key={star}
+                                      type="button"
+                                      onClick={() => setRatingAppointment({ id: appointment.id, rating: star })}
+                                      className="transition-transform hover:scale-110 cursor-pointer"
+                                      disabled={submittingRating}
+                                    >
+                                      <FiStar
+                                        size={24}
+                                        style={{ 
+                                          color: colors.mainYellow,
+                                          fill: ratingAppointment?.id === appointment.id && star <= ratingAppointment.rating ? colors.mainYellow : 'none'
+                                        }}
+                                      />
+                                    </button>
+                                  ))}
+                                </div>
+                                {ratingAppointment?.id === appointment.id && (
+                                  <button
+                                    onClick={() => handleRateAppointment(appointment.id, ratingAppointment.rating)}
+                                    disabled={submittingRating}
+                                    className="w-full px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer disabled:opacity-50"
+                                    style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+                                  >
+                                    {submittingRating ? 'Submitting...' : 'Submit Rating'}
+                                  </button>
+                                )}
+                              </div>
+                            )}
                           </div>
                         )}
                         {appointment.status === 'rejected' && (
