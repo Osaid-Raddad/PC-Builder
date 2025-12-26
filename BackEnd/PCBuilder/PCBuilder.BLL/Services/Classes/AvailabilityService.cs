@@ -4,6 +4,7 @@ using PCBuilder.BLL.Services.Interfaces;
 using PCBuilder.DAL.DTO.Requests;
 using PCBuilder.DAL.DTO.Responses;
 using PCBuilder.DAL.Models;
+using PCBuilder.DAL.Repositories.Classes;
 using PCBuilder.DAL.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -50,7 +51,7 @@ namespace PCBuilder.BLL.Services.Classes
                 EndTime = x.EndTime
             }).ToList();
         }
-        
+
         public async Task DeleteAsync(int id, string techId)
         {
             var availability = await _repo.GetByIdAsync(id);
@@ -63,5 +64,64 @@ namespace PCBuilder.BLL.Services.Classes
 
             await _repo.DeleteAsync(id);
         }
+
+        public async Task<List<TechSupportWithAvailabilityResponse>> GetAllAsync()
+        {
+            var availabilities = await _repo.GetAllWithTechAsync();
+
+         
+            if (availabilities == null || !availabilities.Any())
+                throw new KeyNotFoundException("No tech support availability found");
+
+            
+            if (availabilities.Any(a => a.TechSupport == null))
+                throw new InvalidOperationException("Some availability records are missing tech support data");
+
+            var result = availabilities
+                .GroupBy(a => a.TechSupportId)
+                .Select(group =>
+                {
+                    var tech = group.First().TechSupport;
+
+                
+                    if (string.IsNullOrWhiteSpace(tech.Id))
+                        throw new InvalidOperationException("Invalid tech support ID");
+
+                    if (string.IsNullOrWhiteSpace(tech.FullName))
+                        throw new InvalidOperationException($"Tech support ({tech.Id}) has no full name");
+
+                   
+                    var validAvailabilities = group
+                        .Where(a =>
+                            a.StartTime < a.EndTime &&                 
+                            Enum.IsDefined(typeof(DayOfWeek), a.Day)   
+                        )
+                        .Select(a => new AvailabilityResponse
+                        {
+                            Id = a.Id,
+                            Day = a.Day,
+                            StartTime = a.StartTime,
+                            EndTime = a.EndTime
+                        })
+                        .ToList();
+
+                  
+                    if (!validAvailabilities.Any())
+                        throw new InvalidOperationException(
+                            $"Tech support ({tech.FullName}) has no valid availability schedule");
+
+                    return new TechSupportWithAvailabilityResponse
+                    {
+                        TechSupportId = tech.Id,
+                        FullName = tech.FullName,
+                        Email = tech.Email,
+                        Availabilities = validAvailabilities
+                    };
+                })
+                .ToList();
+
+            return result;
+        }
+
     }
 }

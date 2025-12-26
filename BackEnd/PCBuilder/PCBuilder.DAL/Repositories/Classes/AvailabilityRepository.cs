@@ -44,5 +44,12 @@ namespace PCBuilder.DAL.Repositories.Classes
             _context.Remove(item);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<TechSupportAvailability>> GetAllWithTechAsync()
+        {
+            return await _context.TechSupportAvailabilities
+                .Include(a => a.TechSupport)
+                .ToListAsync();
+        }
     }
 }
