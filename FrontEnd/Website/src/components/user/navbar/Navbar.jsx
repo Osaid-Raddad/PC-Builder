@@ -150,9 +150,8 @@ export default function Navbar() {
   };
 
   const handleLogout = () => {
-    // Clear authentication tokens and user data from localStorage
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userData');
+    // Clear all localStorage data to prevent conflicts between user sessions
+    localStorage.clear();
     
     // Update local state
     setIsLoggedIn(false);

@@ -45,7 +45,8 @@ const MainLayout = () => {
   ];
 
   const handleLogout = () => {
-    // Add your logout logic here
+    // Clear all localStorage data to prevent conflicts between user sessions
+    localStorage.clear();
     navigate('/signin');
   };
 

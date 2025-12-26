@@ -132,7 +132,10 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${colors.error}20`}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
           onClick={() => {
+            // Clear all localStorage data to prevent conflicts between user sessions
+            localStorage.clear();
             console.log('Logout clicked');
+            window.location.href = '/';
           }}
         >
           <MdLogout className="text-2xl" />
