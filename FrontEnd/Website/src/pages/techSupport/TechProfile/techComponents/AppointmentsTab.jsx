@@ -171,6 +171,17 @@ const AppointmentsTab = ({ appointments, onUpdateStatus, onGenerateMeeting }) =>
   // Handle Complete Appointment
   const handleCompleteAppointment = async (appointmentId) => {
     try {
+      const token = localStorage.getItem('authToken');
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/TechSupport/Appointment/complete/${appointmentId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
       // Update local state
       setAppointmentsData(prev => 
         prev.map(apt => 
@@ -183,7 +194,11 @@ const AppointmentsTab = ({ appointments, onUpdateStatus, onGenerateMeeting }) =>
       toast.success('Appointment marked as completed!');
     } catch (error) {
       console.error('Error completing appointment:', error);
-      toast.error('Failed to mark appointment as completed');
+      if (error.response?.status === 401) {
+        toast.error('Please log in to perform this action');
+      } else {
+        toast.error(error.response?.data?.message || 'Failed to mark appointment as completed');
+      }
     }
   };
 
