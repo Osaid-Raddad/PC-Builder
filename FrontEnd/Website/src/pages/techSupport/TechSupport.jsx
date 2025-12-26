@@ -129,6 +129,10 @@ const TechSupport = () => {
   };
 
   const handleRequestAppointment = (supporter) => {
+    if (userRole === 'TechSupport') {
+      toast.error('Tech Support members cannot request appointments');
+      return;
+    }
     setSelectedSupport(supporter);
     setShowAppointmentModal(true);
   };
@@ -333,28 +337,38 @@ const TechSupport = () => {
                   {/* Actions */}
                   <div className="p-6 border-t-2 flex gap-3" style={{ borderColor: colors.platinum }}>
                     {userRole !== 'TechSupport' && (
-                      <button
-                        onClick={() => handleChatWithSupport(supporter)}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-bold border-2 hover:opacity-80 transition-opacity cursor-pointer"
-                        style={{ 
-                          borderColor: colors.mainYellow,
-                          color: colors.mainYellow,
-                          backgroundColor: 'white'
-                        }}
-                        disabled={supporter.status === 'busy'}
-                      >
-                        <FiMessageCircle size={20} />
-                        Chat Now
-                      </button>
+                      <>
+                        <button
+                          onClick={() => handleChatWithSupport(supporter)}
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-bold border-2 hover:opacity-80 transition-opacity cursor-pointer"
+                          style={{ 
+                            borderColor: colors.mainYellow,
+                            color: colors.mainYellow,
+                            backgroundColor: 'white'
+                          }}
+                          disabled={supporter.status === 'busy'}
+                        >
+                          <FiMessageCircle size={20} />
+                          Chat Now
+                        </button>
+                        <button
+                          onClick={() => handleRequestAppointment(supporter)}
+                          className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-bold text-white hover:opacity-90 transition-opacity cursor-pointer"
+                          style={{ backgroundColor: colors.mainYellow }}
+                        >
+                          <FiCalendar size={20} />
+                          Request Appointment
+                        </button>
+                      </>
                     )}
-                    <button
-                      onClick={() => handleRequestAppointment(supporter)}
-                      className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-bold text-white hover:opacity-90 transition-opacity cursor-pointer"
-                      style={{ backgroundColor: colors.mainYellow }}
-                    >
-                      <FiCalendar size={20} />
-                      Request Appointment
-                    </button>
+                    {userRole === 'TechSupport' && (
+                      <div 
+                        className="flex-1 px-4 py-3 rounded-lg text-center font-semibold"
+                        style={{ backgroundColor: colors.mainBeige, color: colors.jet }}
+                      >
+                        Tech Support View Only
+                      </div>
+                    )}
                   </div>
                 </div>
               </BounceCard>
