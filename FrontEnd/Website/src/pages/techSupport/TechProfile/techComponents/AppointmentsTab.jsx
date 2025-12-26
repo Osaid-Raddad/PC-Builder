@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FiCheck, FiX, FiClock, FiUser, FiMessageSquare, FiExternalLink, FiCalendar } from 'react-icons/fi';
 import BounceCard from '../../../../components/animations/BounceCard/BounceCard';
+import MeetingLinkGenerator from './MeetingLinkGenerator';
 import colors from '../../../../config/colors';
 import toast from 'react-hot-toast';
 
@@ -93,6 +94,98 @@ const AppointmentsTab = ({ appointments, onUpdateStatus, onGenerateMeeting }) =>
     if (filter === 'all') return true;
     return apt.status === filter;
   });
+
+  // Handle Accept Appointment
+  const handleAcceptAppointment = async (appointmentId) => {
+    try {
+      const token = localStorage.getItem('authToken');
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/TechSupport/Appointment/approve/${appointmentId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      // Update local state
+      setAppointmentsData(prev => 
+        prev.map(apt => 
+          apt.id === appointmentId 
+            ? { ...apt, status: 'accepted' } 
+            : apt
+        )
+      );
+
+      toast.success('Appointment accepted successfully!');
+    } catch (error) {
+      console.error('Error accepting appointment:', error);
+      if (error.response?.status === 401) {
+        toast.error('Please log in to perform this action');
+      } else {
+        toast.error(error.response?.data?.message || 'Failed to accept appointment');
+      }
+    }
+  };
+
+  // Handle Reject Appointment
+  const handleRejectAppointment = async (appointmentId) => {
+    try {
+      const token = localStorage.getItem('authToken');
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/TechSupport/Appointment/reject/${appointmentId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
+      );
+
+      // Update local state to rejected
+      setAppointmentsData(prev => 
+        prev.map(apt => 
+          apt.id === appointmentId 
+            ? { ...apt, status: 'rejected' } 
+            : apt
+        )
+      );
+
+      toast.success('Appointment rejected');
+
+      // Remove from list after 5 seconds
+      setTimeout(() => {
+        setAppointmentsData(prev => prev.filter(apt => apt.id !== appointmentId));
+      }, 5000);
+    } catch (error) {
+      console.error('Error rejecting appointment:', error);
+      if (error.response?.status === 401) {
+        toast.error('Please log in to perform this action');
+      } else {
+        toast.error(error.response?.data?.message || 'Failed to reject appointment');
+      }
+    }
+  };
+
+  // Handle Complete Appointment
+  const handleCompleteAppointment = async (appointmentId) => {
+    try {
+      // Update local state
+      setAppointmentsData(prev => 
+        prev.map(apt => 
+          apt.id === appointmentId 
+            ? { ...apt, status: 'completed' } 
+            : apt
+        )
+      );
+
+      toast.success('Appointment marked as completed!');
+    } catch (error) {
+      console.error('Error completing appointment:', error);
+      toast.error('Failed to mark appointment as completed');
+    }
+  };
 
   const getStatusColor = (status) => {
     switch(status) {
@@ -226,7 +319,7 @@ const AppointmentsTab = ({ appointments, onUpdateStatus, onGenerateMeeting }) =>
                     {appointment.status === 'pending' && (
                       <>
                         <button
-                          onClick={() => onUpdateStatus(appointment.id, 'accepted')}
+                          onClick={() => handleAcceptAppointment(appointment.id)}
                           className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer"
                           style={{ backgroundColor: '#10b981', color: 'white' }}
                         >
@@ -234,7 +327,7 @@ const AppointmentsTab = ({ appointments, onUpdateStatus, onGenerateMeeting }) =>
                           Accept
                         </button>
                         <button
-                          onClick={() => onUpdateStatus(appointment.id, 'rejected')}
+                          onClick={() => handleRejectAppointment(appointment.id)}
                           className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer"
                           style={{ 
                             backgroundColor: 'white',
@@ -248,43 +341,23 @@ const AppointmentsTab = ({ appointments, onUpdateStatus, onGenerateMeeting }) =>
                       </>
                     )}
                     {appointment.status === 'accepted' && (
-                      <>
+                      <div className="space-y-2">
+                        <MeetingLinkGenerator 
+                          appointmentId={appointment.id}
+                          userName={appointment.userName}
+                        />
                         <button
-                          onClick={() => onGenerateMeeting(appointment.id)}
-                          className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer"
-                          style={{ backgroundColor: colors.mainYellow, color: 'white' }}
-                        >
-                          <FiExternalLink size={18} />
-                          Generate Meeting
-                        </button>
-                        {appointment.meetingLink && (
-                          <a
-                            href={appointment.meetingLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer text-center"
-                            style={{ 
-                              backgroundColor: 'white',
-                              color: colors.mainYellow,
-                              border: `2px solid ${colors.mainYellow}`
-                            }}
-                          >
-                            <FiExternalLink size={18} />
-                            Join Meeting
-                          </a>
-                        )}
-                        <button
-                          onClick={() => onUpdateStatus(appointment.id, 'completed')}
-                          className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer"
+                          onClick={() => handleCompleteAppointment(appointment.id)}
+                          className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-semibold hover:opacity-90 transition-opacity cursor-pointer"
                           style={{ 
-                            backgroundColor: 'white',
-                            color: colors.jet,
-                            border: `2px solid ${colors.platinum}`
+                            backgroundColor: colors.mainYellow,
+                            color: 'white'
                           }}
                         >
+                          <FiCheck size={18} />
                           Mark Complete
                         </button>
-                      </>
+                      </div>
                     )}
                     {appointment.status === 'completed' && (
                       <div 
