@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PCBuilder.BLL.Services.Classes;
 using PCBuilder.BLL.Services.Interfaces;
 using PCBuilder.DAL.DTO.Requests;
 using System.Security.Claims;
@@ -26,10 +27,10 @@ namespace PCBuilder.PL.Areas.TechSupport.Controllers
         {
             var techId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             await _service.AddAsync(techId, request);
-            return Ok(new{ message="Added Successfully"});
+            return Ok(new { message = "Added Successfully" });
         }
 
-        [Authorize(Roles = "TechSupport,User,Admin,SuperAdmin")]
+        [Authorize(Roles = "TechSupport")]
         [HttpGet("Schedule")]
         public async Task<IActionResult> Get()
         {
@@ -43,7 +44,15 @@ namespace PCBuilder.PL.Areas.TechSupport.Controllers
         {
             var techId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             await _service.DeleteAsync(id, techId);
-            return Ok(new { message ="Deleted Successfully"});
+            return Ok(new { message = "Deleted Successfully" });
+        }
+
+        [Authorize(Roles = "TechSupport,User,Admin,SuperAdmin")]
+        [HttpGet("tech-supports")]
+        public async Task<IActionResult> GetAllTechSupportsWithAvailability()
+        {
+            var result = await _service.GetAllAsync();
+            return Ok(result);
         }
     }
 }

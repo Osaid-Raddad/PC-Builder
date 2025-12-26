@@ -13,7 +13,7 @@ namespace PCBuilder.BLL.Services.Interfaces
     {
         Task AddAsync(string techId, AvailabilityRequest request);
         Task<List<AvailabilityResponse>> GetMyAsync(string techId);
-       
+        Task<List<TechSupportWithAvailabilityResponse>> GetAllAsync();
         Task DeleteAsync(int id, string techId);
     }
 }
