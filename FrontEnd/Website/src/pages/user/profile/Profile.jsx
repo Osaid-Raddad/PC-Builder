@@ -6,6 +6,7 @@ import ProfileHeader from './profileComponents/ProfileHeader';
 import ProfileTabs from './profileComponents/ProfileTabs';
 import OverviewTab from './profileComponents/OverviewTab';
 import BuildsTab from './profileComponents/BuildsTab';
+import AppointmentsTab from './profileComponents/AppointmentsTab';
 import FavoritesTab from './profileComponents/FavoritesTab';
 import ActivityTab from './profileComponents/ActivityTab';
 import EditProfileModal from './profileComponents/EditProfileModal';
@@ -323,6 +324,7 @@ const Profile = () => {
             {/* Tab Content */}
             {activeTab === 'overview' && <OverviewTab />}
             {activeTab === 'builds' && <BuildsTab builds={savedBuilds} />}
+            {activeTab === 'appointments' && <AppointmentsTab />}
             {activeTab === 'favorites' && <FavoritesTab products={favoriteProducts} />}
             {activeTab === 'activity' && <ActivityTab activities={activityHistory} />}
           </>
