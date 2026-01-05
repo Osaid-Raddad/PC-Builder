@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useBuild } from '../../context/BuildContext';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import colors from '../../config/colors';
@@ -10,6 +11,7 @@ import cpusData from '../../data/components/cpus.json';
 
 const CPU = () => {
   const navigate = useNavigate();
+  const { addComponent } = useBuild();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(12);
   
@@ -584,8 +586,12 @@ const CPU = () => {
                       ${cpu.price}
                     </span>
                     <button
-                      className="px-4 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity"
+                      className="px-4 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
                       style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+                      onClick={() => {
+                        addComponent('cpu', cpu);
+                        navigate('/builder');
+                      }}
                     >
                       Select
                     </button>

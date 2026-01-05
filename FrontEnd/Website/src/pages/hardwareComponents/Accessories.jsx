@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useBuild } from '../../context/BuildContext';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import BounceCard from '../../components/animations/BounceCard/BounceCard';
@@ -10,6 +11,7 @@ import accessoriesData from '../../data/components/accessories.json';
 
 const Accessories = () => {
   const navigate = useNavigate();
+  const { addComponent } = useBuild();
   const [selectedAccessory, setSelectedAccessory] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('All');
@@ -269,7 +271,8 @@ const Accessories = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSelectAccessory(accessory);
+                      addComponent('accessories', accessory);
+                      navigate('/builder');
                     }}
                     className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                     style={{

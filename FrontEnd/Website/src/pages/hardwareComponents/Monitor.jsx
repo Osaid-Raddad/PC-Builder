@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useBuild } from '../../context/BuildContext';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import BounceCard from '../../components/animations/BounceCard/BounceCard';
@@ -10,6 +11,7 @@ import monitorsData from '../../data/components/monitors.json';
 
 const Monitor = () => {
   const navigate = useNavigate();
+  const { addComponent } = useBuild();
   const [selectedMonitor, setSelectedMonitor] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [animationKey, setAnimationKey] = useState(0);
@@ -807,7 +809,8 @@ const Monitor = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSelectMonitor(monitor);
+                      addComponent('monitor', monitor);
+                      navigate('/builder');
                     }}
                     className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                     style={{

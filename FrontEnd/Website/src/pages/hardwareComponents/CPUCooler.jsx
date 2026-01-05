@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useBuild } from '../../context/BuildContext';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import BounceCard from '../../components/animations/BounceCard/BounceCard';
@@ -10,6 +11,7 @@ import cpuCoolersData from '../../data/components/cpuCoolers.json';
 
 const CPUCooler = () => {
   const navigate = useNavigate();
+  const { addComponent } = useBuild();
   const [selectedCooler, setSelectedCooler] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -500,7 +502,8 @@ const CPUCooler = () => {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleSelectCooler(product);
+                          addComponent('cooler', product);
+                          navigate('/builder');
                         }}
                         className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                         style={{

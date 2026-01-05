@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { BuildProvider } from './context/BuildContext';
 import AuthLayout from './layouts/AuthLayout';
 import Home from './pages/home/Home.jsx';
 import Builder from './pages/user/builder/Builder.jsx';
@@ -141,7 +142,9 @@ function AppContent() {
 function App() {
   return (
     <Router>
-      <AppContent />
+      <BuildProvider>
+        <AppContent />
+      </BuildProvider>
     </Router>
   );
 }
