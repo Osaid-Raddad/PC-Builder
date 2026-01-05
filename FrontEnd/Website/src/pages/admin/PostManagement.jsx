@@ -180,8 +180,13 @@ const PostManagement = () => {
     if (result.isConfirmed) {
       try {
         const token = localStorage.getItem('authToken');
+        if (!token) {
+          toast.error('Authentication token not found. Please login again.');
+          return;
+        }
+
         await axios.delete(
-          `${import.meta.env.VITE_API_BASE_URL}/api/Admins/Posts/deletePost/${postId}`,
+          `${import.meta.env.VITE_API_BASE_URL}/api/Admins/Posts/DeletePost/${postId}`,
           {
             headers: {
               'Authorization': `Bearer ${token}`
@@ -192,7 +197,15 @@ const PostManagement = () => {
         fetchAllPosts(); // Refresh both lists
       } catch (error) {
         console.error('Error deleting post:', error);
-        toast.error('Failed to delete post. Please try again.');
+        if (error.response?.status === 401) {
+          toast.error('Unauthorized. Please login again.');
+        } else if (error.response?.status === 404) {
+          toast.error('Post not found.');
+        } else if (error.response?.data?.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error('Failed to delete post. Please try again.');
+        }
       }
     }
   };
