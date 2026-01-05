@@ -13,6 +13,7 @@ namespace PCBuilder.BLL.Services.Interfaces
     {
         Task<PostResponse> CreatePostAsync(PostCreateRequest dto, string userId, HttpRequest httpRequest);
         Task<List<PostResponse>> GetAllApprovedPostsAsync(HttpRequest httpRequest);
+        Task<List<PostResponse>> GetPendingPostsAsync(HttpRequest httpRequest);
         Task<List<PostResponse>> GetUserPostsAsync(string userId, HttpRequest httpRequest);
         Task<int> GetUserPostCountAsync(string userId);
         Task<PostResponse> GetPostByIdAsync(int postId, HttpRequest httpRequest);

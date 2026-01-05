@@ -30,7 +30,7 @@ namespace PCBuilder.PL.Areas.User.Controllers
         }
 
         // -------------------- Get All Approved Posts --------------------
-        [HttpGet("allPosts")]
+        [HttpGet("GetApprovedPosts")]
         public async Task<IActionResult> GetAllPosts()
         {
             var posts = await _postService.GetAllApprovedPostsAsync(Request);

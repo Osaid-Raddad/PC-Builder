@@ -52,6 +52,18 @@ namespace PCBuilder.DAL.Repositories.Classes
                 .ToListAsync();
         }
 
+        public async Task<List<Post>> GetPendingPostsAsync()
+        {
+            return await _context.Posts
+                .Include(p => p.Images)
+                .Include(p => p.User)
+                .Include(p => p.Likes)
+                .Include(p => p.Comments)
+                .Where(p => p.Status == PostStatus.Pending)
+                .OrderByDescending(p => p.CreatedAt)
+                .ToListAsync();
+        }
+
         public async Task<List<Post>> GetByUserIdAsync(string userId)
         {
             return await _context.Posts

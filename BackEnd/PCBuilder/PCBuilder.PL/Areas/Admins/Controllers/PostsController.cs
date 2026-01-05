@@ -19,12 +19,20 @@ namespace PCBuilder.PL.Areas.Admins.Controllers
         }
 
         // -------------------- Get All Posts (Admin) --------------------
-        [HttpGet("allPosts")]
+        [HttpGet("GetApprovedPosts")]
         public async Task<IActionResult> GetAllPosts()
         {
             var posts = await _postService.GetAllApprovedPostsAsync(Request); // كل البوستات المعتمدة
             return Ok(posts);
         }
+
+        [HttpGet("GetPendingPosts")]
+        public async Task<IActionResult> GetPendingPosts()
+        {
+            var posts = await _postService.GetPendingPostsAsync(Request);
+            return Ok(posts);
+        }
+
 
         // -------------------- Approve Post --------------------
         [HttpPut("ApprovePost/{id}")]

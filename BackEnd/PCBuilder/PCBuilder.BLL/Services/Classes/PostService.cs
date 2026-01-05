@@ -27,11 +27,18 @@ namespace PCBuilder.BLL.Services.Classes
         }
 
         // -------------------- Create Post --------------------
-        public async Task<PostResponse> CreatePostAsync(PostCreateRequest dto, string userId, HttpRequest httpRequest)
+        public async Task<PostResponse> CreatePostAsync(
+            PostCreateRequest dto,
+            string userId,
+            HttpRequest httpRequest)
         {
-         
-            if (string.IsNullOrWhiteSpace(dto.Description) && (dto.Images == null || !dto.Images.Any()))
+            if (string.IsNullOrWhiteSpace(dto.Description) &&
+                (dto.Images == null || !dto.Images.Any()))
                 throw new ArgumentException("Post must have a description or at least one image.");
+
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            if (user == null)
+                throw new KeyNotFoundException("User not found.");
 
             var fileNames = dto.Images != null && dto.Images.Any()
                 ? await _fileService.UploadManyAsync(dto.Images)
@@ -42,15 +49,16 @@ namespace PCBuilder.BLL.Services.Classes
                 Description = dto.Description,
                 UserId = userId,
                 Status = PostStatus.Pending,
-                Images = fileNames.Select(f => new PostImage { ImageUrl = f }).ToList()
+                Images = fileNames.Select(f => new PostImage
+                {
+                    ImageUrl = f
+                }).ToList()
             };
 
             await _postRepository.AddAsync(post);
 
-            
             var createdPost = await _postRepository.GetByIdAsync(post.Id);
 
-            
             return MapToDto(createdPost, httpRequest);
         }
 
@@ -61,12 +69,24 @@ namespace PCBuilder.BLL.Services.Classes
             return posts.Select(p => MapToDto(p, httpRequest)).ToList();
         }
 
+        // -------------------- Get Pending Posts (Admin) --------------------
+        public async Task<List<PostResponse>> GetPendingPostsAsync(HttpRequest httpRequest)
+        {
+            var posts = await _postRepository.GetPendingPostsAsync();
+
+            if (posts == null || !posts.Any())
+                return new List<PostResponse>();
+
+            return posts.Select(p => MapToDto(p, httpRequest)).ToList();
+        }
+
         // -------------------- Get User Posts --------------------
         public async Task<List<PostResponse>> GetUserPostsAsync(string userId, HttpRequest httpRequest)
         {
             var posts = await _postRepository.GetByUserIdAsync(userId);
             return posts.Select(p => MapToDto(p, httpRequest)).ToList();
         }
+
         // -------------------- Get User Post Count --------------------
         public async Task<int> GetUserPostCountAsync(string userId)
         {
@@ -83,40 +103,58 @@ namespace PCBuilder.BLL.Services.Classes
             return MapToDto(post, httpRequest);
         }
 
-        // -------------------- Admin Actions --------------------
+        // -------------------- Approve Post (Admin) --------------------
         public async Task ApprovePostAsync(int postId)
         {
             var post = await _postRepository.GetByIdAsync(postId);
-            if (post == null) throw new KeyNotFoundException("Post not found.");
+            if (post == null)
+                throw new KeyNotFoundException("Post not found.");
+
+            if (post.Status != PostStatus.Pending)
+                throw new InvalidOperationException("Only pending posts can be approved.");
+
             post.Status = PostStatus.Approved;
             await _postRepository.UpdateAsync(post);
         }
 
+        // -------------------- Cancel Post (Admin) --------------------
         public async Task CancelPostAsync(int postId)
         {
             var post = await _postRepository.GetByIdAsync(postId);
-            if (post == null) throw new KeyNotFoundException("Post not found.");
+            if (post == null)
+                throw new KeyNotFoundException("Post not found.");
+
+            if (post.Status != PostStatus.Pending)
+                throw new InvalidOperationException("Only pending posts can be canceled.");
+
             post.Status = PostStatus.Canceled;
             await _postRepository.UpdateAsync(post);
         }
 
+        // -------------------- Delete Post --------------------
         public async Task DeletePostAsync(int postId)
         {
             var post = await _postRepository.GetByIdAsync(postId);
-            if (post == null) throw new KeyNotFoundException("Post not found.");
+            if (post == null)
+                throw new KeyNotFoundException("Post not found.");
+
+            if (post.Status == PostStatus.Approved)
+                throw new InvalidOperationException("Approved posts cannot be deleted.");
+
             await _postRepository.DeleteAsync(post);
         }
 
-        // -------------------- Like Post --------------------
+        // -------------------- Like / Unlike Post --------------------
         public async Task LikePostAsync(int postId, string userId)
         {
             var post = await _postRepository.GetByIdAsync(postId);
             if (post == null)
                 throw new KeyNotFoundException("Post not found.");
 
-            
             if (post.Status != PostStatus.Approved)
                 throw new InvalidOperationException("Cannot like a post that is not approved.");
+
+            post.Likes ??= new List<PostLike>();
 
             var existingLike = post.Likes.FirstOrDefault(l => l.UserId == userId);
             if (existingLike != null)
@@ -125,16 +163,23 @@ namespace PCBuilder.BLL.Services.Classes
             }
             else
             {
-                post.Likes.Add(new PostLike { UserId = userId, PostId = post.Id });
+                post.Likes.Add(new PostLike
+                {
+                    PostId = post.Id,
+                    UserId = userId
+                });
             }
 
             await _postRepository.UpdateAsync(post);
         }
 
         // -------------------- Add Comment --------------------
-        public async Task<CommentResponse> AddCommentAsync(int postId, string userId, string content, int? parentCommentId = null)
+        public async Task<CommentResponse> AddCommentAsync(
+            int postId,
+            string userId,
+            string content,
+            int? parentCommentId = null)
         {
-
             if (string.IsNullOrWhiteSpace(content))
                 throw new ArgumentException("Comment cannot be empty.");
 
@@ -156,7 +201,6 @@ namespace PCBuilder.BLL.Services.Classes
             post.Comments.Add(comment);
             await _postRepository.UpdateAsync(post);
 
-           
             var user = post.User ?? await _userRepository.GetUserByIdAsync(userId);
 
             return new CommentResponse
@@ -165,11 +209,11 @@ namespace PCBuilder.BLL.Services.Classes
                 Content = comment.Content,
                 UserId = userId,
                 UserFullName = user?.FullName ?? "",
-                ParentCommentId = parentCommentId, 
+                ParentCommentId = parentCommentId
             };
         }
 
-        // -------------------- Helper --------------------
+        // -------------------- Mapper Helper --------------------
         private PostResponse MapToDto(Post post, HttpRequest httpRequest)
         {
             var baseUrl = $"{httpRequest.Scheme}://{httpRequest.Host}";
@@ -179,11 +223,11 @@ namespace PCBuilder.BLL.Services.Classes
                 Id = post.Id,
                 Description = post.Description,
                 ImageUrls = post.Images
-                                 .Select(i => $"{baseUrl}/images/Posts/{i.ImageUrl}")
-                                 .ToList(),
+                    .Select(i => $"{baseUrl}/images/Posts/{i.ImageUrl}")
+                    .ToList(),
                 UserFullName = post.User?.FullName ?? "",
-                LikesCount = post.Likes.Count,
-                CommentsCount = post.Comments.Count,
+                LikesCount = post.Likes?.Count ?? 0,
+                CommentsCount = post.Comments?.Count ?? 0,
                 Status = post.Status,
                 CreatedAt = post.CreatedAt
             };
