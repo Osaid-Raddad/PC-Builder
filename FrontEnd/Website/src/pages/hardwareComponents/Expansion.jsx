@@ -6,6 +6,7 @@ import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaNetworkWired } from 'react-icons/fa';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
+import expansionData from '../../data/components/expansion.json';
 
 const Expansion = () => {
   const navigate = useNavigate();
@@ -21,17 +22,13 @@ const Expansion = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const expansionList = [
-    { id: 1, name: 'TP-Link WiFi 6E AX5400', brand: 'TP-Link', type: 'WiFi Adapter', interface: 'PCIe', price: 69.99 },
-    { id: 2, name: 'Creative Sound BlasterX AE-5', brand: 'Creative', type: 'Sound Card', interface: 'PCIe', price: 149.99 },
-    { id: 3, name: 'Intel Wi-Fi 6 AX200', brand: 'Intel', type: 'WiFi Adapter', interface: 'M.2', price: 29.99 },
-    { id: 4, name: 'ASUS PCE-AC88', brand: 'ASUS', type: 'WiFi Adapter', interface: 'PCIe', price: 99.99 },
-    { id: 5, name: 'Elgato Game Capture 4K60 Pro', brand: 'Elgato', type: 'Capture Card', interface: 'PCIe', price: 299.99 },
-    { id: 6, name: 'StarTech 4-Port USB 3.0', brand: 'StarTech', type: 'USB Expansion', interface: 'PCIe', price: 39.99 },
-  ];
+  const expansionList = expansionData.map(expansion => ({
+    ...expansion,
+    brand: expansion.manufacturer
+  }));
 
-  const types = ['All', 'WiFi Adapter', 'Sound Card', 'Capture Card', 'USB Expansion'];
-  const brands = ['All', 'TP-Link', 'Creative', 'Intel', 'ASUS', 'Elgato', 'StarTech'];
+  const types = ['All', ...new Set(expansionList.map(e => e.type))];
+  const brands = ['All', ...new Set(expansionList.map(e => e.brand))];
   const priceRanges = ['All', 'Under $50', '$50-$100', 'Over $100'];
 
   const filteredExpansions = expansionList.filter(expansion => {

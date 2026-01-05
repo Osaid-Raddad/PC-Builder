@@ -6,6 +6,7 @@ import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaBolt } from 'react-icons/fa';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
+import powerSuppliesData from '../../data/components/powerSupplies.json';
 
 const PowerSupply = () => {
   const navigate = useNavigate();
@@ -39,14 +40,13 @@ const PowerSupply = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const psuList = [
-    { id: 1, name: 'Corsair RM1000x', brand: 'Corsair', wattage: '1000W', efficiency: '80+ Gold', modular: 'Fully Modular', price: 189.99 },
-    { id: 2, name: 'EVGA SuperNOVA 850 G6', brand: 'EVGA', wattage: '850W', efficiency: '80+ Gold', modular: 'Fully Modular', price: 149.99 },
-    { id: 3, name: 'Seasonic Focus GX-850', brand: 'Seasonic', wattage: '850W', efficiency: '80+ Gold', modular: 'Fully Modular', price: 139.99 },
-    { id: 4, name: 'be quiet! Straight Power 11', brand: 'be quiet!', wattage: '750W', efficiency: '80+ Platinum', modular: 'Fully Modular', price: 159.99 },
-    { id: 5, name: 'Thermaltake Toughpower GF1', brand: 'Thermaltake', wattage: '750W', efficiency: '80+ Gold', modular: 'Fully Modular', price: 119.99 },
-    { id: 6, name: 'Cooler Master V850 SFX', brand: 'Cooler Master', wattage: '850W', efficiency: '80+ Gold', modular: 'Fully Modular', price: 169.99 },
-  ];
+  const psuList = powerSuppliesData.map(psu => ({
+    ...psu,
+    brand: psu.manufacturer,
+    wattage: `${psu.wattage}W`,
+    efficiency: psu.efficiency,
+    modular: psu.modular
+  }));
 
   const filteredPSUs = psuList.filter(psu => {
     // Search term

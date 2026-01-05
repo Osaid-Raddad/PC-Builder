@@ -6,6 +6,7 @@ import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaMemory } from 'react-icons/fa';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
+import memoryData from '../../data/components/memory.json';
 
 const Memory = () => {
   const navigate = useNavigate();
@@ -35,14 +36,12 @@ const Memory = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const memoryList = [
-    { id: 1, name: 'Corsair Vengeance RGB DDR5', brand: 'Corsair', capacity: '32GB (2x16GB)', speed: 'DDR5-6000', price: 149.99 },
-    { id: 2, name: 'G.Skill Trident Z5 RGB', brand: 'G.Skill', capacity: '32GB (2x16GB)', speed: 'DDR5-6400', price: 169.99 },
-    { id: 3, name: 'Kingston Fury Beast DDR5', brand: 'Kingston', capacity: '32GB (2x16GB)', speed: 'DDR5-5600', price: 129.99 },
-    { id: 4, name: 'Corsair Dominator Platinum RGB', brand: 'Corsair', capacity: '64GB (2x32GB)', speed: 'DDR5-6000', price: 289.99 },
-    { id: 5, name: 'Crucial DDR5', brand: 'Crucial', capacity: '32GB (2x16GB)', speed: 'DDR5-5200', price: 109.99 },
-    { id: 6, name: 'G.Skill Ripjaws S5', brand: 'G.Skill', capacity: '32GB (2x16GB)', speed: 'DDR5-6000', price: 139.99 },
-  ];
+  const memoryList = memoryData.map(mem => ({
+    ...mem,
+    brand: mem.manufacturer,
+    capacity: `${mem.capacityGB}GB (${mem.modules})`,
+    speed: `${mem.type}-${mem.speedMHz}`
+  }));
 
   const filteredMemory = memoryList.filter(mem => {
     // Search term

@@ -6,6 +6,7 @@ import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaPlus } from 'react-icons/fa';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
+import accessoriesData from '../../data/components/accessories.json';
 
 const Accessories = () => {
   const navigate = useNavigate();
@@ -21,17 +22,13 @@ const Accessories = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const accessoryList = [
-    { id: 1, name: 'Cable Management Kit', brand: 'Generic', type: 'Cable Management', price: 19.99 },
-    { id: 2, name: 'RGB LED Strip 2M', brand: 'Corsair', type: 'RGB Lighting', price: 39.99 },
-    { id: 3, name: 'Thermal Paste Arctic MX-5', brand: 'Arctic', type: 'Thermal Compound', price: 12.99 },
-    { id: 4, name: 'Anti-Static Wrist Strap', brand: 'Rosewill', type: 'Safety Equipment', price: 7.99 },
-    { id: 5, name: 'PC Tool Kit', brand: 'iFixit', type: 'Tools', price: 29.99 },
-    { id: 6, name: 'Fan Hub Controller', brand: 'Thermaltake', type: 'Fan Controller', price: 24.99 },
-  ];
+  const accessoryList = accessoriesData.map(accessory => ({
+    ...accessory,
+    brand: accessory.manufacturer
+  }));
 
-  const types = ['All', 'Cable Management', 'RGB Lighting', 'Thermal Compound', 'Safety Equipment', 'Tools', 'Fan Controller'];
-  const brands = ['All', 'Generic', 'Corsair', 'Arctic', 'Rosewill', 'iFixit', 'Thermaltake'];
+  const types = ['All', ...new Set(accessoryList.map(a => a.type))];
+  const brands = ['All', ...new Set(accessoryList.map(a => a.brand))];
   const priceRanges = ['All', 'Under $15', '$15-$30', 'Over $30'];
 
   const filteredAccessories = accessoryList.filter(accessory => {

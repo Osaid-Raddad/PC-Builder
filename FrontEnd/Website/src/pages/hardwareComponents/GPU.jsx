@@ -6,6 +6,7 @@ import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaMicrochip } from 'react-icons/fa';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
+import gpusData from '../../data/components/gpus.json';
 
 const GPU = () => {
   const navigate = useNavigate();
@@ -44,14 +45,12 @@ const GPU = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const gpuList = [
-    { id: 1, name: 'NVIDIA RTX 4090', brand: 'NVIDIA', memory: '24GB GDDR6X', price: 1599.99, tdp: '450W' },
-    { id: 2, name: 'AMD Radeon RX 7900 XTX', brand: 'AMD', memory: '24GB GDDR6', price: 999.99, tdp: '355W' },
-    { id: 3, name: 'NVIDIA RTX 4080', brand: 'NVIDIA', memory: '16GB GDDR6X', price: 1199.99, tdp: '320W' },
-    { id: 4, name: 'AMD Radeon RX 7900 XT', brand: 'AMD', memory: '20GB GDDR6', price: 849.99, tdp: '315W' },
-    { id: 5, name: 'NVIDIA RTX 4070 Ti', brand: 'NVIDIA', memory: '12GB GDDR6X', price: 799.99, tdp: '285W' },
-    { id: 6, name: 'AMD Radeon RX 7800 XT', brand: 'AMD', memory: '16GB GDDR6', price: 499.99, tdp: '263W' },
-  ];
+  const gpuList = gpusData.map(gpu => ({
+    ...gpu,
+    brand: gpu.manufacturer,
+    memory: `${gpu.memoryGB}GB ${gpu.memoryType}`,
+    tdp: `${gpu.tdpWatts}W`
+  }));
 
   const filteredGPUs = gpuList.filter(gpu => {
     // Search term

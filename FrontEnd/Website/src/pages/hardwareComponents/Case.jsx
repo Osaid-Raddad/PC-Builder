@@ -6,6 +6,7 @@ import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaDesktop } from 'react-icons/fa';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
+import casesData from '../../data/components/cases.json';
 
 const Case = () => {
   const navigate = useNavigate();
@@ -41,14 +42,11 @@ const Case = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const caseList = [
-    { id: 1, name: 'Lian Li O11 Dynamic EVO', brand: 'Lian Li', type: 'Mid Tower', formFactor: 'ATX', price: 169.99 },
-    { id: 2, name: 'NZXT H510 Elite', brand: 'NZXT', type: 'Mid Tower', formFactor: 'ATX', price: 149.99 },
-    { id: 3, name: 'Corsair 4000D Airflow', brand: 'Corsair', type: 'Mid Tower', formFactor: 'ATX', price: 104.99 },
-    { id: 4, name: 'Fractal Design Meshify 2', brand: 'Fractal Design', type: 'Mid Tower', formFactor: 'ATX', price: 139.99 },
-    { id: 5, name: 'Phanteks Eclipse P500A', brand: 'Phanteks', type: 'Mid Tower', formFactor: 'ATX', price: 159.99 },
-    { id: 6, name: 'be quiet! Pure Base 500DX', brand: 'be quiet!', type: 'Mid Tower', formFactor: 'ATX', price: 109.99 },
-  ];
+  const caseList = casesData.map(caseItem => ({
+    ...caseItem,
+    brand: caseItem.manufacturer,
+    type: 'Mid Tower'
+  }));
 
   const filteredCases = caseList.filter(caseItem => {
     // Search term

@@ -6,6 +6,7 @@ import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaKeyboard } from 'react-icons/fa';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
+import peripheralsData from '../../data/components/peripherals.json';
 
 const Peripherals = () => {
   const navigate = useNavigate();
@@ -21,24 +22,20 @@ const Peripherals = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const peripheralList = [
-    { id: 1, name: 'Logitech G Pro X Superlight', brand: 'Logitech', type: 'Mouse', connectivity: 'Wireless', price: 159.99 },
-    { id: 2, name: 'Corsair K70 RGB TKL', brand: 'Corsair', type: 'Keyboard', connectivity: 'Wired', price: 139.99 },
-    { id: 3, name: 'Razer DeathAdder V3 Pro', brand: 'Razer', type: 'Mouse', connectivity: 'Wireless', price: 149.99 },
-    { id: 4, name: 'SteelSeries Apex Pro', brand: 'SteelSeries', type: 'Keyboard', connectivity: 'Wired', price: 199.99 },
-    { id: 5, name: 'HyperX Cloud Alpha', brand: 'HyperX', type: 'Headset', connectivity: 'Wired', price: 99.99 },
-    { id: 6, name: 'Blue Yeti X', brand: 'Blue', type: 'Microphone', connectivity: 'USB', price: 169.99 },
-  ];
+  const peripheralList = peripheralsData.map(peripheral => ({
+    ...peripheral,
+    brand: peripheral.manufacturer
+  }));
 
-  const types = ['All', 'Mouse', 'Keyboard', 'Headset', 'Microphone'];
-  const brands = ['All', 'Logitech', 'Corsair', 'Razer', 'SteelSeries', 'HyperX', 'Blue'];
-  const connectivityOptions = ['All', 'Wired', 'Wireless', 'USB', 'Bluetooth'];
+  const types = ['All', ...new Set(peripheralList.map(p => p.category))];
+  const brands = ['All', ...new Set(peripheralList.map(p => p.brand))];
+  const connectivityOptions = ['All', ...new Set(peripheralList.map(p => p.connection).filter(c => c))];
 
   const filteredPeripherals = peripheralList.filter(peripheral => {
     const matchesSearch = searchTerm === '' || peripheral.name.toLowerCase().includes(searchTerm.toLowerCase()) || peripheral.brand.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = typeFilter === 'All' || peripheral.type === typeFilter;
+    const matchesType = typeFilter === 'All' || peripheral.category === typeFilter;
     const matchesBrand = brandFilter === 'All' || peripheral.brand === brandFilter;
-    const matchesConnectivity = connectivityFilter === 'All' || peripheral.connectivity === connectivityFilter;
+    const matchesConnectivity = connectivityFilter === 'All' || peripheral.connection === connectivityFilter;
     return matchesSearch && matchesType && matchesBrand && matchesConnectivity;
   });
 

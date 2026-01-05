@@ -5,10 +5,20 @@ import Footer from '../../components/user/footer/Footer.jsx';
 import colors from '../../config/colors';
 import { BsCpuFill } from 'react-icons/bs';
 import { FiArrowLeft } from 'react-icons/fi';
+import cpusData from '../../data/components/cpus.json';
 
 
 const CPU = () => {
   const navigate = useNavigate();
+  
+  // Transform JSON data to match component structure
+  const cpuList = cpusData.map(cpu => ({
+    ...cpu,
+    brand: cpu.manufacturer,
+    tdp: `${cpu.tdpWatts}W`,
+    cores: cpu.cores,
+    threads: cpu.threads
+  }));
   
   // Filter states
   const [filters, setFilters] = useState({

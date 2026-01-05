@@ -6,6 +6,7 @@ import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaHdd } from 'react-icons/fa';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
+import storageData from '../../data/components/storage.json';
 
 const Storage = () => {
   const navigate = useNavigate();
@@ -30,14 +31,15 @@ const Storage = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const storageList = [
-    { id: 1, name: 'Samsung 990 PRO', brand: 'Samsung', capacity: '2TB', type: 'NVMe SSD', speed: '7,450 MB/s', price: 189.99, rating: 5, interface: 'PCIe 4.0 x4', cache: '2GB', formFactor: 'M.2 2280', nvme: 'Yes' },
-    { id: 2, name: 'WD Black SN850X', brand: 'Western Digital', capacity: '2TB', type: 'NVMe SSD', speed: '7,300 MB/s', price: 179.99, rating: 5, interface: 'PCIe 4.0 x4', cache: '2GB', formFactor: 'M.2 2280', nvme: 'Yes' },
-    { id: 3, name: 'Crucial P5 Plus', brand: 'Crucial', capacity: '1TB', type: 'NVMe SSD', speed: '6,600 MB/s', price: 99.99, rating: 4, interface: 'PCIe 4.0 x4', cache: '1GB', formFactor: 'M.2 2280', nvme: 'Yes' },
-    { id: 4, name: 'Samsung 870 EVO', brand: 'Samsung', capacity: '2TB', type: 'SATA SSD', speed: '560 MB/s', price: 149.99, rating: 5, interface: 'SATA III', cache: '1GB', formFactor: '2.5"', nvme: 'No' },
-    { id: 5, name: 'Seagate BarraCuda', brand: 'Seagate', capacity: '4TB', type: 'HDD', speed: '5,400 RPM', price: 89.99, rating: 4, interface: 'SATA III', cache: '256MB', formFactor: '3.5"', nvme: 'No' },
-    { id: 6, name: 'WD Blue', brand: 'Western Digital', capacity: '2TB', type: 'HDD', speed: '7,200 RPM', price: 54.99, rating: 4, interface: 'SATA III', cache: '256MB', formFactor: '3.5"', nvme: 'No' },
-  ];
+  const storageList = storageData.map(storage => ({
+    ...storage,
+    brand: storage.manufacturer,
+    capacity: `${storage.capacityGB}GB`,
+    speed: storage.type === 'NVMe SSD' || storage.type === 'SATA SSD' ? 
+      `${storage.readSpeedMBps} MB/s` : 
+      storage.type === 'HDD' ? `${storage.rpmSpeed || 7200} RPM` : '',
+    nvme: storage.interface?.includes('M.2') ? 'Yes' : 'No'
+  }));
 
   const filteredStorage = storageList.filter(storage => {
     // Search term

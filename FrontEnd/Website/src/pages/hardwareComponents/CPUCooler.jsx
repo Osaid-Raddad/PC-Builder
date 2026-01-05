@@ -6,6 +6,7 @@ import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaFan } from 'react-icons/fa';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
+import cpuCoolersData from '../../data/components/cpuCoolers.json';
 
 const CPUCooler = () => {
   const navigate = useNavigate();
@@ -32,14 +33,11 @@ const CPUCooler = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const coolerList = [
-    { id: 1, name: 'Noctua NH-D15', brand: 'Noctua', type: 'Air', price: 109.99, compatibility: ['Intel', 'AMD'] },
-    { id: 2, name: 'Corsair iCUE H150i Elite', brand: 'Corsair', type: 'Liquid', price: 189.99, compatibility: ['Intel', 'AMD'] },
-    { id: 3, name: 'be quiet! Dark Rock Pro 4', brand: 'be quiet!', type: 'Air', price: 89.99, compatibility: ['Intel', 'AMD'] },
-    { id: 4, name: 'NZXT Kraken X63', brand: 'NZXT', type: 'Liquid', price: 149.99, compatibility: ['Intel', 'AMD'] },
-    { id: 5, name: 'Cooler Master Hyper 212', brand: 'Cooler Master', type: 'Air', price: 44.99, compatibility: ['Intel', 'AMD'] },
-    { id: 6, name: 'Arctic Liquid Freezer II 280', brand: 'Arctic', type: 'Liquid', price: 119.99, compatibility: ['Intel', 'AMD'] },
-  ];
+  const coolerList = cpuCoolersData.map(cooler => ({
+    ...cooler,
+    brand: cooler.manufacturer,
+    compatibility: cooler.socketCompatibility
+  }));
 
   const handleFilterChange = (filterName, value) => {
     setFilters(prev => ({

@@ -6,6 +6,7 @@ import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { BsMotherboard } from 'react-icons/bs';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
+import motherboardsData from '../../data/components/motherboards.json';
 
 const Motherboard = () => {
   const navigate = useNavigate();
@@ -51,14 +52,10 @@ const Motherboard = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const motherboardList = [
-    { id: 1, name: 'ASUS ROG Maximus Z790 Hero', brand: 'ASUS', chipset: 'Z790', socket: 'LGA1700', price: 629.99, formFactor: 'ATX' },
-    { id: 2, name: 'MSI MPG X670E Carbon WiFi', brand: 'MSI', chipset: 'X670E', socket: 'AM5', price: 449.99, formFactor: 'ATX' },
-    { id: 3, name: 'Gigabyte Z790 AORUS Master', brand: 'Gigabyte', chipset: 'Z790', socket: 'LGA1700', price: 489.99, formFactor: 'ATX' },
-    { id: 4, name: 'ASRock B650E Taichi', brand: 'ASRock', chipset: 'B650E', socket: 'AM5', price: 299.99, formFactor: 'ATX' },
-    { id: 5, name: 'ASUS TUF Gaming B760M', brand: 'ASUS', chipset: 'B760', socket: 'LGA1700', price: 189.99, formFactor: 'Micro-ATX' },
-    { id: 6, name: 'MSI MAG B650 Tomahawk WiFi', brand: 'MSI', chipset: 'B650', socket: 'AM5', price: 229.99, formFactor: 'ATX' },
-  ];
+  const motherboardList = motherboardsData.map(mobo => ({
+    ...mobo,
+    brand: mobo.manufacturer
+  }));
 
   const handleFilterChange = (filterName, value) => {
     setFilters(prev => ({

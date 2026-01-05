@@ -6,6 +6,7 @@ import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaTv } from 'react-icons/fa';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
+import monitorsData from '../../data/components/monitors.json';
 
 const Monitor = () => {
   const navigate = useNavigate();
@@ -40,14 +41,11 @@ const Monitor = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const monitorList = [
-    { id: 1, name: 'ASUS ROG Swift PG279QM', brand: 'ASUS', size: '27"', resolution: '2560x1440', refreshRate: '240Hz', price: 699.99 },
-    { id: 2, name: 'LG 27GN950-B', brand: 'LG', size: '27"', resolution: '3840x2160', refreshRate: '144Hz', price: 799.99 },
-    { id: 3, name: 'Samsung Odyssey G7', brand: 'Samsung', size: '32"', resolution: '2560x1440', refreshRate: '240Hz', price: 649.99 },
-    { id: 4, name: 'Dell S2721DGF', brand: 'Dell', size: '27"', resolution: '2560x1440', refreshRate: '165Hz', price: 429.99 },
-    { id: 5, name: 'AOC CU34G2X', brand: 'AOC', size: '34"', resolution: '3440x1440', refreshRate: '144Hz', price: 449.99 },
-    { id: 6, name: 'BenQ EX2780Q', brand: 'BenQ', size: '27"', resolution: '2560x1440', refreshRate: '144Hz', price: 499.99 },
-  ];
+  const monitorList = monitorsData.map(monitor => ({
+    ...monitor,
+    size: `${monitor.screenSize}"`,
+    refreshRate: `${monitor.refreshRate}Hz`
+  }));
 
   const filteredMonitors = monitorList.filter(monitor => {
     // Search term
