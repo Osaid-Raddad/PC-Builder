@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { BuildProvider } from './context/BuildContext';
+import { CompareProvider } from './context/CompareContext';
 import AuthLayout from './layouts/AuthLayout';
 import Home from './pages/home/Home.jsx';
 import Builder from './pages/user/builder/Builder.jsx';
@@ -143,7 +144,9 @@ function App() {
   return (
     <Router>
       <BuildProvider>
-        <AppContent />
+        <CompareProvider>
+          <AppContent />
+        </CompareProvider>
       </BuildProvider>
     </Router>
   );

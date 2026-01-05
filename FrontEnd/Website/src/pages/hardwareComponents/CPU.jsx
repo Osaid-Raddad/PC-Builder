@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBuild } from '../../context/BuildContext';
+import { useCompare } from '../../context/CompareContext';
+import toast from 'react-hot-toast';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import colors from '../../config/colors';
@@ -12,6 +14,7 @@ import cpusData from '../../data/components/cpus.json';
 const CPU = () => {
   const navigate = useNavigate();
   const { addComponent } = useBuild();
+  const { addToCompare, isInCompare, removeFromCompare, compareList, getCategory, clearCompare } = useCompare();
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(12);
   
@@ -585,16 +588,45 @@ const CPU = () => {
                     <span className="text-2xl font-bold" style={{ color: colors.mainYellow }}>
                       ${cpu.price}
                     </span>
-                    <button
-                      className="px-4 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
-                      style={{ backgroundColor: colors.mainYellow, color: 'white' }}
-                      onClick={() => {
-                        addComponent('cpu', cpu);
-                        navigate('/builder');
-                      }}
-                    >
-                      Select
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        className="px-4 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+                        style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+                        onClick={() => {
+                          addComponent('cpu', cpu);
+                          navigate('/builder');
+                        }}
+                      >
+                        Select
+                      </button>
+                      <button
+                        className="px-4 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+                        style={{ 
+                          backgroundColor: isInCompare(cpu.id) ? colors.accent : 'white',
+                          color: isInCompare(cpu.id) ? 'white' : colors.accent,
+                          border: `2px solid ${colors.accent}`
+                        }}
+                        onClick={() => {
+                          if (isInCompare(cpu.id)) {
+                            removeFromCompare(cpu.id);
+                          } else {
+                            const category = getCategory();
+                            if (category && category !== 'cpu') {
+                              toast.error(`You can only compare products from the same category. Clear your current ${category} comparison first.`, { duration: 3000 });
+                              return;
+                            }
+                            if (compareList.length >= 4) {
+                              toast.error('You can compare up to 4 products at once.', { duration: 3000 });
+                              return;
+                            }
+                            addToCompare(cpu, 'cpu');
+                          }
+                        }}
+                        title={isInCompare(cpu.id) ? 'Remove from compare' : 'Add to compare'}
+                      >
+                        {isInCompare(cpu.id) ? '✓' : '+'}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -635,6 +667,57 @@ const CPU = () => {
           </div>
         </div>
       </div>
+
+      {/* Floating Compare Bar */}
+      {compareList.length > 0 && (
+        <div 
+          className="fixed bottom-0 left-0 right-0 shadow-lg z-50 p-4"
+          style={{ backgroundColor: colors.mainBlack }}
+        >
+          <div className="container mx-auto flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <span className="text-white font-semibold">
+                Compare ({compareList.length}/4)
+              </span>
+              <div className="flex gap-2">
+                {compareList.map(item => (
+                  <div 
+                    key={item.id}
+                    className="px-3 py-1 rounded flex items-center gap-2"
+                    style={{ backgroundColor: colors.mainYellow }}
+                  >
+                    <span className="text-sm text-white">{item.name || `${item.brand} ${item.model}`}</span>
+                    <button
+                      onClick={() => removeFromCompare(item.id)}
+                      className="text-white hover:opacity-80"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex gap-2">
+             <button
+                  onClick={() => {
+                    compareList.forEach(product => removeFromCompare(product.id));
+                  }}
+                  className="px-4 py-2 rounded-lg font-semibold hover:opacity-80"
+                  style={{ backgroundColor: '#F44336', color: 'white' }}
+                >
+                  Clear All
+                </button>
+              <button
+                onClick={() => navigate('/comparator')}
+                className="px-4 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity"
+                style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+              >
+                Compare Now
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

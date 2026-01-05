@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBuild } from '../../context/BuildContext';
+import { useCompare } from '../../context/CompareContext';
+import toast from 'react-hot-toast';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import BounceCard from '../../components/animations/BounceCard/BounceCard';
@@ -12,6 +14,7 @@ import gpusData from '../../data/components/gpus.json';
 const GPU = () => {
   const navigate = useNavigate();
   const { addComponent } = useBuild();
+  const { compareList, addToCompare, isInCompare, removeFromCompare, getCategory } = useCompare();
   const [selectedGPU, setSelectedGPU] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [animationKey, setAnimationKey] = useState(0);
@@ -782,7 +785,7 @@ const GPU = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-2">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -797,6 +800,33 @@ const GPU = () => {
                     }}
                   >
                     {selectedGPU?.id === gpu.id ? 'Selected' : 'Select'}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const currentCategory = getCategory();
+                      if (currentCategory && currentCategory !== 'gpu') {
+                        toast.error(`You can only compare GPUs together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
+                        return;
+                      }
+                      if (isInCompare(gpu.id)) {
+                        removeFromCompare(gpu.id);
+                      } else {
+                        if (compareList.length >= 4) {
+                          toast.error('You can compare up to 4 products at once.', { duration: 3000 });
+                          return;
+                        }
+                        addToCompare(gpu, 'gpu');
+                      }
+                    }}
+                    className="px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: isInCompare(gpu.id) ? colors.mainYellow : 'white',
+                      color: isInCompare(gpu.id) ? 'white' : colors.mainYellow,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {isInCompare(gpu.id) ? '✓' : '+'}
                   </button>
                   <button
                     onClick={(e) => handleProductClick(gpu.id, e)}
@@ -847,23 +877,61 @@ const GPU = () => {
                 </button>
               </div>
             )}
-
-            {/* Empty State */}
-            {filteredGPUs.length === 0 && (
-              <div className="text-center py-12">
-                <FaMicrochip size={64} style={{ color: colors.platinum }} className="mx-auto mb-4" />
-                <p className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>
-                  No GPUs found
-                </p>
-                <p className="text-lg" style={{ color: colors.jet }}>
-                  Try adjusting your filters or search terms
-                </p>
-              </div>
-            )}
           </div>
         </div>
-      </div>
 
+        {/* Floating Compare Bar */}
+        {compareList.length > 0 && (
+          <div 
+            className="fixed bottom-0 left-0 right-0 shadow-lg z-50"
+            style={{ backgroundColor: colors.mainBlack, borderTop: `3px solid ${colors.mainYellow}` }}
+          >
+            <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                            <span className="text-white font-semibold">
+                              Compare ({compareList.length}/4)
+                            </span>
+                            <div className="flex gap-2">
+                              {compareList.map(item => (
+                                <div 
+                                  key={item.id}
+                                  className="px-3 py-1 rounded flex items-center gap-2"
+                                  style={{ backgroundColor: colors.mainYellow }}
+                                >
+                                  <span className="text-sm text-white">{item.name || `${item.brand} ${item.model}`}</span>
+                                  <button
+                                    onClick={() => removeFromCompare(item.id)}
+                                    className="text-white hover:opacity-80"
+                                  >
+                                    ×
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    compareList.forEach(product => removeFromCompare(product.id));
+                  }}
+                  className="px-4 py-2 rounded-lg font-semibold hover:opacity-80"
+                  style={{ backgroundColor: '#F44336', color: 'white' }}
+                >
+                  Clear All
+                </button>
+                <button
+                  onClick={() => navigate('/comparator')}
+                  className="px-6 py-2 rounded-lg font-semibold hover:opacity-80"
+                  style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+                >
+                  Compare Now
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
       <Footer />
     </div>
   );
