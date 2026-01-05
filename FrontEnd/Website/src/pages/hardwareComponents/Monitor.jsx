@@ -13,6 +13,8 @@ const Monitor = () => {
   const [selectedMonitor, setSelectedMonitor] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [animationKey, setAnimationKey] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(12);
   
   const [filters, setFilters] = useState({
     priceRange: { min: 0, max: 2000 },
@@ -154,6 +156,12 @@ const Monitor = () => {
            matchesPixelPitch && matchesWidescreen && matchesCurvedScreen && matchesInterface &&
            matchesFrameSync && matchesSpeakers && matchesVesa && matchesHdr;
   });
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentMonitors = filteredMonitors.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredMonitors.length / itemsPerPage);
 
   const handleFilterChange = (filterName, value) => {
     setFilters(prev => ({ ...prev, [filterName]: value }));
@@ -746,7 +754,7 @@ const Monitor = () => {
 
             {/* Product Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredMonitors.map((monitor, index) => (
+          {currentMonitors.map((monitor, index) => (
             <BounceCard
               key={`${monitor.id}-${animationKey}`}
               delay={index * 0.1}
@@ -829,6 +837,45 @@ const Monitor = () => {
             </BounceCard>
           ))}
             </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-4 mt-8">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
+                    currentPage === 1
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:opacity-80'
+                  }`}
+                  style={{
+                    backgroundColor: colors.accent,
+                    color: colors.mainWhite
+                  }}
+                >
+                  Previous
+                </button>
+                <span className="font-semibold" style={{ color: colors.mainBlack }}>
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
+                    currentPage === totalPages
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:opacity-80'
+                  }`}
+                  style={{
+                    backgroundColor: colors.accent,
+                    color: colors.mainWhite
+                  }}
+                >
+                  Next
+                </button>
+              </div>
+            )}
 
             {/* Empty State */}
             {filteredMonitors.length === 0 && (

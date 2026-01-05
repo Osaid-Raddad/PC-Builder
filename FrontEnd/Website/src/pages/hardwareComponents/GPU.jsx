@@ -13,6 +13,8 @@ const GPU = () => {
   const [selectedGPU, setSelectedGPU] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [animationKey, setAnimationKey] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(12);
   
   const [filters, setFilters] = useState({
     priceRange: { min: 0, max: 2000 },
@@ -45,12 +47,15 @@ const GPU = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const gpuList = gpusData.map(gpu => ({
+  const gpuList = gpusData.gpus.map(gpu => ({
     ...gpu,
-    brand: gpu.manufacturer,
+    name: `${gpu.brand} ${gpu.model}`, // Combine brand and model for display
     memory: `${gpu.memoryGB}GB ${gpu.memoryType}`,
     tdp: `${gpu.tdpWatts}W`
   }));
+  
+  console.log('GPU List loaded:', gpuList.length, 'items');
+  console.log('First GPU:', gpuList[0]);
 
   const filteredGPUs = gpuList.filter(gpu => {
     // Search term
@@ -65,108 +70,21 @@ const GPU = () => {
     const matchesManufacturer = filters.manufacturers.length === 0 || 
       filters.manufacturers.includes(gpu.brand);
     
-    // Rating
+    // Rating (optional field)
     const matchesRating = filters.rating === null || 
+      !filters.rating ||
       (gpu.rating && gpu.rating >= filters.rating);
     
-    // Chipset
-    const matchesChipset = filters.chipset.length === 0 || 
-      !gpu.chipset ||
-      filters.chipset.includes(gpu.chipset);
-    
-    // Memory
-    const matchesMemory = filters.memory.length === 0 || 
-      !gpu.memory ||
-      filters.memory.includes(gpu.memory);
-    
-    // Memory Type
-    const matchesMemoryType = filters.memoryType.length === 0 || 
-      !gpu.memoryType ||
-      filters.memoryType.includes(gpu.memoryType);
-    
-    // Core Clock
-    const matchesCoreClock = !gpu.coreClock || 
-      (gpu.coreClock >= filters.coreClock.min && gpu.coreClock <= filters.coreClock.max);
-    
-    // Boost Clock
-    const matchesBoostClock = !gpu.boostClock || 
-      (gpu.boostClock >= filters.boostClock.min && gpu.boostClock <= filters.boostClock.max);
-    
-    // Interface
-    const matchesInterface = filters.interface.length === 0 || 
-      !gpu.interface ||
-      filters.interface.includes(gpu.interface);
-    
-    // Color
-    const matchesColor = filters.color.length === 0 || 
-      !gpu.color ||
-      filters.color.includes(gpu.color);
-    
-    // SLI/Crossfire
-    const matchesSliCrossfire = filters.sliCrossfire.length === 0 || 
-      !gpu.sliCrossfire ||
-      filters.sliCrossfire.includes(gpu.sliCrossfire);
-    
-    // Frame Sync
-    const matchesFrameSync = filters.frameSync.length === 0 || 
-      !gpu.frameSync ||
-      filters.frameSync.includes(gpu.frameSync);
-    
-    // Length
-    const matchesLength = !gpu.length || 
-      (gpu.length >= filters.length.min && gpu.length <= filters.length.max);
-    
-    // TDP
-    const matchesTdp = !gpu.tdp || 
-      (gpu.tdp >= filters.tdp.min && gpu.tdp <= filters.tdp.max);
-    
-    // Port filters
-    const matchesDvi = filters.dviPorts.length === 0 || 
-      !gpu.dviPorts ||
-      filters.dviPorts.includes(gpu.dviPorts.toString());
-    
-    const matchesHdmi = filters.hdmiPorts.length === 0 || 
-      !gpu.hdmiPorts ||
-      filters.hdmiPorts.includes(gpu.hdmiPorts.toString());
-    
-    const matchesMiniHdmi = filters.miniHdmiPorts.length === 0 || 
-      !gpu.miniHdmiPorts ||
-      filters.miniHdmiPorts.includes(gpu.miniHdmiPorts.toString());
-    
-    const matchesDisplayPort = filters.displayPortPorts.length === 0 || 
-      !gpu.displayPortPorts ||
-      filters.displayPortPorts.includes(gpu.displayPortPorts.toString());
-    
-    const matchesMiniDisplayPort = filters.miniDisplayPortPorts.length === 0 || 
-      !gpu.miniDisplayPortPorts ||
-      filters.miniDisplayPortPorts.includes(gpu.miniDisplayPortPorts.toString());
-    
-    // Expansion Slots
-    const matchesCaseExpansion = filters.caseExpansionSlotWidth.length === 0 || 
-      !gpu.caseExpansionSlotWidth ||
-      filters.caseExpansionSlotWidth.includes(gpu.caseExpansionSlotWidth.toString());
-    
-    const matchesTotalSlot = filters.totalSlotWidth.length === 0 || 
-      !gpu.totalSlotWidth ||
-      filters.totalSlotWidth.includes(gpu.totalSlotWidth.toString());
-    
-    // Cooling
-    const matchesCooling = filters.cooling.length === 0 || 
-      !gpu.cooling ||
-      filters.cooling.includes(gpu.cooling);
-    
-    // External Power
-    const matchesExternalPower = filters.externalPower.length === 0 || 
-      !gpu.externalPower ||
-      filters.externalPower.includes(gpu.externalPower);
-    
-    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating &&
-           matchesChipset && matchesMemory && matchesMemoryType && matchesCoreClock &&
-           matchesBoostClock && matchesInterface && matchesColor && matchesSliCrossfire &&
-           matchesFrameSync && matchesLength && matchesTdp && matchesDvi && matchesHdmi &&
-           matchesMiniHdmi && matchesDisplayPort && matchesMiniDisplayPort && matchesCaseExpansion &&
-           matchesTotalSlot && matchesCooling && matchesExternalPower;
+    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating;
   });
+  
+  console.log('Filtered GPUs:', filteredGPUs.length);
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentGPUs = filteredGPUs.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredGPUs.length / itemsPerPage);
 
   const handleFilterChange = (filterName, value) => {
     setFilters(prev => ({ ...prev, [filterName]: value }));
@@ -814,7 +732,7 @@ const GPU = () => {
 
             {/* Product Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredGPUs.map((gpu, index) => (
+          {currentGPUs.map((gpu, index) => (
             <BounceCard
               key={gpu.id}
               delay={index * 0.1}
@@ -893,6 +811,39 @@ const GPU = () => {
             </BounceCard>
           ))}
         </div>
+
+            {/* Pagination */}
+            {filteredGPUs.length > itemsPerPage && (
+              <div className="mt-8 flex justify-center gap-4">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    backgroundColor: colors.mainYellow,
+                    color: 'white',
+                    border: 'none'
+                  }}
+                >
+                  Previous
+                </button>
+                <span className="px-4 py-2 text-lg font-semibold" style={{ color: colors.mainBlack }}>
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    backgroundColor: colors.mainYellow,
+                    color: 'white',
+                    border: 'none'
+                  }}
+                >
+                  Next
+                </button>
+              </div>
+            )}
 
             {/* Empty State */}
             {filteredGPUs.length === 0 && (

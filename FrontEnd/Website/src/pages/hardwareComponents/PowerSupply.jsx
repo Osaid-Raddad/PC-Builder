@@ -13,6 +13,8 @@ const PowerSupply = () => {
   const [selectedPSU, setSelectedPSU] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [animationKey, setAnimationKey] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(12);
   
   const [filters, setFilters] = useState({
     priceRange: { min: 0, max: 500 },
@@ -40,13 +42,15 @@ const PowerSupply = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const psuList = powerSuppliesData.map(psu => ({
+  const psuList = powerSuppliesData.powerSupplies.map(psu => ({
     ...psu,
-    brand: psu.manufacturer,
+    name: `${psu.brand} ${psu.model}`, // Combine brand and model for display
     wattage: `${psu.wattage}W`,
     efficiency: psu.efficiency,
     modular: psu.modular
   }));
+  
+  console.log('PSU List loaded:', psuList.length, 'items');
 
   const filteredPSUs = psuList.filter(psu => {
     // Search term
@@ -138,6 +142,12 @@ const PowerSupply = () => {
            matchesPcie16pin && matchesPcie12pin && matchesPcie8pin && matchesPcie6plus2 &&
            matchesPcie6pin && matchesSata && matchesMolex;
   });
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentPSUs = filteredPSUs.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredPSUs.length / itemsPerPage);
 
   const handleFilterChange = (filterName, value) => {
     setFilters(prev => ({ ...prev, [filterName]: value }));
@@ -678,7 +688,7 @@ const PowerSupply = () => {
 
             {/* Product Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredPSUs.map((psu, index) => (
+          {currentPSUs.map((psu, index) => (
             <BounceCard
               key={`${psu.id}-${animationKey}`}
               delay={index * 0.1}
@@ -764,6 +774,45 @@ const PowerSupply = () => {
             </BounceCard>
           ))}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-4 mt-8">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
+                currentPage === 1
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:opacity-80'
+              }`}
+              style={{
+                backgroundColor: colors.accent,
+                color: colors.mainWhite
+              }}
+            >
+              Previous
+            </button>
+            <span className="font-semibold" style={{ color: colors.mainBlack }}>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
+                currentPage === totalPages
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:opacity-80'
+              }`}
+              style={{
+                backgroundColor: colors.accent,
+                color: colors.mainWhite
+              }}
+            >
+              Next
+            </button>
+          </div>
+        )}
 
             {/* Empty State */}
             {filteredPSUs.length === 0 && (

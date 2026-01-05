@@ -13,6 +13,8 @@ const Memory = () => {
   const [selectedMemory, setSelectedMemory] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [animationKey, setAnimationKey] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(12);
   
   const [filters, setFilters] = useState({
     priceRange: { min: 0, max: 500 },
@@ -36,12 +38,14 @@ const Memory = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const memoryList = memoryData.map(mem => ({
+  const memoryList = memoryData.memory.map(mem => ({
     ...mem,
-    brand: mem.manufacturer,
+    name: `${mem.brand} ${mem.model}`, // Combine brand and model for display
     capacity: `${mem.capacityGB}GB (${mem.modules})`,
     speed: `${mem.type}-${mem.speedMHz}`
   }));
+  
+  console.log('Memory List loaded:', memoryList.length, 'items');
 
   const filteredMemory = memoryList.filter(mem => {
     // Search term
@@ -120,6 +124,12 @@ const Memory = () => {
            matchesColor && matchesFirstWordLatency && matchesCasLatency && matchesVoltage &&
            matchesTiming && matchesEccRegistered && matchesHeatSpreader;
   });
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentMemory = filteredMemory.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredMemory.length / itemsPerPage);
 
   const handleFilterChange = (filterName, value) => {
     setFilters(prev => ({ ...prev, [filterName]: value }));
@@ -594,7 +604,7 @@ const Memory = () => {
 
             {/* Product Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredMemory.map((memory, index) => (
+          {currentMemory.map((memory, index) => (
             <BounceCard
               key={memory.id}
               delay={index * 0.1}
@@ -672,6 +682,45 @@ const Memory = () => {
             </BounceCard>
           ))}
         </div>
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-4 mt-8">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
+                currentPage === 1
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:opacity-80'
+              }`}
+              style={{
+                backgroundColor: colors.accent,
+                color: colors.mainWhite
+              }}
+            >
+              Previous
+            </button>
+            <span className="font-semibold" style={{ color: colors.mainBlack }}>
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
+                currentPage === totalPages
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'hover:opacity-80'
+              }`}
+              style={{
+                backgroundColor: colors.accent,
+                color: colors.mainWhite
+              }}
+            >
+              Next
+            </button>
+          </div>
+        )}
 
             {filteredMemory.length === 0 && (
               <div className="text-center py-12">

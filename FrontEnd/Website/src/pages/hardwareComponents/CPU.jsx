@@ -10,15 +10,18 @@ import cpusData from '../../data/components/cpus.json';
 
 const CPU = () => {
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(12);
   
   // Transform JSON data to match component structure
-  const cpuList = cpusData.map(cpu => ({
+  const cpuList = cpusData.cpus.map(cpu => ({
     ...cpu,
-    brand: cpu.manufacturer,
-    tdp: `${cpu.tdpWatts}W`,
-    cores: cpu.cores,
-    threads: cpu.threads
+    brand: cpu.brand, // Already has brand field in JSON
+    model: cpu.model,
+    tdp: `${cpu.tdpWatts}W`
   }));
+  
+  console.log('CPU List loaded:', cpuList.length, 'items');
   
   // Filter states
   const [filters, setFilters] = useState({
@@ -82,6 +85,12 @@ const CPU = () => {
       includesCooler: null
     });
   };
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentCPUs = cpuList.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(cpuList.length / itemsPerPage);
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.mainBeige }}>
@@ -520,16 +529,103 @@ const CPU = () => {
 
           {/* Products Area */}
           <div className="flex-1">
-            {/* Empty State - No CPUs Available */}
-            <div className="text-center py-20">
-              <BsCpuFill size={64} style={{ color: colors.platinum }} className="mx-auto mb-4" />
-              <h2 className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>
-                No CPUs Available
-              </h2>
-              <p style={{ color: colors.jet }}>
-                CPU data is not currently loaded.
-              </p>
+            {/* Product Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {currentCPUs.map((cpu, index) => (
+                <div
+                  key={cpu.id}
+                  className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all p-6 cursor-pointer"
+                  style={{ border: `2px solid ${colors.platinum}` }}
+                  onMouseEnter={(e) => e.currentTarget.style.borderColor = colors.mainYellow}
+                  onMouseLeave={(e) => e.currentTarget.style.borderColor = colors.platinum}
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <span 
+                      className="px-3 py-1 rounded-full text-xs font-semibold text-white"
+                      style={{ backgroundColor: colors.mainYellow }}
+                    >
+                      {cpu.brand}
+                    </span>
+                  </div>
+
+                  <h3 className="text-xl font-bold mb-4" style={{ color: colors.mainBlack }}>
+                    {cpu.model}
+                  </h3>
+
+                  <div className="space-y-2 mb-4">
+                    <div className="flex justify-between text-sm">
+                      <span style={{ color: colors.jet }}>Cores:</span>
+                      <span className="font-semibold" style={{ color: colors.mainBlack }}>{cpu.cores}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span style={{ color: colors.jet }}>Threads:</span>
+                      <span className="font-semibold" style={{ color: colors.mainBlack }}>{cpu.threads}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span style={{ color: colors.jet }}>Base Clock:</span>
+                      <span className="font-semibold" style={{ color: colors.mainBlack }}>{cpu.baseClockGHz} GHz</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span style={{ color: colors.jet }}>Boost Clock:</span>
+                      <span className="font-semibold" style={{ color: colors.mainBlack }}>{cpu.boostClockGHz} GHz</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span style={{ color: colors.jet }}>TDP:</span>
+                      <span className="font-semibold" style={{ color: colors.mainBlack }}>{cpu.tdp}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span style={{ color: colors.jet }}>Socket:</span>
+                      <span className="font-semibold" style={{ color: colors.mainBlack }}>{cpu.socket}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-4 border-t" style={{ borderColor: colors.platinum }}>
+                    <span className="text-2xl font-bold" style={{ color: colors.mainYellow }}>
+                      ${cpu.price}
+                    </span>
+                    <button
+                      className="px-4 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity"
+                      style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+                    >
+                      Select
+                    </button>
+                  </div>
+                </div>
+              ))}
             </div>
+
+            {/* Pagination */}
+            {cpuList.length > itemsPerPage && (
+              <div className="mt-8 flex justify-center gap-4">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    backgroundColor: colors.mainYellow,
+                    color: 'white',
+                    border: 'none'
+                  }}
+                >
+                  Previous
+                </button>
+                <span className="px-4 py-2 text-lg font-semibold" style={{ color: colors.mainBlack }}>
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    backgroundColor: colors.mainYellow,
+                    color: 'white',
+                    border: 'none'
+                  }}
+                >
+                  Next
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
