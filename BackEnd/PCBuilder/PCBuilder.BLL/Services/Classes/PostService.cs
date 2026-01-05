@@ -138,8 +138,8 @@ namespace PCBuilder.BLL.Services.Classes
             if (post == null)
                 throw new KeyNotFoundException("Post not found.");
 
-            if (post.Status == PostStatus.Approved)
-                throw new InvalidOperationException("Approved posts cannot be deleted.");
+            if (post.Status != PostStatus.Approved)
+                throw new InvalidOperationException("cannot deleted pending posts.");
 
             await _postRepository.DeleteAsync(post);
         }
