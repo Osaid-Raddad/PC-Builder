@@ -20,75 +20,16 @@ const Posts = () => {
   const [selectedPost, setSelectedPost] = useState(null);
   const observerTarget = useRef(null);
 
-  // Mock data - Replace with API call
-  const mockPosts = [
-    {
-      id: 1,
-      author: {
-        name: 'Ahmad Hassan',
-        avatar: 'https://ui-avatars.com/api/?name=Ahmad+Hassan&background=F9B233&color=fff'
-      },
-      content: 'Just finished building my first gaming PC! RTX 4070 Ti + Ryzen 7 7800X3D. The performance is incredible! 🚀',
-      images: ['https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=800'],
-      likes: 45,
-      comments: 12,
-      timestamp: '2 hours ago',
-      liked: false
-    },
-    {
-      id: 2,
-      author: {
-        name: 'Sarah Mohammed',
-        avatar: 'https://ui-avatars.com/api/?name=Sarah+Mohammed&background=F9B233&color=fff'
-      },
-      content: 'Anyone have experience with the new Intel 14th gen processors? Thinking about upgrading from my 12th gen.',
-      images: [],
-      likes: 23,
-      comments: 8,
-      timestamp: '5 hours ago',
-      liked: false
-    },
-    {
-      id: 3,
-      author: {
-        name: 'Khaled Ali',
-        avatar: 'https://ui-avatars.com/api/?name=Khaled+Ali&background=F9B233&color=fff'
-      },
-      content: 'My RGB setup is finally complete! What do you think? 🌈',
-      images: [
-        'https://images.unsplash.com/photo-1593640495253-23196b27a87f?w=800',
-        'https://images.unsplash.com/photo-1616588589676-62b3bd4ff6d2?w=800'
-      ],
-      likes: 89,
-      comments: 24,
-      timestamp: '1 day ago',
-      liked: true
-    }
-  ];
-
-  // Simulate fetching posts with pagination
+  // Fetch posts from API
   const fetchPosts = useCallback(async (pageNum) => {
     if (loading) return;
     
     setLoading(true);
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Simulate pagination - create unique posts for each page
-    const newPosts = mockPosts.map((post, idx) => ({
-      ...post,
-      id: (pageNum - 1) * mockPosts.length + idx + 1, // Generate unique ID
-      liked: false // Reset liked status for new posts
-    }));
-    
-    if (pageNum > 3) { // Limit to 3 pages for demo
-      setHasMore(false);
-    } else {
-      setPosts(prev => [...prev, ...newPosts]);
-    }
-    
+    // TODO: Implement actual API call for fetching posts
+    // For now, just show empty state
     setLoading(false);
+    setHasMore(false);
   }, [loading]);
 
   // Initial load
@@ -138,10 +79,8 @@ const Posts = () => {
     setShowCommentsModal(true);
   };
 
-  const handleCreatePost = (newPost) => {
-    toast.success('Your post has been submitted for review!');
+  const handleCreatePost = () => {
     setShowCreateModal(false);
-    // In real app, add to pending posts or refresh from API
   };
 
   return (

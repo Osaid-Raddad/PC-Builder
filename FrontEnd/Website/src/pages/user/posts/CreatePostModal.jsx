@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import axios from 'axios';
 import colors from '../../../config/colors';
-import { FiX, FiImage, FiTrash2 } from 'react-icons/fi';
+import { FiX, FiImage } from 'react-icons/fi';
 import toast from 'react-hot-toast';
 
 const CreatePostModal = ({ onClose, onSubmit }) => {
-  const [content, setContent] = useState('');
+  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm();
   const [images, setImages] = useState([]);
   const [imagePreviews, setImagePreviews] = useState([]);
 
@@ -12,8 +14,8 @@ const CreatePostModal = ({ onClose, onSubmit }) => {
     const files = Array.from(e.target.files);
     
     // Validate number of images
-    if (images.length + files.length > 5) {
-      toast.error('You can only upload up to 5 images per post');
+    if (images.length + files.length > 3) {
+      toast.error('You can only upload up to 3 images per post');
       return;
     }
 
@@ -54,21 +56,45 @@ const CreatePostModal = ({ onClose, onSubmit }) => {
     setImagePreviews(prev => prev.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const onSubmitForm = async (data) => {
+    try {
+      const formData = new FormData();
+      formData.append('Description', data.description);
+      
+      // Append all images
+      images.forEach((image) => {
+        formData.append('Images', image);
+      });
 
-    if (!content.trim()) {
-      toast.error('Please write something in your post');
-      return;
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        toast.error('Please login to create a post');
+        return;
+      }
+
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/User/Posts/createPost`,
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+
+      toast.success('Your post has been submitted for review!');
+      onSubmit();
+    } catch (error) {
+      console.error('Error creating post:', error);
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else if (error.response?.status === 401) {
+        toast.error('Please login to create a post');
+      } else {
+        toast.error('Failed to create post. Please try again.');
+      }
     }
-
-    const postData = {
-      content,
-      images,
-      timestamp: new Date().toISOString()
-    };
-
-    onSubmit(postData);
   };
 
   return (
@@ -110,7 +136,7 @@ const CreatePostModal = ({ onClose, onSubmit }) => {
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-4">
+        <form onSubmit={handleSubmit(onSubmitForm)} className="flex-1 overflow-y-auto p-4">
           {/* User Info */}
           <div className="flex items-center gap-3 mb-4">
             <div 
@@ -127,18 +153,23 @@ const CreatePostModal = ({ onClose, onSubmit }) => {
 
           {/* Content Textarea */}
           <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
+            {...register('description', { 
+              required: 'Please write something in your post',
+              minLength: { value: 1, message: 'Post cannot be empty' }
+            })}
             placeholder="What's on your mind? Share your build, ask a question, or start a discussion..."
             className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none transition-colors resize-none mb-4"
             style={{ 
-              borderColor: colors.platinum,
+              borderColor: errors.description ? 'red' : colors.platinum,
               color: colors.mainBlack,
               minHeight: '150px'
             }}
             onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
-            onBlur={(e) => e.target.style.borderColor = colors.platinum}
+            onBlur={(e) => e.target.style.borderColor = errors.description ? 'red' : colors.platinum}
           />
+          {errors.description && (
+            <p className="text-red-500 text-sm mb-4 -mt-2">{errors.description.message}</p>
+          )}
 
           {/* Image Previews */}
           {imagePreviews.length > 0 && (
@@ -170,7 +201,7 @@ const CreatePostModal = ({ onClose, onSubmit }) => {
             style={{ borderColor: colors.mainYellow, color: colors.mainYellow }}
           >
             <FiImage size={20} />
-            <span className="font-semibold">Add Photos ({images.length}/5)</span>
+            <span className="font-semibold">Add Photos ({images.length}/3)</span>
             <input
               type="file"
               accept="image/jpeg,image/jpg,image/png,image/webp"
@@ -179,36 +210,37 @@ const CreatePostModal = ({ onClose, onSubmit }) => {
               className="hidden"
             />
           </label>
-        </form>
 
-        {/* Footer */}
-        <div 
-          className="p-4 border-t-2 flex gap-3"
-          style={{ borderColor: colors.platinum }}
-        >
-          {/* Action Buttons */}
-          <div className="flex gap-3">
-            <button
-              onClick={onClose}
-              className="flex-1 px-6 py-3 rounded-lg font-semibold border-2 hover:opacity-80 transition-opacity cursor-pointer"
-              style={{ 
-                borderColor: colors.platinum,
-                color: colors.jet,
-                backgroundColor: 'white'
-              }}
-            >
-              Cancel
-            </button>
-            <button
-              onClick={handleSubmit}
-              disabled={!content.trim()}
-              className="flex-1 px-6 py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-              style={{ backgroundColor: colors.mainYellow }}
-            >
-              Post
-            </button>
+          {/* Footer - Moved inside form */}
+          <div 
+            className="mt-4 pt-4 border-t-2 flex gap-3"
+            style={{ borderColor: colors.platinum }}
+          >
+            {/* Action Buttons */}
+            <div className="flex gap-3 w-full">
+              <button
+                type="button"
+                onClick={onClose}
+                className="flex-1 px-6 py-3 rounded-lg font-semibold border-2 hover:opacity-80 transition-opacity cursor-pointer"
+                style={{ 
+                  borderColor: colors.platinum,
+                  color: colors.jet,
+                  backgroundColor: 'white'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="flex-1 px-6 py-3 rounded-lg font-semibold text-white hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                style={{ backgroundColor: colors.mainYellow }}
+              >
+                {isSubmitting ? 'Posting...' : 'Post'}
+              </button>
+            </div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
