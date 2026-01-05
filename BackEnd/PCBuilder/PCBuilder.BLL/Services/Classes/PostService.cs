@@ -174,11 +174,7 @@ namespace PCBuilder.BLL.Services.Classes
         }
 
         // -------------------- Add Comment --------------------
-        public async Task<CommentResponse> AddCommentAsync(
-            int postId,
-            string userId,
-            string content,
-            int? parentCommentId = null)
+        public async Task<CommentResponse> AddCommentAsync(int postId,string userId, string content, int? parentCommentId = null)
         {
             if (string.IsNullOrWhiteSpace(content))
                 throw new ArgumentException("Comment cannot be empty.");
@@ -190,16 +186,18 @@ namespace PCBuilder.BLL.Services.Classes
             if (post.Status != PostStatus.Approved)
                 throw new InvalidOperationException("Cannot comment on a post that is not approved.");
 
+          
             var comment = new PostComment
             {
                 PostId = postId,
                 UserId = userId,
                 Content = content,
-                ParentCommentId = parentCommentId
+                ParentCommentId = parentCommentId,
+                CreatedAt = DateTime.UtcNow
             };
 
-            post.Comments.Add(comment);
-            await _postRepository.UpdateAsync(post);
+            
+            await _postRepository.AddCommentAsync(comment); 
 
             var user = post.User ?? await _userRepository.GetUserByIdAsync(userId);
 
@@ -209,9 +207,46 @@ namespace PCBuilder.BLL.Services.Classes
                 Content = comment.Content,
                 UserId = userId,
                 UserFullName = user?.FullName ?? "",
-                ParentCommentId = parentCommentId
+                ParentCommentId = parentCommentId,
+                CreatedAt = comment.CreatedAt
             };
         }
+
+
+        public async Task<List<CommentWithRepliesResponse>> GetPostCommentsAsync(int postId)
+        {
+            var post = await _postRepository.GetByIdAsync(postId);
+            if (post == null)
+                throw new KeyNotFoundException("Post not found.");
+
+            if (post.Status != PostStatus.Approved)
+                throw new InvalidOperationException("Cannot view comments for unapproved post.");
+
+            
+            var comments = await _postRepository.GetPostCommentsAsync(postId);
+
+            
+            var commentDict = comments.ToDictionary(c => c.Id);
+
+            foreach (var comment in comments)
+            {
+                if (comment.ParentCommentId.HasValue)
+                {
+                    var parent = commentDict[comment.ParentCommentId.Value];
+                    parent.Replies.Add(comment);
+                }
+            }
+
+          
+            var parentComments = comments
+                .Where(c => c.ParentCommentId == null)
+                .OrderByDescending(c => c.CreatedAt)
+                .ToList();
+
+           
+            return parentComments.Select(c => MapComment(c)).ToList();
+        }
+
 
         // -------------------- Mapper Helper --------------------
         private PostResponse MapToDto(Post post, HttpRequest httpRequest)
@@ -231,6 +266,22 @@ namespace PCBuilder.BLL.Services.Classes
                 Status = post.Status,
                 CreatedAt = post.CreatedAt
             };
+
         }
+       private CommentWithRepliesResponse MapComment(PostComment comment)
+{
+    return new CommentWithRepliesResponse
+    {
+        Id = comment.Id,
+        Content = comment.Content,
+        CreatedAt = comment.CreatedAt,
+        UserFullName = comment.User?.FullName ?? "",
+        Replies = comment.Replies?
+            .OrderBy(r => r.CreatedAt)
+            .Select(r => MapComment(r))
+            .ToList() ?? new List<CommentWithRepliesResponse>()
+    };
+}
+
     }
 }

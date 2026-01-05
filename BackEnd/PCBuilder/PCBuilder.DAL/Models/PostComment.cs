@@ -18,6 +18,6 @@ namespace PCBuilder.DAL.Models
         public int? ParentCommentId { get; set; }
         public PostComment ParentComment { get; set; }
         public List<PostComment> Replies { get; set; } = new();
-       
+        public DateTime CreatedAt { get; set; }
     }
 }

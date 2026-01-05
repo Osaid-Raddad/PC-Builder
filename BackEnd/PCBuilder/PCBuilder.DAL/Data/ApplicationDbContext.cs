@@ -20,6 +20,7 @@ namespace PCBuilder.DAL.Data
         public DbSet<TechSupportAvailability> TechSupportAvailabilities { get; set; }
 
         public DbSet<Post> Posts { get; set; }
+        public DbSet<PostComment> PostComments { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
 
         public DbSet<UpgradeUserRole> UpgradeUserRoles { get; set; }
@@ -66,19 +67,25 @@ namespace PCBuilder.DAL.Data
                 .HasOne(l => l.Post)
                 .WithMany(p => p.Likes)
                 .HasForeignKey(l => l.PostId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
 
             builder.Entity<PostComment>()
                   .HasOne(c => c.User)
                   .WithMany()
                   .HasForeignKey(c => c.UserId)
-                  .OnDelete(DeleteBehavior.NoAction); 
+                  .OnDelete(DeleteBehavior.NoAction);
 
             builder.Entity<PostComment>()
                 .HasOne(c => c.Post)
                 .WithMany(p => p.Comments)
                 .HasForeignKey(c => c.PostId)
-                .OnDelete(DeleteBehavior.Cascade); 
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<PostComment>()
+                .HasOne(c => c.ParentComment)
+                .WithMany(c => c.Replies)
+                .HasForeignKey(c => c.ParentCommentId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
 
     }

@@ -22,5 +22,6 @@ namespace PCBuilder.BLL.Services.Interfaces
         Task DeletePostAsync(int postId);
         Task LikePostAsync(int postId, string userId);
         Task<CommentResponse> AddCommentAsync(int postId, string userId, string content, int? parentCommentId = null);
+        Task<List<CommentWithRepliesResponse>> GetPostCommentsAsync(int postId);
     }
 }
