@@ -30,7 +30,7 @@ namespace PCBuilder.PL.Areas.User.Controllers
         }
 
         // -------------------- Get All Approved Posts --------------------
-        [HttpGet("allPosts")]
+        [HttpGet("GetApprovedPosts")]
         public async Task<IActionResult> GetAllPosts()
         {
             var posts = await _postService.GetAllApprovedPostsAsync(Request);
@@ -57,7 +57,7 @@ namespace PCBuilder.PL.Areas.User.Controllers
 
         // -------------------- Get Post By Id --------------------
         [HttpGet("Post/{id}")]
-        public async Task<IActionResult> GetPostById([FromRoute]int id)
+        public async Task<IActionResult> GetPostById([FromRoute] int id)
         {
             var post = await _postService.GetPostByIdAsync(id, Request);
             return Ok(post);
@@ -79,6 +79,13 @@ namespace PCBuilder.PL.Areas.User.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var comment = await _postService.AddCommentAsync(id, userId, dto.Content, dto.ParentCommentId);
             return Ok(comment);
+        }
+        // -------------------- Get Comment With Replies --------------------
+        [HttpGet("Post/comments/{id}")]
+        public async Task<IActionResult> GetPostComments([FromRoute] int id)
+        {
+            var comments = await _postService.GetPostCommentsAsync(id);
+            return Ok(comments);
         }
     }
 }

@@ -52,6 +52,26 @@ namespace PCBuilder.DAL.Repositories.Classes
                 .ToListAsync();
         }
 
+        public async Task<List<Post>> GetPendingPostsAsync()
+        {
+            return await _context.Posts
+                .Include(p => p.Images)
+                .Include(p => p.User)
+                .Include(p => p.Likes)
+                .Include(p => p.Comments)
+                .Where(p => p.Status == PostStatus.Pending)
+                .OrderByDescending(p => p.CreatedAt)
+                .ToListAsync();
+        }
+        public async Task<List<PostComment>> GetPostCommentsAsync(int postId)
+        {
+            return await _context.PostComments
+       .Where(c => c.PostId == postId)
+       .Include(c => c.User)                      
+       .Include(c => c.Replies)                  
+           .ThenInclude(r => r.User)              
+       .ToListAsync();
+        }
         public async Task<List<Post>> GetByUserIdAsync(string userId)
         {
             return await _context.Posts
@@ -67,6 +87,12 @@ namespace PCBuilder.DAL.Repositories.Classes
         public async Task<int> GetUserPostCountAsync(string userId)
         {
             return await _context.Posts.CountAsync(p => p.UserId == userId);
+        }
+
+        public async Task AddCommentAsync(PostComment comment)
+        {
+            _context.PostComments.Add(comment);
+            await _context.SaveChangesAsync();
         }
 
         public async Task AddAsync(Post post)
