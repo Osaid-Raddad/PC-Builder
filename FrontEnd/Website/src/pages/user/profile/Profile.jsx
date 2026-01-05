@@ -6,6 +6,7 @@ import ProfileHeader from './profileComponents/ProfileHeader';
 import ProfileTabs from './profileComponents/ProfileTabs';
 import OverviewTab from './profileComponents/OverviewTab';
 import BuildsTab from './profileComponents/BuildsTab';
+import PostsTab from './profileComponents/PostsTab';
 import AppointmentsTab from './profileComponents/AppointmentsTab';
 import FavoritesTab from './profileComponents/FavoritesTab';
 import ActivityTab from './profileComponents/ActivityTab';
@@ -34,6 +35,15 @@ const Profile = () => {
         const response = await apiClient.get('/Profile/UserProfile/profile');
         const profileData = response.data;
         
+        // Fetch posts count
+        let postsCount = 0;
+        try {
+          const postsResponse = await apiClient.get('/User/Posts/myPost/count');
+          postsCount = postsResponse.data || 0;
+        } catch (error) {
+          console.error('Error fetching posts count:', error);
+        }
+        
         // Transform API data to match component structure
         const transformedData = {
           id: profileData.id,
@@ -57,7 +67,7 @@ const Profile = () => {
           stats: {
             builds: 0, // Will be handled later
             favorites: 0, // Will be handled later
-            posts: 0
+            posts: postsCount
           }
         };
         
@@ -324,6 +334,7 @@ const Profile = () => {
             {/* Tab Content */}
             {activeTab === 'overview' && <OverviewTab />}
             {activeTab === 'builds' && <BuildsTab builds={savedBuilds} />}
+            {activeTab === 'posts' && <PostsTab />}
             {activeTab === 'appointments' && <AppointmentsTab />}
             {activeTab === 'favorites' && <FavoritesTab products={favoriteProducts} />}
             {activeTab === 'activity' && <ActivityTab activities={activityHistory} />}
