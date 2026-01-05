@@ -90,8 +90,13 @@ const PostManagement = () => {
     if (result.isConfirmed) {
       try {
         const token = localStorage.getItem('authToken');
-        await axios.post(
-          `${import.meta.env.VITE_API_BASE_URL}/api/Admins/Posts/approvePost/${postId}`,
+        if (!token) {
+          toast.error('Authentication token not found. Please login again.');
+          return;
+        }
+
+        await axios.put(
+          `${import.meta.env.VITE_API_BASE_URL}/api/Admins/Posts/ApprovePost/${postId}`,
           {},
           {
             headers: {
@@ -103,7 +108,15 @@ const PostManagement = () => {
         fetchAllPosts(); // Refresh both lists
       } catch (error) {
         console.error('Error approving post:', error);
-        toast.error('Failed to approve post. Please try again.');
+        if (error.response?.status === 401) {
+          toast.error('Unauthorized. Please login again.');
+        } else if (error.response?.status === 404) {
+          toast.error('Post not found.');
+        } else if (error.response?.data?.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error('Failed to approve post. Please try again.');
+        }
       }
     }
   };
@@ -122,8 +135,13 @@ const PostManagement = () => {
     if (result.isConfirmed) {
       try {
         const token = localStorage.getItem('authToken');
-        await axios.post(
-          `${import.meta.env.VITE_API_BASE_URL}/api/Admins/Posts/rejectPost/${postId}`,
+        if (!token) {
+          toast.error('Authentication token not found. Please login again.');
+          return;
+        }
+
+        await axios.put(
+          `${import.meta.env.VITE_API_BASE_URL}/api/Admins/Posts/RejectPost/${postId}`,
           {},
           {
             headers: {
@@ -131,11 +149,19 @@ const PostManagement = () => {
             }
           }
         );
-        toast.success('Post rejected successfully!');
+        toast.success('Post rejected successfully! ✅');
         fetchAllPosts(); // Refresh both lists
       } catch (error) {
         console.error('Error rejecting post:', error);
-        toast.error('Failed to reject post. Please try again.');
+        if (error.response?.status === 401) {
+          toast.error('Unauthorized. Please login again.');
+        } else if (error.response?.status === 404) {
+          toast.error('Post not found.');
+        } else if (error.response?.data?.message) {
+          toast.error(error.response.data.message);
+        } else {
+          toast.error('Failed to reject post. Please try again.');
+        }
       }
     }
   };

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import axios from 'axios';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
 import colors from '../../../config/colors';
@@ -24,12 +25,51 @@ const Posts = () => {
   const fetchPosts = useCallback(async (pageNum) => {
     if (loading) return;
     
+    // Only fetch on first load since API returns all posts
+    if (pageNum > 1) {
+      setHasMore(false);
+      return;
+    }
+    
     setLoading(true);
     
-    // TODO: Implement actual API call for fetching posts
-    // For now, just show empty state
-    setLoading(false);
-    setHasMore(false);
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        toast.error('Please login to view posts');
+        setLoading(false);
+        setHasMore(false);
+        return;
+      }
+
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/api/User/Posts/GetApprovedPosts`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      if (response.data && response.data.length > 0) {
+        setPosts(response.data);
+        // Since API returns all posts, disable infinite scroll
+        setHasMore(false);
+      } else {
+        setPosts([]);
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      if (error.response?.status === 401) {
+        toast.error('Session expired. Please login again.');
+      } else {
+        toast.error('Failed to load posts. Please try again.');
+      }
+      setHasMore(false);
+    } finally {
+      setLoading(false);
+    }
   }, [loading]);
 
   // Initial load
@@ -81,6 +121,11 @@ const Posts = () => {
 
   const handleCreatePost = () => {
     setShowCreateModal(false);
+    // Refresh posts after creating a new one
+    setPosts([]);
+    setPage(1);
+    setHasMore(true);
+    fetchPosts(1);
   };
 
   return (
