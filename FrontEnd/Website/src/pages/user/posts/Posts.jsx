@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import axios from 'axios';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
 import colors from '../../../config/colors';
@@ -18,77 +19,72 @@ const Posts = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [likedPosts, setLikedPosts] = useState(() => {
+    const saved = localStorage.getItem('likedPosts');
+    return saved ? JSON.parse(saved) : [];
+  });
   const observerTarget = useRef(null);
 
-  // Mock data - Replace with API call
-  const mockPosts = [
-    {
-      id: 1,
-      author: {
-        name: 'Ahmad Hassan',
-        avatar: 'https://ui-avatars.com/api/?name=Ahmad+Hassan&background=F9B233&color=fff'
-      },
-      content: 'Just finished building my first gaming PC! RTX 4070 Ti + Ryzen 7 7800X3D. The performance is incredible! 🚀',
-      images: ['https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=800'],
-      likes: 45,
-      comments: 12,
-      timestamp: '2 hours ago',
-      liked: false
-    },
-    {
-      id: 2,
-      author: {
-        name: 'Sarah Mohammed',
-        avatar: 'https://ui-avatars.com/api/?name=Sarah+Mohammed&background=F9B233&color=fff'
-      },
-      content: 'Anyone have experience with the new Intel 14th gen processors? Thinking about upgrading from my 12th gen.',
-      images: [],
-      likes: 23,
-      comments: 8,
-      timestamp: '5 hours ago',
-      liked: false
-    },
-    {
-      id: 3,
-      author: {
-        name: 'Khaled Ali',
-        avatar: 'https://ui-avatars.com/api/?name=Khaled+Ali&background=F9B233&color=fff'
-      },
-      content: 'My RGB setup is finally complete! What do you think? 🌈',
-      images: [
-        'https://images.unsplash.com/photo-1593640495253-23196b27a87f?w=800',
-        'https://images.unsplash.com/photo-1616588589676-62b3bd4ff6d2?w=800'
-      ],
-      likes: 89,
-      comments: 24,
-      timestamp: '1 day ago',
-      liked: true
-    }
-  ];
+  // Save liked posts to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+  }, [likedPosts]);
 
-  // Simulate fetching posts with pagination
+  // Fetch posts from API
   const fetchPosts = useCallback(async (pageNum) => {
     if (loading) return;
     
-    setLoading(true);
-    
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Simulate pagination - create unique posts for each page
-    const newPosts = mockPosts.map((post, idx) => ({
-      ...post,
-      id: (pageNum - 1) * mockPosts.length + idx + 1, // Generate unique ID
-      liked: false // Reset liked status for new posts
-    }));
-    
-    if (pageNum > 3) { // Limit to 3 pages for demo
+    // Only fetch on first load since API returns all posts
+    if (pageNum > 1) {
       setHasMore(false);
-    } else {
-      setPosts(prev => [...prev, ...newPosts]);
+      return;
     }
     
-    setLoading(false);
+    setLoading(true);
+    
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        toast.error('Please login to view posts');
+        setLoading(false);
+        setHasMore(false);
+        return;
+      }
+
+      const response = await axios.get(
+        `${import.meta.env.VITE_API_BASE_URL}/api/User/Posts/GetApprovedPosts`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      if (response.data && response.data.length > 0) {
+        // Map posts and add liked status from localStorage
+        const postsWithLikedStatus = response.data.map(post => ({
+          ...post,
+          liked: likedPosts.includes(post.id) || post.isLiked || post.liked,
+          isLiked: likedPosts.includes(post.id) || post.isLiked || post.liked
+        }));
+        setPosts(postsWithLikedStatus);
+        // Since API returns all posts, disable infinite scroll
+        setHasMore(false);
+      } else {
+        setPosts([]);
+        setHasMore(false);
+      }
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      if (error.response?.status === 401) {
+        toast.error('Session expired. Please login again.');
+      } else {
+        toast.error('Failed to load posts. Please try again.');
+      }
+      setHasMore(false);
+    } finally {
+      setLoading(false);
+    }
   }, [loading]);
 
   // Initial load
@@ -125,12 +121,46 @@ const Posts = () => {
     }
   }, [page]);
 
-  const handleLike = (postId) => {
-    setPosts(prev => prev.map(post => 
-      post.id === postId 
-        ? { ...post, liked: !post.liked, likes: post.liked ? post.likes - 1 : post.likes + 1 }
-        : post
-    ));
+  const handleLike = async (postId) => {
+    try {
+      const token = localStorage.getItem('authToken');
+      
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/User/Posts/likePost/${postId}`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      // Update the post's like status and count in local state
+      setPosts(prev => prev.map(post => {
+        if (post.id === postId) {
+          const isCurrentlyLiked = post.liked || post.isLiked;
+          const newLikedState = !isCurrentlyLiked;
+          
+          // Update localStorage
+          if (newLikedState) {
+            setLikedPosts(curr => [...curr, postId]);
+          } else {
+            setLikedPosts(curr => curr.filter(id => id !== postId));
+          }
+          
+          return {
+            ...post,
+            liked: newLikedState,
+            isLiked: newLikedState,
+            likesCount: isCurrentlyLiked ? post.likesCount - 1 : post.likesCount + 1
+          };
+        }
+        return post;
+      }));
+    } catch (error) {
+      console.error('Error liking post:', error);
+      toast.error('Failed to like post');
+    }
   };
 
   const handleComment = (post) => {
@@ -138,10 +168,13 @@ const Posts = () => {
     setShowCommentsModal(true);
   };
 
-  const handleCreatePost = (newPost) => {
-    toast.success('Your post has been submitted for review!');
+  const handleCreatePost = () => {
     setShowCreateModal(false);
-    // In real app, add to pending posts or refresh from API
+    // Refresh posts after creating a new one
+    setPosts([]);
+    setPage(1);
+    setHasMore(true);
+    fetchPosts(1);
   };
 
   return (

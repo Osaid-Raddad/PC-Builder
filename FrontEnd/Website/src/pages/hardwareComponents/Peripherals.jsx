@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useBuild } from '../../context/BuildContext';
+import { useCompare } from '../../context/CompareContext';
+import toast from 'react-hot-toast';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaKeyboard } from 'react-icons/fa';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
+import peripheralsData from '../../data/components/peripherals.json';
 
 const Peripherals = () => {
   const navigate = useNavigate();
+  const { addComponent } = useBuild();
+  const { compareList, addToCompare, isInCompare, removeFromCompare, getCategory } = useCompare();
   const [selectedPeripheral, setSelectedPeripheral] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('All');
@@ -21,24 +27,20 @@ const Peripherals = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const peripheralList = [
-    { id: 1, name: 'Logitech G Pro X Superlight', brand: 'Logitech', type: 'Mouse', connectivity: 'Wireless', price: 159.99 },
-    { id: 2, name: 'Corsair K70 RGB TKL', brand: 'Corsair', type: 'Keyboard', connectivity: 'Wired', price: 139.99 },
-    { id: 3, name: 'Razer DeathAdder V3 Pro', brand: 'Razer', type: 'Mouse', connectivity: 'Wireless', price: 149.99 },
-    { id: 4, name: 'SteelSeries Apex Pro', brand: 'SteelSeries', type: 'Keyboard', connectivity: 'Wired', price: 199.99 },
-    { id: 5, name: 'HyperX Cloud Alpha', brand: 'HyperX', type: 'Headset', connectivity: 'Wired', price: 99.99 },
-    { id: 6, name: 'Blue Yeti X', brand: 'Blue', type: 'Microphone', connectivity: 'USB', price: 169.99 },
-  ];
+  const peripheralList = peripheralsData.map(peripheral => ({
+    ...peripheral,
+    brand: peripheral.manufacturer
+  }));
 
-  const types = ['All', 'Mouse', 'Keyboard', 'Headset', 'Microphone'];
-  const brands = ['All', 'Logitech', 'Corsair', 'Razer', 'SteelSeries', 'HyperX', 'Blue'];
-  const connectivityOptions = ['All', 'Wired', 'Wireless', 'USB', 'Bluetooth'];
+  const types = ['All', ...new Set(peripheralList.map(p => p.category))];
+  const brands = ['All', ...new Set(peripheralList.map(p => p.brand))];
+  const connectivityOptions = ['All', ...new Set(peripheralList.map(p => p.connection).filter(c => c))];
 
   const filteredPeripherals = peripheralList.filter(peripheral => {
     const matchesSearch = searchTerm === '' || peripheral.name.toLowerCase().includes(searchTerm.toLowerCase()) || peripheral.brand.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = typeFilter === 'All' || peripheral.type === typeFilter;
+    const matchesType = typeFilter === 'All' || peripheral.category === typeFilter;
     const matchesBrand = brandFilter === 'All' || peripheral.brand === brandFilter;
-    const matchesConnectivity = connectivityFilter === 'All' || peripheral.connectivity === connectivityFilter;
+    const matchesConnectivity = connectivityFilter === 'All' || peripheral.connection === connectivityFilter;
     return matchesSearch && matchesType && matchesBrand && matchesConnectivity;
   });
 
@@ -270,11 +272,12 @@ const Peripherals = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-3">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSelectPeripheral(peripheral);
+                      addComponent('peripherals', peripheral);
+                      navigate('/builder');
                     }}
                     className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                     style={{
@@ -284,6 +287,33 @@ const Peripherals = () => {
                     }}
                   >
                     {selectedPeripheral?.id === peripheral.id ? 'Selected' : 'Select'}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const currentCategory = getCategory();
+                      if (currentCategory && currentCategory !== 'peripherals') {
+                        toast.error(`You can only compare Peripherals together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
+                        return;
+                      }
+                      if (isInCompare(peripheral.id)) {
+                        removeFromCompare(peripheral.id);
+                      } else {
+                        if (compareList.length >= 4) {
+                          toast.error('You can compare up to 4 products at once.', { duration: 3000 });
+                          return;
+                        }
+                        addToCompare(peripheral, 'peripherals');
+                      }
+                    }}
+                    className="px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: isInCompare(peripheral.id) ? colors.mainYellow : 'white',
+                      color: isInCompare(peripheral.id) ? 'white' : colors.mainYellow,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {isInCompare(peripheral.id) ? '✓' : '+'}
                   </button>
                   <button
                     onClick={(e) => {
@@ -314,6 +344,57 @@ const Peripherals = () => {
           </div>
         )}
       </div>
+
+      {/* Floating Compare Bar */}
+      {compareList.length > 0 && (
+        <div 
+          className="fixed bottom-0 left-0 right-0 shadow-lg z-50"
+          style={{ backgroundColor: colors.mainBeige, borderTop: `3px solid ${colors.mainYellow}` }}
+        >
+          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+                          <span className="text-white font-semibold">
+                            Compare ({compareList.length}/4)
+                          </span>
+                          <div className="flex gap-2">
+                            {compareList.map(item => (
+                              <div 
+                                key={item.id}
+                                className="px-3 py-1 rounded flex items-center gap-2"
+                                style={{ backgroundColor: colors.mainYellow }}
+                              >
+                                <span className="text-sm text-white">{item.name || `${item.brand} ${item.model}`}</span>
+                                <button
+                                  onClick={() => removeFromCompare(item.id)}
+                                  className="text-white hover:opacity-80"
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  compareList.forEach(product => removeFromCompare(product.id));
+                }}
+                className="px-4 py-2 rounded-lg font-semibold hover:opacity-80"
+                style={{ backgroundColor: '#F44336', color: 'white' }}
+              >
+                Clear All
+              </button>
+              <button
+                onClick={() => navigate('/comparator')}
+                className="px-6 py-2 rounded-lg font-semibold hover:opacity-80"
+                style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+              >
+                Compare Now
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

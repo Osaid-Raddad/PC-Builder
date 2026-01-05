@@ -1,87 +1,81 @@
 import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import colors from '../../../config/colors';
-import { FiX, FiSend, FiHeart, FiMessageCircle } from 'react-icons/fi';
+import { FiX, FiSend, FiHeart, FiMessageCircle, FiThumbsUp } from 'react-icons/fi';
 import { FaHeart } from 'react-icons/fa';
 import toast from 'react-hot-toast';
+import axios from 'axios';
 
 const CommentsModal = ({ post, onClose }) => {
-  const [newComment, setNewComment] = useState('');
-  const [comments, setComments] = useState([
-    {
-      id: 1,
-      author: {
-        name: 'Mohammed Nasser',
-        avatar: 'https://ui-avatars.com/api/?name=Mohammed+Nasser&background=F9B233&color=fff'
-      },
-      content: 'Great build! How much did it cost in total?',
-      timestamp: '1 hour ago',
-      likes: 5,
-      liked: false,
-      replies: []
-    },
-    {
-      id: 2,
-      author: {
-        name: 'Laila Ibrahim',
-        avatar: 'https://ui-avatars.com/api/?name=Laila+Ibrahim&background=F9B233&color=fff'
-      },
-      content: 'Which shop did you buy from? Looking to build something similar.',
-      timestamp: '45 minutes ago',
-      likes: 3,
-      liked: false,
-      replies: [
-        {
-          id: 3,
-          author: {
-            name: post.author.name,
-            avatar: post.author.avatar
-          },
-          content: 'I got most parts from Watani Mall in Jerusalem!',
-          timestamp: '30 minutes ago',
-          likes: 2,
-          liked: false
-        }
-      ]
-    }
-  ]);
+  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm();
+  const [comments, setComments] = useState([]);
   const [replyingTo, setReplyingTo] = useState(null);
+  const [currentUser, setCurrentUser] = useState(() => {
+    const userData = localStorage.getItem('userData');
+    return userData ? JSON.parse(userData) : null;
+  });
 
-  const handleSubmitComment = (e) => {
-    e.preventDefault();
-    
-    if (!newComment.trim()) {
-      toast.error('Please write a comment');
-      return;
+  const onSubmit = async (data) => {
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        toast.error('Please login to comment');
+        return;
+      }
+
+      const requestBody = {
+        content: data.comment,
+        parentCommentId: replyingTo || null
+      };
+
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/User/Posts/commentPost/${post.id}`,
+        requestBody,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+
+      const newCommentObj = {
+        id: Date.now(),
+        author: {
+          name: 'You',
+          avatar: 'https://ui-avatars.com/api/?name=You&background=F9B233&color=fff'
+        },
+        content: data.comment,
+        timestamp: 'Just now',
+        likes: 0,
+        liked: false,
+        replies: []
+      };
+
+      if (replyingTo) {
+        setComments(prev => prev.map(c => 
+          c.id === replyingTo 
+            ? { ...c, replies: [...c.replies, newCommentObj] }
+            : c
+        ));
+        toast.success('Reply posted successfully!');
+        setReplyingTo(null);
+      } else {
+        setComments(prev => [newCommentObj, ...prev]);
+        toast.success('Comment posted successfully!');
+      }
+
+      reset();
+    } catch (error) {
+      console.error('Error posting comment:', error);
+      if (error.response?.status === 401) {
+        toast.error('Session expired. Please login again.');
+      } else if (error.response?.status === 400) {
+        toast.error('Invalid comment. Please try again.');
+      } else {
+        toast.error('Failed to post comment. Please try again.');
+      }
     }
-
-    const comment = {
-      id: Date.now(),
-      author: {
-        name: 'You',
-        avatar: 'https://ui-avatars.com/api/?name=You&background=F9B233&color=fff'
-      },
-      content: newComment,
-      timestamp: 'Just now',
-      likes: 0,
-      liked: false,
-      replies: []
-    };
-
-    if (replyingTo) {
-      // Add as reply
-      setComments(prev => prev.map(c => 
-        c.id === replyingTo 
-          ? { ...c, replies: [...c.replies, comment] }
-          : c
-      ));
-      setReplyingTo(null);
-    } else {
-      // Add as new comment
-      setComments(prev => [comment, ...prev]);
-    }
-
-    setNewComment('');
-    toast.success('Comment posted!');
   };
 
   const handleLikeComment = (commentId, isReply = false, parentId = null) => {
@@ -124,7 +118,7 @@ const CommentsModal = ({ post, onClose }) => {
           style={{ borderColor: colors.platinum }}
         >
           <h2 className="text-2xl font-bold" style={{ color: colors.mainBlack }}>
-            {post.author.name}'s Post
+            {post.userFullName}'s Post
           </h2>
           {/* Close Button */}
           <button
@@ -139,24 +133,30 @@ const CommentsModal = ({ post, onClose }) => {
         <div className="p-4 border-b-2" style={{ borderColor: colors.platinum }}>
           <div className="flex items-center gap-3 mb-3">
             <img 
-              src={post.author.avatar} 
-              alt={post.author.name}
+              src={`https://ui-avatars.com/api/?name=${encodeURIComponent(post.userFullName || 'User')}&background=F9B233&color=fff`}
+              alt={post.userFullName}
               className="w-10 h-10 rounded-full"
             />
             <div>
               <h3 className="font-bold" style={{ color: colors.mainBlack }}>
-                {post.author.name}
+                {post.userFullName}
               </h3>
               <p className="text-xs" style={{ color: colors.jet }}>
-                {post.timestamp}
+                {new Date(post.createdAt).toLocaleDateString('en-US', { 
+                  year: 'numeric', 
+                  month: 'short', 
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })}
               </p>
             </div>
           </div>
-          <p style={{ color: colors.mainBlack }}>{post.content}</p>
+          <p style={{ color: colors.mainBlack }}>{post.description}</p>
           
-          {post.images && post.images.length > 0 && (
+          {post.imageUrls && post.imageUrls.length > 0 && (
             <div className="mt-3 grid grid-cols-2 gap-2">
-              {post.images.slice(0, 2).map((image, index) => (
+              {post.imageUrls.slice(0, 2).map((image, index) => (
                 <img 
                   key={index}
                   src={image} 
@@ -171,7 +171,7 @@ const CommentsModal = ({ post, onClose }) => {
             <div className="flex items-center gap-1">
               <FaHeart size={14} style={{ color: colors.mainYellow }} />
               <span className="text-sm font-semibold" style={{ color: colors.jet }}>
-                {post.likes}
+                {post.likesCount || 0}
               </span>
             </div>
             <div className="flex items-center gap-1">
@@ -296,7 +296,10 @@ const CommentsModal = ({ post, onClose }) => {
                 Replying to {comments.find(c => c.id === replyingTo)?.author.name}
               </span>
               <button
-                onClick={() => setReplyingTo(null)}
+                onClick={() => {
+                  setReplyingTo(null);
+                  reset();
+                }}
                 className="text-sm font-semibold hover:underline cursor-pointer"
                 style={{ color: colors.mainYellow }}
               >
@@ -305,36 +308,54 @@ const CommentsModal = ({ post, onClose }) => {
             </div>
           )}
           
-          <form onSubmit={handleSubmitComment} className="flex gap-3">
-            <div 
-              className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shrink-0"
-              style={{ backgroundColor: colors.mainYellow }}
-            >
-              U
-            </div>
-            <div className="flex-1 flex gap-2">
-              <input
-                type="text"
-                value={newComment}
-                onChange={(e) => setNewComment(e.target.value)}
-                placeholder="Write a comment..."
-                className="flex-1 px-4 py-2 rounded-full border-2 focus:outline-none transition-colors"
-                style={{ 
-                  borderColor: colors.platinum,
-                  color: colors.mainBlack
-                }}
-                onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
-                onBlur={(e) => e.target.style.borderColor = colors.platinum}
+          <form onSubmit={handleSubmit(onSubmit)} className="flex gap-3">
+            {currentUser?.profileImageUrl ? (
+              <img
+                src={currentUser.profileImageUrl}
+                alt={currentUser.fullName || 'User'}
+                className="w-10 h-10 rounded-full shrink-0 border-2"
+                style={{ borderColor: colors.mainYellow }}
               />
-              {/* Send Comment Button */}
-              <button
-                onClick={handleAddComment}
-                disabled={!newComment.trim()}
-                className="p-3 rounded-full hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            ) : (
+              <div 
+                className="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold shrink-0 text-lg"
                 style={{ backgroundColor: colors.mainYellow }}
               >
-                <FiSend size={20} color="white" />
-              </button>
+                {currentUser?.fullName?.[0]?.toUpperCase() || 'U'}
+              </div>
+            )}
+            <div className="flex-1">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  {...register('comment', { 
+                    required: 'Please write a comment',
+                    minLength: { value: 1, message: 'Comment cannot be empty' },
+                    maxLength: { value: 500, message: 'Comment is too long (max 500 characters)' }
+                  })}
+                  placeholder="Write a comment..."
+                  className="flex-1 px-4 py-2 rounded-full border-2 focus:outline-none transition-colors"
+                  style={{ 
+                    borderColor: errors.comment ? '#dc2626' : colors.platinum,
+                    color: colors.mainBlack
+                  }}
+                  onFocus={(e) => e.target.style.borderColor = errors.comment ? '#dc2626' : colors.mainYellow}
+                  onBlur={(e) => e.target.style.borderColor = errors.comment ? '#dc2626' : colors.platinum}
+                />
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="p-3 rounded-full hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                  style={{ backgroundColor: colors.mainYellow }}
+                >
+                  <FiSend size={20} color="white" />
+                </button>
+              </div>
+              {errors.comment && (
+                <p className="text-xs mt-1 ml-4" style={{ color: '#dc2626' }}>
+                  {errors.comment.message}
+                </p>
+              )}
             </div>
           </form>
         </div>

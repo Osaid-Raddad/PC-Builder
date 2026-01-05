@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiSearch, FiMenu, FiX, FiUser, FiChevronDown, FiShoppingBag, FiLogOut, FiHeart, FiMessageCircle, FiHeadphones } from 'react-icons/fi';
+import { FiSearch, FiMenu, FiX, FiUser, FiChevronDown, FiShoppingBag, FiLogOut, FiHeart, FiMessageCircle, FiHeadphones, FiZap } from 'react-icons/fi';
 import { FaTools, FaBoxOpen, FaNewspaper, FaEdit, FaUserCircle, FaMemory, FaHdd, FaDesktop } from 'react-icons/fa';
 import { PiDesktopTowerFill } from 'react-icons/pi';
 import { BsFillMotherboardFill, BsGpuCard } from 'react-icons/bs';
@@ -69,6 +69,7 @@ export default function Navbar() {
     { label: 'Posts', path: '/posts', icon: <FaEdit size={18} /> },
     { label: 'News', path: '/news', icon: <FaNewspaper size={18} /> },
     { label: 'Shops', path: '/shops', icon: <FiShoppingBag size={18} /> },
+    { label: 'Quantum Computing', path: '/quantum-computing', icon: <FiZap size={18} /> },
   ];
 
   const menuItems = [

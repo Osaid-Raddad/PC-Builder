@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useBuild } from '../../context/BuildContext';
+import { useCompare } from '../../context/CompareContext';
+import toast from 'react-hot-toast';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaMicrochip } from 'react-icons/fa';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
+import gpusData from '../../data/components/gpus.json';
 
 const GPU = () => {
   const navigate = useNavigate();
+  const { addComponent } = useBuild();
+  const { compareList, addToCompare, isInCompare, removeFromCompare, getCategory } = useCompare();
   const [selectedGPU, setSelectedGPU] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [animationKey, setAnimationKey] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(12);
   
   const [filters, setFilters] = useState({
     priceRange: { min: 0, max: 2000 },
@@ -44,14 +52,15 @@ const GPU = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const gpuList = [
-    { id: 1, name: 'NVIDIA RTX 4090', brand: 'NVIDIA', memory: '24GB GDDR6X', price: 1599.99, tdp: '450W' },
-    { id: 2, name: 'AMD Radeon RX 7900 XTX', brand: 'AMD', memory: '24GB GDDR6', price: 999.99, tdp: '355W' },
-    { id: 3, name: 'NVIDIA RTX 4080', brand: 'NVIDIA', memory: '16GB GDDR6X', price: 1199.99, tdp: '320W' },
-    { id: 4, name: 'AMD Radeon RX 7900 XT', brand: 'AMD', memory: '20GB GDDR6', price: 849.99, tdp: '315W' },
-    { id: 5, name: 'NVIDIA RTX 4070 Ti', brand: 'NVIDIA', memory: '12GB GDDR6X', price: 799.99, tdp: '285W' },
-    { id: 6, name: 'AMD Radeon RX 7800 XT', brand: 'AMD', memory: '16GB GDDR6', price: 499.99, tdp: '263W' },
-  ];
+  const gpuList = gpusData.gpus.map(gpu => ({
+    ...gpu,
+    name: `${gpu.brand} ${gpu.model}`, // Combine brand and model for display
+    memory: `${gpu.memoryGB}GB ${gpu.memoryType}`,
+    tdp: `${gpu.tdpWatts}W`
+  }));
+  
+  console.log('GPU List loaded:', gpuList.length, 'items');
+  console.log('First GPU:', gpuList[0]);
 
   const filteredGPUs = gpuList.filter(gpu => {
     // Search term
@@ -66,108 +75,21 @@ const GPU = () => {
     const matchesManufacturer = filters.manufacturers.length === 0 || 
       filters.manufacturers.includes(gpu.brand);
     
-    // Rating
+    // Rating (optional field)
     const matchesRating = filters.rating === null || 
+      !filters.rating ||
       (gpu.rating && gpu.rating >= filters.rating);
     
-    // Chipset
-    const matchesChipset = filters.chipset.length === 0 || 
-      !gpu.chipset ||
-      filters.chipset.includes(gpu.chipset);
-    
-    // Memory
-    const matchesMemory = filters.memory.length === 0 || 
-      !gpu.memory ||
-      filters.memory.includes(gpu.memory);
-    
-    // Memory Type
-    const matchesMemoryType = filters.memoryType.length === 0 || 
-      !gpu.memoryType ||
-      filters.memoryType.includes(gpu.memoryType);
-    
-    // Core Clock
-    const matchesCoreClock = !gpu.coreClock || 
-      (gpu.coreClock >= filters.coreClock.min && gpu.coreClock <= filters.coreClock.max);
-    
-    // Boost Clock
-    const matchesBoostClock = !gpu.boostClock || 
-      (gpu.boostClock >= filters.boostClock.min && gpu.boostClock <= filters.boostClock.max);
-    
-    // Interface
-    const matchesInterface = filters.interface.length === 0 || 
-      !gpu.interface ||
-      filters.interface.includes(gpu.interface);
-    
-    // Color
-    const matchesColor = filters.color.length === 0 || 
-      !gpu.color ||
-      filters.color.includes(gpu.color);
-    
-    // SLI/Crossfire
-    const matchesSliCrossfire = filters.sliCrossfire.length === 0 || 
-      !gpu.sliCrossfire ||
-      filters.sliCrossfire.includes(gpu.sliCrossfire);
-    
-    // Frame Sync
-    const matchesFrameSync = filters.frameSync.length === 0 || 
-      !gpu.frameSync ||
-      filters.frameSync.includes(gpu.frameSync);
-    
-    // Length
-    const matchesLength = !gpu.length || 
-      (gpu.length >= filters.length.min && gpu.length <= filters.length.max);
-    
-    // TDP
-    const matchesTdp = !gpu.tdp || 
-      (gpu.tdp >= filters.tdp.min && gpu.tdp <= filters.tdp.max);
-    
-    // Port filters
-    const matchesDvi = filters.dviPorts.length === 0 || 
-      !gpu.dviPorts ||
-      filters.dviPorts.includes(gpu.dviPorts.toString());
-    
-    const matchesHdmi = filters.hdmiPorts.length === 0 || 
-      !gpu.hdmiPorts ||
-      filters.hdmiPorts.includes(gpu.hdmiPorts.toString());
-    
-    const matchesMiniHdmi = filters.miniHdmiPorts.length === 0 || 
-      !gpu.miniHdmiPorts ||
-      filters.miniHdmiPorts.includes(gpu.miniHdmiPorts.toString());
-    
-    const matchesDisplayPort = filters.displayPortPorts.length === 0 || 
-      !gpu.displayPortPorts ||
-      filters.displayPortPorts.includes(gpu.displayPortPorts.toString());
-    
-    const matchesMiniDisplayPort = filters.miniDisplayPortPorts.length === 0 || 
-      !gpu.miniDisplayPortPorts ||
-      filters.miniDisplayPortPorts.includes(gpu.miniDisplayPortPorts.toString());
-    
-    // Expansion Slots
-    const matchesCaseExpansion = filters.caseExpansionSlotWidth.length === 0 || 
-      !gpu.caseExpansionSlotWidth ||
-      filters.caseExpansionSlotWidth.includes(gpu.caseExpansionSlotWidth.toString());
-    
-    const matchesTotalSlot = filters.totalSlotWidth.length === 0 || 
-      !gpu.totalSlotWidth ||
-      filters.totalSlotWidth.includes(gpu.totalSlotWidth.toString());
-    
-    // Cooling
-    const matchesCooling = filters.cooling.length === 0 || 
-      !gpu.cooling ||
-      filters.cooling.includes(gpu.cooling);
-    
-    // External Power
-    const matchesExternalPower = filters.externalPower.length === 0 || 
-      !gpu.externalPower ||
-      filters.externalPower.includes(gpu.externalPower);
-    
-    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating &&
-           matchesChipset && matchesMemory && matchesMemoryType && matchesCoreClock &&
-           matchesBoostClock && matchesInterface && matchesColor && matchesSliCrossfire &&
-           matchesFrameSync && matchesLength && matchesTdp && matchesDvi && matchesHdmi &&
-           matchesMiniHdmi && matchesDisplayPort && matchesMiniDisplayPort && matchesCaseExpansion &&
-           matchesTotalSlot && matchesCooling && matchesExternalPower;
+    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating;
   });
+  
+  console.log('Filtered GPUs:', filteredGPUs.length);
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentGPUs = filteredGPUs.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredGPUs.length / itemsPerPage);
 
   const handleFilterChange = (filterName, value) => {
     setFilters(prev => ({ ...prev, [filterName]: value }));
@@ -815,7 +737,7 @@ const GPU = () => {
 
             {/* Product Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredGPUs.map((gpu, index) => (
+          {currentGPUs.map((gpu, index) => (
             <BounceCard
               key={gpu.id}
               delay={index * 0.1}
@@ -863,11 +785,12 @@ const GPU = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-2">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSelectGPU(gpu);
+                      addComponent('gpu', gpu);
+                      navigate('/builder');
                     }}
                     className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                     style={{
@@ -877,6 +800,33 @@ const GPU = () => {
                     }}
                   >
                     {selectedGPU?.id === gpu.id ? 'Selected' : 'Select'}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const currentCategory = getCategory();
+                      if (currentCategory && currentCategory !== 'gpu') {
+                        toast.error(`You can only compare GPUs together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
+                        return;
+                      }
+                      if (isInCompare(gpu.id)) {
+                        removeFromCompare(gpu.id);
+                      } else {
+                        if (compareList.length >= 4) {
+                          toast.error('You can compare up to 4 products at once.', { duration: 3000 });
+                          return;
+                        }
+                        addToCompare(gpu, 'gpu');
+                      }
+                    }}
+                    className="px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: isInCompare(gpu.id) ? colors.mainYellow : 'white',
+                      color: isInCompare(gpu.id) ? 'white' : colors.mainYellow,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {isInCompare(gpu.id) ? '✓' : '+'}
                   </button>
                   <button
                     onClick={(e) => handleProductClick(gpu.id, e)}
@@ -895,22 +845,93 @@ const GPU = () => {
           ))}
         </div>
 
-            {/* Empty State */}
-            {filteredGPUs.length === 0 && (
-              <div className="text-center py-12">
-                <FaMicrochip size={64} style={{ color: colors.platinum }} className="mx-auto mb-4" />
-                <p className="text-2xl font-bold mb-2" style={{ color: colors.mainBlack }}>
-                  No GPUs found
-                </p>
-                <p className="text-lg" style={{ color: colors.jet }}>
-                  Try adjusting your filters or search terms
-                </p>
+            {/* Pagination */}
+            {filteredGPUs.length > itemsPerPage && (
+              <div className="mt-8 flex justify-center gap-4">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    backgroundColor: colors.mainYellow,
+                    color: 'white',
+                    border: 'none'
+                  }}
+                >
+                  Previous
+                </button>
+                <span className="px-4 py-2 text-lg font-semibold" style={{ color: colors.mainBlack }}>
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{
+                    backgroundColor: colors.mainYellow,
+                    color: 'white',
+                    border: 'none'
+                  }}
+                >
+                  Next
+                </button>
               </div>
             )}
           </div>
         </div>
-      </div>
 
+        {/* Floating Compare Bar */}
+        {compareList.length > 0 && (
+          <div 
+            className="fixed bottom-0 left-0 right-0 shadow-lg z-50"
+            style={{ backgroundColor: colors.mainBlack, borderTop: `3px solid ${colors.mainYellow}` }}
+          >
+            <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                            <span className="text-white font-semibold">
+                              Compare ({compareList.length}/4)
+                            </span>
+                            <div className="flex gap-2">
+                              {compareList.map(item => (
+                                <div 
+                                  key={item.id}
+                                  className="px-3 py-1 rounded flex items-center gap-2"
+                                  style={{ backgroundColor: colors.mainYellow }}
+                                >
+                                  <span className="text-sm text-white">{item.name || `${item.brand} ${item.model}`}</span>
+                                  <button
+                                    onClick={() => removeFromCompare(item.id)}
+                                    className="text-white hover:opacity-80"
+                                  >
+                                    ×
+                                  </button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    compareList.forEach(product => removeFromCompare(product.id));
+                  }}
+                  className="px-4 py-2 rounded-lg font-semibold hover:opacity-80"
+                  style={{ backgroundColor: '#F44336', color: 'white' }}
+                >
+                  Clear All
+                </button>
+                <button
+                  onClick={() => navigate('/comparator')}
+                  className="px-6 py-2 rounded-lg font-semibold hover:opacity-80"
+                  style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+                >
+                  Compare Now
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+      </div>
       <Footer />
     </div>
   );

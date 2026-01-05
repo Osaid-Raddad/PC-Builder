@@ -1,5 +1,5 @@
 import React from 'react';
-import { FiUser, FiActivity, FiHeart, FiCalendar } from 'react-icons/fi';
+import { FiUser, FiActivity, FiHeart, FiCalendar, FiMessageSquare } from 'react-icons/fi';
 import { FaDesktop } from 'react-icons/fa';
 import colors from '../../../../config/colors';
 
@@ -7,6 +7,7 @@ const ProfileTabs = ({ activeTab, onTabChange }) => {
   const tabs = [
     { id: 'overview', label: 'Overview', icon: <FiUser /> },
     { id: 'builds', label: 'My Builds', icon: <FaDesktop /> },
+    { id: 'posts', label: 'My Posts', icon: <FiMessageSquare /> },
     { id: 'appointments', label: 'Appointments', icon: <FiCalendar /> },
     { id: 'favorites', label: 'Favorites', icon: <FiHeart /> },
     { id: 'activity', label: 'Activity', icon: <FiActivity /> }

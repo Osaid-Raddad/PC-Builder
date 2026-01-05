@@ -1,5 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { BuildProvider } from './context/BuildContext';
+import { CompareProvider } from './context/CompareContext';
 import AuthLayout from './layouts/AuthLayout';
 import Home from './pages/home/Home.jsx';
 import Builder from './pages/user/builder/Builder.jsx';
@@ -46,6 +48,7 @@ import PostManagement from './pages/admin/PostManagement';
 import UserManagement from './pages/admin/UserManagement';
 import ProductManagement from './pages/admin/ProductManagement';
 import Settings from './pages/admin/Settings';
+import QuantumComputing from './pages/user/quantumComputing/QuantumComputing.jsx';
 
 function AppContent() {
   const location = useLocation();
@@ -96,6 +99,7 @@ function AppContent() {
           <Route path="/terms-of-service" element={<TermsOfService />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/building-guides" element={<BuildingGuides />} />
+          <Route path="/quantum-computing" element={<QuantumComputing />} />
           {/* Product Category Routes */}
           <Route path="/products/cpu" element={<CPU />} />
           <Route path="/products/gpu" element={<GPU />} />
@@ -141,7 +145,11 @@ function AppContent() {
 function App() {
   return (
     <Router>
-      <AppContent />
+      <BuildProvider>
+        <CompareProvider>
+          <AppContent />
+        </CompareProvider>
+      </BuildProvider>
     </Router>
   );
 }

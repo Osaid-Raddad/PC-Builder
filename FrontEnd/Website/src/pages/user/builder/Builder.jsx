@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useBuild } from '../../../context/BuildContext';
 import Navbar from '../../../components/user/navbar/Navbar.jsx';
 import Footer from '../../../components/user/footer/Footer.jsx';
 import BounceCard from '../../../components/animations/BounceCard/BounceCard.jsx';
@@ -23,7 +24,15 @@ import { PiDesktopTowerFill } from 'react-icons/pi';
 
 const Builder = () => {
   const navigate = useNavigate();
-  const [selectedComponents, setSelectedComponents] = useState({});
+  const { 
+    selectedComponents, 
+    removeComponent, 
+    clearBuild, 
+    calculateTotalPrice, 
+    calculateTotalPower, 
+    checkCompatibility: checkCompat, 
+    getPerformanceScore 
+  } = useBuild();
   const [showQRModal, setShowQRModal] = useState(false);
 
   const components = [
@@ -63,41 +72,55 @@ const Builder = () => {
   };
 
   const calculateTotal = () => {
-    // TODO: Calculate total price from selected components
-    return 0;
+    return calculateTotalPrice();
   };
 
-  const checkCompatibility = () => {
-    // TODO: Implement actual compatibility checking logic
-    const selectedCount = Object.keys(selectedComponents).length;
-    
-    if (selectedCount === 0) {
-      return { status: 'none', message: 'No components selected', icon: null };
-    } else if (selectedCount < 5) {
+  const getCompatibilityStatus = () => {
+    try {
+      const compatCheck = checkCompat();
+      const selectedCount = Object.keys(selectedComponents).length;
+      
+      if (selectedCount === 0) {
+        return { status: 'none', message: 'No components selected', icon: null };
+      } else if (selectedCount < 5) {
+        return { 
+          status: 'incomplete', 
+          message: 'Build Incomplete', 
+          icon: <FaExclamationTriangle size={20} />,
+          color: '#FF9800'
+        };
+      }
+      
+      // Use compatibility check from context
+      if (!compatCheck.isCompatible) {
+        return { 
+          status: 'incompatible', 
+          message: `${compatCheck.issues.length} Issues Found`, 
+          icon: <FaTimesCircle size={20} />,
+          color: '#F44336'
+        };
+      } else if (compatCheck.hasWarnings) {
+        return { 
+          status: 'warning', 
+          message: `${compatCheck.warnings.length} Warnings`, 
+          icon: <FaExclamationTriangle size={20} />,
+          color: '#FF9800'
+        };
+      } else {
+        return { 
+          status: 'compatible', 
+          message: 'All Compatible', 
+          icon: <FaCheckCircle size={20} />,
+          color: '#4CAF50'
+        };
+      }
+    } catch (error) {
+      console.error('Error checking compatibility:', error);
       return { 
-        status: 'incomplete', 
-        message: 'Build Incomplete', 
+        status: 'error', 
+        message: 'Error checking compatibility', 
         icon: <FaExclamationTriangle size={20} />,
         color: '#FF9800'
-      };
-    }
-    
-    // Simulate compatibility check
-    const isCompatible = true; // Replace with actual logic
-    
-    if (isCompatible) {
-      return { 
-        status: 'compatible', 
-        message: 'All Compatible', 
-        icon: <FaCheckCircle size={20} />,
-        color: '#4CAF50'
-      };
-    } else {
-      return { 
-        status: 'incompatible', 
-        message: 'Issues Found', 
-        icon: <FaTimesCircle size={20} />,
-        color: '#F44336'
       };
     }
   };
@@ -117,7 +140,7 @@ const Builder = () => {
     return `${window.location.origin}/shared-build/${buildId}`;
   };
 
-  const compatibility = checkCompatibility();
+  const compatibility = getCompatibilityStatus();
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.mainBeige }}>
@@ -213,16 +236,42 @@ const Builder = () => {
 
                 {/* Selection Status */}
                 {selectedComponents[component.id] ? (
-                  <div 
-                    className="p-3 rounded-lg text-center"
-                    style={{ backgroundColor: colors.mainYellow + '20' }}
-                  >
-                    <p className="text-sm font-medium" style={{ color: colors.mainBlack }}>
-                      {selectedComponents[component.id].name}
-                    </p>
-                    <p className="text-xs" style={{ color: colors.jet }}>
-                      ${selectedComponents[component.id].price}
-                    </p>
+                  <div>
+                    <div 
+                      className="p-3 rounded-lg mb-2"
+                      style={{ backgroundColor: colors.mainYellow + '20' }}
+                    >
+                      <p className="text-sm font-medium" style={{ color: colors.mainBlack }}>
+                        {selectedComponents[component.id].name || 
+                         `${selectedComponents[component.id].brand || ''} ${selectedComponents[component.id].model || ''}`.trim() ||
+                         'Unknown Component'}
+                      </p>
+                      <p className="text-xs" style={{ color: colors.jet }}>
+                        ${selectedComponents[component.id].price || 0}
+                      </p>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleComponentClick(component.id);
+                        }}
+                        className="flex-1 py-2 rounded-lg font-semibold text-sm hover:opacity-80 transition-opacity"
+                        style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+                      >
+                        Change
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeComponent(component.id);
+                        }}
+                        className="flex-1 py-2 rounded-lg font-semibold text-sm hover:opacity-80 transition-opacity"
+                        style={{ backgroundColor: '#F44336', color: 'white' }}
+                      >
+                        Remove
+                      </button>
+                    </div>
                   </div>
                 ) : (
                   <button
@@ -247,12 +296,14 @@ const Builder = () => {
             Save Build
           </button>
           <button
-            className="px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-lg cursor-pointer"
+            onClick={clearBuild}
+            className="px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             style={{ 
               backgroundColor: 'white',
               color: colors.mainYellow,
               border: `2px solid ${colors.mainYellow}`
             }}
+            disabled={Object.keys(selectedComponents).length === 0}
           >
             Clear Build
           </button>
@@ -267,6 +318,98 @@ const Builder = () => {
             Share Build
           </button>
         </div>
+
+        {/* Compatibility Details & Performance */}
+        {Object.keys(selectedComponents).length > 0 && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+            {/* Compatibility Issues */}
+            <div 
+              className="rounded-lg shadow-lg p-6"
+              style={{ backgroundColor: 'white', border: `2px solid ${colors.platinum}` }}
+            >
+              <h3 className="text-xl font-bold mb-4" style={{ color: colors.mainBlack }}>
+                Compatibility Check
+              </h3>
+              {(() => {
+                const compatCheck = checkCompat();
+                return (
+                  <div>
+                    {compatCheck.issues.length > 0 && (
+                      <div className="mb-4">
+                        <h4 className="font-semibold text-sm mb-2" style={{ color: '#F44336' }}>
+                          ⚠️ Critical Issues:
+                        </h4>
+                        {compatCheck.issues.map((issue, idx) => (
+                          <div key={idx} className="p-2 mb-2 rounded" style={{ backgroundColor: '#FFEBEE' }}>
+                            <p className="text-sm" style={{ color: '#C62828' }}>{issue.message}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {compatCheck.warnings.length > 0 && (
+                      <div className="mb-4">
+                        <h4 className="font-semibold text-sm mb-2" style={{ color: '#FF9800' }}>
+                          ⚡ Warnings:
+                        </h4>
+                        {compatCheck.warnings.map((warning, idx) => (
+                          <div key={idx} className="p-2 mb-2 rounded" style={{ backgroundColor: '#FFF3E0' }}>
+                            <p className="text-sm" style={{ color: '#E65100' }}>{warning.message}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {compatCheck.isCompatible && !compatCheck.hasWarnings && (
+                      <div className="p-4 rounded" style={{ backgroundColor: '#E8F5E9' }}>
+                        <p className="text-center font-semibold" style={{ color: '#2E7D32' }}>
+                          ✅ All components are compatible!
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* Performance Score */}
+            <div 
+              className="rounded-lg shadow-lg p-6"
+              style={{ backgroundColor: 'white', border: `2px solid ${colors.platinum}` }}
+            >
+              <h3 className="text-xl font-bold mb-4" style={{ color: colors.mainBlack }}>
+                Performance Score
+              </h3>
+              {(() => {
+                const perfScore = getPerformanceScore();
+                return (
+                  <div className="text-center">
+                    <div className="mb-4">
+                      <div className="text-6xl font-bold mb-2" style={{ color: colors.mainYellow }}>
+                        {perfScore.score}
+                      </div>
+                      <div className="text-2xl font-semibold" style={{ color: colors.mainBlack }}>
+                        {perfScore.category}
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span style={{ color: colors.jet }}>Estimated Power:</span>
+                        <span className="font-semibold" style={{ color: colors.mainBlack }}>
+                          {calculateTotalPower()}W
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span style={{ color: colors.jet }}>PSU Recommendation:</span>
+                        <span className="font-semibold" style={{ color: colors.mainBlack }}>
+                          {Math.round(calculateTotalPower() * 1.3)}W+
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })()}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* QR Code Modal */}

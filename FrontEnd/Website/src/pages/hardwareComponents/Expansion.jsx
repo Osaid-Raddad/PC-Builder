@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useBuild } from '../../context/BuildContext';
+import { useCompare } from '../../context/CompareContext';
+import toast from 'react-hot-toast';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaNetworkWired } from 'react-icons/fa';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
+import expansionData from '../../data/components/expansion.json';
 
 const Expansion = () => {
   const navigate = useNavigate();
+  const { addComponent } = useBuild();
+  const { compareList, addToCompare, isInCompare, removeFromCompare, getCategory } = useCompare();
   const [selectedExpansion, setSelectedExpansion] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [typeFilter, setTypeFilter] = useState('All');
@@ -21,17 +27,13 @@ const Expansion = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const expansionList = [
-    { id: 1, name: 'TP-Link WiFi 6E AX5400', brand: 'TP-Link', type: 'WiFi Adapter', interface: 'PCIe', price: 69.99 },
-    { id: 2, name: 'Creative Sound BlasterX AE-5', brand: 'Creative', type: 'Sound Card', interface: 'PCIe', price: 149.99 },
-    { id: 3, name: 'Intel Wi-Fi 6 AX200', brand: 'Intel', type: 'WiFi Adapter', interface: 'M.2', price: 29.99 },
-    { id: 4, name: 'ASUS PCE-AC88', brand: 'ASUS', type: 'WiFi Adapter', interface: 'PCIe', price: 99.99 },
-    { id: 5, name: 'Elgato Game Capture 4K60 Pro', brand: 'Elgato', type: 'Capture Card', interface: 'PCIe', price: 299.99 },
-    { id: 6, name: 'StarTech 4-Port USB 3.0', brand: 'StarTech', type: 'USB Expansion', interface: 'PCIe', price: 39.99 },
-  ];
+  const expansionList = expansionData.map(expansion => ({
+    ...expansion,
+    brand: expansion.manufacturer
+  }));
 
-  const types = ['All', 'WiFi Adapter', 'Sound Card', 'Capture Card', 'USB Expansion'];
-  const brands = ['All', 'TP-Link', 'Creative', 'Intel', 'ASUS', 'Elgato', 'StarTech'];
+  const types = ['All', ...new Set(expansionList.map(e => e.type))];
+  const brands = ['All', ...new Set(expansionList.map(e => e.brand))];
   const priceRanges = ['All', 'Under $50', '$50-$100', 'Over $100'];
 
   const filteredExpansions = expansionList.filter(expansion => {
@@ -268,11 +270,12 @@ const Expansion = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-3">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSelectExpansion(expansion);
+                      addComponent('expansion', expansion);
+                      navigate('/builder');
                     }}
                     className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                     style={{
@@ -282,6 +285,33 @@ const Expansion = () => {
                     }}
                   >
                     {selectedExpansion?.id === expansion.id ? 'Selected' : 'Select'}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const currentCategory = getCategory();
+                      if (currentCategory && currentCategory !== 'expansion') {
+                        toast.error(`You can only compare Expansion Cards together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
+                        return;
+                      }
+                      if (isInCompare(expansion.id)) {
+                        removeFromCompare(expansion.id);
+                      } else {
+                        if (compareList.length >= 4) {
+                          toast.error('You can compare up to 4 products at once.', { duration: 3000 });
+                          return;
+                        }
+                        addToCompare(expansion, 'expansion');
+                      }
+                    }}
+                    className="px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: isInCompare(expansion.id) ? colors.mainYellow : 'white',
+                      color: isInCompare(expansion.id) ? 'white' : colors.mainYellow,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {isInCompare(expansion.id) ? '✓' : '+'}
                   </button>
                   <button
                     onClick={(e) => {
@@ -312,6 +342,57 @@ const Expansion = () => {
           </div>
         )}
       </div>
+
+      {/* Floating Compare Bar */}
+      {compareList.length > 0 && (
+        <div 
+          className="fixed bottom-0 left-0 right-0 shadow-lg z-50"
+          style={{ backgroundColor: colors.mainBeige, borderTop: `3px solid ${colors.mainYellow}` }}
+        >
+          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+           <div className="flex items-center gap-4">
+                         <span className="text-white font-semibold">
+                           Compare ({compareList.length}/4)
+                         </span>
+                         <div className="flex gap-2">
+                           {compareList.map(item => (
+                             <div 
+                               key={item.id}
+                               className="px-3 py-1 rounded flex items-center gap-2"
+                               style={{ backgroundColor: colors.mainYellow }}
+                             >
+                               <span className="text-sm text-white">{item.name || `${item.brand} ${item.model}`}</span>
+                               <button
+                                 onClick={() => removeFromCompare(item.id)}
+                                 className="text-white hover:opacity-80"
+                               >
+                                 ×
+                               </button>
+                             </div>
+                           ))}
+                         </div>
+                       </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  compareList.forEach(product => removeFromCompare(product.id));
+                }}
+                className="px-4 py-2 rounded-lg font-semibold hover:opacity-80"
+                style={{ backgroundColor: '#F44336', color: 'white' }}
+              >
+                Clear All
+              </button>
+              <button
+                onClick={() => navigate('/comparator')}
+                className="px-6 py-2 rounded-lg font-semibold hover:opacity-80"
+                style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+              >
+                Compare Now
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

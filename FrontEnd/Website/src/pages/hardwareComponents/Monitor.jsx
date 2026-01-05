@@ -1,17 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useBuild } from '../../context/BuildContext';
+import { useCompare } from '../../context/CompareContext';
+import toast from 'react-hot-toast';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaTv } from 'react-icons/fa';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
+import monitorsData from '../../data/components/monitors.json';
 
 const Monitor = () => {
   const navigate = useNavigate();
+  const { addComponent } = useBuild();
+  const { compareList, addToCompare, isInCompare, removeFromCompare, getCategory } = useCompare();
   const [selectedMonitor, setSelectedMonitor] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [animationKey, setAnimationKey] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(12);
   
   const [filters, setFilters] = useState({
     priceRange: { min: 0, max: 2000 },
@@ -40,14 +48,11 @@ const Monitor = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const monitorList = [
-    { id: 1, name: 'ASUS ROG Swift PG279QM', brand: 'ASUS', size: '27"', resolution: '2560x1440', refreshRate: '240Hz', price: 699.99 },
-    { id: 2, name: 'LG 27GN950-B', brand: 'LG', size: '27"', resolution: '3840x2160', refreshRate: '144Hz', price: 799.99 },
-    { id: 3, name: 'Samsung Odyssey G7', brand: 'Samsung', size: '32"', resolution: '2560x1440', refreshRate: '240Hz', price: 649.99 },
-    { id: 4, name: 'Dell S2721DGF', brand: 'Dell', size: '27"', resolution: '2560x1440', refreshRate: '165Hz', price: 429.99 },
-    { id: 5, name: 'AOC CU34G2X', brand: 'AOC', size: '34"', resolution: '3440x1440', refreshRate: '144Hz', price: 449.99 },
-    { id: 6, name: 'BenQ EX2780Q', brand: 'BenQ', size: '27"', resolution: '2560x1440', refreshRate: '144Hz', price: 499.99 },
-  ];
+  const monitorList = monitorsData.map(monitor => ({
+    ...monitor,
+    size: `${monitor.screenSize}"`,
+    refreshRate: `${monitor.refreshRate}Hz`
+  }));
 
   const filteredMonitors = monitorList.filter(monitor => {
     // Search term
@@ -156,6 +161,12 @@ const Monitor = () => {
            matchesPixelPitch && matchesWidescreen && matchesCurvedScreen && matchesInterface &&
            matchesFrameSync && matchesSpeakers && matchesVesa && matchesHdr;
   });
+
+  // Pagination logic
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentMonitors = filteredMonitors.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredMonitors.length / itemsPerPage);
 
   const handleFilterChange = (filterName, value) => {
     setFilters(prev => ({ ...prev, [filterName]: value }));
@@ -748,7 +759,7 @@ const Monitor = () => {
 
             {/* Product Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredMonitors.map((monitor, index) => (
+          {currentMonitors.map((monitor, index) => (
             <BounceCard
               key={`${monitor.id}-${animationKey}`}
               delay={index * 0.1}
@@ -797,11 +808,12 @@ const Monitor = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-3">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSelectMonitor(monitor);
+                      addComponent('monitor', monitor);
+                      navigate('/builder');
                     }}
                     className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                     style={{
@@ -811,6 +823,33 @@ const Monitor = () => {
                     }}
                   >
                     {selectedMonitor?.id === monitor.id ? 'Selected' : 'Select'}
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      const currentCategory = getCategory();
+                      if (currentCategory && currentCategory !== 'monitor') {
+                        toast.error(`You can only compare Monitors together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
+                        return;
+                      }
+                      if (isInCompare(monitor.id)) {
+                        removeFromCompare(monitor.id);
+                      } else {
+                        if (compareList.length >= 4) {
+                          toast.error('You can compare up to 4 products at once.', { duration: 3000 });
+                          return;
+                        }
+                        addToCompare(monitor, 'monitor');
+                      }
+                    }}
+                    className="px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
+                    style={{
+                      backgroundColor: isInCompare(monitor.id) ? colors.mainYellow : 'white',
+                      color: isInCompare(monitor.id) ? 'white' : colors.mainYellow,
+                      border: `2px solid ${colors.mainYellow}`
+                    }}
+                  >
+                    {isInCompare(monitor.id) ? '✓' : '+'}
                   </button>
                   <button
                     onClick={(e) => {
@@ -832,6 +871,45 @@ const Monitor = () => {
           ))}
             </div>
 
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-4 mt-8">
+                <button
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
+                    currentPage === 1
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:opacity-80'
+                  }`}
+                  style={{
+                    backgroundColor: colors.accent,
+                    color: colors.mainWhite
+                  }}
+                >
+                  Previous
+                </button>
+                <span className="font-semibold" style={{ color: colors.mainBlack }}>
+                  Page {currentPage} of {totalPages}
+                </span>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className={`px-4 py-2 rounded-lg font-semibold transition-all duration-200 ${
+                    currentPage === totalPages
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:opacity-80'
+                  }`}
+                  style={{
+                    backgroundColor: colors.accent,
+                    color: colors.mainWhite
+                  }}
+                >
+                  Next
+                </button>
+              </div>
+            )}
+
             {/* Empty State */}
             {filteredMonitors.length === 0 && (
               <div className="text-center py-12">
@@ -843,6 +921,57 @@ const Monitor = () => {
           </div>
         </div>
       </div>
+
+      {/* Floating Compare Bar */}
+      {compareList.length > 0 && (
+        <div 
+          className="fixed bottom-0 left-0 right-0 shadow-lg z-50"
+          style={{ backgroundColor: colors.mainBlack, borderTop: `3px solid ${colors.mainYellow}` }}
+        >
+          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+           <div className="flex items-center gap-4">
+                         <span className="text-white font-semibold">
+                           Compare ({compareList.length}/4)
+                         </span>
+                         <div className="flex gap-2">
+                           {compareList.map(item => (
+                             <div 
+                               key={item.id}
+                               className="px-3 py-1 rounded flex items-center gap-2"
+                               style={{ backgroundColor: colors.mainYellow }}
+                             >
+                               <span className="text-sm text-white">{item.name || `${item.brand} ${item.model}`}</span>
+                               <button
+                                 onClick={() => removeFromCompare(item.id)}
+                                 className="text-white hover:opacity-80"
+                               >
+                                 ×
+                               </button>
+                             </div>
+                           ))}
+                         </div>
+                       </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  compareList.forEach(product => removeFromCompare(product.id));
+                }}
+                className="px-4 py-2 rounded-lg font-semibold hover:opacity-80"
+                style={{ backgroundColor: '#F44336', color: 'white' }}
+              >
+                Clear All
+              </button>
+              <button
+                onClick={() => navigate('/comparator')}
+                className="px-6 py-2 rounded-lg font-semibold hover:opacity-80"
+                style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+              >
+                Compare Now
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

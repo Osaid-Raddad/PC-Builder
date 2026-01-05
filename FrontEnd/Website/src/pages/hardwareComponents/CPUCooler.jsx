@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useBuild } from '../../context/BuildContext';
+import { useCompare } from '../../context/CompareContext';
+import toast from 'react-hot-toast';
 import Navbar from '../../components/user/navbar/Navbar.jsx';
 import Footer from '../../components/user/footer/Footer.jsx';
 import BounceCard from '../../components/animations/BounceCard/BounceCard';
 import colors from '../../config/colors';
 import { FaFan } from 'react-icons/fa';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
+import cpuCoolersData from '../../data/components/cpuCoolers.json';
 
 const CPUCooler = () => {
   const navigate = useNavigate();
+  const { addComponent } = useBuild();
+  const { compareList, addToCompare, isInCompare, removeFromCompare, getCategory } = useCompare();
   const [selectedCooler, setSelectedCooler] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -32,14 +38,13 @@ const CPUCooler = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const coolerList = [
-    { id: 1, name: 'Noctua NH-D15', brand: 'Noctua', type: 'Air', price: 109.99, compatibility: ['Intel', 'AMD'] },
-    { id: 2, name: 'Corsair iCUE H150i Elite', brand: 'Corsair', type: 'Liquid', price: 189.99, compatibility: ['Intel', 'AMD'] },
-    { id: 3, name: 'be quiet! Dark Rock Pro 4', brand: 'be quiet!', type: 'Air', price: 89.99, compatibility: ['Intel', 'AMD'] },
-    { id: 4, name: 'NZXT Kraken X63', brand: 'NZXT', type: 'Liquid', price: 149.99, compatibility: ['Intel', 'AMD'] },
-    { id: 5, name: 'Cooler Master Hyper 212', brand: 'Cooler Master', type: 'Air', price: 44.99, compatibility: ['Intel', 'AMD'] },
-    { id: 6, name: 'Arctic Liquid Freezer II 280', brand: 'Arctic', type: 'Liquid', price: 119.99, compatibility: ['Intel', 'AMD'] },
-  ];
+  const coolerList = cpuCoolersData.cpuCoolers.map(cooler => ({
+    ...cooler,
+    name: `${cooler.brand} ${cooler.model}`, // Combine brand and model for display
+    compatibility: cooler.socketCompatibility
+  }));
+  
+  console.log('CPU Cooler List loaded:', coolerList.length, 'items');
 
   const handleFilterChange = (filterName, value) => {
     setFilters(prev => ({
@@ -90,44 +95,12 @@ const CPUCooler = () => {
     const matchesManufacturer = filters.manufacturers.length === 0 || 
       filters.manufacturers.includes(cooler.brand);
     
-    // Rating
-    const matchesRating = filters.rating === null || 
+    // Rating (optional)
+    const matchesRating = filters.rating === null ||
+      !filters.rating ||
       (cooler.rating && cooler.rating >= filters.rating);
     
-    // Color
-    const matchesColor = filters.color.length === 0 || 
-      !cooler.color ||
-      filters.color.includes(cooler.color);
-    
-    // Height
-    const matchesHeight = !cooler.height || 
-      (cooler.height >= filters.height.min && cooler.height <= filters.height.max);
-    
-    // Bearing
-    const matchesBearing = filters.bearing.length === 0 || 
-      !cooler.bearing ||
-      filters.bearing.includes(cooler.bearing);
-    
-    // CPU Socket
-    const matchesSocket = filters.cpuSocket.length === 0 || 
-      !cooler.socket ||
-      filters.cpuSocket.some(socket => 
-        Array.isArray(cooler.socket) ? cooler.socket.includes(socket) : cooler.socket === socket
-      );
-    
-    // Water Cooled
-    const matchesWaterCooled = filters.waterCooled === null || 
-      !cooler.hasOwnProperty('waterCooled') ||
-      cooler.waterCooled === filters.waterCooled;
-    
-    // Fanless
-    const matchesFanless = filters.fanless === null || 
-      !cooler.hasOwnProperty('fanless') ||
-      cooler.fanless === filters.fanless;
-    
-    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating &&
-           matchesColor && matchesHeight && matchesBearing && matchesSocket &&
-           matchesWaterCooled && matchesFanless;
+    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating;
   });
 
   const handleSelectCooler = (cooler) => {
@@ -528,11 +501,12 @@ const CPUCooler = () => {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-3 gap-3">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleSelectCooler(product);
+                          addComponent('cooler', product);
+                          navigate('/builder');
                         }}
                         className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                         style={{
@@ -542,6 +516,33 @@ const CPUCooler = () => {
                         }}
                       >
                         {selectedCooler?.id === product.id ? 'Selected' : 'Select'}
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          const currentCategory = getCategory();
+                          if (currentCategory && currentCategory !== 'cpucooler') {
+                            toast.error(`You can only compare CPU Coolers together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
+                            return;
+                          }
+                          if (isInCompare(product.id)) {
+                            removeFromCompare(product.id);
+                          } else {
+                            if (compareList.length >= 4) {
+                              toast.error('You can compare up to 4 products at once.', { duration: 3000 });
+                              return;
+                            }
+                            addToCompare(product, 'cpucooler');
+                          }
+                        }}
+                        className="px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
+                        style={{
+                          backgroundColor: isInCompare(product.id) ? colors.mainYellow : 'white',
+                          color: isInCompare(product.id) ? 'white' : colors.mainYellow,
+                          border: `2px solid ${colors.mainYellow}`
+                        }}
+                      >
+                        {isInCompare(product.id) ? '✓' : '+'}
                       </button>
                       <button
                         onClick={(e) => {
@@ -605,6 +606,57 @@ const CPUCooler = () => {
           </div>
         </div>
       </div>
+
+      {/* Floating Compare Bar */}
+      {compareList.length > 0 && (
+        <div 
+          className="fixed bottom-0 left-0 right-0 shadow-lg z-50"
+          style={{ backgroundColor: colors.mainBlack, borderTop: `3px solid ${colors.mainYellow}` }}
+        >
+          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+           <div className="flex items-center gap-4">
+                         <span className="text-white font-semibold">
+                           Compare ({compareList.length}/4)
+                         </span>
+                         <div className="flex gap-2">
+                           {compareList.map(item => (
+                             <div 
+                               key={item.id}
+                               className="px-3 py-1 rounded flex items-center gap-2"
+                               style={{ backgroundColor: colors.mainYellow }}
+                             >
+                               <span className="text-sm text-white">{item.name || `${item.brand} ${item.model}`}</span>
+                               <button
+                                 onClick={() => removeFromCompare(item.id)}
+                                 className="text-white hover:opacity-80"
+                               >
+                                 ×
+                               </button>
+                             </div>
+                           ))}
+                         </div>
+                       </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => {
+                  compareList.forEach(product => removeFromCompare(product.id));
+                }}
+                className="px-4 py-2 rounded-lg font-semibold hover:opacity-80"
+                style={{ backgroundColor: '#F44336', color: 'white' }}
+              >
+                Clear All
+              </button>
+              <button
+                onClick={() => navigate('/comparator')}
+                className="px-6 py-2 rounded-lg font-semibold hover:opacity-80"
+                style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+              >
+                Compare Now
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>
