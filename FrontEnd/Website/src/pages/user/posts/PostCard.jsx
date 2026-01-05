@@ -81,12 +81,12 @@ const PostCard = ({ post, onLike, onComment }) => {
           onClick={() => onLike(post.id)}
           className="flex-1 flex items-center justify-center gap-2 py-2 rounded-lg hover:bg-opacity-10 transition-all font-semibold cursor-pointer"
           style={{ 
-            color: post.liked ? colors.mainYellow : colors.jet,
+            color: (post.liked || post.isLiked) ? colors.mainYellow : colors.jet,
           }}
           onMouseEnter={(e) => e.currentTarget.style.backgroundColor = colors.mainYellow + '10'}
           onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
         >
-          {post.liked ? <FaHeart size={20} /> : <FiHeart size={20} />}
+          {(post.liked || post.isLiked) ? <FaHeart size={20} /> : <FiHeart size={20} />}
           <span>Like</span>
         </button>
 

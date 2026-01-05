@@ -19,7 +19,16 @@ const Posts = () => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
+  const [likedPosts, setLikedPosts] = useState(() => {
+    const saved = localStorage.getItem('likedPosts');
+    return saved ? JSON.parse(saved) : [];
+  });
   const observerTarget = useRef(null);
+
+  // Save liked posts to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+  }, [likedPosts]);
 
   // Fetch posts from API
   const fetchPosts = useCallback(async (pageNum) => {
@@ -52,7 +61,13 @@ const Posts = () => {
       );
 
       if (response.data && response.data.length > 0) {
-        setPosts(response.data);
+        // Map posts and add liked status from localStorage
+        const postsWithLikedStatus = response.data.map(post => ({
+          ...post,
+          liked: likedPosts.includes(post.id) || post.isLiked || post.liked,
+          isLiked: likedPosts.includes(post.id) || post.isLiked || post.liked
+        }));
+        setPosts(postsWithLikedStatus);
         // Since API returns all posts, disable infinite scroll
         setHasMore(false);
       } else {
@@ -106,12 +121,46 @@ const Posts = () => {
     }
   }, [page]);
 
-  const handleLike = (postId) => {
-    setPosts(prev => prev.map(post => 
-      post.id === postId 
-        ? { ...post, liked: !post.liked, likes: post.liked ? post.likes - 1 : post.likes + 1 }
-        : post
-    ));
+  const handleLike = async (postId) => {
+    try {
+      const token = localStorage.getItem('authToken');
+      
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/User/Posts/likePost/${postId}`,
+        {},
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+
+      // Update the post's like status and count in local state
+      setPosts(prev => prev.map(post => {
+        if (post.id === postId) {
+          const isCurrentlyLiked = post.liked || post.isLiked;
+          const newLikedState = !isCurrentlyLiked;
+          
+          // Update localStorage
+          if (newLikedState) {
+            setLikedPosts(curr => [...curr, postId]);
+          } else {
+            setLikedPosts(curr => curr.filter(id => id !== postId));
+          }
+          
+          return {
+            ...post,
+            liked: newLikedState,
+            isLiked: newLikedState,
+            likesCount: isCurrentlyLiked ? post.likesCount - 1 : post.likesCount + 1
+          };
+        }
+        return post;
+      }));
+    } catch (error) {
+      console.error('Error liking post:', error);
+      toast.error('Failed to like post');
+    }
   };
 
   const handleComment = (post) => {
