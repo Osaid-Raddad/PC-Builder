@@ -14,22 +14,18 @@ export default function BuilderScreen({ navigation }) {
   const [selectedComponents, setSelectedComponents] = useState({});
 
   const components = [
-    { id: "cpu", name: "CPU", icon: "cpu-64-bit", required: true, screen: "CPU" },
-    { id: "gpu", name: "GPU", icon: "expansion-card", required: false, screen: "GPU" },
-    { id: "motherboard", name: "Motherboard", icon: "chip", required: true, screen: "Motherboard" },
-    { id: "memory", name: "RAM", icon: "memory", required: true, screen: "Memory" },
-    { id: "storage", name: "Storage", icon: "harddisk", required: true, screen: "Storage" },
-    { id: "power-supply", name: "Power Supply", icon: "flash", required: true, screen: "PowerSupply" },
-    { id: "case", name: "Case", icon: "desktop-tower", required: true, screen: "Case" },
-    { id: "cooler", name: "Cooling", icon: "fan", required: false, screen: "Cooler" },
-    { id: "monitor", name: "Monitor", icon: "monitor", required: false, screen: "Monitor" },
-    {
-      id: "accessories",
-      name: "Accessories",
-      icon: "cable-data",
-      required: false,
-      screen: "Accessories",
-    },
+    { id: "cpu", name: "CPU", icon: "cpu-64-bit", description: "Choose your processor", required: true, screen: "CPU" },
+    { id: "cooler", name: "CPU Cooler", icon: "fan", description: "Keep your CPU cool", required: false, screen: "Cooler" },
+    { id: "motherboard", name: "Motherboard", icon: "chip", description: "The backbone of your PC", required: true, screen: "Motherboard" },
+    { id: "memory", name: "Memory", icon: "memory", description: "RAM for multitasking", required: true, screen: "Memory" },
+    { id: "storage", name: "Storage", icon: "harddisk", description: "HDD/SSD for your data", required: true, screen: "Storage" },
+    { id: "gpu", name: "GPU", icon: "expansion-card", description: "Graphics card for gaming", required: false, screen: "GPU" },
+    { id: "case", name: "Case", icon: "desktop-tower", description: "House your components", required: true, screen: "Case" },
+    { id: "psu", name: "Power Supply", icon: "flash", description: "Power your build", required: true, screen: "PowerSupply" },
+    { id: "monitor", name: "Monitor", icon: "monitor", description: "Display your visuals", required: false, screen: "Monitor" },
+    { id: "expansion", name: "Expansion Cards / Networking", icon: "network-outline", description: "Wi-Fi, sound cards, etc.", required: false, screen: "Expansion" },
+    { id: "peripherals", name: "Peripherals", icon: "keyboard-outline", description: "Keyboard, mouse, etc.", required: false, screen: "Peripherals" },
+    { id: "accessories", name: "Accessories / Other", icon: "cable-data", description: "Extra items", required: false, screen: "Accessories" },
   ];
 
   const handleSelectComponent = (screen) => {

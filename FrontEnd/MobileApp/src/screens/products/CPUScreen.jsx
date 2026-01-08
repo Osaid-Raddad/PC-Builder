@@ -12,49 +12,13 @@ import {
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ScreenLayout from "../../components/ScreenLayout";
 import colors from "../../config/colors";
+import cpusData from "../../data/components/cpus.json";
 
-const MOCK_PRODUCTS = [
-  {
-    id: "1",
-    name: "Intel Core i9-13900K",
-    price: 589,
-    brand: "Intel",
-    rating: 4.8,
-    cores: 24,
-    threads: 32,
-    clockSpeed: 3.0,
-  },
-  { 
-    id: "2", 
-    name: "AMD Ryzen 9 7950X", 
-    price: 699, 
-    brand: "AMD", 
-    rating: 4.9,
-    cores: 16,
-    threads: 32,
-    clockSpeed: 4.5,
-  },
-  {
-    id: "3",
-    name: "Intel Core i7-13700K",
-    price: 419,
-    brand: "Intel",
-    rating: 4.7,
-    cores: 16,
-    threads: 24,
-    clockSpeed: 3.4,
-  },
-  { 
-    id: "4", 
-    name: "AMD Ryzen 7 7700X", 
-    price: 399, 
-    brand: "AMD", 
-    rating: 4.6,
-    cores: 8,
-    threads: 16,
-    clockSpeed: 4.5,
-  },
-];
+const MOCK_PRODUCTS = (cpusData?.cpus || []).map(cpu => ({
+  ...cpu,
+  name: `${cpu.brand} ${cpu.model}`,
+  clockSpeed: cpu.baseClockGHz,
+}));
 
 export default function CPUScreen({ navigation }) {
   const [showFilterModal, setShowFilterModal] = useState(false);

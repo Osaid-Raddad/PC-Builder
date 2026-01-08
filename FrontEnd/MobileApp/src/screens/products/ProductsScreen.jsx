@@ -23,10 +23,10 @@ export default function ProductsScreen({ navigation }) {
       color: colors.primary,
     },
     {
-      id: "gpu",
-      name: "GPU",
-      icon: "expansion-card",
-      screen: "GPU",
+      id: "cooler",
+      name: "CPU Cooler",
+      icon: "fan",
+      screen: "Cooler",
       color: colors.secondary,
     },
     {
@@ -38,7 +38,7 @@ export default function ProductsScreen({ navigation }) {
     },
     {
       id: "memory",
-      name: "RAM",
+      name: "Memory",
       icon: "memory",
       screen: "Memory",
       color: colors.success,
@@ -51,11 +51,11 @@ export default function ProductsScreen({ navigation }) {
       color: colors.warning,
     },
     {
-      id: "power-supply",
-      name: "Power Supply",
-      icon: "flash",
-      screen: "PowerSupply",
-      color: colors.error,
+      id: "gpu",
+      name: "GPU",
+      icon: "expansion-card",
+      screen: "GPU",
+      color: colors.secondary,
     },
     {
       id: "case",
@@ -65,11 +65,11 @@ export default function ProductsScreen({ navigation }) {
       color: colors.primary,
     },
     {
-      id: "cooler",
-      name: "Cooling",
-      icon: "fan",
-      screen: "Cooler",
-      color: colors.secondary,
+      id: "psu",
+      name: "Power Supply",
+      icon: "flash",
+      screen: "PowerSupply",
+      color: colors.error,
     },
     {
       id: "monitor",
@@ -77,6 +77,20 @@ export default function ProductsScreen({ navigation }) {
       icon: "monitor",
       screen: "Monitor",
       color: colors.accent,
+    },
+    {
+      id: "expansion",
+      name: "Expansion Cards",
+      icon: "network-outline",
+      screen: "Expansion",
+      color: colors.primary,
+    },
+    {
+      id: "peripherals",
+      name: "Peripherals",
+      icon: "keyboard-outline",
+      screen: "Peripherals",
+      color: colors.secondary,
     },
     {
       id: "accessories",

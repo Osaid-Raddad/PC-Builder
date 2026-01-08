@@ -38,6 +38,8 @@ import PowerSupplyScreen from "../screens/products/PowerSupplyScreen";
 import CaseScreen from "../screens/products/CaseScreen";
 import CoolerScreen from "../screens/products/CoolerScreen";
 import MonitorScreen from "../screens/products/MonitorScreen";
+import ExpansionScreen from "../screens/products/ExpansionScreen";
+import PeripheralsScreen from "../screens/products/PeripheralsScreen";
 import AccessoriesScreen from "../screens/products/AccessoriesScreen";
 
 const Stack = createStackNavigator();
@@ -91,6 +93,8 @@ export default function AppNavigator() {
         <Stack.Screen name="Case" component={CaseScreen} />
         <Stack.Screen name="Cooler" component={CoolerScreen} />
         <Stack.Screen name="Monitor" component={MonitorScreen} />
+        <Stack.Screen name="Expansion" component={ExpansionScreen} />
+        <Stack.Screen name="Peripherals" component={PeripheralsScreen} />
         <Stack.Screen name="Accessories" component={AccessoriesScreen} />
 
         {/* Community */}

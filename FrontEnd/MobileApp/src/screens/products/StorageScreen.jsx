@@ -12,29 +12,14 @@ import {
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ScreenLayout from "../../components/ScreenLayout";
 import colors from "../../config/colors";
+import storageData from "../../data/components/storage.json";
 
-const MOCK_PRODUCTS = [
-  {
-    id: "1",
-    name: "Samsung 990 PRO",
-    price: 189,
-    brand: "Samsung",
-    rating: 5,
-    capacity: "2TB",
-    type: "NVMe SSD",
-  },
-  { id: "2", name: "WD Black SN850X", price: 179, brand: "Western Digital", rating: 5, capacity: "2TB", type: "NVMe SSD" },
-  {
-    id: "3",
-    name: "Crucial P5 Plus",
-    price: 99,
-    brand: "Crucial",
-    rating: 4,
-    capacity: "1TB",
-    type: "NVMe SSD",
-  },
-  { id: "4", name: "Samsung 870 EVO", price: 149, brand: "Samsung", rating: 5, capacity: "2TB", type: "SATA SSD" },
-];
+const MOCK_PRODUCTS = (storageData?.storage || []).map(storage => ({
+  ...storage,
+  name: `${storage.manufacturer} ${storage.model}`,
+  brand: storage.manufacturer,
+  capacity: `${storage.capacityGB}GB`,
+}));
 
 export default function StorageScreen({ navigation }) {
   const [showFilterModal, setShowFilterModal] = useState(false);

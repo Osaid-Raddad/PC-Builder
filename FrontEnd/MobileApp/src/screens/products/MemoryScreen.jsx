@@ -12,29 +12,15 @@ import {
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ScreenLayout from "../../components/ScreenLayout";
 import colors from "../../config/colors";
+import memoryData from "../../data/components/memory.json";
 
-const MOCK_PRODUCTS = [
-  {
-    id: "1",
-    name: "Corsair Vengeance RGB DDR5",
-    price: 149,
-    brand: "Corsair",
-    rating: 4.8,
-    capacity: "32GB",
-    speed: "DDR5-6000",
-  },
-  { id: "2", name: "G.Skill Trident Z5 RGB", price: 169, brand: "G.Skill", rating: 4.9, capacity: "32GB", speed: "DDR5-6400" },
-  {
-    id: "3",
-    name: "Kingston Fury Beast DDR5",
-    price: 129,
-    brand: "Kingston",
-    rating: 4.7,
-    capacity: "32GB",
-    speed: "DDR5-5600",
-  },
-  { id: "4", name: "Crucial DDR5", price: 109, brand: "Crucial", rating: 4.6, capacity: "32GB", speed: "DDR5-5200" },
-];
+const MOCK_PRODUCTS = (memoryData?.memory || []).map(mem => ({
+  ...mem,
+  name: `${mem.manufacturer} ${mem.model}`,
+  brand: mem.manufacturer,
+  capacity: `${mem.capacityGB}GB`,
+  speed: mem.speed,
+}));
 
 export default function MemoryScreen({ navigation }) {
   const [showFilterModal, setShowFilterModal] = useState(false);

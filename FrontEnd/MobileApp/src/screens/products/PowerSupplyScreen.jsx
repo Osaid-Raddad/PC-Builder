@@ -10,25 +10,13 @@ import {
 import { Feather } from "@expo/vector-icons";
 import ScreenLayout from "../../components/ScreenLayout";
 import colors from "../../config/colors";
+import psuData from "../../data/components/powerSupplies.json";
 
-const MOCK_PRODUCTS = [
-  {
-    id: "1",
-    name: "Intel Core i9-13900K",
-    price: 589,
-    brand: "Intel",
-    rating: 4.8,
-  },
-  { id: "2", name: "AMD Ryzen 9 7950X", price: 699, brand: "AMD", rating: 4.9 },
-  {
-    id: "3",
-    name: "Intel Core i7-13700K",
-    price: 419,
-    brand: "Intel",
-    rating: 4.7,
-  },
-  { id: "4", name: "AMD Ryzen 7 7700X", price: 399, brand: "AMD", rating: 4.6 },
-];
+const MOCK_PRODUCTS = (psuData?.powerSupplies || []).map(psu => ({
+  ...psu,
+  name: `${psu.manufacturer} ${psu.model}`,
+  brand: psu.manufacturer,
+}));
 
 export default function PowerSupplyScreen({ navigation }) {
   const [selectedFilter, setSelectedFilter] = useState("all");
