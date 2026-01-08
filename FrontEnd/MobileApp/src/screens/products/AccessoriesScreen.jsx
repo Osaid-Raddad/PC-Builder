@@ -8,11 +8,13 @@ import {
   Image,
   Modal,
   ScrollView,
+  Alert,
 } from "react-native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ScreenLayout from "../../components/ScreenLayout";
 import colors from "../../config/colors";
 import accessoriesData from "../../data/components/accessories.json";
+import { useBuild } from "../../context/BuildContext";
 
 const MOCK_PRODUCTS = (accessoriesData || []).map(accessory => ({
   ...accessory,
@@ -21,6 +23,7 @@ const MOCK_PRODUCTS = (accessoriesData || []).map(accessory => ({
 }));
 
 export default function AccessoriesScreen({ navigation }) {
+  const { addComponent, selectedComponents } = useBuild();
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [filters, setFilters] = useState({
     priceRange: { min: 0, max: 300 },
@@ -49,10 +52,33 @@ export default function AccessoriesScreen({ navigation }) {
     });
   };
 
-  const renderProduct = ({ item }) => (
-    <TouchableOpacity style={styles.productCard}>
+  const handleAddToBuild = (product) => {
+    addComponent('accessories', product);
+    Alert.alert(
+      "Accessory Added",
+      `${product.name} has been added to your build.`,
+      [
+        { text: "Continue Browsing", style: "cancel" },
+        {
+          text: "View Build",
+          onPress: () => navigation.navigate("Builder"),
+        },
+      ]
+    );
+  };
+
+  const renderProduct = ({ item }) => {
+    const isSelected = selectedComponents.accessories?.id === item.id;
+    
+    return (
+    <TouchableOpacity style={[styles.productCard, isSelected && styles.productCardSelected]}>
       <View style={styles.productImage}>
         <Feather name="package" size={48} color={colors.mainYellow} />
+        {isSelected && (
+          <View style={styles.selectedBadge}>
+            <Feather name="check-circle" size={20} color={colors.success} />
+          </View>
+        )}
       </View>
       <View style={styles.productInfo}>
         <Text style={styles.productName}>{item.name}</Text>
@@ -65,11 +91,19 @@ export default function AccessoriesScreen({ navigation }) {
           </View>
         </View>
       </View>
-      <TouchableOpacity style={styles.addButton}>
-        <Feather name="plus" size={20} color={colors.mainBlack} />
+      <TouchableOpacity 
+        style={[styles.addButton, isSelected && styles.addButtonSelected]}
+        onPress={() => handleAddToBuild(item)}
+      >
+        <Feather 
+          name={isSelected ? "check" : "plus"} 
+          size={20} 
+          color={isSelected ? colors.success : colors.mainBlack} 
+        />
       </TouchableOpacity>
     </TouchableOpacity>
-  );
+    );
+  };
 
   return (
     <ScreenLayout navigation={navigation} scrollable={false} showFooter={false}>
@@ -519,5 +553,19 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     alignSelf: "center",
+  },
+  addButtonSelected: {
+    backgroundColor: colors.success + "20",
+  },
+  productCardSelected: {
+    borderColor: colors.success,
+    borderWidth: 2,
+  },
+  selectedBadge: {
+    position: "absolute",
+    top: -5,
+    right: -5,
+    backgroundColor: "white",
+    borderRadius: 10,
   },
 });

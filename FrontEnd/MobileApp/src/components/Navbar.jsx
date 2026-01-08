@@ -122,22 +122,6 @@ export default function Navbar({ navigation }) {
 
           {/* Right Side Icons */}
           <View style={styles.rightIcons}>
-            {/* Search Icon */}
-            <TouchableOpacity
-              style={styles.iconButton}
-              onPress={() => handleNavigation("Search")}
-            >
-              <Feather name="search" size={24} color={colors.alabaster} />
-            </TouchableOpacity>
-
-            {/* Notification Icon */}
-            <TouchableOpacity
-              style={styles.iconButton}
-              onPress={() => handleNavigation("Notifications")}
-            >
-              <Feather name="bell" size={24} color={colors.alabaster} />
-            </TouchableOpacity>
-
             {/* User Menu Icon */}
             {isLoggedIn && (
               <TouchableOpacity

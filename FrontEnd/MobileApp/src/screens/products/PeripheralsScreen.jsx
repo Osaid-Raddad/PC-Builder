@@ -7,13 +7,16 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput,
+  Alert,
 } from "react-native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ScreenLayout from "../../components/ScreenLayout";
 import colors from "../../config/colors";
 import peripheralsData from "../../data/components/peripherals.json";
+import { useBuild } from "../../context/BuildContext";
 
 export default function PeripheralsScreen({ navigation }) {
+  const { addComponent, selectedComponents } = useBuild();
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("All");
   const [brandFilter, setBrandFilter] = useState("All");
@@ -26,6 +29,21 @@ export default function PeripheralsScreen({ navigation }) {
   const types = ['All', ...new Set(peripheralList.map(p => p.category))];
   const brands = ['All', ...new Set(peripheralList.map(p => p.brand))];
 
+  const handleAddToBuild = (product) => {
+    addComponent('peripherals', product);
+    Alert.alert(
+      "Peripheral Added",
+      `${product.name} has been added to your build.`,
+      [
+        { text: "Continue Browsing", style: "cancel" },
+        {
+          text: "View Build",
+          onPress: () => navigation.navigate("Builder"),
+        },
+      ]
+    );
+  };
+
   const filteredPeripherals = peripheralList.filter(peripheral => {
     const matchesSearch = searchTerm === '' || 
       peripheral.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -35,9 +53,12 @@ export default function PeripheralsScreen({ navigation }) {
     return matchesSearch && matchesType && matchesBrand;
   });
 
-  const renderPeripheralCard = ({ item }) => (
+  const renderPeripheralCard = ({ item }) => {
+    const isSelected = selectedComponents.peripherals?.name === item.name;
+    
+    return (
     <TouchableOpacity
-      style={styles.productCard}
+      style={[styles.productCard, isSelected && styles.productCardSelected]}
       onPress={() => navigation.navigate("ProductDetails", { product: item })}
     >
       <View style={styles.productInfo}>
@@ -60,15 +81,23 @@ export default function PeripheralsScreen({ navigation }) {
         <View style={styles.priceRow}>
           <Text style={styles.price}>${item.price}</Text>
           <TouchableOpacity
-            style={styles.addButton}
-            onPress={() => console.log("Add to build:", item)}
+            style={[styles.addButton, isSelected && styles.addButtonSelected]}
+            onPress={(e) => {
+              e.stopPropagation();
+              handleAddToBuild(item);
+            }}
           >
-            <Feather name="plus" size={20} color={colors.mainBlack} />
+            <Feather 
+              name={isSelected ? "check" : "plus"} 
+              size={20} 
+              color={isSelected ? colors.success : colors.mainBlack} 
+            />
           </TouchableOpacity>
         </View>
       </View>
     </TouchableOpacity>
-  );
+    );
+  };
 
   return (
     <ScreenLayout navigation={navigation} scrollable={false}>
@@ -317,5 +346,12 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: "center",
     alignItems: "center",
+  },
+  addButtonSelected: {
+    backgroundColor: colors.success + "20",
+  },
+  productCardSelected: {
+    borderColor: colors.success,
+    borderWidth: 2,
   },
 });
