@@ -21,7 +21,6 @@ import ContactScreen from "../screens/contact/ContactScreen";
 import TechSupportScreen from "../screens/techSupport/TechSupportScreen";
 import BuildingGuidesScreen from "../screens/buildingGuides/BuildingGuidesScreen";
 import TermsOfServiceScreen from "../screens/termsOfService/TermsOfServiceScreen";
-import NotificationsScreen from "../screens/notifications/NotificationsScreen";
 
 // Profile Feature Screens
 import MyBuildsScreen from "../screens/profile/MyBuildsScreen";
@@ -105,7 +104,6 @@ export default function AppNavigator() {
 
         {/* User */}
         <Stack.Screen name="Profile" component={ProfileScreen} />
-        <Stack.Screen name="Notifications" component={NotificationsScreen} />
         <Stack.Screen name="MyBuilds" component={MyBuildsScreen} />
         <Stack.Screen name="Saved" component={SavedScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
