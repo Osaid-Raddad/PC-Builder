@@ -33,6 +33,8 @@ import ShopRequestsScreen from "../screens/admin/ShopRequestsScreen";
 import PostManagementScreen from "../screens/admin/PostManagementScreen";
 import UserManagementScreen from "../screens/admin/UserManagementScreen";
 import ProductManagementScreen from "../screens/admin/ProductManagementScreen";
+import TechSupportRequestsScreen from "../screens/admin/TechSupportRequestsScreen";
+import ChangeRolesScreen from "../screens/admin/ChangeRolesScreen";
 
 // Product Category Screens
 import CPUScreen from "../screens/products/CPUScreen";
@@ -121,6 +123,8 @@ export default function AppNavigator() {
         <Stack.Screen name="PostManagement" component={PostManagementScreen} />
         <Stack.Screen name="UserManagement" component={UserManagementScreen} />
         <Stack.Screen name="ProductManagement" component={ProductManagementScreen} />
+        <Stack.Screen name="TechSupportRequests" component={TechSupportRequestsScreen} />
+        <Stack.Screen name="ChangeRoles" component={ChangeRolesScreen} />
 
         {/* Support */}
         <Stack.Screen name="TechSupport" component={TechSupportScreen} />

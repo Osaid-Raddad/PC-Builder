@@ -76,19 +76,15 @@ export default function AdminSidebar({ navigation, visible, onClose, currentScre
     const screenMap = {
       'Dashboard': 'Dashboard',
       'ShopRequests': 'ShopRequests',
-      'TechSupportRequests': 'Dashboard',
-      'ChangeRoles': 'Dashboard',
+      'TechSupportRequests': 'TechSupportRequests',
+      'ChangeRoles': 'ChangeRoles',
       'PostManagement': 'PostManagement',
       'UserManagement': 'UserManagement',
       'ProductManagement': 'ProductManagement'
     };
     
     const targetScreen = screenMap[item.screen];
-    if (targetScreen === 'Dashboard' && item.screen !== 'Dashboard') {
-      Alert.alert('Coming Soon', `${item.name} screen is under development`);
-    } else {
-      navigation.navigate(targetScreen);
-    }
+    navigation.navigate(targetScreen);
   };
 
   return (
