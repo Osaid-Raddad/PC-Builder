@@ -25,36 +25,37 @@ export default function PostsScreen({ navigation }) {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showCommentsModal, setShowCommentsModal] = useState(false);
   const [selectedPost, setSelectedPost] = useState(null);
-  const [likedPosts, setLikedPosts] = useState([]);
+  const [likedPosts, setLikedPosts] = useState(() => {
+    // Initialize from AsyncStorage synchronously isn't possible, so we load it in useEffect
+    return [];
+  });
 
-  // Load liked posts from AsyncStorage
+  // Load liked posts from AsyncStorage on mount
   useEffect(() => {
+    const loadLikedPosts = async () => {
+      try {
+        const saved = await AsyncStorage.getItem('likedPosts');
+        if (saved) {
+          setLikedPosts(JSON.parse(saved));
+        }
+      } catch (error) {
+        console.error('Error loading liked posts:', error);
+      }
+    };
     loadLikedPosts();
   }, []);
+
+  // Save liked posts to AsyncStorage whenever it changes
+  useEffect(() => {
+    if (likedPosts.length >= 0) {
+      AsyncStorage.setItem('likedPosts', JSON.stringify(likedPosts));
+    }
+  }, [likedPosts]);
 
   // Fetch posts on mount
   useEffect(() => {
     fetchPosts();
   }, []);
-
-  const loadLikedPosts = async () => {
-    try {
-      const saved = await AsyncStorage.getItem('likedPosts');
-      if (saved) {
-        setLikedPosts(JSON.parse(saved));
-      }
-    } catch (error) {
-      console.error('Error loading liked posts:', error);
-    }
-  };
-
-  const saveLikedPosts = async (likedPostsArray) => {
-    try {
-      await AsyncStorage.setItem('likedPosts', JSON.stringify(likedPostsArray));
-    } catch (error) {
-      console.error('Error saving liked posts:', error);
-    }
-  };
 
   const fetchPosts = useCallback(async () => {
     if (loading) return;
@@ -102,20 +103,17 @@ export default function PostsScreen({ navigation }) {
     try {
       await apiClient.post(`/User/Posts/likePost/${postId}`);
 
+      // Update the post's like status and count in local state
       setPosts(prev => prev.map(post => {
         if (post.id === postId) {
           const isCurrentlyLiked = post.liked || post.isLiked;
           const newLikedState = !isCurrentlyLiked;
           
-          // Update liked posts array
+          // Update likedPosts state (AsyncStorage update is handled by useEffect)
           if (newLikedState) {
-            const newLikedPosts = [...likedPosts, postId];
-            setLikedPosts(newLikedPosts);
-            saveLikedPosts(newLikedPosts);
+            setLikedPosts(curr => [...curr, postId]);
           } else {
-            const newLikedPosts = likedPosts.filter(id => id !== postId);
-            setLikedPosts(newLikedPosts);
-            saveLikedPosts(newLikedPosts);
+            setLikedPosts(curr => curr.filter(id => id !== postId));
           }
           
           return {
@@ -314,7 +312,6 @@ const styles = StyleSheet.create({
     color: colors.mainBlack,
   },
   headerContainer: {
-    paddingHorizontal: 20,
     paddingBottom: 16,
   },
   subtitle: {

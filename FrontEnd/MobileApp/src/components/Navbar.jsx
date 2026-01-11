@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -13,6 +13,7 @@ import {
   Linking,
 } from "react-native";
 import { Feather, MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import colors from "../config/colors";
 
 const { width } = Dimensions.get("window");
@@ -21,8 +22,23 @@ export default function Navbar({ navigation }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [isCommunityExpanded, setIsCommunityExpanded] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // TODO: Replace with actual auth state
-  const [userName, setUserName] = useState("John Doe"); // TODO: Get from auth context
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  const checkAuthStatus = async () => {
+    try {
+      const token = await AsyncStorage.getItem('authToken');
+      const fullName = await AsyncStorage.getItem('fullName');
+      setIsLoggedIn(!!token);
+      setUserName(fullName || 'User');
+    } catch (error) {
+      console.error('Error checking auth status:', error);
+    }
+  };
 
   const menuItems = [
     {
@@ -83,8 +99,19 @@ export default function Navbar({ navigation }) {
     },
   ];
 
-  const handleNavigation = (screen) => {
+  const handleNavigation = async (screen) => {
     setIsMenuOpen(false);
+    setIsUserMenuOpen(false);
+    
+    // Check if user is trying to access profile without being logged in
+    if (screen === 'Profile' || screen === 'MyBuilds' || screen === 'Saved' || screen === 'Settings') {
+      const token = await AsyncStorage.getItem('authToken');
+      if (!token) {
+        navigation.navigate('Login');
+        return;
+      }
+    }
+    
     navigation.navigate(screen);
   };
 

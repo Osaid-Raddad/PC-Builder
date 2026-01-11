@@ -27,6 +27,13 @@ import MyBuildsScreen from "../screens/profile/MyBuildsScreen";
 import SavedScreen from "../screens/profile/SavedScreen";
 import SettingsScreen from "../screens/profile/SettingsScreen";
 
+// Admin Screens
+import DashboardScreen from "../screens/admin/DashboardScreen";
+import ShopRequestsScreen from "../screens/admin/ShopRequestsScreen";
+import PostManagementScreen from "../screens/admin/PostManagementScreen";
+import UserManagementScreen from "../screens/admin/UserManagementScreen";
+import ProductManagementScreen from "../screens/admin/ProductManagementScreen";
+
 // Product Category Screens
 import CPUScreen from "../screens/products/CPUScreen";
 import GPUScreen from "../screens/products/GPUScreen";
@@ -107,6 +114,13 @@ export default function AppNavigator() {
         <Stack.Screen name="MyBuilds" component={MyBuildsScreen} />
         <Stack.Screen name="Saved" component={SavedScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
+
+        {/* Admin */}
+        <Stack.Screen name="Dashboard" component={DashboardScreen} />
+        <Stack.Screen name="ShopRequests" component={ShopRequestsScreen} />
+        <Stack.Screen name="PostManagement" component={PostManagementScreen} />
+        <Stack.Screen name="UserManagement" component={UserManagementScreen} />
+        <Stack.Screen name="ProductManagement" component={ProductManagementScreen} />
 
         {/* Support */}
         <Stack.Screen name="TechSupport" component={TechSupportScreen} />
