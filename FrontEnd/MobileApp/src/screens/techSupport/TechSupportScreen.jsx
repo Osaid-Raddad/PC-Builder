@@ -1,84 +1,345 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
+  Image,
+  ActivityIndicator,
+  RefreshControl,
+  Alert,
 } from "react-native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import ScreenLayout from "../../components/ScreenLayout";
+import ApplyTechSupportModal from "./ApplyTechSupportModal";
+import AppointmentModal from "./AppointmentModal";
+import { apiClient } from "../../config/api";
 import colors from "../../config/colors";
 
 export default function TechSupportScreen({ navigation }) {
-  const supportOptions = [
+  const [techSupporters, setTechSupporters] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [userRole, setUserRole] = useState('');
+  const [showApplyModal, setShowApplyModal] = useState(false);
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
+  const [selectedSupport, setSelectedSupport] = useState(null);
+
+  // Utility functions
+  const formatTime = (time24) => {
+    const [hours, minutes] = time24.split(':');
+    const hour = parseInt(hours);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    const hour12 = hour % 12 || 12;
+    return `${hour12}:${minutes} ${ampm}`;
+  };
+
+  const getDayNameFromNumber = (dayNumber) => {
+    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    return days[dayNumber];
+  };
+
+  const getDayName = (dayIndex) => {
+    return ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'][dayIndex];
+  };
+
+  const transformTechSupportData = (supporter) => {
+    // Initialize availability object with all days empty
+    const availability = {
+      monday: [],
+      tuesday: [],
+      wednesday: [],
+      thursday: [],
+      friday: [],
+      saturday: [],
+      sunday: []
+    };
+    
+    // Populate availability from backend data
+    if (supporter.availabilities && supporter.availabilities.length > 0) {
+      supporter.availabilities.forEach((slot) => {
+        const dayName = getDayNameFromNumber(slot.day);
+        const timeSlot = `${formatTime(slot.startTime)} - ${formatTime(slot.endTime)}`;
+        
+        if (availability[dayName]) {
+          availability[dayName].push(timeSlot);
+        }
+      });
+    }
+
+    return {
+      id: supporter.id,
+      name: supporter.fullName,
+      email: supporter.email,
+      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(supporter.fullName)}&background=FFC436&color=fff&size=200`,
+      specialization: supporter.areaOfSpecialization || 'General Support',
+      rating: supporter.rating || 4.5,
+      reviews: supporter.reviewsCount || 0,
+      experience: supporter.yearsOfExperience ? `${supporter.yearsOfExperience}+ years` : 'N/A',
+      status: supporter.isAvailable ? 'available' : 'busy',
+      availability
+    };
+  };
+
+  const fetchTechSupporters = async () => {
+    try {
+      const response = await apiClient.get('/TechSupport/Availability/tech-supports');
+      
+      if (response.data && Array.isArray(response.data)) {
+        const transformedData = response.data.map(transformTechSupportData);
+        setTechSupporters(transformedData);
+      } else {
+        setTechSupporters([]);
+      }
+    } catch (error) {
+      console.error('Error fetching tech supporters:', error);
+      Alert.alert('Error', 'Failed to load tech support team. Please try again later.');
+      setTechSupporters([]);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
+    const loadUserRole = async () => {
+      try {
+        const role = await AsyncStorage.getItem('userRole');
+        setUserRole(role || '');
+      } catch (error) {
+        console.error('Error loading user role:', error);
+      }
+    };
+
+    loadUserRole();
+    fetchTechSupporters();
+  }, []);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchTechSupporters();
+  };
+
+  const handleChatWithSupport = (supporter) => {
+    navigation.navigate('Chat', {
+      recipientId: supporter.id,
+      recipientName: supporter.name,
+      recipientEmail: supporter.email,
+    });
+  };
+
+  const handleRequestAppointment = (supporter) => {
+    setSelectedSupport(supporter);
+    setShowAppointmentModal(true);
+  };
+
+  const benefits = [
     {
-      icon: "message-circle",
-      title: "Live Chat",
-      description: "Chat with our support team",
-      color: colors.primary,
+      icon: 'headphones',
+      title: 'Expert Technicians',
+      description: 'Certified professionals with years of experience'
     },
     {
-      icon: "mail",
-      title: "Email Support",
-      description: "Send us an email",
-      color: colors.secondary,
+      icon: 'clock',
+      title: 'Flexible Scheduling',
+      description: 'Book appointments that fit your schedule'
     },
     {
-      icon: "phone",
-      title: "Phone Support",
-      description: "Call us directly",
-      color: colors.accent,
-    },
-    {
-      icon: "calendar",
-      title: "Book Appointment",
-      description: "Schedule a tech consultation",
-      color: colors.success,
-    },
+      icon: 'message-circle',
+      title: 'Direct Communication',
+      description: 'Chat directly with technicians in real-time'
+    }
+  ];
+
+  const howItWorks = [
+    { step: '1', title: 'Choose Support', desc: 'Select a tech support specialist' },
+    { step: '2', title: 'Schedule', desc: 'Pick a convenient time slot' },
+    { step: '3', title: 'Get Confirmation', desc: 'Receive appointment confirmation' },
+    { step: '4', title: 'Get Help', desc: 'Chat or meet with your technician' }
   ];
 
   return (
     <ScreenLayout navigation={navigation}>
-      <View style={styles.container}>
+      <ScrollView
+        style={styles.container}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[colors.mainYellow]} />
+        }
+      >
+        {/* Header */}
         <View style={styles.header}>
-          <MaterialCommunityIcons
-            name="face-agent"
-            size={60}
-            color={colors.mainYellow}
-          />
+          <MaterialCommunityIcons name="face-agent" size={60} color={colors.mainYellow} />
           <Text style={styles.title}>Tech Support</Text>
           <Text style={styles.subtitle}>
-            We're here to help you build your dream PC
+            Get expert help from certified PC technicians
           </Text>
+          <TouchableOpacity
+            style={styles.applyButton}
+            onPress={() => setShowApplyModal(true)}
+          >
+            <Text style={styles.applyButtonText}>Become a Tech Support</Text>
+          </TouchableOpacity>
         </View>
 
-        <View style={styles.optionsContainer}>
-          {supportOptions.map((option, index) => (
-            <TouchableOpacity key={index} style={styles.optionCard}>
-              <View
-                style={[
-                  styles.optionIcon,
-                  { backgroundColor: option.color + "20" },
-                ]}
-              >
-                <Feather name={option.icon} size={32} color={option.color} />
+        {/* Benefits Section */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Why Choose Our Tech Support</Text>
+          <View style={styles.benefitsContainer}>
+            {benefits.map((benefit, index) => (
+              <View key={`benefit-${index}`} style={styles.benefitCard}>
+                <View style={styles.benefitIcon}>
+                  <Feather name={benefit.icon} size={32} color={colors.mainYellow} />
+                </View>
+                <Text style={styles.benefitTitle}>{benefit.title}</Text>
+                <Text style={styles.benefitDescription}>{benefit.description}</Text>
               </View>
-              <Text style={styles.optionTitle}>{option.title}</Text>
-              <Text style={styles.optionDescription}>{option.description}</Text>
-            </TouchableOpacity>
-          ))}
+            ))}
+          </View>
         </View>
 
-        <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>Support Hours</Text>
-          <Text style={styles.infoText}>
-            Monday - Friday: 9:00 AM - 6:00 PM
-          </Text>
-          <Text style={styles.infoText}>Saturday: 10:00 AM - 4:00 PM</Text>
-          <Text style={styles.infoText}>Sunday: Closed</Text>
+        {/* Tech Support Team */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>Our Tech Support Team</Text>
+
+          {loading ? (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color={colors.mainYellow} />
+              <Text style={styles.loadingText}>Loading tech support team...</Text>
+            </View>
+          ) : techSupporters.length === 0 ? (
+            <View style={styles.emptyContainer}>
+              <Feather name="users" size={48} color={colors.jet} />
+              <Text style={styles.emptyText}>
+                No tech support specialists available at the moment.
+              </Text>
+            </View>
+          ) : (
+            <>
+              {techSupporters.map((supporter) => (
+                <View key={supporter.id} style={styles.supporterCard}>
+                {/* Header */}
+                <View style={styles.supporterHeader}>
+                  <Image source={{ uri: supporter.avatar }} style={styles.supporterAvatar} />
+                  <View style={styles.supporterInfo}>
+                    <View style={styles.supporterNameRow}>
+                      <Text style={styles.supporterName}>{supporter.name}</Text>
+                      <MaterialCommunityIcons
+                        name="check-circle"
+                        size={20}
+                        color={colors.mainYellow}
+                        style={{ marginLeft: 6 }}
+                      />
+                    </View>
+                    <Text style={styles.supporterSpec}>{supporter.specialization}</Text>
+                    <View style={styles.supporterMeta}>
+                      <View style={styles.ratingContainer}>
+                        <Feather name="star" size={14} color={colors.mainYellow} fill={colors.mainYellow} />
+                        <Text style={styles.ratingText}>{supporter.rating}</Text>
+                        <Text style={styles.reviewsText}>({supporter.reviews} reviews)</Text>
+                      </View>
+                      <Text style={styles.experienceText}>{supporter.experience} experience</Text>
+                    </View>
+                  </View>
+                </View>
+
+                {/* Weekly Schedule */}
+                <View style={styles.scheduleContainer}>
+                  <View style={styles.scheduleHeader}>
+                    <Feather name="calendar" size={16} color={colors.mainYellow} />
+                    <Text style={styles.scheduleTitle}>Weekly Schedule</Text>
+                  </View>
+                  {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map((day, dayIndex) => {
+                    const dayKey = getDayName(dayIndex);
+                    const slots = supporter.availability[dayKey];
+                    return (
+                      <View key={`${supporter.id}-${day}`} style={styles.scheduleDay}>
+                        <Text style={styles.scheduleDayName}>
+                          {day}
+                        </Text>
+                        <View style={styles.slotsWrapper}>
+                          {slots && slots.length > 0 ? (
+                            <View style={styles.slotsContainer}>
+                              {slots.map((slot, slotIndex) => (
+                                <View key={`${supporter.id}-${day}-slot-${slotIndex}`} style={styles.slotBadge}>
+                                  <Text style={styles.slotText}>{slot}</Text>
+                                </View>
+                              ))}
+                            </View>
+                          ) : (
+                            <Text style={styles.notAvailableText}>Not Available</Text>
+                          )}
+                        </View>
+                      </View>
+                    );
+                  })}
+                </View>
+
+                {/* Actions */}
+                <View style={styles.actionsContainer}>
+                  {userRole !== 'TechSupport' ? (
+                    <>
+                      <TouchableOpacity
+                        style={styles.chatButton}
+                        onPress={() => handleChatWithSupport(supporter)}
+                        disabled={supporter.status === 'busy'}
+                      >
+                        <Feather name="message-circle" size={18} color={colors.mainYellow} />
+                        <Text style={styles.chatButtonText}>Chat Now</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={styles.appointmentButton}
+                        onPress={() => handleRequestAppointment(supporter)}
+                      >
+                        <Feather name="calendar" size={18} color="white" />
+                        <Text style={styles.appointmentButtonText}>Request Appointment</Text>
+                      </TouchableOpacity>
+                    </>
+                  ) : (
+                    <View style={styles.techSupportView}>
+                      <Text style={styles.techSupportViewText}>Tech Support View Only</Text>
+                    </View>
+                  )}
+                </View>
+              </View>
+              ))}
+            </>
+          )}
         </View>
-      </View>
+
+        {/* How It Works Section */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { textAlign: 'center' }]}>How It Works</Text>
+          <View style={styles.stepsContainer}>
+            {howItWorks.map((item, index) => (
+              <View key={`step-${index}`} style={styles.stepCard}>
+                <View style={styles.stepNumber}>
+                  <Text style={styles.stepNumberText}>{item.step}</Text>
+                </View>
+                <Text style={styles.stepTitle}>{item.title}</Text>
+                <Text style={styles.stepDesc}>{item.desc}</Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* Modals */}
+      <ApplyTechSupportModal
+        visible={showApplyModal}
+        onClose={() => setShowApplyModal(false)}
+        onSubmit={() => console.log('Application submitted')}
+      />
+
+      <AppointmentModal
+        visible={showAppointmentModal}
+        supporter={selectedSupport}
+        onClose={() => {
+          setShowAppointmentModal(false);
+          setSelectedSupport(null);
+        }}
+      />
     </ScreenLayout>
   );
 }
@@ -86,12 +347,12 @@ export default function TechSupportScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: colors.mainBeige,
   },
   header: {
     alignItems: "center",
-    marginBottom: 32,
+    paddingVertical: 32,
+    paddingHorizontal: 20,
   },
   title: {
     fontSize: 28,
@@ -104,64 +365,292 @@ const styles = StyleSheet.create({
     color: colors.text,
     textAlign: "center",
     marginTop: 8,
-    paddingHorizontal: 20,
     lineHeight: 24,
   },
-  optionsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "space-between",
-    marginBottom: 24,
+  applyButton: {
+    marginTop: 20,
+    backgroundColor: colors.mainYellow,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 8,
   },
-  optionCard: {
-    width: "48%",
+  applyButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "white",
+  },
+  section: {
+    paddingHorizontal: 20,
+    marginBottom: 32,
+  },
+  sectionTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: colors.mainBlack,
+    marginBottom: 16,
+  },
+  benefitsContainer: {
+  },
+  benefitCard: {
+    marginBottom: 16,
     backgroundColor: "white",
     borderRadius: 12,
     padding: 20,
-    marginBottom: 16,
     alignItems: "center",
-    elevation: 1,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
+    borderWidth: 2,
+    borderColor: colors.platinum,
   },
-  optionIcon: {
+  benefitIcon: {
     width: 72,
     height: 72,
     borderRadius: 36,
+    backgroundColor: colors.mainYellow + "20",
     justifyContent: "center",
     alignItems: "center",
-    marginBottom: 16,
+    marginBottom: 12,
   },
-  optionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
+  benefitTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
     color: colors.mainBlack,
     marginBottom: 8,
     textAlign: "center",
   },
-  optionDescription: {
-    fontSize: 12,
-    color: colors.text,
+  benefitDescription: {
+    fontSize: 14,
+    color: colors.jet,
     textAlign: "center",
-    lineHeight: 18,
+    lineHeight: 20,
   },
-  infoCard: {
-    backgroundColor: colors.mainBlack,
+  loadingContainer: {
+    paddingVertical: 60,
+    alignItems: "center",
+  },
+  loadingText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: colors.mainBlack,
+    marginTop: 16,
+  },
+  emptyContainer: {
+    paddingVertical: 60,
+    alignItems: "center",
+  },
+  emptyText: {
+    fontSize: 16,
+    color: colors.jet,
+    textAlign: "center",
+    marginTop: 16,
+  },
+  supporterCard: {
+    backgroundColor: "white",
     borderRadius: 12,
-    padding: 20,
+    marginBottom: 16,
+    borderWidth: 2,
+    borderColor: colors.platinum,
+    overflow: "hidden",
   },
-  infoTitle: {
+  supporterHeader: {
+    flexDirection: "row",
+    padding: 16,
+    borderBottomWidth: 2,
+    borderBottomColor: colors.platinum,
+  },
+  supporterAvatar: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    marginRight: 12,
+  },
+  supporterInfo: {
+    flex: 1,
+  },
+  supporterNameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  supporterName: {
     fontSize: 18,
     fontWeight: "bold",
+    color: colors.mainBlack,
+  },
+  supporterSpec: {
+    fontSize: 14,
+    fontWeight: "600",
     color: colors.mainYellow,
+    marginBottom: 8,
+  },
+  supporterMeta: {
+  },
+  ratingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+  },
+  ratingText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: colors.jet,
+    marginLeft: 4,
+  },
+  reviewsText: {
+    fontSize: 14,
+    color: colors.jet,
+    marginLeft: 4,
+  },
+  experienceText: {
+    fontSize: 14,
+    color: colors.jet,
+  },
+  scheduleContainer: {
+    padding: 16,
+  },
+  scheduleHeader: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 12,
   },
-  infoText: {
-    fontSize: 14,
-    color: colors.alabaster,
+  scheduleTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: colors.mainBlack,
+    marginLeft: 8,
+  },
+  scheduleDay: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+    backgroundColor: colors.mainBeige,
+    borderRadius: 8,
     marginBottom: 8,
-    lineHeight: 20,
+  },
+  scheduleDayName: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: colors.mainBlack,
+  },
+  slotsWrapper: {
+    flex: 1,
+    alignItems: "flex-end",
+    marginLeft: 12,
+  },
+  slotsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "flex-end",
+  },
+  slotBadge: {
+    backgroundColor: colors.mainYellow,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 16,
+    marginLeft: 6,
+    marginBottom: 4,
+  },
+  slotText: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: "white",
+  },
+  notAvailableContainer: {
+    alignItems: "flex-start",
+  },
+  notAvailableText: {
+    fontSize: 12,
+    color: colors.jet,
+  },
+  actionsContainer: {
+    flexDirection: "row",
+    padding: 16,
+    borderTopWidth: 2,
+    borderTopColor: colors.platinum,
+  },
+  chatButton: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 12,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: colors.mainYellow,
+    backgroundColor: "white",
+    marginRight: 8,
+  },
+  chatButtonText: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: colors.mainYellow,
+    marginLeft: 6,
+  },
+  appointmentButton: {
+    flex: 1.2,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+    backgroundColor: colors.mainYellow,
+    marginLeft: 4,
+  },
+  appointmentButtonText: {
+    fontSize: 13,
+    fontWeight: "bold",
+    color: "white",
+    marginLeft: 6,
+    flexShrink: 1,
+  },
+  techSupportView: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 8,
+    backgroundColor: colors.mainBeige,
+    alignItems: "center",
+  },
+  techSupportViewText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: colors.jet,
+  },
+  stepsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-around",
+  },
+  stepCard: {
+    width: "45%",
+    alignItems: "center",
+    marginBottom: 16,
+  },
+  stepNumber: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: colors.mainYellow,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  stepNumberText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "white",
+  },
+  stepTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: colors.mainBlack,
+    marginBottom: 6,
+    textAlign: "center",
+  },
+  stepDesc: {
+    fontSize: 12,
+    color: colors.jet,
+    textAlign: "center",
+    lineHeight: 18,
   },
 });
