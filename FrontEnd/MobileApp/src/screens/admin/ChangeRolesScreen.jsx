@@ -74,7 +74,7 @@ export default function ChangeRolesScreen({ navigation }) {
 
     Alert.alert(
       'Are you sure?',
-      `Change ${userName}'s role to: ${newRole}?`,
+      `Change ${userName}'s role to: ${newRole}?\n\nNote: The user will need to log out and log back in for the role change to take effect.`,
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -82,11 +82,17 @@ export default function ChangeRolesScreen({ navigation }) {
           style: 'default',
           onPress: async () => {
             try {
-              await apiClient.patch(`/Admins/Users/changeRole/${userId}`, {
+              const response = await apiClient.patch(`/Admins/Users/changeRole/${userId}`, {
                 newRole: newRole
               });
 
-              Alert.alert('Success', 'User role updated successfully!');
+              console.log('Role change response:', response.data);
+
+              Alert.alert(
+                'Success', 
+                `User role updated to ${newRole}!\n\nThe user must log out and log back in for the change to take effect.`,
+                [{ text: 'OK' }]
+              );
 
               // Update the user in the local state
               setUsers(users.map(user => 
@@ -94,7 +100,12 @@ export default function ChangeRolesScreen({ navigation }) {
               ));
             } catch (error) {
               console.error('Error changing role:', error);
-              Alert.alert('Error', 'Failed to change user role');
+              console.error('Error details:', error.response?.data);
+              
+              const errorMessage = error.response?.data?.message || 
+                                 error.response?.data?.title || 
+                                 'Failed to change user role';
+              Alert.alert('Error', errorMessage);
             }
           }
         }
