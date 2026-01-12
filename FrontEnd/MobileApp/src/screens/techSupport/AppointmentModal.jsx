@@ -81,6 +81,12 @@ export default function AppointmentModal({ visible, supporter, onClose }) {
       return;
     }
 
+    if (!supporter?.id) {
+      Alert.alert('Error', 'Tech support information is missing. Please try again.');
+      console.error('Supporter data:', supporter);
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {

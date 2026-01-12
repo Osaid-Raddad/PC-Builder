@@ -69,8 +69,15 @@ export default function TechSupportScreen({ navigation }) {
       });
     }
 
+    // Handle different possible ID field names from backend
+    const supporterId = supporter.id || supporter.userId || supporter.techSupportId;
+    
+    if (!supporterId) {
+      console.error('Tech supporter missing ID:', supporter);
+    }
+
     return {
-      id: supporter.id,
+      id: supporterId,
       name: supporter.fullName,
       email: supporter.email,
       avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(supporter.fullName)}&background=FFC436&color=fff&size=200`,
