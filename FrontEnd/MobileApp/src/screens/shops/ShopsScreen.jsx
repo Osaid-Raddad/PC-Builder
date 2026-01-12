@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,9 +8,12 @@ import {
   ScrollView,
   Image,
   Linking,
+  Alert,
 } from "react-native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import ScreenLayout from "../../components/ScreenLayout";
+import SubmitShopModal from "./SubmitShopModal";
 import colors from "../../config/colors";
 
 const ALL_SHOPS = [
@@ -258,6 +261,17 @@ const ALL_SHOPS = [
 
 export default function ShopsScreen({ navigation }) {
   const [selectedCity, setSelectedCity] = useState('All');
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Check if user is logged in
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      const token = await AsyncStorage.getItem('authToken');
+      setIsLoggedIn(!!token);
+    };
+    checkLoginStatus();
+  }, []);
   
   // Get unique cities for filter
   const cities = ['All', ...new Set(ALL_SHOPS.map(shop => shop.city))];
@@ -269,6 +283,14 @@ export default function ShopsScreen({ navigation }) {
 
   const openShopUrl = (url) => {
     Linking.openURL(url).catch(err => console.error("Couldn't load page", err));
+  };
+
+  const handleSubmitShop = () => {
+    if (isLoggedIn) {
+      setShowSubmitModal(true);
+    } else {
+      Alert.alert('Sign In Required', 'Please sign in to submit your shop');
+    }
   };
   const renderShop = ({ item }) => (
     <TouchableOpacity 
@@ -345,9 +367,58 @@ export default function ShopsScreen({ navigation }) {
               </View>
             </>
           }
+          ListFooterComponent={
+            <>
+              {/* Submit Your Shop Section */}
+              <View style={styles.submitShopSection}>
+                <MaterialCommunityIcons
+                  name="store"
+                  size={48}
+                  color={colors.mainYellow}
+                  style={styles.submitShopIcon}
+                />
+                <Text style={styles.submitShopTitle}>Own a Computer Shop?</Text>
+                <Text style={styles.submitShopDescription}>
+                  List your shop on our platform and reach thousands of PC builders and tech enthusiasts across Palestine!
+                </Text>
+                {!isLoggedIn && (
+                  <Text style={styles.submitShopWarning}>
+                    Please sign in to submit your shop
+                  </Text>
+                )}
+                <TouchableOpacity
+                  style={[
+                    styles.submitShopButton,
+                    !isLoggedIn && styles.submitShopButtonDisabled
+                  ]}
+                  onPress={handleSubmitShop}
+                  disabled={!isLoggedIn}
+                >
+                  <Feather name="plus" size={18} color="white" />
+                  <Text style={styles.submitShopButtonText}>
+                    {isLoggedIn ? 'Submit Your Shop' : 'Sign In Required'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Info Section */}
+              <View style={styles.infoSection}>
+                <Text style={styles.infoTitle}>Why Shop Local?</Text>
+                <Text style={styles.infoDescription}>
+                  Support local Palestinian businesses and get expert advice, warranty support, and fast delivery for your PC building needs. All shops listed above offer quality products and reliable customer service.
+                </Text>
+              </View>
+            </>
+          }
           contentContainerStyle={styles.listContainer}
         />
       </View>
+
+      {/* Submit Shop Modal */}
+      <SubmitShopModal
+        visible={showSubmitModal}
+        onClose={() => setShowSubmitModal(false)}
+      />
     </ScreenLayout>
   );
 }
@@ -463,5 +534,79 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: colors.mainBlack,
     fontWeight: "500",
+  },
+  submitShopSection: {
+    backgroundColor: colors.mainYellow + '15',
+    borderWidth: 2,
+    borderColor: colors.mainYellow,
+    borderRadius: 12,
+    padding: 20,
+    marginTop: 20,
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  submitShopIcon: {
+    marginBottom: 12,
+  },
+  submitShopTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: colors.mainBlack,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  submitShopDescription: {
+    fontSize: 14,
+    color: colors.jet,
+    marginBottom: 12,
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  submitShopWarning: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.mainYellow,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  submitShopButton: {
+    flexDirection: 'row',
+    backgroundColor: colors.mainYellow,
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  submitShopButtonDisabled: {
+    backgroundColor: colors.platinum,
+    opacity: 0.6,
+  },
+  submitShopButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
+    marginLeft: 8,
+  },
+  infoSection: {
+    backgroundColor: 'white',
+    borderWidth: 2,
+    borderColor: colors.mainYellow,
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 20,
+  },
+  infoTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.mainBlack,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  infoDescription: {
+    fontSize: 14,
+    color: colors.jet,
+    textAlign: 'center',
+    lineHeight: 20,
   },
 });
