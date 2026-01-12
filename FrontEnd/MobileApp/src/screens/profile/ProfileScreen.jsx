@@ -63,6 +63,13 @@ export default function ProfileScreen({ navigation }) {
       const profileResponse = await apiClient.get('/Profile/UserProfile/profile');
       const profileData = profileResponse.data;
       
+      // Check if user is TechSupport and redirect to TechSupportProfileScreen
+      if (profileData.role === 'TechSupport') {
+        setIsLoading(false);
+        navigation.replace('TechSupportProfile');
+        return;
+      }
+      
       let postsCount = 0;
       try {
         const postsResponse = await apiClient.get('/User/Posts/myPost/count');
@@ -305,13 +312,11 @@ export default function ProfileScreen({ navigation }) {
     ]);
   };
 
-  if (isLoading) {
+  if (isLoading || !userData) {
     return (
-      <ScreenLayout navigation={navigation}>
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color={colors.mainYellow} />
-        </View>
-      </ScreenLayout>
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.mainYellow} />
+      </View>
     );
   }
 
@@ -665,6 +670,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: colors.mainBeige,
   },
   profileCard: {
     backgroundColor: 'white',

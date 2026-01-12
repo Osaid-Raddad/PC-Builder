@@ -29,6 +29,7 @@ import QuantumComputingScreen from "../screens/quantumComputing/QuantumComputing
 import MyBuildsScreen from "../screens/profile/MyBuildsScreen";
 import SavedScreen from "../screens/profile/SavedScreen";
 import SettingsScreen from "../screens/profile/SettingsScreen";
+import TechSupportProfileScreen from "../screens/profile/TechSupportProfileScreen";
 
 // Admin Screens
 import DashboardScreen from "../screens/admin/DashboardScreen";
@@ -119,6 +120,7 @@ export default function AppNavigator() {
 
         {/* User */}
         <Stack.Screen name="Profile" component={ProfileScreen} />
+        <Stack.Screen name="TechSupportProfile" component={TechSupportProfileScreen} />
         <Stack.Screen name="MyBuilds" component={MyBuildsScreen} />
         <Stack.Screen name="Saved" component={SavedScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />

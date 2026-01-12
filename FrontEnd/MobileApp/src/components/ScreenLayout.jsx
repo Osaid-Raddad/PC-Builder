@@ -70,6 +70,10 @@ export default function ScreenLayout({
 
   const getActiveIndex = () => {
     const currentRoute = getCurrentRoute();
+    // Treat TechSupportProfile as Profile for the quick menu indicator
+    if (currentRoute === 'TechSupportProfile') {
+      return quickMenuItems.findIndex(item => item.screen === 'Profile');
+    }
     return quickMenuItems.findIndex(item => item.screen === currentRoute);
   };
 
