@@ -7,6 +7,8 @@ import colors from "../config/colors";
 import HomeScreen from "../screens/HomeScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import RegisterScreen from "../screens/auth/RegisterScreen";
+import ForgotPasswordScreen from "../screens/auth/ForgotPasswordScreen";
+import ResetPasswordScreen from "../screens/auth/ResetPasswordScreen";
 import BuilderScreen from "../screens/builder/BuilderScreen";
 import ProductsScreen from "../screens/products/ProductsScreen";
 import ComparatorScreen from "../screens/comparator/ComparatorScreen";
@@ -82,6 +84,8 @@ export default function AppNavigator() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+        <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
 
         {/* Builder & Tools */}
         <Stack.Screen name="Builder" component={BuilderScreen} />
