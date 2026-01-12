@@ -89,6 +89,12 @@ export default function Navbar({ navigation }) {
           iconSet: "Feather",
           screen: "Shops",
         },
+        {
+          label: "Quantum Computing",
+          icon: "atom",
+          iconSet: "MaterialCommunityIcons",
+          screen: "QuantumComputing",
+        },
       ],
     },
     {

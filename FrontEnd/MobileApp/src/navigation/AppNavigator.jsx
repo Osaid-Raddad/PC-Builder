@@ -21,6 +21,7 @@ import ContactScreen from "../screens/contact/ContactScreen";
 import TechSupportScreen from "../screens/techSupport/TechSupportScreen";
 import BuildingGuidesScreen from "../screens/buildingGuides/BuildingGuidesScreen";
 import TermsOfServiceScreen from "../screens/termsOfService/TermsOfServiceScreen";
+import QuantumComputingScreen from "../screens/quantumComputing/QuantumComputingScreen";
 
 // Profile Feature Screens
 import MyBuildsScreen from "../screens/profile/MyBuildsScreen";
@@ -109,6 +110,7 @@ export default function AppNavigator() {
         <Stack.Screen name="Posts" component={PostsScreen} />
         <Stack.Screen name="News" component={NewsScreen} />
         <Stack.Screen name="Shops" component={ShopsScreen} />
+        <Stack.Screen name="QuantumComputing" component={QuantumComputingScreen} />
         <Stack.Screen name="Chat" component={ChatScreen} />
 
         {/* User */}

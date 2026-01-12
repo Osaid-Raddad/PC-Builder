@@ -82,17 +82,24 @@ export default function HomeScreen({ navigation }) {
       screen: "TechSupport",
     },
     {
+      title: "Quantum Computing",
+      description: "Explore the future of computing",
+      icon: "atom",
+      color: colors.mainYellow,
+      screen: "QuantumComputing",
+    },
+    {
       title: "FAQ",
       description: "Frequently asked questions",
       icon: "help-circle",
-      color: colors.mainYellow,
+      color: colors.primary,
       screen: "FAQ",
     },
     {
       title: "Contact",
       description: "Get in touch with us",
       icon: "email",
-      color: colors.primary,
+      color: colors.secondary,
       screen: "Contact",
     },
   ];
