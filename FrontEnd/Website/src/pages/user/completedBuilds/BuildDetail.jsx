@@ -231,6 +231,32 @@ const BuildDetail = () => {
       description: 'My first PC build! Great entry-level gaming performance on a student budget. This was an amazing learning experience and the build runs all my favorite games smoothly.',
       buildDate: 'August 2025',
       purpose: 'First gaming PC on student budget'
+    },
+    {
+      id: 9,
+      name: 'First Build Ever',
+      owner: 'Noor Ibrahim',
+      image: '/src/assets/Images/build3.jpg',
+      images: [
+        '/src/assets/Images/build3.jpg',
+        '/src/assets/Images/build1.jpg',
+        '/src/assets/Images/build2.jpg'
+      ],
+      category: 'Budget',
+      cpu: 'AMD Ryzen 5 5600',
+      gpu: 'NVIDIA GTX 1660 Super',
+      ram: '16GB DDR4',
+      storage: '500GB NVMe SSD',
+      psu: '500W 80+ Bronze',
+      motherboard: 'MSI B450 TOMAHAWK MAX II',
+      cpuCooler: 'Cooler Master Hyper 212',
+      case: 'Cooler Master MasterBox Q300L',
+      price: '$650',
+      likes: 278,
+      comments: 96,
+      description: 'My first PC build! Great entry-level gaming performance on a student budget',
+      buildDate: 'May 2025',
+      purpose: 'Entry-level gaming on student budget'
     }
   ];
 
