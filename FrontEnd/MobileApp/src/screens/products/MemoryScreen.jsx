@@ -15,6 +15,7 @@ import ScreenLayout from "../../components/ScreenLayout";
 import colors from "../../config/colors";
 import memoryData from "../../data/components/memory.json";
 import { useBuild } from "../../context/BuildContext";
+import { useCompare } from "../../context/CompareContext";
 
 const MOCK_PRODUCTS = (memoryData?.memory || []).map(mem => ({
   ...mem,
@@ -26,6 +27,7 @@ const MOCK_PRODUCTS = (memoryData?.memory || []).map(mem => ({
 
 export default function MemoryScreen({ navigation }) {
   const { addComponent, selectedComponents } = useBuild();
+  const { addToCompare, isInCompare, removeFromCompare, getCategory, compareList } = useCompare();
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [filters, setFilters] = useState({
     priceRange: { min: 0, max: 500 },
@@ -87,8 +89,46 @@ export default function MemoryScreen({ navigation }) {
     );
   };
 
+  const handleCompareToggle = (product) => {
+    if (isInCompare(product.id)) {
+      removeFromCompare(product.id);
+      Alert.alert("Removed", `${product.name} removed from comparison.`);
+    } else {
+      const category = getCategory();
+      if (category && category !== 'memory') {
+        Alert.alert(
+          "Different Category",
+          `You can only compare products from the same category. Clear your current comparison first.`,
+          [{ text: "OK" }]
+        );
+        return;
+      }
+      if (compareList.length >= 4) {
+        Alert.alert(
+          "Limit Reached",
+          "You can compare up to 4 products at once.",
+          [{ text: "OK" }]
+        );
+        return;
+      }
+      addToCompare(product, 'memory');
+      Alert.alert(
+        "Added to Compare",
+        `${product.name} added to comparison.`,
+        [
+          { text: "Continue Browsing", style: "cancel" },
+          {
+            text: "View Comparison",
+            onPress: () => navigation.navigate("Comparator"),
+          },
+        ]
+      );
+    }
+  };
+
   const renderProduct = ({ item }) => {
     const isSelected = selectedComponents.memory?.model === item.model;
+    const inCompare = isInCompare(item.id);
     
     return (
     <TouchableOpacity style={[styles.productCard, isSelected && styles.productCardSelected]}>
@@ -111,16 +151,28 @@ export default function MemoryScreen({ navigation }) {
           </View>
         </View>
       </View>
-      <TouchableOpacity 
-        style={[styles.addButton, isSelected && styles.addButtonSelected]}
-        onPress={() => handleAddToBuild(item)}
-      >
-        <Feather 
-          name={isSelected ? "check" : "plus"} 
-          size={20} 
-          color={isSelected ? colors.success : colors.mainBlack} 
-        />
-      </TouchableOpacity>
+      <View style={styles.actionButtons}>
+        <TouchableOpacity 
+          style={[styles.addButton, isSelected && styles.addButtonSelected]}
+          onPress={() => handleAddToBuild(item)}
+        >
+          <Feather 
+            name={isSelected ? "check" : "plus"} 
+            size={20} 
+            color={isSelected ? colors.success : colors.mainBlack} 
+          />
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.compareButton, inCompare && styles.compareButtonActive]}
+          onPress={() => handleCompareToggle(item)}
+        >
+          <MaterialCommunityIcons 
+            name={inCompare ? "check" : "compare"} 
+            size={20} 
+            color={inCompare ? "white" : colors.mainYellow} 
+          />
+        </TouchableOpacity>
+      </View>
     </TouchableOpacity>
     );
   };
@@ -745,6 +797,11 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontWeight: "500",
   },
+  actionButtons: {
+    flexDirection: "column",
+    gap: 8,
+    justifyContent: "center",
+  },
   addButton: {
     width: 40,
     height: 40,
@@ -752,10 +809,23 @@ const styles = StyleSheet.create({
     backgroundColor: colors.mainYellow,
     justifyContent: "center",
     alignItems: "center",
-    alignSelf: "center",
   },
   addButtonSelected: {
     backgroundColor: colors.success + "20",
+  },
+  compareButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainYellow,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  compareButtonActive: {
+    backgroundColor: colors.mainYellow,
+    borderColor: colors.mainYellow,
   },
   productCardSelected: {
     borderColor: colors.success,

@@ -6,6 +6,8 @@ import {
   StyleSheet,
   FlatList,
   TextInput,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ScreenLayout from "../../components/ScreenLayout";
@@ -101,6 +103,11 @@ export default function ProductsScreen({ navigation }) {
     },
   ];
 
+  // Filter categories based on search query
+  const filteredCategories = categories.filter(category =>
+    category.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   const renderCategory = ({ item }) => (
     <TouchableOpacity
       style={styles.categoryCard}
@@ -118,50 +125,80 @@ export default function ProductsScreen({ navigation }) {
 
   return (
     <ScreenLayout navigation={navigation} scrollable={false}>
-      <View style={styles.container}>
-        {/* Back Button */}
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Feather name="arrow-left" size={24} color={colors.mainBlack} />
-        </TouchableOpacity>
+      <KeyboardAvoidingView 
+        style={styles.keyboardView}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
+      >
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => navigation.goBack()}
+            >
+              <Feather name="arrow-left" size={24} color={colors.mainBlack} />
+            </TouchableOpacity>
+            <View style={styles.headerText}>
+              <Text style={styles.title}>Products</Text>
+              <Text style={styles.subtitle}>Browse all PC components</Text>
+            </View>
+          </View>
 
-        <View style={styles.header}>
-          <Text style={styles.title}>Products</Text>
-          <Text style={styles.subtitle}>Browse all PC components</Text>
-        </View>
+          <View style={styles.searchContainer}>
+            <Feather name="search" size={20} color={colors.platinum} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search products..."
+              placeholderTextColor={colors.platinum}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchQuery("")}>
+                <Feather name="x" size={20} color={colors.platinum} />
+              </TouchableOpacity>
+            )}
+          </View>
 
-        <View style={styles.searchContainer}>
-          <Feather name="search" size={20} color={colors.platinum} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search products..."
-            placeholderTextColor={colors.platinum}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
+          <FlatList
+            data={filteredCategories}
+            renderItem={renderCategory}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.listContainer}
+            keyboardShouldPersistTaps="handled"
+            ListEmptyComponent={
+              <View style={styles.emptyState}>
+                <Feather name="search" size={64} color={colors.platinum} />
+                <Text style={styles.emptyTitle}>No Results Found</Text>
+                <Text style={styles.emptyText}>
+                  Try searching with different keywords
+                </Text>
+              </View>
+            }
           />
         </View>
-
-        <FlatList
-          data={categories}
-          renderItem={renderCategory}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContainer}
-        />
-      </View>
+      </KeyboardAvoidingView>
     </ScreenLayout>
   );
 }
 
 const styles = StyleSheet.create({
+  keyboardView: {
+    flex: 1,
+  },
   container: {
     flex: 1,
     padding: 20,
     backgroundColor: colors.mainBeige,
   },
   header: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 24,
+    gap: 12,
+  },
+  headerText: {
+    flex: 1,
   },
   title: {
     fontSize: 28,
@@ -171,7 +208,20 @@ const styles = StyleSheet.create({
   subtitle: {
     fontSize: 16,
     color: colors.text,
-    marginTop: 8,
+    marginTop: 4,
+  },
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 1,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   searchContainer: {
     flexDirection: "row",
@@ -219,5 +269,23 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "600",
     color: colors.mainBlack,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 60,
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: colors.mainBlack,
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: colors.text,
+    textAlign: "center",
   },
 });

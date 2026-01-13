@@ -14,9 +14,11 @@ import ScreenLayout from "../../components/ScreenLayout";
 import colors from "../../config/colors";
 import expansionData from "../../data/components/expansion.json";
 import { useBuild } from "../../context/BuildContext";
+import { useCompare } from "../../context/CompareContext";
 
 export default function ExpansionScreen({ navigation }) {
   const { addComponent, selectedComponents } = useBuild();
+  const { addToCompare, isInCompare, removeFromCompare, getCategory, compareList } = useCompare();
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("All");
   const [brandFilter, setBrandFilter] = useState("All");
@@ -44,6 +46,43 @@ export default function ExpansionScreen({ navigation }) {
     );
   };
 
+  const handleCompareToggle = (product) => {
+    if (isInCompare(product.id)) {
+      removeFromCompare(product.id);
+      Alert.alert("Removed", `${product.name} removed from comparison.`);
+    } else {
+      const category = getCategory();
+      if (category && category !== 'expansion') {
+        Alert.alert(
+          "Different Category",
+          `You can only compare products from the same category. Clear your current comparison first.`,
+          [{ text: "OK" }]
+        );
+        return;
+      }
+      if (compareList.length >= 4) {
+        Alert.alert(
+          "Limit Reached",
+          "You can compare up to 4 products at once.",
+          [{ text: "OK" }]
+        );
+        return;
+      }
+      addToCompare(product, 'expansion');
+      Alert.alert(
+        "Added to Compare",
+        `${product.name} added to comparison.`,
+        [
+          { text: "Continue Browsing", style: "cancel" },
+          {
+            text: "View Comparison",
+            onPress: () => navigation.navigate("Comparator"),
+          },
+        ]
+      );
+    }
+  };
+
   const filteredExpansions = expansionList.filter(expansion => {
     const matchesSearch = searchTerm === '' || 
       expansion.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -55,6 +94,7 @@ export default function ExpansionScreen({ navigation }) {
 
   const renderExpansionCard = ({ item }) => {
     const isSelected = selectedComponents.expansion?.name === item.name;
+    const inCompare = isInCompare(item.id);
     
     return (
     <TouchableOpacity
@@ -80,19 +120,34 @@ export default function ExpansionScreen({ navigation }) {
         </View>
         <View style={styles.priceRow}>
           <Text style={styles.price}>${item.price}</Text>
-          <TouchableOpacity
-            style={[styles.addButton, isSelected && styles.addButtonSelected]}
-            onPress={(e) => {
-              e.stopPropagation();
-              handleAddToBuild(item);
-            }}
-          >
-            <Feather 
-              name={isSelected ? "check" : "plus"} 
-              size={20} 
-              color={isSelected ? colors.success : colors.mainBlack} 
-            />
-          </TouchableOpacity>
+          <View style={styles.actionButtons}>
+            <TouchableOpacity
+              style={[styles.addButton, isSelected && styles.addButtonSelected]}
+              onPress={(e) => {
+                e.stopPropagation();
+                handleAddToBuild(item);
+              }}
+            >
+              <Feather 
+                name={isSelected ? "check" : "plus"} 
+                size={20} 
+                color={isSelected ? colors.success : colors.mainBlack} 
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.compareButton, inCompare && styles.compareButtonActive]}
+              onPress={(e) => {
+                e.stopPropagation();
+                handleCompareToggle(item);
+              }}
+            >
+              <MaterialCommunityIcons 
+                name="compare" 
+                size={20} 
+                color={inCompare ? colors.mainYellow : colors.mainBlack} 
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </TouchableOpacity>
@@ -339,6 +394,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: colors.mainYellow,
   },
+  actionButtons: {
+    flexDirection: "row",
+    gap: 8,
+  },
   addButton: {
     backgroundColor: colors.mainYellow,
     width: 40,
@@ -349,6 +408,19 @@ const styles = StyleSheet.create({
   },
   addButtonSelected: {
     backgroundColor: colors.success + "20",
+  },
+  compareButton: {
+    backgroundColor: colors.platinum,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  compareButtonActive: {
+    backgroundColor: colors.mainYellow + "40",
+    borderWidth: 2,
+    borderColor: colors.mainYellow,
   },
   productCardSelected: {
     borderColor: colors.success,
