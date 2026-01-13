@@ -810,7 +810,7 @@ const Monitor = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-3">
+                <div className="flex gap-3 justify-end">
                   {/* Only show action buttons if source exists (from builder or comparator) */}
                   {source && (
                     <>

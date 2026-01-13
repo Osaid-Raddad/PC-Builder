@@ -272,7 +272,7 @@ const Accessories = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-3">
+                <div className="flex gap-3 justify-end">
                   {source && (
                     <>
                       {source !== 'comparator' && (
@@ -282,7 +282,7 @@ const Accessories = () => {
                             addComponent('accessories', accessory);
                             navigate('/builder');
                           }}
-                          className="px-6 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                          className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer flex-1"
                           style={{
                             backgroundColor: selectedAccessory?.id === accessory.id ? colors.mainYellow : 'white',
                             color: selectedAccessory?.id === accessory.id ? 'white' : colors.mainYellow,

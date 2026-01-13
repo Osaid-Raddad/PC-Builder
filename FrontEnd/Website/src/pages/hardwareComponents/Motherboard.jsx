@@ -974,7 +974,7 @@ const Motherboard = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-2 justify-between">
+                <div className="flex gap-2 justify-end">
                   {/* Only show action buttons if source exists (from builder or comparator) */}
                   {source && (
                     <>
