@@ -8,35 +8,25 @@ import {
   Image,
   Modal,
   ScrollView,
+  Alert,
 } from "react-native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ScreenLayout from "../../components/ScreenLayout";
 import colors from "../../config/colors";
+import storageData from "../../data/components/storage.json";
+import { useBuild } from "../../context/BuildContext";
+import { useCompare } from "../../context/CompareContext";
 
-const MOCK_PRODUCTS = [
-  {
-    id: "1",
-    name: "Samsung 990 PRO",
-    price: 189,
-    brand: "Samsung",
-    rating: 5,
-    capacity: "2TB",
-    type: "NVMe SSD",
-  },
-  { id: "2", name: "WD Black SN850X", price: 179, brand: "Western Digital", rating: 5, capacity: "2TB", type: "NVMe SSD" },
-  {
-    id: "3",
-    name: "Crucial P5 Plus",
-    price: 99,
-    brand: "Crucial",
-    rating: 4,
-    capacity: "1TB",
-    type: "NVMe SSD",
-  },
-  { id: "4", name: "Samsung 870 EVO", price: 149, brand: "Samsung", rating: 5, capacity: "2TB", type: "SATA SSD" },
-];
+const MOCK_PRODUCTS = (storageData?.storage || []).map(storage => ({
+  ...storage,
+  name: `${storage.manufacturer} ${storage.model}`,
+  brand: storage.manufacturer,
+  capacity: `${storage.capacityGB}GB`,
+}));
 
 export default function StorageScreen({ navigation }) {
+  const { addComponent, selectedComponents } = useBuild();
+  const { addToCompare, isInCompare, removeFromCompare, getCategory, compareList } = useCompare();
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [filters, setFilters] = useState({
     priceRange: { min: 0, max: 500 },
@@ -73,10 +63,71 @@ export default function StorageScreen({ navigation }) {
     });
   };
 
-  const renderProduct = ({ item }) => (
-    <TouchableOpacity style={styles.productCard}>
+  const handleAddToBuild = (product) => {
+    addComponent('storage', product);
+    Alert.alert(
+      "Storage Added",
+      `${product.name} has been added to your build.`,
+      [
+        { text: "Continue Browsing", style: "cancel" },
+        {
+          text: "View Build",
+          onPress: () => navigation.navigate("Builder"),
+        },
+      ]
+    );
+  };
+
+  const handleCompareToggle = (product) => {
+    if (isInCompare(product.id)) {
+      removeFromCompare(product.id);
+      Alert.alert("Removed", `${product.name} removed from comparison.`);
+    } else {
+      const category = getCategory();
+      if (category && category !== 'storage') {
+        Alert.alert(
+          "Different Category",
+          `You can only compare products from the same category. Clear your current comparison first.`,
+          [{ text: "OK" }]
+        );
+        return;
+      }
+      if (compareList.length >= 4) {
+        Alert.alert(
+          "Limit Reached",
+          "You can compare up to 4 products at once.",
+          [{ text: "OK" }]
+        );
+        return;
+      }
+      addToCompare(product, 'storage');
+      Alert.alert(
+        "Added to Compare",
+        `${product.name} added to comparison.`,
+        [
+          { text: "Continue Browsing", style: "cancel" },
+          {
+            text: "View Comparison",
+            onPress: () => navigation.navigate("Comparator"),
+          },
+        ]
+      );
+    }
+  };
+
+  const renderProduct = ({ item }) => {
+    const isSelected = selectedComponents.storage?.model === item.model;
+    const inCompare = isInCompare(item.id);
+    
+    return (
+    <TouchableOpacity style={[styles.productCard, isSelected && styles.productCardSelected]}>
       <View style={styles.productImage}>
         <Feather name="hard-drive" size={48} color={colors.mainYellow} />
+        {isSelected && (
+          <View style={styles.selectedBadge}>
+            <Feather name="check-circle" size={20} color={colors.success} />
+          </View>
+        )}
       </View>
       <View style={styles.productInfo}>
         <Text style={styles.productName}>{item.name}</Text>
@@ -89,11 +140,31 @@ export default function StorageScreen({ navigation }) {
           </View>
         </View>
       </View>
-      <TouchableOpacity style={styles.addButton}>
-        <Feather name="plus" size={20} color={colors.mainBlack} />
-      </TouchableOpacity>
+      <View style={styles.actionButtons}>
+        <TouchableOpacity 
+          style={[styles.addButton, isSelected && styles.addButtonSelected]}
+          onPress={() => handleAddToBuild(item)}
+        >
+          <Feather 
+            name={isSelected ? "check" : "plus"} 
+            size={20} 
+            color={isSelected ? colors.success : colors.mainBlack} 
+          />
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.compareButton, inCompare && styles.compareButtonActive]}
+          onPress={() => handleCompareToggle(item)}
+        >
+          <MaterialCommunityIcons 
+            name={inCompare ? "check" : "compare"} 
+            size={20} 
+            color={inCompare ? "white" : colors.mainYellow} 
+          />
+        </TouchableOpacity>
+      </View>
     </TouchableOpacity>
-  );
+    );
+  };
 
   return (
     <ScreenLayout navigation={navigation} scrollable={false} showFooter={false}>
@@ -585,6 +656,11 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontWeight: "500",
   },
+  actionButtons: {
+    flexDirection: "column",
+    gap: 8,
+    justifyContent: "center",
+  },
   addButton: {
     width: 40,
     height: 40,
@@ -592,6 +668,33 @@ const styles = StyleSheet.create({
     backgroundColor: colors.mainYellow,
     justifyContent: "center",
     alignItems: "center",
-    alignSelf: "center",
+  },
+  addButtonSelected: {
+    backgroundColor: colors.success + "20",
+  },
+  compareButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainYellow,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  compareButtonActive: {
+    backgroundColor: colors.mainYellow,
+    borderColor: colors.mainYellow,
+  },
+  productCardSelected: {
+    borderColor: colors.success,
+    borderWidth: 2,
+  },
+  selectedBadge: {
+    position: "absolute",
+    top: -5,
+    right: -5,
+    backgroundColor: "white",
+    borderRadius: 10,
   },
 });

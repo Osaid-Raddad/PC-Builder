@@ -1,36 +1,62 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   View,
   Text,
   TouchableOpacity,
   StyleSheet,
   Image,
+  Alert,
 } from "react-native";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
 import ScreenLayout from "../../components/ScreenLayout";
 import colors from "../../config/colors";
+import { useBuild } from "../../context/BuildContext";
 
 export default function BuilderScreen({ navigation }) {
-  const [selectedComponents, setSelectedComponents] = useState({});
+  const {
+    selectedComponents,
+    calculateTotalPrice,
+    calculateTotalPower,
+    checkCompatibility,
+    getPerformanceScore,
+    clearBuild,
+  } = useBuild();
 
   const components = [
-    { id: "cpu", name: "CPU", icon: "cpu-64-bit", required: true, screen: "CPU" },
-    { id: "gpu", name: "GPU", icon: "expansion-card", required: false, screen: "GPU" },
-    { id: "motherboard", name: "Motherboard", icon: "chip", required: true, screen: "Motherboard" },
-    { id: "memory", name: "RAM", icon: "memory", required: true, screen: "Memory" },
-    { id: "storage", name: "Storage", icon: "harddisk", required: true, screen: "Storage" },
-    { id: "power-supply", name: "Power Supply", icon: "flash", required: true, screen: "PowerSupply" },
-    { id: "case", name: "Case", icon: "desktop-tower", required: true, screen: "Case" },
-    { id: "cooler", name: "Cooling", icon: "fan", required: false, screen: "Cooler" },
-    { id: "monitor", name: "Monitor", icon: "monitor", required: false, screen: "Monitor" },
-    {
-      id: "accessories",
-      name: "Accessories",
-      icon: "cable-data",
-      required: false,
-      screen: "Accessories",
-    },
+    { id: "cpu", name: "CPU", icon: "cpu-64-bit", description: "Choose your processor", required: true, screen: "CPU" },
+    { id: "cooler", name: "CPU Cooler", icon: "fan", description: "Keep your CPU cool", required: true, screen: "Cooler" },
+    { id: "motherboard", name: "Motherboard", icon: "chip", description: "The backbone of your PC", required: true, screen: "Motherboard" },
+    { id: "memory", name: "Memory", icon: "memory", description: "RAM for multitasking", required: true, screen: "Memory" },
+    { id: "storage", name: "Storage", icon: "harddisk", description: "HDD/SSD for your data", required: true, screen: "Storage" },
+    { id: "gpu", name: "GPU", icon: "expansion-card", description: "Graphics card for gaming", required: false, screen: "GPU" },
+    { id: "case", name: "Case", icon: "desktop-tower", description: "House your components", required: true, screen: "Case" },
+    { id: "psu", name: "Power Supply", icon: "flash", description: "Power your build", required: true, screen: "PowerSupply" },
+    { id: "monitor", name: "Monitor", icon: "monitor", description: "Display your visuals", required: false, screen: "Monitor" },
+    { id: "expansion", name: "Expansion Cards / Networking", icon: "network-outline", description: "Wi-Fi, sound cards, etc.", required: false, screen: "Expansion" },
+    { id: "peripherals", name: "Peripherals", icon: "keyboard-outline", description: "Keyboard, mouse, etc.", required: false, screen: "Peripherals" },
+    { id: "accessories", name: "Accessories / Other", icon: "cable-data", description: "Extra items", required: false, screen: "Accessories" },
   ];
+
+  const totalPrice = calculateTotalPrice();
+  const totalPower = calculateTotalPower();
+  const compatibility = checkCompatibility();
+  const performance = getPerformanceScore();
+  const componentCount = Object.values(selectedComponents).filter(Boolean).length;
+
+  const handleClearBuild = () => {
+    Alert.alert(
+      "Clear Build",
+      "Are you sure you want to clear all components?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Clear",
+          style: "destructive",
+          onPress: () => clearBuild(),
+        },
+      ]
+    );
+  };
 
   const handleSelectComponent = (screen) => {
     navigation.navigate(screen);
@@ -50,42 +76,96 @@ export default function BuilderScreen({ navigation }) {
 
         <View style={styles.statsCard}>
           <View style={styles.statItem}>
-            <Text style={styles.statNumber}>0</Text>
+            <Text style={styles.statNumber}>{componentCount}</Text>
             <Text style={styles.statLabel}>Components</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <Text style={styles.statNumber}>$0</Text>
+            <Text style={styles.statNumber}>${totalPrice.toFixed(0)}</Text>
             <Text style={styles.statLabel}>Total Cost</Text>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <Text style={styles.statNumber}>0W</Text>
+            <Text style={styles.statNumber}>{totalPower}W</Text>
             <Text style={styles.statLabel}>Power</Text>
           </View>
         </View>
 
         {/* Compatibility Status */}
-        <View style={styles.compatibilityCard}>
+        <View style={[
+          styles.compatibilityCard,
+          { borderLeftColor: !compatibility.isCompatible ? colors.error : 
+                             compatibility.hasWarnings ? colors.warning : 
+                             colors.success }
+        ]}>
           <View style={styles.compatibilityHeader}>
             <MaterialCommunityIcons
-              name="check-decagram"
+              name={!compatibility.isCompatible ? "alert-circle" : 
+                    compatibility.hasWarnings ? "alert" : 
+                    "check-decagram"}
               size={24}
-              color={colors.success}
+              color={!compatibility.isCompatible ? colors.error : 
+                     compatibility.hasWarnings ? colors.warning : 
+                     colors.success}
             />
             <Text style={styles.compatibilityTitle}>Compatibility Status</Text>
           </View>
           <View style={styles.compatibilityContent}>
-            <View style={styles.compatibilityItem}>
-              <Feather name="check-circle" size={18} color={colors.success} />
-              <Text style={styles.compatibilityText}>All components compatible</Text>
-            </View>
-            <View style={styles.compatibilityItem}>
-              <Feather name="info" size={18} color={colors.primary} />
-              <Text style={styles.compatibilityTextInfo}>Add components to check compatibility</Text>
-            </View>
+            {componentCount === 0 ? (
+              <View style={styles.compatibilityItem}>
+                <Feather name="info" size={18} color={colors.primary} />
+                <Text style={styles.compatibilityTextInfo}>
+                  Add components to check compatibility
+                </Text>
+              </View>
+            ) : (
+              <>
+                {compatibility.isCompatible && !compatibility.hasWarnings && (
+                  <View style={styles.compatibilityItem}>
+                    <Feather name="check-circle" size={18} color={colors.success} />
+                    <Text style={styles.compatibilityText}>
+                      All components compatible
+                    </Text>
+                  </View>
+                )}
+                {compatibility.issues.map((issue, index) => (
+                  <View key={`issue-${index}`} style={styles.compatibilityItem}>
+                    <Feather name="x-circle" size={18} color={colors.error} />
+                    <Text style={styles.compatibilityTextError}>
+                      {issue.message}
+                    </Text>
+                  </View>
+                ))}
+                {compatibility.warnings.map((warning, index) => (
+                  <View key={`warning-${index}`} style={styles.compatibilityItem}>
+                    <Feather name="alert-triangle" size={18} color={colors.warning} />
+                    <Text style={styles.compatibilityTextWarning}>
+                      {warning.message}
+                    </Text>
+                  </View>
+                ))}
+              </>
+            )}
           </View>
         </View>
+
+        {/* Performance Score */}
+        {componentCount > 0 && (
+          <View style={styles.performanceCard}>
+            <View style={styles.performanceHeader}>
+              <MaterialCommunityIcons
+                name="speedometer"
+                size={24}
+                color={colors.mainYellow}
+              />
+              <Text style={styles.performanceTitle}>Performance Score</Text>
+            </View>
+            <View style={styles.performanceContent}>
+              <Text style={styles.performanceScore}>{performance.score}</Text>
+              <Text style={styles.performanceCategory}>{performance.category}</Text>
+            </View>
+          </View>
+        )}
 
         <Text style={styles.sectionTitle}>Select Components</Text>
 
@@ -132,7 +212,10 @@ export default function BuilderScreen({ navigation }) {
           <Text style={styles.saveButtonText}>Save Build</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.clearButton}>
+        <TouchableOpacity 
+          style={styles.clearButton}
+          onPress={handleClearBuild}
+        >
           <Feather name="trash-2" size={20} color={colors.error} />
           <Text style={styles.clearButtonText}>Clear All</Text>
         </TouchableOpacity>
@@ -240,6 +323,58 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.text,
     marginLeft: 10,
+  },
+  compatibilityTextError: {
+    fontSize: 14,
+    color: colors.error,
+    marginLeft: 10,
+    fontWeight: "500",
+    flex: 1,
+  },
+  compatibilityTextWarning: {
+    fontSize: 14,
+    color: colors.warning || "#f59e0b",
+    marginLeft: 10,
+    fontWeight: "500",
+    flex: 1,
+  },
+  performanceCard: {
+    backgroundColor: "white",
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 24,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.mainYellow,
+  },
+  performanceHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  performanceTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: colors.mainBlack,
+    marginLeft: 8,
+  },
+  performanceContent: {
+    alignItems: "center",
+  },
+  performanceScore: {
+    fontSize: 48,
+    fontWeight: "bold",
+    color: colors.mainYellow,
+  },
+  performanceCategory: {
+    fontSize: 18,
+    color: colors.text,
+    marginTop: 4,
+    fontWeight: "600",
   },
   sectionTitle: {
     fontSize: 20,

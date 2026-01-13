@@ -13,16 +13,33 @@ import {
 } from 'react-icons/fa';
 import { MdCompare } from 'react-icons/md';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
+import { FaPlus } from 'react-icons/fa';
 import { BsCpuFill } from 'react-icons/bs';
 import { FaMicrochip, FaMemory, FaHdd } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import Navbar from '../../../components/user/navbar/Navbar.jsx';
 import Footer from '../../../components/user/footer/Footer.jsx';
 import colors from '../../../config/colors.js';
+import { useBuild } from '../../../context/BuildContext';
+
+// Import all product data
+import cpusData from '../../../data/components/cpus.json';
+import gpusData from '../../../data/components/gpus.json';
+import motherboardsData from '../../../data/components/motherboards.json';
+import memoryData from '../../../data/components/memory.json';
+import storageData from '../../../data/components/storage.json';
+import casesData from '../../../data/components/cases.json';
+import powerSuppliesData from '../../../data/components/powerSupplies.json';
+import monitorsData from '../../../data/components/monitors.json';
+import cpuCoolersData from '../../../data/components/cpuCoolers.json';
+import accessoriesData from '../../../data/components/accessories.json';
+import expansionData from '../../../data/components/expansion.json';
+import peripheralsData from '../../../data/components/peripherals.json';
 
 const ProductDetails = () => {
   const { category, id } = useParams();
   const navigate = useNavigate();
+  const { addComponent } = useBuild();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -36,93 +53,424 @@ const ProductDetails = () => {
     fetchProductDetails();
   }, [id, category]);
 
+  const getProductData = () => {
+    try {
+      // Map category to the appropriate data source
+      let productList;
+      let componentKey; // for BuildContext
+      
+      console.log('Category received:', category);
+      
+      switch(category) {
+        case 'cpu':
+          productList = cpusData?.cpus;
+          componentKey = 'cpu';
+          break;
+        case 'gpu':
+          productList = gpusData?.gpus;
+          componentKey = 'gpu';
+          break;
+        case 'motherboard':
+          productList = motherboardsData?.motherboards;
+          componentKey = 'motherboard';
+          break;
+        case 'memory':
+          productList = memoryData?.memory;
+          componentKey = 'memory';
+          break;
+        case 'storage':
+          productList = storageData?.storage;
+          componentKey = 'storage';
+          break;
+        case 'case':
+          productList = casesData?.cases;
+          componentKey = 'case';
+          break;
+        case 'power-supply':
+        case 'powersupply': // Handle both variations
+          productList = powerSuppliesData?.powerSupplies;
+          componentKey = 'psu';
+          break;
+        case 'monitor':
+          console.log('Monitor data:', monitorsData);
+          productList = Array.isArray(monitorsData) ? monitorsData : monitorsData?.monitors;
+          componentKey = 'monitor';
+          break;
+        case 'cooler':
+        case 'cpucooler': // Handle both variations
+          productList = cpuCoolersData?.cpuCoolers;
+          componentKey = 'cooler';
+          break;
+        case 'accessories':
+          console.log('Accessories data:', accessoriesData);
+          productList = Array.isArray(accessoriesData) ? accessoriesData : accessoriesData?.accessories;
+          componentKey = 'accessories';
+          break;
+        case 'expansion':
+          console.log('Expansion data:', expansionData);
+          productList = Array.isArray(expansionData) ? expansionData : expansionData?.expansion;
+          componentKey = 'expansion';
+          break;
+        case 'peripherals':
+          console.log('Peripherals data:', peripheralsData);
+          productList = Array.isArray(peripheralsData) ? peripheralsData : peripheralsData?.peripherals;
+          componentKey = 'peripherals';
+          break;
+        default:
+          console.error('Unknown category:', category);
+          return null;
+      }
+      
+      console.log('Product list loaded:', productList ? `${productList.length} items` : 'undefined');
+      
+      if (!productList || !Array.isArray(productList)) {
+        console.error('Product list is not an array or is undefined for category:', category);
+        return null;
+      }
+      
+      // Handle both string and numeric IDs
+      const rawProduct = productList.find(p => p.id === id || p.id === parseInt(id) || p.id.toString() === id.toString());
+      if (!rawProduct) {
+        console.error('Product not found in list. ID:', id, 'Available IDs:', productList.map(p => p.id).slice(0, 10));
+        return null;
+      }
+
+      console.log('Found product:', rawProduct);
+
+      // Transform the product data to match the component's expected format
+      return {
+        ...rawProduct,
+        componentKey, // Store for AddToBuild functionality
+        name: rawProduct.name || `${rawProduct.brand || rawProduct.manufacturer} ${rawProduct.model}`,
+        brand: rawProduct.brand || rawProduct.manufacturer,
+        category: category,
+        originalPrice: rawProduct.price * 1.2, // 20% markup for display
+        rating: rawProduct.rating || 4.5,
+        reviewCount: Math.floor(Math.random() * 500) + 50,
+        likes: Math.floor(Math.random() * 300) + 20,
+        shares: Math.floor(Math.random() * 100) + 5,
+        inStock: true,
+        images: [
+          rawProduct.image || 'https://via.placeholder.com/800x600/242423/f3bd4a?text=Product+Image',
+          'https://via.placeholder.com/800x600/242423/efece1?text=Additional+View',
+          'https://via.placeholder.com/800x600/242423/CFDBD5?text=Side+View',
+          'https://via.placeholder.com/800x600/242423/333533?text=Detail+View'
+        ],
+        description: generateDescription(rawProduct, category),
+        specifications: generateSpecifications(rawProduct, category),
+        features: generateFeatures(rawProduct, category),
+        compatibility: generateCompatibility(rawProduct, category),
+        reviews: generateMockReviews()
+      };
+    } catch (error) {
+      console.error('Error in getProductData:', error);
+      return null;
+    }
+  };
+
+  const generateDescription = (product, category) => {
+    const brand = product.brand || product.manufacturer;
+    
+    switch(category) {
+      case 'cpu':
+        return `High-performance ${product.cores}-core processor from ${brand}. Perfect for gaming and demanding applications with ${product.baseClockGHz}GHz base clock and ${product.boostClockGHz}GHz boost. ${product.tdpWatts}W TDP ensures efficient power consumption.`;
+      case 'gpu':
+        return `Powerful graphics card featuring ${product.memoryGB}GB ${product.memoryType} memory. Core clock of ${product.coreClockMHz}MHz and boost clock of ${product.boostClockMHz}MHz. Performance score: ${product.performanceScore}.`;
+      case 'motherboard':
+        return `Feature-rich motherboard with ${product.socket} socket and ${product.formFactor} form factor. Supports ${product.memoryType} memory with ${product.memorySlots} slots and ${product.maxMemoryGB}GB maximum capacity.`;
+      case 'memory':
+        return `High-speed ${product.modules} memory kit with ${product.totalCapacityGB}GB total capacity. ${product.speedMHz}MHz speed with CL${product.casLatency} timing. ${product.color} heatspreader design.`;
+      case 'storage':
+        return `${product.capacityGB}GB ${product.type} storage with ${product.formFactor} form factor. ${product.interface} interface ensures fast data transfer speeds. Cache: ${product.cacheMB}MB.`;
+      case 'case':
+        return `Stylish ${product.type} case with ${product.color} finish. Supports motherboards up to ${product.motherboardFormFactor}. Includes ${product.includedFans} fans and has ${product.maxFans} fan mounting points.`;
+      case 'power-supply':
+      case 'powersupply':
+        return `Reliable ${product.wattage}W power supply with ${product.efficiencyRating} efficiency certification. ${product.modular} cable management and ${product.fanSize}mm fan for quiet operation.`;
+      case 'monitor':
+        return `${product.screenSize}" monitor with ${product.resolution} resolution. ${product.refreshRate}Hz refresh rate and ${product.responseTime}ms response time. ${product.panelType} panel technology for excellent color accuracy and viewing angles.`;
+      case 'cooler':
+      case 'cpucooler':
+        return `${product.type} CPU cooler with ${product.fanSize}mm fan. Compatible with ${product.socket} and ${product.tdpWatts}W TDP. Noise level: ${product.noiseLevel}dB.`;
+      case 'accessories':
+        return `Quality ${product.category || 'accessory'} from ${brand}. ${product.name} offers great value and performance for your build.`;
+      case 'expansion':
+        return `${product.type} expansion card from ${brand}. ${product.name} provides enhanced functionality for your system.`;
+      case 'peripherals':
+        return `Premium ${product.type} from ${brand}. ${product.name} delivers excellent performance and reliability.`;
+      default:
+        return `Quality ${category} component from ${brand}. Professional-grade performance and reliability.`;
+    }
+  };
+
+  const generateSpecifications = (product, category) => {
+    const brand = product.brand || product.manufacturer;
+    const model = product.model || '';
+    
+    switch(category) {
+      case 'cpu':
+        return {
+          'Brand': product.brand,
+          'Model': product.model,
+          'Cores': product.cores,
+          'Threads': product.threads,
+          'Base Clock': `${product.baseClockGHz} GHz`,
+          'Boost Clock': `${product.boostClockGHz} GHz`,
+          'TDP': `${product.tdpWatts}W`,
+          'Socket': product.socket,
+          'Integrated Graphics': product.integratedGraphics || 'No',
+          'Performance Score': product.performanceScore
+        };
+      case 'gpu':
+        return {
+          'Brand': product.brand,
+          'Model': product.model,
+          'Memory': `${product.memoryGB}GB ${product.memoryType}`,
+          'Core Clock': `${product.coreClockMHz} MHz`,
+          'Boost Clock': `${product.boostClockMHz} MHz`,
+          'TDP': `${product.tdpWatts}W`,
+          'Length': `${product.length}mm`,
+          'PCI Slots': product.pciSlots,
+          'Performance Score': product.performanceScore
+        };
+      case 'motherboard':
+        return {
+          'Brand': product.brand,
+          'Model': product.model,
+          'Socket': product.socket,
+          'Form Factor': product.formFactor,
+          'Chipset': product.chipset,
+          'Memory Type': product.memoryType,
+          'Memory Slots': product.memorySlots,
+          'Max Memory': `${product.maxMemoryGB}GB`,
+          'PCIe x16 Slots': product.pcie16Slots,
+          'M.2 Slots': product.m2Slots
+        };
+      case 'memory':
+        return {
+          'Brand': product.brand,
+          'Model': product.model,
+          'Type': product.type,
+          'Speed': `${product.speedMHz} MHz`,
+          'Modules': product.modules,
+          'Capacity per Module': `${product.capacityPerModuleGB}GB`,
+          'Total Capacity': `${product.totalCapacityGB}GB`,
+          'CAS Latency': `CL${product.casLatency}`,
+          'Color': product.color
+        };
+      case 'storage':
+        return {
+          'Brand': product.brand,
+          'Model': product.model,
+          'Type': product.type,
+          'Capacity': `${product.capacityGB}GB`,
+          'Form Factor': product.formFactor,
+          'Interface': product.interface,
+          'Cache': `${product.cacheMB}MB`,
+          'Read Speed': product.readSpeed || 'N/A',
+          'Write Speed': product.writeSpeed || 'N/A'
+        };
+      case 'case':
+        return {
+          'Brand': product.brand,
+          'Model': product.model,
+          'Type': product.type,
+          'Color': product.color,
+          'Form Factor': product.motherboardFormFactor,
+          'Included Fans': product.includedFans,
+          'Max Fans': product.maxFans,
+          'Side Panel': product.sidePanel
+        };
+      case 'power-supply':
+      case 'powersupply':
+        return {
+          'Brand': product.brand,
+          'Model': product.model,
+          'Wattage': `${product.wattage}W`,
+          'Efficiency': product.efficiencyRating,
+          'Modular': product.modular,
+          'Fan Size': `${product.fanSize}mm`,
+          'Length': `${product.length}mm`
+        };
+      case 'monitor':
+        return {
+          'Brand': brand,
+          'Model': model || product.name,
+          'Screen Size': `${product.screenSize}"`,
+          'Resolution': product.resolution,
+          'Refresh Rate': `${product.refreshRate}Hz`,
+          'Response Time': `${product.responseTime}ms`,
+          'Panel Type': product.panelType,
+          'Adaptive Sync': product.adaptiveSync || 'No'
+        };
+      case 'cooler':
+      case 'cpucooler':
+        return {
+          'Brand': brand,
+          'Model': model,
+          'Type': product.type,
+          'Fan Size': `${product.fanSize}mm`,
+          'Socket': product.socket,
+          'TDP': `${product.tdpWatts}W`,
+          'Noise Level': `${product.noiseLevel}dB`,
+          'Height': `${product.height}mm`
+        };
+      case 'accessories':
+        return {
+          'Brand': brand,
+          'Name': product.name,
+          'Category': product.category,
+          'Type': product.type,
+          'Price': `$${product.price}`
+        };
+      case 'expansion':
+        return {
+          'Brand': brand,
+          'Name': product.name,
+          'Type': product.type,
+          'Interface': product.interface,
+          'Price': `$${product.price}`
+        };
+      case 'peripherals':
+        return {
+          'Brand': brand,
+          'Name': product.name,
+          'Type': product.type,
+          'Price': `$${product.price}`
+        };
+      default:
+        return {
+          'Brand': brand,
+          'Name': product.name || `${brand} ${model}`,
+          'Price': `$${product.price}`
+        };
+    }
+  };
+
+  const generateFeatures = (product, category) => {
+    const features = [];
+    
+    switch(category) {
+      case 'cpu':
+        features.push(`${product.cores} cores / ${product.threads} threads for multitasking`);
+        features.push(`Up to ${product.boostClockGHz}GHz boost frequency`);
+        if (product.integratedGraphics) features.push(`Integrated ${product.integratedGraphics} graphics`);
+        features.push(`Compatible with ${product.socket} motherboards`);
+        break;
+      case 'gpu':
+        features.push(`${product.memoryGB}GB ${product.memoryType} high-speed memory`);
+        features.push(`Performance score: ${product.performanceScore}`);
+        features.push(`Boost clock up to ${product.boostClockMHz}MHz`);
+        features.push(`${product.pciSlots}-slot design`);
+        break;
+      case 'motherboard':
+        features.push(`Supports ${product.memoryType} memory up to ${product.maxMemoryGB}GB`);
+        features.push(`${product.pcie16Slots} PCIe x16 slots for expansion`);
+        features.push(`${product.m2Slots} M.2 slots for fast storage`);
+        features.push(`${product.formFactor} form factor`);
+        break;
+      case 'memory':
+        features.push(`${product.totalCapacityGB}GB total capacity (${product.modules})`);
+        features.push(`${product.speedMHz}MHz for fast performance`);
+        features.push(`Low latency CL${product.casLatency} timing`);
+        features.push(`${product.color} design`);
+        break;
+      default:
+        features.push('High-quality construction');
+        features.push('Reliable performance');
+        features.push('Great value for money');
+    }
+    
+    return features;
+  };
+
+  const generateCompatibility = (product, category) => {
+    const compat = [];
+    
+    switch(category) {
+      case 'cpu':
+        compat.push(`Compatible with ${product.socket} motherboards`);
+        compat.push(`Requires appropriate cooling solution`);
+        compat.push(`Check motherboard compatibility for full feature support`);
+        break;
+      case 'gpu':
+        compat.push(`Requires ${product.pciSlots} PCIe slots`);
+        compat.push(`Minimum ${product.tdpWatts}W power supply recommended`);
+        compat.push(`Check case clearance (${product.length}mm length)`);
+        break;
+      case 'motherboard':
+        compat.push(`Supports ${product.socket} processors`);
+        compat.push(`${product.memorySlots} slots for ${product.memoryType} memory`);
+        compat.push(`Compatible with ${product.formFactor} cases`);
+        break;
+      case 'memory':
+        compat.push(`Compatible with ${product.type} memory slots`);
+        compat.push(`Check motherboard support for ${product.speedMHz}MHz speed`);
+        compat.push(`XMP/DOCP profile support may be required`);
+        break;
+      default:
+        compat.push('Check product specifications for compatibility');
+        compat.push('Consult manufacturer documentation');
+    }
+    
+    return compat;
+  };
+
+  const generateMockReviews = () => {
+    const reviewTemplates = [
+      {
+        userName: 'TechEnthusiast',
+        rating: 5,
+        title: 'Excellent Product!',
+        comment: 'This product exceeded my expectations. Great performance and quality.',
+        helpful: Math.floor(Math.random() * 100) + 20,
+        verified: true
+      },
+      {
+        userName: 'PCBuilder2024',
+        rating: 4,
+        title: 'Good value',
+        comment: 'Solid product for the price. Works as expected.',
+        helpful: Math.floor(Math.random() * 80) + 10,
+        verified: true
+      },
+      {
+        userName: 'GamerPro',
+        rating: 5,
+        title: 'Perfect for my build',
+        comment: 'Exactly what I needed. Highly recommended!',
+        helpful: Math.floor(Math.random() * 120) + 30,
+        verified: false
+      }
+    ];
+    
+    return reviewTemplates.map((review, index) => ({
+      ...review,
+      id: index + 1,
+      date: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+    }));
+  };
+
   const fetchProductDetails = async () => {
     try {
       setLoading(true);
-      // Replace with your actual API endpoint
-      // const response = await axios.get(`/api/products/${category}/${id}`);
+      console.log('Fetching product details for category:', category, 'id:', id);
+      const productData = getProductData();
       
-      // Mock data for demonstration
-      const mockProduct = {
-        id: id,
-        name: 'Intel Core i9-14900K',
-        category: category,
-        brand: 'Intel',
-        price: 589.99,
-        originalPrice: 649.99,
-        rating: 4.8,
-        reviewCount: 342,
-        likes: 256,
-        shares: 48,
-        inStock: true,
-        images: [
-          'https://via.placeholder.com/800x600/242423/f3bd4a?text=Product+Image+1',
-          'https://via.placeholder.com/800x600/242423/efece1?text=Product+Image+2',
-          'https://via.placeholder.com/800x600/242423/CFDBD5?text=Product+Image+3',
-          'https://via.placeholder.com/800x600/242423/333533?text=Product+Image+4'
-        ],
-        description: 'High-performance processor designed for gaming and content creation with exceptional multi-threaded performance. Perfect for 4K gaming at ultra settings. Features advanced architecture and premium performance capabilities. Overclocked for extra performance. Advanced thermal management keeps everything running cool and quiet.',
-        specifications: {
-          'Cores': '24 (8P + 16E)',
-          'Threads': '32',
-          'Base Clock': '3.2 GHz',
-          'Boost Clock': '6.0 GHz',
-          'TDP': '125W',
-          'Socket': 'LGA 1700',
-          'Cache': '36 MB',
-          'Integrated Graphics': 'Intel UHD Graphics 770',
-        },
-        features: [
-          'Unlocked for overclocking',
-          'Support for DDR5 memory',
-          'PCIe 5.0 support',
-          'Intel Thread Director',
-          'Intel Thermal Velocity Boost',
-        ],
-        compatibility: [
-          'Compatible with LGA 1700 motherboards',
-          'Requires BIOS update for some boards',
-          'DDR5 memory recommended',
-        ],
-        reviews: [
-          {
-            id: 1,
-            userName: 'TechGuru',
-            rating: 5,
-            date: '2024-10-15',
-            title: 'Outstanding Performance!',
-            comment: 'Best CPU I\'ve ever used. Handles everything I throw at it with ease. Gaming performance is phenomenal!',
-            helpful: 89,
-            verified: true
-          },
-          {
-            id: 2,
-            userName: 'BuilderPro',
-            rating: 4,
-            date: '2024-10-10',
-            title: 'Great but runs hot',
-            comment: 'Performance is excellent but requires a good cooler. Make sure you have proper cooling solution.',
-            helpful: 45,
-            verified: true
-          },
-          {
-            id: 3,
-            userName: 'GamerX',
-            rating: 5,
-            date: '2024-10-05',
-            title: 'Perfect for gaming',
-            comment: 'Zero bottleneck with my RTX 4090. Highly recommended for high-end builds!',
-            helpful: 123,
-            verified: false
-          }
-        ],
-      };
+      if (!productData) {
+        console.log('Product not found for category:', category, 'id:', id);
+        setProduct(null);
+      } else {
+        console.log('Product data loaded:', productData);
+        setProduct(productData);
+      }
       
-      setProduct(mockProduct);
       setLoading(false);
     } catch (error) {
       console.error('Error fetching product:', error);
+      console.error('Category:', category, 'ID:', id);
       toast.error('Failed to load product details');
+      setProduct(null);
       setLoading(false);
     }
   };
@@ -133,9 +481,17 @@ const ProductDetails = () => {
   };
 
   const handleAddToBuild = () => {
-    toast.success('Added to PC build!');
-    navigate('/builder');
-    // Add your build logic here
+    if (product) {
+      try {
+        // Use the componentKey we stored when transforming the product
+        addComponent(product.componentKey, product);
+        toast.success(`${product.name} added to your build!`);
+        navigate('/builder');
+      } catch (error) {
+        toast.error('Failed to add to build');
+        console.error('Error adding to build:', error);
+      }
+    }
   };
 
   const toggleFavorite = () => {
@@ -238,7 +594,8 @@ const ProductDetails = () => {
             style={{ 
               backgroundColor: colors.mainYellow,
               color: 'white',
-              border: `1px solid ${colors.mainYellow}`
+              border: `1px solid ${colors.mainYellow}`,
+              cursor: 'pointer'
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.backgroundColor = 'white';
@@ -399,31 +756,20 @@ const ProductDetails = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-3 mb-6">
+            <div className="flex flex-col gap-3 mb-6">
+              {/* Add to Build - Primary Action */}
               <button
-                onClick={toggleFavorite}
-                className="flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+                onClick={handleAddToBuild}
+                className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-lg font-bold hover:opacity-90 transition-opacity text-lg"
                 style={{ 
-                  backgroundColor: isFavorite ? colors.mainYellow : 'white',
-                  color: isFavorite ? 'white' : colors.mainYellow,
-                  border: `2px solid ${colors.mainYellow}`
+                  backgroundColor: colors.mainYellow,
+                  color: 'white',
+                  cursor: 'pointer'
                 }}
               >
-                {isFavorite ? <FaHeart size={20} /> : <FaRegHeart size={20} />}
-                {isFavorite ? 'Liked' : 'Like'}
-              </button>
-              <button
-                onClick={handleShare}
-                className="flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
-                style={{ 
-                  backgroundColor: 'white',
-                  color: colors.mainYellow,
-                  border: `2px solid ${colors.mainYellow}`
-                }}
-              >
-                <FaShare size={20} />
-                Share
-              </button>
+                <FaPlus size={20} />
+                Add to Build
+              </button>  
             </div>
           </div>
         </div>

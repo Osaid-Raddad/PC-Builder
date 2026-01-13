@@ -8,31 +8,24 @@ import {
   Image,
   Modal,
   ScrollView,
+  Alert,
 } from "react-native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ScreenLayout from "../../components/ScreenLayout";
 import colors from "../../config/colors";
+import motherboardsData from "../../data/components/motherboards.json";
+import { useBuild } from "../../context/BuildContext";
+import { useCompare } from "../../context/CompareContext";
 
-const MOCK_PRODUCTS = [
-  {
-    id: "1",
-    name: "Intel Core i9-13900K",
-    price: 589,
-    brand: "Intel",
-    rating: 4.8,
-  },
-  { id: "2", name: "AMD Ryzen 9 7950X", price: 699, brand: "AMD", rating: 4.9 },
-  {
-    id: "3",
-    name: "Intel Core i7-13700K",
-    price: 419,
-    brand: "Intel",
-    rating: 4.7,
-  },
-  { id: "4", name: "AMD Ryzen 7 7700X", price: 399, brand: "AMD", rating: 4.6 },
-];
+const MOCK_PRODUCTS = (motherboardsData?.motherboards || []).map(mb => ({
+  ...mb,
+  name: `${mb.manufacturer} ${mb.model}`,
+  brand: mb.manufacturer,
+}));
 
 export default function MotherboardScreen({ navigation }) {
+  const { addComponent, selectedComponents } = useBuild();
+  const { addToCompare, isInCompare, removeFromCompare, getCategory, compareList } = useCompare();
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [filters, setFilters] = useState({
     priceRange: { min: 0, max: 1000 },
@@ -77,10 +70,71 @@ export default function MotherboardScreen({ navigation }) {
     });
   };
 
-  const renderProduct = ({ item }) => (
-    <TouchableOpacity style={styles.productCard}>
+  const handleAddToBuild = (product) => {
+    addComponent('motherboard', product);
+    Alert.alert(
+      "Motherboard Added",
+      `${product.name} has been added to your build.`,
+      [
+        { text: "Continue Browsing", style: "cancel" },
+        {
+          text: "View Build",
+          onPress: () => navigation.navigate("Builder"),
+        },
+      ]
+    );
+  };
+
+  const handleCompareToggle = (product) => {
+    if (isInCompare(product.id)) {
+      removeFromCompare(product.id);
+      Alert.alert("Removed", `${product.name} removed from comparison.`);
+    } else {
+      const category = getCategory();
+      if (category && category !== 'motherboard') {
+        Alert.alert(
+          "Different Category",
+          `You can only compare products from the same category. Clear your current comparison first.`,
+          [{ text: "OK" }]
+        );
+        return;
+      }
+      if (compareList.length >= 4) {
+        Alert.alert(
+          "Limit Reached",
+          "You can compare up to 4 products at once.",
+          [{ text: "OK" }]
+        );
+        return;
+      }
+      addToCompare(product, 'motherboard');
+      Alert.alert(
+        "Added to Compare",
+        `${product.name} added to comparison.`,
+        [
+          { text: "Continue Browsing", style: "cancel" },
+          {
+            text: "View Comparison",
+            onPress: () => navigation.navigate("Comparator"),
+          },
+        ]
+      );
+    }
+  };
+
+  const renderProduct = ({ item }) => {
+    const isSelected = selectedComponents.motherboard?.model === item.model;
+    const inCompare = isInCompare(item.id);
+    
+    return (
+    <TouchableOpacity style={[styles.productCard, isSelected && styles.productCardSelected]}>
       <View style={styles.productImage}>
-        <Feather name="grid" size={48} color={colors.mainYellow} />
+        <Feather name="cpu" size={48} color={colors.mainYellow} />
+        {isSelected && (
+          <View style={styles.selectedBadge}>
+            <Feather name="check-circle" size={20} color={colors.success} />
+          </View>
+        )}
       </View>
       <View style={styles.productInfo}>
         <Text style={styles.productName}>{item.name}</Text>
@@ -93,11 +147,31 @@ export default function MotherboardScreen({ navigation }) {
           </View>
         </View>
       </View>
-      <TouchableOpacity style={styles.addButton}>
-        <Feather name="plus" size={20} color={colors.mainBlack} />
-      </TouchableOpacity>
+      <View style={styles.actionButtons}>
+        <TouchableOpacity 
+          style={[styles.addButton, isSelected && styles.addButtonSelected]}
+          onPress={() => handleAddToBuild(item)}
+        >
+          <Feather 
+            name={isSelected ? "check" : "plus"} 
+            size={20} 
+            color={isSelected ? colors.success : colors.mainBlack} 
+          />
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[styles.compareButton, inCompare && styles.compareButtonActive]}
+          onPress={() => handleCompareToggle(item)}
+        >
+          <MaterialCommunityIcons 
+            name={inCompare ? "check" : "compare"} 
+            size={20} 
+            color={inCompare ? "white" : colors.mainYellow} 
+          />
+        </TouchableOpacity>
+      </View>
     </TouchableOpacity>
-  );
+    );
+  };
 
   return (
     <ScreenLayout navigation={navigation} scrollable={false} showFooter={false}>
@@ -719,6 +793,11 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontWeight: "500",
   },
+  actionButtons: {
+    flexDirection: "column",
+    gap: 8,
+    justifyContent: "center",
+  },
   addButton: {
     width: 40,
     height: 40,
@@ -726,6 +805,33 @@ const styles = StyleSheet.create({
     backgroundColor: colors.mainYellow,
     justifyContent: "center",
     alignItems: "center",
-    alignSelf: "center",
+  },
+  addButtonSelected: {
+    backgroundColor: colors.success + "20",
+  },
+  compareButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainYellow,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  compareButtonActive: {
+    backgroundColor: colors.mainYellow,
+    borderColor: colors.mainYellow,
+  },
+  productCardSelected: {
+    borderColor: colors.success,
+    borderWidth: 2,
+  },
+  selectedBadge: {
+    position: "absolute",
+    top: -5,
+    right: -5,
+    backgroundColor: "white",
+    borderRadius: 10,
   },
 });

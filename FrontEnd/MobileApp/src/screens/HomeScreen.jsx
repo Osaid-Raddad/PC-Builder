@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import {
   View,
   Text,
@@ -15,6 +15,8 @@ import colors from "../config/colors";
 const { width } = Dimensions.get("window");
 
 export default function HomeScreen({ navigation }) {
+  const [currentPage, setCurrentPage] = useState(0);
+  const scrollViewRef = useRef(null);
   const features = [
     {
       title: "PC Builder",
@@ -80,17 +82,24 @@ export default function HomeScreen({ navigation }) {
       screen: "TechSupport",
     },
     {
+      title: "Quantum Computing",
+      description: "Explore the future of computing",
+      icon: "atom",
+      color: colors.mainYellow,
+      screen: "QuantumComputing",
+    },
+    {
       title: "FAQ",
       description: "Frequently asked questions",
       icon: "help-circle",
-      color: colors.mainYellow,
+      color: colors.primary,
       screen: "FAQ",
     },
     {
       title: "Contact",
       description: "Get in touch with us",
       icon: "email",
-      color: colors.primary,
+      color: colors.secondary,
       screen: "Contact",
     },
   ];
@@ -100,6 +109,13 @@ export default function HomeScreen({ navigation }) {
   for (let i = 0; i < features.length; i += 4) {
     groupedFeatures.push(features.slice(i, i + 4));
   }
+
+  const handleScroll = (event) => {
+    const scrollPosition = event.nativeEvent.contentOffset.x;
+    const pageWidth = width - 45 + 10; // featurePage width + marginRight
+    const page = Math.round(scrollPosition / pageWidth);
+    setCurrentPage(page);
+  };
 
   return (
     <ScreenLayout navigation={navigation}>
@@ -127,11 +143,14 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.featuresSection}>
           <Text style={styles.sectionTitle}>Features</Text>
           <ScrollView
+            ref={scrollViewRef}
             horizontal
             showsHorizontalScrollIndicator={false}
             pagingEnabled
             decelerationRate="fast"
             contentContainerStyle={styles.featuresScrollContent}
+            onScroll={handleScroll}
+            scrollEventThrottle={16}
           >
             {groupedFeatures.map((group, pageIndex) => (
               <View key={pageIndex} style={styles.featurePage}>
@@ -164,6 +183,29 @@ export default function HomeScreen({ navigation }) {
               </View>
             ))}
           </ScrollView>
+          
+          {/* Pagination Dots */}
+          <View style={styles.pagination}>
+            {groupedFeatures.map((_, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => {
+                  const pageWidth = width - 45 + 10;
+                  scrollViewRef.current?.scrollTo({
+                    x: index * pageWidth,
+                    animated: true,
+                  });
+                }}
+              >
+                <View
+                  style={[
+                    styles.paginationDot,
+                    currentPage === index && styles.paginationDotActive,
+                  ]}
+                />
+              </TouchableOpacity>
+            ))}
+          </View>
         </View>
 
         {/* Stats Section */}
@@ -267,10 +309,12 @@ const styles = StyleSheet.create({
   },
   featureCard: {
     width: "48%",
+    height: 160,
     backgroundColor: "white",
     borderRadius: 12,
     padding: 16,
     alignItems: "center",
+    justifyContent: "center",
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -298,6 +342,24 @@ const styles = StyleSheet.create({
     color: colors.text,
     textAlign: "center",
     lineHeight: 16,
+  },
+  pagination: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 16,
+    gap: 8,
+  },
+  paginationDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: colors.platinum,
+    marginHorizontal: 4,
+  },
+  paginationDotActive: {
+    width: 24,
+    backgroundColor: colors.mainYellow,
   },
   statsSection: {
     paddingBottom: 30,

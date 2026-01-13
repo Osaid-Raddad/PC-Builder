@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Navbar from '../../../components/user/navbar/Navbar';
 import Footer from '../../../components/user/footer/Footer';
 import ElectricCard from '../../../components/user/electric-card/ElectricCard';
@@ -11,10 +11,20 @@ import BlurText from '../../../components/animations/BlurText/BlurText';
 
 const CompletedBuilds = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const buildsPerPage = 6;
+
+  // Restore page number when returning from build detail
+  useEffect(() => {
+    if (location.state?.initialPage) {
+      setCurrentPage(location.state.initialPage);
+      // Clear the state to avoid restoring again on subsequent renders
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   const builds = [
     {
@@ -22,288 +32,241 @@ const CompletedBuilds = () => {
       name: 'The Beast Gaming Rig',
       owner: 'Ahmad Khalil',
       image: '/src/assets/Images/build1.jpg',
+      images: [
+        '/src/assets/Images/build1.jpg',
+        '/src/assets/Images/build2.jpg',
+        '/src/assets/Images/build3.jpg',
+        '/src/assets/Images/build4.jpg'
+      ],
       category: 'Gaming',
       cpu: 'Intel Core i9-14900K',
       gpu: 'NVIDIA RTX 4090',
       ram: '64GB DDR5',
       storage: '2TB NVMe SSD',
       psu: '1000W 80+ Platinum',
+      motherboard: 'ASUS ROG MAXIMUS Z790 HERO',
+      cpuCooler: 'NZXT Kraken Z73 RGB',
+      case: 'Lian Li O11 Dynamic EVO',
       price: '$3,500',
       likes: 234,
       comments: 45,
-      description: 'Ultimate gaming beast for 4K gaming at max settings'
+      description: 'Ultimate gaming beast for 4K gaming at max settings',
+      buildDate: 'December 2025',
+      purpose: 'High-end gaming and content creation'
     },
     {
       id: 2,
       name: 'Budget King',
       owner: 'Mohammed Nasser',
       image: '/src/assets/Images/build2.jpg',
+      images: [
+        '/src/assets/Images/build2.jpg',
+        '/src/assets/Images/build3.jpg',
+        '/src/assets/Images/build4.jpg',
+        '/src/assets/Images/build1.jpg'
+      ],
       category: 'Budget',
       cpu: 'AMD Ryzen 5 7600X',
       gpu: 'AMD RX 7600',
       ram: '16GB DDR5',
       storage: '512GB NVMe SSD',
       psu: '550W 80+ Bronze',
+      motherboard: 'MSI B650 GAMING PLUS WIFI',
+      cpuCooler: 'Stock AMD Cooler',
+      case: 'NZXT H510',
       price: '$800',
       likes: 189,
       comments: 32,
-      description: 'Best value for 1080p gaming on a tight budget'
+      description: 'Best value for 1080p gaming on a tight budget',
+      buildDate: 'November 2025',
+      purpose: '1080p gaming on a budget'
     },
     {
       id: 3,
       name: 'Workstation Pro',
       owner: 'Sara Ahmed',
       image: '/src/assets/Images/build3.jpg',
+      images: [
+        '/src/assets/Images/build3.jpg',
+        '/src/assets/Images/build4.jpg',
+        '/src/assets/Images/build1.jpg',
+        '/src/assets/Images/build2.jpg'
+      ],
       category: 'Workstation',
       cpu: 'AMD Ryzen 9 7950X',
       gpu: 'NVIDIA RTX 4080',
       ram: '128GB DDR5',
       storage: '4TB NVMe SSD',
       psu: '850W 80+ Gold',
+      motherboard: 'ASUS ProArt X670E-CREATOR WIFI',
+      cpuCooler: 'Noctua NH-D15',
+      case: 'Fractal Design Define 7',
       price: '$4,200',
       likes: 156,
       comments: 28,
-      description: 'Professional workstation for video editing and 3D rendering'
+      description: 'Professional workstation for video editing and 3D rendering',
+      buildDate: 'October 2025',
+      purpose: 'Professional content creation'
     },
     {
       id: 4,
       name: 'RGB Paradise',
       owner: 'Omar Hassan',
       image: '/src/assets/Images/build4.jpg',
+      images: [
+        '/src/assets/Images/build4.jpg',
+        '/src/assets/Images/build1.jpg',
+        '/src/assets/Images/build2.jpg',
+        '/src/assets/Images/build3.jpg'
+      ],
       category: 'Gaming',
       cpu: 'Intel Core i7-14700K',
       gpu: 'NVIDIA RTX 4070 Ti',
       ram: '32GB DDR5',
       storage: '1TB NVMe SSD',
       psu: '750W 80+ Gold',
+      motherboard: 'MSI MPG Z790 CARBON WIFI',
+      cpuCooler: 'Corsair iCUE H150i RGB',
+      case: 'Corsair 5000X RGB',
       price: '$2,100',
       likes: 312,
       comments: 67,
-      description: 'Full RGB setup with stunning visual effects'
+      description: 'Full RGB setup with stunning visual effects',
+      buildDate: 'January 2026',
+      purpose: 'Gaming with maximum RGB'
     },
     {
       id: 5,
       name: 'Silent Performer',
       owner: 'Layla Mahmoud',
       image: '/src/assets/Images/build5.jpg',
+      images: [
+        '/src/assets/Images/build5.jpg',
+        '/src/assets/Images/build1.jpg',
+        '/src/assets/Images/build3.jpg'
+      ],
       category: 'Office',
       cpu: 'Intel Core i5-14600K',
       gpu: 'Integrated Graphics',
       ram: '32GB DDR5',
       storage: '1TB NVMe SSD',
       psu: '500W 80+ Gold',
+      motherboard: 'ASUS PRIME Z790-P WIFI',
+      cpuCooler: 'be quiet! Dark Rock 4',
+      case: 'be quiet! Pure Base 500DX',
       price: '$950',
       likes: 98,
       comments: 19,
-      description: 'Quiet and efficient build for office work and productivity'
+      description: 'Quiet and efficient build for office work and productivity',
+      buildDate: 'September 2025',
+      purpose: 'Office productivity and programming'
     },
     {
       id: 6,
       name: 'Compact Powerhouse',
       owner: 'Yusuf Ali',
       image: '/src/assets/Images/build6.jpg',
+      images: [
+        '/src/assets/Images/build6.jpg',
+        '/src/assets/Images/build1.jpg',
+        '/src/assets/Images/build4.jpg',
+        '/src/assets/Images/build2.jpg'
+      ],
       category: 'Mini-ITX',
       cpu: 'AMD Ryzen 7 7800X3D',
       gpu: 'NVIDIA RTX 4070',
       ram: '32GB DDR5',
       storage: '2TB NVMe SSD',
       psu: '650W 80+ Gold SFX',
+      motherboard: 'ASUS ROG STRIX B650E-I',
+      cpuCooler: 'Noctua NH-L12S',
+      case: 'NZXT H1 V2',
       price: '$2,400',
       likes: 267,
       comments: 54,
-      description: 'Small form factor without compromising performance'
+      description: 'Small form factor without compromising performance',
+      buildDate: 'August 2025',
+      purpose: 'Compact gaming and portability'
     },
     {
       id: 7,
       name: 'White Snow Elegance',
       owner: 'Rana Saleh',
       image: '/src/assets/Images/build1.jpg',
+      images: [
+        '/src/assets/Images/build1.jpg',
+        '/src/assets/Images/build3.jpg',
+        '/src/assets/Images/build5.jpg',
+        '/src/assets/Images/build2.jpg'
+      ],
       category: 'Gaming',
       cpu: 'Intel Core i5-14600K',
       gpu: 'NVIDIA RTX 4060 Ti',
       ram: '32GB DDR5',
       storage: '1TB NVMe SSD',
       psu: '700W 80+ Gold',
+      motherboard: 'ASUS TUF GAMING Z790-PLUS WIFI',
+      cpuCooler: 'Corsair iCUE H100i Elite',
+      case: 'Lian Li O11 Dynamic Mini White',
       price: '$1,650',
       likes: 421,
       comments: 89,
-      description: 'All-white themed build with clean aesthetics and great 1440p performance'
+      description: 'All-white themed build with clean aesthetics and great 1440p performance',
+      buildDate: 'July 2025',
+      purpose: '1440p gaming with clean aesthetics'
     },
     {
       id: 8,
       name: 'Creator Studio',
       owner: 'Tariq Mansour',
       image: '/src/assets/Images/build2.jpg',
+      images: [
+        '/src/assets/Images/build2.jpg',
+        '/src/assets/Images/build3.jpg',
+        '/src/assets/Images/build4.jpg',
+        '/src/assets/Images/build5.jpg'
+      ],
       category: 'Workstation',
       cpu: 'AMD Ryzen 9 7900X',
       gpu: 'NVIDIA RTX 4070 Ti',
       ram: '64GB DDR5',
       storage: '2TB NVMe + 4TB HDD',
       psu: '850W 80+ Platinum',
+      motherboard: 'ASUS ProArt X670E-CREATOR',
+      cpuCooler: 'Arctic Liquid Freezer II 360',
+      case: 'Fractal Design Meshify 2',
       price: '$3,100',
       likes: 187,
       comments: 42,
-      description: 'Perfect for content creation, streaming, and video production'
+      description: 'Perfect for content creation, streaming, and video production',
+      buildDate: 'June 2025',
+      purpose: 'Content creation and streaming'
     },
     {
       id: 9,
       name: 'First Build Ever',
       owner: 'Noor Ibrahim',
       image: '/src/assets/Images/build3.jpg',
+      images: [
+        '/src/assets/Images/build3.jpg',
+        '/src/assets/Images/build1.jpg',
+        '/src/assets/Images/build2.jpg'
+      ],
       category: 'Budget',
       cpu: 'AMD Ryzen 5 5600',
       gpu: 'NVIDIA GTX 1660 Super',
       ram: '16GB DDR4',
       storage: '500GB NVMe SSD',
       psu: '500W 80+ Bronze',
+      motherboard: 'MSI B450 TOMAHAWK MAX II',
+      cpuCooler: 'Cooler Master Hyper 212',
+      case: 'Cooler Master MasterBox Q300L',
       price: '$650',
       likes: 278,
       comments: 96,
-      description: 'My first PC build! Great entry-level gaming performance on a student budget'
-    },
-    {
-      id: 10,
-      name: 'Cyberpunk Dream',
-      owner: 'Khalid Zaid',
-      image: '/src/assets/Images/build4.jpg',
-      category: 'Gaming',
-      cpu: 'Intel Core i9-14900KS',
-      gpu: 'NVIDIA RTX 4090',
-      ram: '64GB DDR5',
-      storage: '4TB NVMe SSD',
-      psu: '1200W 80+ Titanium',
-      price: '$5,200',
-      likes: 542,
-      comments: 134,
-      description: 'Custom water-cooled beast with neon RGB and futuristic theme'
-    },
-    {
-      id: 11,
-      name: 'Office Minimalist',
-      owner: 'Maha Fares',
-      image: '/src/assets/Images/build5.jpg',
-      category: 'Office',
-      cpu: 'Intel Core i3-14100',
-      gpu: 'Integrated UHD Graphics',
-      ram: '16GB DDR5',
-      storage: '512GB NVMe SSD',
-      psu: '450W 80+ Bronze',
-      price: '$520',
-      likes: 67,
-      comments: 12,
-      description: 'Simple and efficient setup for daily office tasks and web browsing'
-    },
-    {
-      id: 12,
-      name: 'AMD All The Way',
-      owner: 'Basel Yousef',
-      image: '/src/assets/Images/build6.jpg',
-      category: 'Gaming',
-      cpu: 'AMD Ryzen 7 7800X3D',
-      gpu: 'AMD Radeon RX 7900 XTX',
-      ram: '32GB DDR5',
-      storage: '2TB NVMe SSD',
-      psu: '850W 80+ Gold',
-      price: '$2,800',
-      likes: 334,
-      comments: 71,
-      description: 'Full AMD build with excellent gaming performance and SAM enabled'
-    },
-    {
-      id: 13,
-      name: 'ITX Travel Companion',
-      owner: 'Dina Rashid',
-      image: '/src/assets/Images/build1.jpg',
-      category: 'Mini-ITX',
-      cpu: 'AMD Ryzen 5 7600X',
-      gpu: 'NVIDIA RTX 4060',
-      ram: '32GB DDR5',
-      storage: '1TB NVMe SSD',
-      psu: '600W 80+ Gold SFX',
-      price: '$1,450',
-      likes: 203,
-      comments: 38,
-      description: 'Portable gaming setup that fits in a backpack for LAN parties'
-    },
-    {
-      id: 14,
-      name: 'Retro Gaming Station',
-      owner: 'Fadi Haddad',
-      image: '/src/assets/Images/build2.jpg',
-      category: 'Budget',
-      cpu: 'Intel Core i5-12400F',
-      gpu: 'AMD RX 6600',
-      ram: '16GB DDR4',
-      storage: '1TB NVMe SSD',
-      psu: '550W 80+ Bronze',
-      price: '$750',
-      likes: 145,
-      comments: 29,
-      description: 'Perfect for emulation and playing older games at high settings'
-    },
-    {
-      id: 15,
-      name: 'Dual Monitor Workstation',
-      owner: 'Hiba Kamal',
-      image: '/src/assets/Images/build3.jpg',
-      category: 'Workstation',
-      cpu: 'AMD Ryzen 7 7700X',
-      gpu: 'NVIDIA RTX 4060 Ti',
-      ram: '64GB DDR5',
-      storage: '2TB NVMe SSD',
-      psu: '750W 80+ Gold',
-      price: '$2,300',
-      likes: 176,
-      comments: 34,
-      description: 'Productivity powerhouse for multitasking with dual 4K monitors'
-    },
-    {
-      id: 16,
-      name: 'Silent Assassin',
-      owner: 'Jamal Qasim',
-      image: '/src/assets/Images/build4.jpg',
-      category: 'Gaming',
-      cpu: 'Intel Core i7-14700F',
-      gpu: 'NVIDIA RTX 4070 Super',
-      ram: '32GB DDR5',
-      storage: '2TB NVMe SSD',
-      psu: '750W 80+ Gold',
-      price: '$2,200',
-      likes: 298,
-      comments: 56,
-      description: 'Ultra-quiet build with premium Noctua cooling and sound dampening'
-    },
-    {
-      id: 17,
-      name: 'Family PC',
-      owner: 'Amira Taleb',
-      image: '/src/assets/Images/build5.jpg',
-      category: 'Office',
-      cpu: 'AMD Ryzen 5 5600G',
-      gpu: 'Integrated Radeon Graphics',
-      ram: '16GB DDR4',
-      storage: '512GB NVMe SSD',
-      psu: '450W 80+ Bronze',
-      price: '$480',
-      likes: 92,
-      comments: 18,
-      description: 'Affordable family computer for homework, browsing, and light tasks'
-    },
-    {
-      id: 18,
-      name: 'Green Machine',
-      owner: 'Sami Najjar',
-      image: '/src/assets/Images/build6.jpg',
-      category: 'Gaming',
-      cpu: 'AMD Ryzen 5 7600X',
-      gpu: 'NVIDIA RTX 4070',
-      ram: '32GB DDR5',
-      storage: '1TB NVMe SSD',
-      psu: '700W 80+ Gold',
-      price: '$1,850',
-      likes: 256,
-      comments: 48,
-      description: 'Green and black themed build with excellent 1440p gaming performance'
+      description: 'My first PC build! Great entry-level gaming performance on a student budget',
+      buildDate: 'May 2025',
+      purpose: 'Entry-level gaming on student budget'
     }
   ];
 
@@ -438,7 +401,7 @@ const CompletedBuilds = () => {
               className="hover:shadow-2xl transition-all duration-300 cursor-pointer"
               onClick={() => {
                 window.scrollTo({ top: 0, behavior: 'instant' });
-                navigate(`/build/${build.id}`);
+                navigate(`/completed-builds/${build.id}`, { state: { fromPage: currentPage } });
               }}
             >
               <div

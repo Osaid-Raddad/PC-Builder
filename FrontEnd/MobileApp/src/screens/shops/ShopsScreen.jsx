@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,9 +8,12 @@ import {
   ScrollView,
   Image,
   Linking,
+  Alert,
 } from "react-native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import ScreenLayout from "../../components/ScreenLayout";
+import SubmitShopModal from "./SubmitShopModal";
 import colors from "../../config/colors";
 
 const ALL_SHOPS = [
@@ -258,6 +261,19 @@ const ALL_SHOPS = [
 
 export default function ShopsScreen({ navigation }) {
   const [selectedCity, setSelectedCity] = useState('All');
+  const [showSubmitModal, setShowSubmitModal] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const shopsPerPage = 6;
+
+  // Check if user is logged in
+  useEffect(() => {
+    const checkLoginStatus = async () => {
+      const token = await AsyncStorage.getItem('authToken');
+      setIsLoggedIn(!!token);
+    };
+    checkLoginStatus();
+  }, []);
   
   // Get unique cities for filter
   const cities = ['All', ...new Set(ALL_SHOPS.map(shop => shop.city))];
@@ -267,8 +283,31 @@ export default function ShopsScreen({ navigation }) {
     ? ALL_SHOPS 
     : ALL_SHOPS.filter(shop => shop.city === selectedCity);
 
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredShops.length / shopsPerPage);
+  const indexOfLastShop = currentPage * shopsPerPage;
+  const indexOfFirstShop = indexOfLastShop - shopsPerPage;
+  const currentShops = filteredShops.slice(indexOfFirstShop, indexOfLastShop);
+
   const openShopUrl = (url) => {
     Linking.openURL(url).catch(err => console.error("Couldn't load page", err));
+  };
+
+  const handleSubmitShop = () => {
+    if (isLoggedIn) {
+      setShowSubmitModal(true);
+    } else {
+      Alert.alert('Sign In Required', 'Please sign in to submit your shop');
+    }
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handleCityFilter = (city) => {
+    setSelectedCity(city);
+    setCurrentPage(1); // Reset to first page when changing filter
   };
   const renderShop = ({ item }) => (
     <TouchableOpacity 
@@ -305,7 +344,7 @@ export default function ShopsScreen({ navigation }) {
     <ScreenLayout navigation={navigation} scrollable={false} showFooter={false}>
       <View style={styles.container}>
         <FlatList
-          data={filteredShops}
+          data={currentShops}
           renderItem={renderShop}
           keyExtractor={(item) => item.id.toString()}
           ListHeaderComponent={
@@ -329,7 +368,7 @@ export default function ShopsScreen({ navigation }) {
                         styles.cityButton,
                         selectedCity === item && styles.cityButtonActive
                       ]}
-                      onPress={() => setSelectedCity(item)}
+                      onPress={() => handleCityFilter(item)}
                     >
                       <Text
                         style={[
@@ -345,9 +384,126 @@ export default function ShopsScreen({ navigation }) {
               </View>
             </>
           }
+          ListFooterComponent={
+            <>
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <View style={styles.paginationContainer}>
+                  {/* Previous Button */}
+                  <TouchableOpacity
+                    style={[
+                      styles.paginationButton,
+                      currentPage === 1 && styles.paginationButtonDisabled
+                    ]}
+                    onPress={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    <Feather name="chevron-left" size={20} color={currentPage === 1 ? colors.jet : colors.mainYellow} />
+                    <Text style={[
+                      styles.paginationButtonText,
+                      currentPage === 1 && styles.paginationButtonTextDisabled
+                    ]}>
+                      Prev
+                    </Text>
+                  </TouchableOpacity>
+
+                  {/* Page Numbers */}
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.pageNumbersContainer}
+                  >
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
+                      <TouchableOpacity
+                        key={pageNumber}
+                        style={[
+                          styles.pageNumberButton,
+                          currentPage === pageNumber && styles.pageNumberButtonActive
+                        ]}
+                        onPress={() => handlePageChange(pageNumber)}
+                      >
+                        <Text
+                          style={[
+                            styles.pageNumberText,
+                            currentPage === pageNumber && styles.pageNumberTextActive
+                          ]}
+                        >
+                          {pageNumber}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+
+                  {/* Next Button */}
+                  <TouchableOpacity
+                    style={[
+                      styles.paginationButton,
+                      currentPage === totalPages && styles.paginationButtonDisabled
+                    ]}
+                    onPress={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    <Text style={[
+                      styles.paginationButtonText,
+                      currentPage === totalPages && styles.paginationButtonTextDisabled
+                    ]}>
+                      Next
+                    </Text>
+                    <Feather name="chevron-right" size={20} color={currentPage === totalPages ? colors.jet : colors.mainYellow} />
+                  </TouchableOpacity>
+                </View>
+              )}
+
+              {/* Submit Your Shop Section */}
+              <View style={styles.submitShopSection}>
+                <MaterialCommunityIcons
+                  name="store"
+                  size={48}
+                  color={colors.mainYellow}
+                  style={styles.submitShopIcon}
+                />
+                <Text style={styles.submitShopTitle}>Own a Computer Shop?</Text>
+                <Text style={styles.submitShopDescription}>
+                  List your shop on our platform and reach thousands of PC builders and tech enthusiasts across Palestine!
+                </Text>
+                {!isLoggedIn && (
+                  <Text style={styles.submitShopWarning}>
+                    Please sign in to submit your shop
+                  </Text>
+                )}
+                <TouchableOpacity
+                  style={[
+                    styles.submitShopButton,
+                    !isLoggedIn && styles.submitShopButtonDisabled
+                  ]}
+                  onPress={handleSubmitShop}
+                  disabled={!isLoggedIn}
+                >
+                  <Feather name="plus" size={18} color="white" />
+                  <Text style={styles.submitShopButtonText}>
+                    {isLoggedIn ? 'Submit Your Shop' : 'Sign In Required'}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Info Section */}
+              <View style={styles.infoSection}>
+                <Text style={styles.infoTitle}>Why Shop Local?</Text>
+                <Text style={styles.infoDescription}>
+                  Support local Palestinian businesses and get expert advice, warranty support, and fast delivery for your PC building needs. All shops listed above offer quality products and reliable customer service.
+                </Text>
+              </View>
+            </>
+          }
           contentContainerStyle={styles.listContainer}
         />
       </View>
+
+      {/* Submit Shop Modal */}
+      <SubmitShopModal
+        visible={showSubmitModal}
+        onClose={() => setShowSubmitModal(false)}
+      />
     </ScreenLayout>
   );
 }
@@ -463,5 +619,134 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: colors.mainBlack,
     fontWeight: "500",
+  },
+  paginationContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 20,
+    gap: 10,
+  },
+  paginationButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: colors.mainYellow,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 8,
+    gap: 6,
+  },
+  paginationButtonDisabled: {
+    backgroundColor: colors.platinum,
+    opacity: 0.6,
+  },
+  paginationButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: 'white',
+  },
+  paginationButtonTextDisabled: {
+    color: colors.jet,
+  },
+  pageNumbersContainer: {
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+  },
+  pageNumberButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    backgroundColor: 'white',
+    borderWidth: 2,
+    borderColor: colors.platinum,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  pageNumberButtonActive: {
+    backgroundColor: colors.mainYellow,
+    borderColor: colors.mainYellow,
+  },
+  pageNumberText: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: colors.mainBlack,
+  },
+  pageNumberTextActive: {
+    color: 'white',
+  },
+  submitShopSection: {
+    backgroundColor: colors.mainYellow + '15',
+    borderWidth: 2,
+    borderColor: colors.mainYellow,
+    borderRadius: 12,
+    padding: 20,
+    marginTop: 20,
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  submitShopIcon: {
+    marginBottom: 12,
+  },
+  submitShopTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: colors.mainBlack,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  submitShopDescription: {
+    fontSize: 14,
+    color: colors.jet,
+    marginBottom: 12,
+    textAlign: 'center',
+    lineHeight: 20,
+  },
+  submitShopWarning: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: colors.mainYellow,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  submitShopButton: {
+    flexDirection: 'row',
+    backgroundColor: colors.mainYellow,
+    paddingHorizontal: 24,
+    paddingVertical: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  submitShopButtonDisabled: {
+    backgroundColor: colors.platinum,
+    opacity: 0.6,
+  },
+  submitShopButtonText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: 'white',
+    marginLeft: 8,
+  },
+  infoSection: {
+    backgroundColor: 'white',
+    borderWidth: 2,
+    borderColor: colors.mainYellow,
+    borderRadius: 12,
+    padding: 20,
+    marginBottom: 20,
+  },
+  infoTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: colors.mainBlack,
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  infoDescription: {
+    fontSize: 14,
+    color: colors.jet,
+    textAlign: 'center',
+    lineHeight: 20,
   },
 });
