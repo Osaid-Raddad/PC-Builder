@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -6,8 +6,11 @@ import {
   StyleSheet,
   Image,
   Alert,
+  Modal,
+  TextInput,
 } from "react-native";
 import { MaterialCommunityIcons, Feather } from "@expo/vector-icons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import ScreenLayout from "../../components/ScreenLayout";
 import colors from "../../config/colors";
 import { useBuild } from "../../context/BuildContext";
@@ -20,7 +23,11 @@ export default function BuilderScreen({ navigation }) {
     checkCompatibility,
     getPerformanceScore,
     clearBuild,
+    removeComponent,
   } = useBuild();
+
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [buildName, setBuildName] = useState('');
 
   const components = [
     { id: "cpu", name: "CPU", icon: "cpu-64-bit", description: "Choose your processor", required: true, screen: "CPU" },
@@ -62,6 +69,75 @@ export default function BuilderScreen({ navigation }) {
     navigation.navigate(screen);
   };
 
+  const handleRemoveComponent = (componentId, componentName) => {
+    Alert.alert(
+      "Remove Component",
+      `Remove ${componentName}?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Remove",
+          style: "destructive",
+          onPress: () => removeComponent(componentId),
+        },
+      ]
+    );
+  };
+
+  const handleSaveBuild = () => {
+    if (componentCount === 0) {
+      Alert.alert("Empty Build", "Please add at least one component before saving.");
+      return;
+    }
+    setShowSaveModal(true);
+  };
+
+  const saveBuildWithName = async () => {
+    if (!buildName.trim()) {
+      Alert.alert("Build Name Required", "Please enter a name for your build.");
+      return;
+    }
+
+    try {
+      const newBuild = {
+        id: Date.now().toString(),
+        name: buildName.trim(),
+        components: selectedComponents,
+        totalPrice: totalPrice,
+        totalPower: totalPower,
+        compatibility: compatibility,
+        performance: performance,
+        componentCount: componentCount,
+        createdAt: new Date().toISOString(),
+      };
+
+      // Get existing builds
+      const existingBuildsJson = await AsyncStorage.getItem('savedBuilds');
+      const existingBuilds = existingBuildsJson ? JSON.parse(existingBuildsJson) : [];
+
+      // Add new build
+      const updatedBuilds = [newBuild, ...existingBuilds];
+
+      // Save to AsyncStorage
+      await AsyncStorage.setItem('savedBuilds', JSON.stringify(updatedBuilds));
+
+      setShowSaveModal(false);
+      setBuildName('');
+
+      Alert.alert(
+        "Build Saved!",
+        `"${buildName}" has been saved to your builds.`,
+        [
+          { text: "OK" },
+          { text: "View Builds", onPress: () => navigation.navigate('Profile') }
+        ]
+      );
+    } catch (error) {
+      console.error('Error saving build:', error);
+      Alert.alert("Error", "Failed to save build. Please try again.");
+    }
+  };
+
   return (
     <ScreenLayout navigation={navigation}>
       <View style={styles.container}>
@@ -70,7 +146,6 @@ export default function BuilderScreen({ navigation }) {
             source={require("../../../assets/LogoBig.png")}
             style={styles.logoImage}
           />
-          <Text style={styles.title}>PC Builder</Text>
           <Text style={styles.subtitle}>Build your custom PC step by step</Text>
         </View>
 
@@ -196,18 +271,39 @@ export default function BuilderScreen({ navigation }) {
                     </View>
                   )}
                 </View>
-                <Text style={styles.componentStatus}>
-                  {selectedComponents[component.id]
-                    ? "Selected"
-                    : "Not selected"}
-                </Text>
+                {selectedComponents[component.id] ? (
+                  <View style={styles.selectedProductInfo}>
+                    <View style={styles.selectedProductDetails}>
+                      <Text style={styles.selectedProductName}>
+                        {selectedComponents[component.id].name || 
+                         `${selectedComponents[component.id].brand || selectedComponents[component.id].manufacturer || ''} ${selectedComponents[component.id].model || ''}`.trim()}
+                      </Text>
+                      <Text style={styles.selectedProductPrice}>
+                        ${selectedComponents[component.id].price}
+                      </Text>
+                    </View>
+                    <TouchableOpacity 
+                      style={styles.removeButton}
+                      onPress={() => handleRemoveComponent(component.id, component.name)}
+                    >
+                      <Feather name="x" size={20} color={colors.error} />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <Text style={styles.componentStatus}>
+                    {component.description}
+                  </Text>
+                )}
               </View>
               <Feather name="chevron-right" size={24} color={colors.platinum} />
             </TouchableOpacity>
           ))}
         </View>
 
-        <TouchableOpacity style={styles.saveButton}>
+        <TouchableOpacity 
+          style={styles.saveButton}
+          onPress={handleSaveBuild}
+        >
           <Feather name="save" size={20} color={colors.mainBlack} />
           <Text style={styles.saveButtonText}>Save Build</Text>
         </TouchableOpacity>
@@ -219,6 +315,64 @@ export default function BuilderScreen({ navigation }) {
           <Feather name="trash-2" size={20} color={colors.error} />
           <Text style={styles.clearButtonText}>Clear All</Text>
         </TouchableOpacity>
+
+        {/* Save Build Modal */}
+        <Modal
+          visible={showSaveModal}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={() => setShowSaveModal(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.saveModal}>
+              <Text style={styles.modalTitle}>Save Build</Text>
+              <Text style={styles.modalSubtitle}>Give your build a name</Text>
+              
+              <TextInput
+                style={styles.buildNameInput}
+                placeholder="e.g., Gaming Beast 2026"
+                placeholderTextColor={colors.text}
+                value={buildName}
+                onChangeText={setBuildName}
+                autoFocus
+              />
+
+              <View style={styles.buildSummary}>
+                <View style={styles.summaryRow}>
+                  <Text style={styles.summaryLabel}>Components:</Text>
+                  <Text style={styles.summaryValue}>{componentCount}</Text>
+                </View>
+                <View style={styles.summaryRow}>
+                  <Text style={styles.summaryLabel}>Total Cost:</Text>
+                  <Text style={styles.summaryValue}>${totalPrice.toFixed(0)}</Text>
+                </View>
+                <View style={styles.summaryRow}>
+                  <Text style={styles.summaryLabel}>Power:</Text>
+                  <Text style={styles.summaryValue}>{totalPower}W</Text>
+                </View>
+              </View>
+
+              <View style={styles.modalButtons}>
+                <TouchableOpacity
+                  style={styles.modalCancelButton}
+                  onPress={() => {
+                    setShowSaveModal(false);
+                    setBuildName('');
+                  }}
+                >
+                  <Text style={styles.modalCancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.modalSaveButton}
+                  onPress={saveBuildWithName}
+                >
+                  <Feather name="save" size={18} color={colors.mainBlack} />
+                  <Text style={styles.modalSaveButtonText}>Save</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </View>
     </ScreenLayout>
   );
@@ -436,6 +590,39 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: colors.text,
   },
+  selectedProductInfo: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    flex: 1,
+  },
+  selectedProductDetails: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginRight: 8,
+  },
+  selectedProductName: {
+    fontSize: 14,
+    color: colors.success,
+    fontWeight: "500",
+    flex: 1,
+  },
+  selectedProductPrice: {
+    fontSize: 14,
+    color: colors.mainYellow,
+    fontWeight: "600",
+    marginLeft: 8,
+  },
+  removeButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.error + "10",
+    justifyContent: "center",
+    alignItems: "center",
+  },
   saveButton: {
     flexDirection: "row",
     backgroundColor: colors.mainYellow,
@@ -466,5 +653,94 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "600",
     marginLeft: 8,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  saveModal: {
+    backgroundColor: "white",
+    borderRadius: 16,
+    padding: 24,
+    width: "100%",
+    maxWidth: 400,
+  },
+  modalTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: colors.mainBlack,
+    marginBottom: 8,
+  },
+  modalSubtitle: {
+    fontSize: 14,
+    color: colors.text,
+    marginBottom: 20,
+  },
+  buildNameInput: {
+    backgroundColor: colors.background,
+    borderRadius: 8,
+    padding: 12,
+    fontSize: 16,
+    color: colors.mainBlack,
+    marginBottom: 20,
+    borderWidth: 1,
+    borderColor: colors.mainYellow,
+  },
+  buildSummary: {
+    backgroundColor: colors.background,
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 20,
+  },
+  summaryRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  summaryLabel: {
+    fontSize: 14,
+    color: colors.text,
+  },
+  summaryValue: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: colors.mainBlack,
+  },
+  modalButtons: {
+    flexDirection: "row",
+    gap: 12,
+  },
+  modalCancelButton: {
+    flex: 1,
+    backgroundColor: "white",
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  modalCancelButtonText: {
+    color: colors.text,
+    fontSize: 16,
+    fontWeight: "600",
+  },
+  modalSaveButton: {
+    flex: 1,
+    flexDirection: "row",
+    backgroundColor: colors.mainYellow,
+    borderRadius: 8,
+    paddingVertical: 12,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 8,
+  },
+  modalSaveButtonText: {
+    color: colors.mainBlack,
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
