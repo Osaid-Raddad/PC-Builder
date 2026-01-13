@@ -17,8 +17,25 @@ import { apiClient } from "../../config/api";
 import EditProfileModal from "./EditProfileModal";
 
 export default function ProfileScreen({ navigation }) {
-  const [isLoading, setIsLoading] = useState(true);
-  const [userData, setUserData] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [userData, setUserData] = useState({
+    id: '',
+    name: 'Loading...',
+    email: 'Loading...',
+    phone: '-',
+    city: '-',
+    street: '-',
+    location: '-',
+    bio: 'Loading profile...',
+    role: 'Member',
+    joinDate: '-',
+    avatar: 'https://ui-avatars.com/api/?name=User&background=F9B233&color=fff&size=200',
+    stats: {
+      builds: 0,
+      favorites: 0,
+      posts: 0
+    }
+  });
   const [activeTab, setActiveTab] = useState('overview');
   const [showEditModal, setShowEditModal] = useState(false);
   const [myPosts, setMyPosts] = useState([]);
@@ -58,14 +75,12 @@ export default function ProfileScreen({ navigation }) {
 
   const fetchProfileData = async () => {
     try {
-      setIsLoading(true);
       
       const profileResponse = await apiClient.get('/Profile/UserProfile/profile');
       const profileData = profileResponse.data;
       
       // Check if user is TechSupport and redirect to TechSupportProfileScreen
       if (profileData.role === 'TechSupport') {
-        setIsLoading(false);
         navigation.replace('TechSupportProfile');
         return;
       }
@@ -108,8 +123,6 @@ export default function ProfileScreen({ navigation }) {
     } catch (error) {
       console.error('Error fetching profile data:', error);
       Alert.alert('Error', 'Failed to load profile data');
-    } finally {
-      setIsLoading(false);
     }
   };
 
