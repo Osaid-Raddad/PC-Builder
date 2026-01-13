@@ -6,6 +6,9 @@ import Footer from '../../../components/user/footer/Footer.jsx';
 import colors from '../../../config/colors';
 import { FiArrowLeft } from 'react-icons/fi';
 import { MdCompareArrows } from 'react-icons/md';
+import { BsCpuFill } from 'react-icons/bs';
+import { FaMicrochip, FaMemory, FaHdd, FaBolt, FaBox, FaFan, FaDesktop, FaTools, FaNetworkWired, FaKeyboard } from 'react-icons/fa';
+import { GiVideoCamera } from 'react-icons/gi';
 
 const Comparator = () => {
   const navigate = useNavigate();
@@ -54,32 +57,34 @@ const Comparator = () => {
       
       <div className="flex-1 container mx-auto px-4 py-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center cursor-pointer gap-2 px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
-            style={{ backgroundColor: colors.mainYellow, color: 'white' }}
-          >
-            <FiArrowLeft size={20} />
-            Back
-          </button>
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <button
+              onClick={() => navigate(-1)}
+              className="flex items-center cursor-pointer gap-2 px-4 py-2 rounded-lg hover:opacity-80 transition-opacity"
+              style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+            >
+              <FiArrowLeft size={20} />
+              Back
+            </button>
+            
+            {compareList.length > 0 && (
+              <button
+                onClick={clearCompare}
+                className="px-4 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity"
+                style={{ backgroundColor: '#F44336', color: 'white' }}
+              >
+                Clear All
+              </button>
+            )}
+          </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center justify-center gap-3">
             <MdCompareArrows size={40} style={{ color: colors.mainYellow }} />
             <h1 className="text-3xl font-bold" style={{ color: colors.mainBlack }}>
               Compare {category ? categoryNames[category] : 'Components'}
             </h1>
           </div>
-          
-          {compareList.length > 0 && (
-            <button
-              onClick={clearCompare}
-              className="px-4 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity"
-              style={{ backgroundColor: '#F44336', color: 'white' }}
-            >
-              Clear All
-            </button>
-          )}
         </div>
 
         {compareList.length === 0 ? (
@@ -93,15 +98,115 @@ const Comparator = () => {
               No Products Selected
             </h2>
             <p className="text-lg mb-6" style={{ color: colors.jet }}>
-              Go to any product category and click the "+" button to add products for comparison
+              Select a category below to browse products and add them for comparison
             </p>
-            <button
-              onClick={() => navigate('/products/cpu')}
-              className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-opacity"
-              style={{ backgroundColor: colors.mainYellow, color: 'white' , cursor: 'pointer'}}
-            >
-              Browse Products
-            </button>
+            
+            {/* Product Category Buttons - Horizontal Slide Bar */}
+            <div className="relative max-w-5xl mx-auto">
+              <div className="overflow-x-auto pb-4" style={{ scrollbarWidth: 'thin', scrollbarColor: `${colors.mainYellow} ${colors.platinum}` }}>
+                <div className="flex gap-3 min-w-max px-2">
+                  <button
+                    onClick={() => navigate('/products/cpu')}
+                    className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
+                    style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
+                  >
+                    <BsCpuFill size={20} />
+                    CPUs
+                  </button>
+                  <button
+                    onClick={() => navigate('/products/gpu')}
+                    className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
+                    style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
+                  >
+                    <GiVideoCamera size={20} />
+                    GPUs
+                  </button>
+                  <button
+                    onClick={() => navigate('/products/motherboard')}
+                    className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
+                    style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
+                  >
+                    <FaMicrochip size={20} />
+                    Motherboards
+                  </button>
+                  <button
+                    onClick={() => navigate('/products/memory')}
+                    className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
+                    style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
+                  >
+                    <FaMemory size={20} />
+                    Memory
+                  </button>
+                  <button
+                    onClick={() => navigate('/products/storage')}
+                    className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
+                    style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
+                  >
+                    <FaHdd size={20} />
+                    Storage
+                  </button>
+                  <button
+                    onClick={() => navigate('/products/power-supply')}
+                    className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
+                    style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
+                  >
+                    <FaBolt size={20} />
+                    Power Supplies
+                  </button>
+                  <button
+                    onClick={() => navigate('/products/case')}
+                    className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
+                    style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
+                  >
+                    <FaBox size={20} />
+                    Cases
+                  </button>
+                  <button
+                    onClick={() => navigate('/products/cooler')}
+                    className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
+                    style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
+                  >
+                    <FaFan size={20} />
+                    CPU Coolers
+                  </button>
+                  <button
+                    onClick={() => navigate('/products/monitor')}
+                    className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
+                    style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
+                  >
+                    <FaDesktop size={20} />
+                    Monitors
+                  </button>
+                  <button
+                    onClick={() => navigate('/products/accessories')}
+                    className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
+                    style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
+                  >
+                    <FaTools size={20} />
+                    Accessories
+                  </button>
+                  <button
+                    onClick={() => navigate('/products/expansion')}
+                    className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
+                    style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
+                  >
+                    <FaNetworkWired size={20} />
+                    Expansion Cards
+                  </button>
+                  <button
+                    onClick={() => navigate('/products/peripherals')}
+                    className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
+                    style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
+                  >
+                    <FaKeyboard size={20} />
+                    Peripherals
+                  </button>
+                </div>
+              </div>
+              <p className="text-sm mt-2" style={{ color: colors.jet }}>
+                ← Scroll to see all categories →
+              </p>
+            </div>
           </div>
         ) : (
           /* Comparison Table */
