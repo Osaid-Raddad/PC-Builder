@@ -106,7 +106,7 @@ const Comparator = () => {
               <div className="overflow-x-auto pb-4" style={{ scrollbarWidth: 'thin', scrollbarColor: `${colors.mainYellow} ${colors.platinum}` }}>
                 <div className="flex gap-3 min-w-max px-2">
                   <button
-                    onClick={() => navigate('/products/cpu')}
+                    onClick={() => navigate('/products/cpu?source=comparator')}
                     className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
                     style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
                   >
@@ -114,7 +114,7 @@ const Comparator = () => {
                     CPUs
                   </button>
                   <button
-                    onClick={() => navigate('/products/gpu')}
+                    onClick={() => navigate('/products/gpu?source=comparator')}
                     className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
                     style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
                   >
@@ -122,7 +122,7 @@ const Comparator = () => {
                     GPUs
                   </button>
                   <button
-                    onClick={() => navigate('/products/motherboard')}
+                    onClick={() => navigate('/products/motherboard?source=comparator')}
                     className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
                     style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
                   >
@@ -130,7 +130,7 @@ const Comparator = () => {
                     Motherboards
                   </button>
                   <button
-                    onClick={() => navigate('/products/memory')}
+                    onClick={() => navigate('/products/memory?source=comparator')}
                     className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
                     style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
                   >
@@ -138,7 +138,7 @@ const Comparator = () => {
                     Memory
                   </button>
                   <button
-                    onClick={() => navigate('/products/storage')}
+                    onClick={() => navigate('/products/storage?source=comparator')}
                     className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
                     style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
                   >
@@ -146,7 +146,7 @@ const Comparator = () => {
                     Storage
                   </button>
                   <button
-                    onClick={() => navigate('/products/power-supply')}
+                    onClick={() => navigate('/products/power-supply?source=comparator')}
                     className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
                     style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
                   >
@@ -154,7 +154,7 @@ const Comparator = () => {
                     Power Supplies
                   </button>
                   <button
-                    onClick={() => navigate('/products/case')}
+                    onClick={() => navigate('/products/case?source=comparator')}
                     className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
                     style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
                   >
@@ -162,7 +162,7 @@ const Comparator = () => {
                     Cases
                   </button>
                   <button
-                    onClick={() => navigate('/products/cooler')}
+                    onClick={() => navigate('/products/cooler?source=comparator')}
                     className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
                     style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
                   >
@@ -170,7 +170,7 @@ const Comparator = () => {
                     CPU Coolers
                   </button>
                   <button
-                    onClick={() => navigate('/products/monitor')}
+                    onClick={() => navigate('/products/monitor?source=comparator')}
                     className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
                     style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
                   >
@@ -178,7 +178,7 @@ const Comparator = () => {
                     Monitors
                   </button>
                   <button
-                    onClick={() => navigate('/products/accessories')}
+                    onClick={() => navigate('/products/accessories?source=comparator')}
                     className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
                     style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
                   >
@@ -186,7 +186,7 @@ const Comparator = () => {
                     Accessories
                   </button>
                   <button
-                    onClick={() => navigate('/products/expansion')}
+                    onClick={() => navigate('/products/expansion?source=comparator')}
                     className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
                     style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
                   >
@@ -194,7 +194,7 @@ const Comparator = () => {
                     Expansion Cards
                   </button>
                   <button
-                    onClick={() => navigate('/products/peripherals')}
+                    onClick={() => navigate('/products/peripherals?source=comparator')}
                     className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-all hover:scale-105 whitespace-nowrap flex items-center gap-2"
                     style={{ backgroundColor: colors.mainYellow, color: 'white', cursor: 'pointer' }}
                   >
@@ -280,7 +280,7 @@ const Comparator = () => {
             {compareList.length < 4 && (
               <div className="p-4 text-center" style={{ backgroundColor: colors.mainBeige }}>
                 <button
-                  onClick={() => navigate(`/products/${category}`)}
+                  onClick={() => navigate(`/products/${category}?source=comparator`)}
                   className="px-6 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity"
                   style={{ backgroundColor: colors.mainYellow, color: 'white' }}
                 >

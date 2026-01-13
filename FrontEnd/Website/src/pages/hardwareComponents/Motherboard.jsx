@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useBuild } from '../../context/BuildContext';
 import { useCompare } from '../../context/CompareContext';
 import toast from 'react-hot-toast';
@@ -13,6 +13,8 @@ import motherboardsData from '../../data/components/motherboards.json';
 
 const Motherboard = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const source = searchParams.get('source'); // 'builder' or 'comparator'
   const { addComponent } = useBuild();
   const { compareList, addToCompare, isInCompare, removeFromCompare, getCategory } = useCompare();
   const [selectedMotherboard, setSelectedMotherboard] = useState(null);
@@ -972,59 +974,72 @@ const Motherboard = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="grid grid-cols-3 gap-2">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      addComponent('motherboard', motherboard);
-                      navigate('/builder');
-                    }}
-                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
-                    style={{
-                      backgroundColor: selectedMotherboard?.id === motherboard.id ? colors.mainYellow : 'white',
-                      color: selectedMotherboard?.id === motherboard.id ? 'white' : colors.mainYellow,
-                      border: `2px solid ${colors.mainYellow}`
-                    }}
-                  >
-                    {selectedMotherboard?.id === motherboard.id ? 'Selected' : 'Select'}
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const currentCategory = getCategory();
-                      if (currentCategory && currentCategory !== 'motherboard') {
-                        toast.error(`You can only compare motherboards together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
-                        return;
-                      }
-                      if (isInCompare(motherboard.id)) {
-                        removeFromCompare(motherboard.id);
-                      } else {
-                        if (compareList.length >= 4) {
-                          toast.error('You can compare up to 4 products at once.', { duration: 3000 });
-                          return;
-                        }
-                        addToCompare(motherboard, 'motherboard');
-                      }
-                    }}
-                    className="px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
-                    style={{
-                      backgroundColor: isInCompare(motherboard.id) ? colors.mainYellow : 'white',
-                      color: isInCompare(motherboard.id) ? 'white' : colors.mainYellow,
-                      border: `2px solid ${colors.mainYellow}`
-                    }}
-                  >
-                    {isInCompare(motherboard.id) ? '✓' : '+'}
-                  </button>
+                <div className="flex gap-2 justify-between">
+                  {/* Only show action buttons if source exists (from builder or comparator) */}
+                  {source && (
+                    <>
+                      {/* Add to Build button - hide if from comparator */}
+                      {source !== 'comparator' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            addComponent('motherboard', motherboard);
+                            navigate('/builder');
+                          }}
+                          className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer flex-1"
+                          style={{
+                            backgroundColor: selectedMotherboard?.id === motherboard.id ? colors.mainYellow : 'white',
+                            color: selectedMotherboard?.id === motherboard.id ? 'white' : colors.mainYellow,
+                            border: `2px solid ${colors.mainYellow}`
+                          }}
+                        >
+                          {selectedMotherboard?.id === motherboard.id ? 'Selected' : 'Select'}
+                        </button>
+                      )}
+                      
+                      {/* Compare button - hide if from builder */}
+                      {source !== 'builder' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const currentCategory = getCategory();
+                            if (currentCategory && currentCategory !== 'motherboard') {
+                              toast.error(`You can only compare motherboards together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
+                              return;
+                            }
+                            if (isInCompare(motherboard.id)) {
+                              removeFromCompare(motherboard.id);
+                            } else {
+                              if (compareList.length >= 4) {
+                                toast.error('You can compare up to 4 products at once.', { duration: 3000 });
+                                return;
+                              }
+                              addToCompare(motherboard, 'motherboard');
+                            }
+                          }}
+                          className="px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
+                          style={{
+                            backgroundColor: isInCompare(motherboard.id) ? colors.mainYellow : 'white',
+                            color: isInCompare(motherboard.id) ? 'white' : colors.mainYellow,
+                            border: `2px solid ${colors.mainYellow}`
+                          }}
+                        >
+                          {isInCompare(motherboard.id) ? '✓' : '+'}
+                        </button>
+                      )}
+                    </>
+                  )}
+                  
+                  {/* Details button - always show */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleProductClick(motherboard.id);
                     }}
-                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer flex-1"
                     style={{
-                      backgroundColor: selectedMotherboard?.id === motherboard.id ? 'white' : colors.mainYellow,
-                      color: selectedMotherboard?.id === motherboard.id ? colors.mainYellow : 'white',
-                      border: selectedMotherboard?.id === motherboard.id ? `2px solid ${colors.mainYellow}` : 'none'
+                      backgroundColor: colors.mainYellow,
+                      color: 'white'
                     }}
                   >
                     Details

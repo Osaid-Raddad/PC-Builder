@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useBuild } from '../../context/BuildContext';
 import { useCompare } from '../../context/CompareContext';
 import toast from 'react-hot-toast';
@@ -13,6 +13,8 @@ import peripheralsData from '../../data/components/peripherals.json';
 
 const Peripherals = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const source = searchParams.get('source');
   const { addComponent } = useBuild();
   const { compareList, addToCompare, isInCompare, removeFromCompare, getCategory } = useCompare();
   const [selectedPeripheral, setSelectedPeripheral] = useState(null);
@@ -272,55 +274,63 @@ const Peripherals = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="grid grid-cols-3 gap-3">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      addComponent('peripherals', peripheral);
-                      navigate('/builder');
-                    }}
-                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
-                    style={{
-                      backgroundColor: selectedPeripheral?.id === peripheral.id ? colors.mainYellow : 'white',
-                      color: selectedPeripheral?.id === peripheral.id ? 'white' : colors.mainYellow,
-                      border: `2px solid ${colors.mainYellow}`
-                    }}
-                  >
-                    {selectedPeripheral?.id === peripheral.id ? 'Selected' : 'Select'}
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const currentCategory = getCategory();
-                      if (currentCategory && currentCategory !== 'peripherals') {
-                        toast.error(`You can only compare Peripherals together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
-                        return;
-                      }
-                      if (isInCompare(peripheral.id)) {
-                        removeFromCompare(peripheral.id);
-                      } else {
-                        if (compareList.length >= 4) {
-                          toast.error('You can compare up to 4 products at once.', { duration: 3000 });
-                          return;
-                        }
-                        addToCompare(peripheral, 'peripherals');
-                      }
-                    }}
-                    className="px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
-                    style={{
-                      backgroundColor: isInCompare(peripheral.id) ? colors.mainYellow : 'white',
-                      color: isInCompare(peripheral.id) ? 'white' : colors.mainYellow,
-                      border: `2px solid ${colors.mainYellow}`
-                    }}
-                  >
-                    {isInCompare(peripheral.id) ? '✓' : '+'}
-                  </button>
+                <div className="flex gap-3">
+                  {source && (
+                    <>
+                      {source !== 'comparator' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            addComponent('peripherals', peripheral);
+                            navigate('/builder');
+                          }}
+                          className="flex-1 px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                          style={{
+                            backgroundColor: selectedPeripheral?.id === peripheral.id ? colors.mainYellow : 'white',
+                            color: selectedPeripheral?.id === peripheral.id ? 'white' : colors.mainYellow,
+                            border: `2px solid ${colors.mainYellow}`
+                          }}
+                        >
+                          {selectedPeripheral?.id === peripheral.id ? 'Selected' : 'Select'}
+                        </button>
+                      )}
+                      {source !== 'builder' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const currentCategory = getCategory();
+                            if (currentCategory && currentCategory !== 'peripherals') {
+                              toast.error(`You can only compare Peripherals together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
+                              return;
+                            }
+                            if (isInCompare(peripheral.id)) {
+                              removeFromCompare(peripheral.id);
+                            } else {
+                              if (compareList.length >= 4) {
+                                toast.error('You can compare up to 4 products at once.', { duration: 3000 });
+                                return;
+                              }
+                              addToCompare(peripheral, 'peripherals');
+                            }
+                          }}
+                          className="flex-1 px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
+                          style={{
+                            backgroundColor: isInCompare(peripheral.id) ? colors.mainYellow : 'white',
+                            color: isInCompare(peripheral.id) ? 'white' : colors.mainYellow,
+                            border: `2px solid ${colors.mainYellow}`
+                          }}
+                        >
+                          {isInCompare(peripheral.id) ? '✓' : '+'}
+                        </button>
+                      )}
+                    </>
+                  )}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate(`/product/peripherals/${peripheral.id}`);
                     }}
-                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    className="flex-1 px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                     style={{
                       backgroundColor: selectedPeripheral?.id === peripheral.id ? 'white' : colors.mainYellow,
                       color: selectedPeripheral?.id === peripheral.id ? colors.mainYellow : 'white',

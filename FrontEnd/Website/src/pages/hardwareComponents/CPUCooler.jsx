@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useBuild } from '../../context/BuildContext';
 import { useCompare } from '../../context/CompareContext';
 import toast from 'react-hot-toast';
@@ -13,6 +13,8 @@ import cpuCoolersData from '../../data/components/cpuCoolers.json';
 
 const CPUCooler = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const source = searchParams.get('source'); // 'builder' or 'comparator'
   const { addComponent } = useBuild();
   const { compareList, addToCompare, isInCompare, removeFromCompare, getCategory } = useCompare();
   const [selectedCooler, setSelectedCooler] = useState(null);
@@ -501,59 +503,72 @@ const CPUCooler = () => {
                     </div>
 
                     {/* Action Buttons */}
-                    <div className="grid grid-cols-3 gap-3">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          addComponent('cooler', product);
-                          navigate('/builder');
-                        }}
-                        className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
-                        style={{
-                          backgroundColor: selectedCooler?.id === product.id ? colors.mainYellow : 'white',
-                          color: selectedCooler?.id === product.id ? 'white' : colors.mainYellow,
-                          border: `2px solid ${colors.mainYellow}`
-                        }}
-                      >
-                        {selectedCooler?.id === product.id ? 'Selected' : 'Select'}
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          const currentCategory = getCategory();
-                          if (currentCategory && currentCategory !== 'cpucooler') {
-                            toast.error(`You can only compare CPU Coolers together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
-                            return;
-                          }
-                          if (isInCompare(product.id)) {
-                            removeFromCompare(product.id);
-                          } else {
-                            if (compareList.length >= 4) {
-                              toast.error('You can compare up to 4 products at once.', { duration: 3000 });
-                              return;
-                            }
-                            addToCompare(product, 'cpucooler');
-                          }
-                        }}
-                        className="px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
-                        style={{
-                          backgroundColor: isInCompare(product.id) ? colors.mainYellow : 'white',
-                          color: isInCompare(product.id) ? 'white' : colors.mainYellow,
-                          border: `2px solid ${colors.mainYellow}`
-                        }}
-                      >
-                        {isInCompare(product.id) ? '✓' : '+'}
-                      </button>
+                    <div className="flex gap-3 justify-between">
+                      {/* Only show action buttons if source exists (from builder or comparator) */}
+                      {source && (
+                        <>
+                          {/* Add to Build button - hide if from comparator */}
+                          {source !== 'comparator' && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                addComponent('cooler', product);
+                                navigate('/builder');
+                              }}
+                              className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer flex-1"
+                              style={{
+                                backgroundColor: selectedCooler?.id === product.id ? colors.mainYellow : 'white',
+                                color: selectedCooler?.id === product.id ? 'white' : colors.mainYellow,
+                                border: `2px solid ${colors.mainYellow}`
+                              }}
+                            >
+                              {selectedCooler?.id === product.id ? 'Selected' : 'Select'}
+                            </button>
+                          )}
+                          
+                          {/* Compare button - hide if from builder */}
+                          {source !== 'builder' && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                const currentCategory = getCategory();
+                                if (currentCategory && currentCategory !== 'cpucooler') {
+                                  toast.error(`You can only compare CPU Coolers together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
+                                  return;
+                                }
+                                if (isInCompare(product.id)) {
+                                  removeFromCompare(product.id);
+                                } else {
+                                  if (compareList.length >= 4) {
+                                    toast.error('You can compare up to 4 products at once.', { duration: 3000 });
+                                    return;
+                                  }
+                                  addToCompare(product, 'cpucooler');
+                                }
+                              }}
+                              className="px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
+                              style={{
+                                backgroundColor: isInCompare(product.id) ? colors.mainYellow : 'white',
+                                color: isInCompare(product.id) ? 'white' : colors.mainYellow,
+                                border: `2px solid ${colors.mainYellow}`
+                              }}
+                            >
+                              {isInCompare(product.id) ? '✓' : '+'}
+                            </button>
+                          )}
+                        </>
+                      )}
+                      
+                      {/* Details button - always show */}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           navigate(`/product/cpucooler/${product.id}`);
                         }}
-                        className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                        className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer flex-1"
                         style={{
-                          backgroundColor: selectedCooler?.id === product.id ? 'white' : colors.mainYellow,
-                          color: selectedCooler?.id === product.id ? colors.mainYellow : 'white',
-                          border: selectedCooler?.id === product.id ? `2px solid ${colors.mainYellow}` : 'none'
+                          backgroundColor: colors.mainYellow,
+                          color: 'white'
                         }}
                       >
                         Details

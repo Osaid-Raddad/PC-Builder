@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useBuild } from '../../context/BuildContext';
 import { useCompare } from '../../context/CompareContext';
 import toast from 'react-hot-toast';
@@ -13,6 +13,8 @@ import monitorsData from '../../data/components/monitors.json';
 
 const Monitor = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const source = searchParams.get('source'); // 'builder' or 'comparator'
   const { addComponent } = useBuild();
   const { compareList, addToCompare, isInCompare, removeFromCompare, getCategory } = useCompare();
   const [selectedMonitor, setSelectedMonitor] = useState(null);
@@ -808,55 +810,69 @@ const Monitor = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="grid grid-cols-3 gap-3">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      addComponent('monitor', monitor);
-                      navigate('/builder');
-                    }}
-                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
-                    style={{
-                      backgroundColor: selectedMonitor?.id === monitor.id ? colors.mainYellow : 'white',
-                      color: selectedMonitor?.id === monitor.id ? 'white' : colors.mainYellow,
-                      border: `2px solid ${colors.mainYellow}`
-                    }}
-                  >
-                    {selectedMonitor?.id === monitor.id ? 'Selected' : 'Select'}
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const currentCategory = getCategory();
-                      if (currentCategory && currentCategory !== 'monitor') {
-                        toast.error(`You can only compare Monitors together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
-                        return;
-                      }
-                      if (isInCompare(monitor.id)) {
-                        removeFromCompare(monitor.id);
-                      } else {
-                        if (compareList.length >= 4) {
-                          toast.error('You can compare up to 4 products at once.', { duration: 3000 });
-                          return;
-                        }
-                        addToCompare(monitor, 'monitor');
-                      }
-                    }}
-                    className="px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
-                    style={{
-                      backgroundColor: isInCompare(monitor.id) ? colors.mainYellow : 'white',
-                      color: isInCompare(monitor.id) ? 'white' : colors.mainYellow,
-                      border: `2px solid ${colors.mainYellow}`
-                    }}
-                  >
-                    {isInCompare(monitor.id) ? '✓' : '+'}
-                  </button>
+                <div className="flex gap-3">
+                  {/* Only show action buttons if source exists (from builder or comparator) */}
+                  {source && (
+                    <>
+                      {/* Select button - hide if from comparator */}
+                      {source !== 'comparator' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            addComponent('monitor', monitor);
+                            navigate('/builder');
+                          }}
+                          className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer flex-1"
+                          style={{
+                            backgroundColor: selectedMonitor?.id === monitor.id ? colors.mainYellow : 'white',
+                            color: selectedMonitor?.id === monitor.id ? 'white' : colors.mainYellow,
+                            border: `2px solid ${colors.mainYellow}`
+                          }}
+                        >
+                          {selectedMonitor?.id === monitor.id ? 'Selected' : 'Select'}
+                        </button>
+                      )}
+                      
+                      {/* Compare button - hide if from builder */}
+                      {source !== 'builder' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const currentCategory = getCategory();
+                            if (currentCategory && currentCategory !== 'monitor') {
+                              toast.error(`You can only compare Monitors together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
+                              return;
+                            }
+                            if (isInCompare(monitor.id)) {
+                              removeFromCompare(monitor.id);
+                            } else {
+                              if (compareList.length >= 4) {
+                                toast.error('You can compare up to 4 products at once.', { duration: 3000 });
+                                return;
+                              }
+                              addToCompare(monitor, 'monitor');
+                            }
+                          }}
+                          className="px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
+                          style={{
+                            backgroundColor: isInCompare(monitor.id) ? colors.mainYellow : 'white',
+                            color: isInCompare(monitor.id) ? 'white' : colors.mainYellow,
+                            border: `2px solid ${colors.mainYellow}`
+                          }}
+                        >
+                          {isInCompare(monitor.id) ? '✓' : '+'}
+                        </button>
+                      )}
+                    </>
+                  )}
+                  
+                  {/* Details button - always show */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate(`/product/monitor/${monitor.id}`);
                     }}
-                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer flex-1"
                     style={{
                       backgroundColor: selectedMonitor?.id === monitor.id ? 'white' : colors.mainYellow,
                       color: selectedMonitor?.id === monitor.id ? colors.mainYellow : 'white',
