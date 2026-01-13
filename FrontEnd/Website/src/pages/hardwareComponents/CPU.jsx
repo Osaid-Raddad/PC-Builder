@@ -598,7 +598,7 @@ const CPU = () => {
                           {source !== 'comparator' && (
                             <button
                               className="px-4 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
-                              style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+                              style={{ color: colors.mainYellow , border: `2px solid ${colors.mainYellow}`, backgroundColor: 'white' }}
                               onClick={() => {
                                 addComponent('cpu', cpu);
                                 navigate('/builder');

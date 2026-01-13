@@ -846,7 +846,7 @@ const GPU = () => {
                   {/* Details button - always show */}
                   <button
                     onClick={(e) => handleProductClick(gpu.id, e)}
-                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer flex-1"
+                    className="px-6 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                     style={{
                       backgroundColor: colors.mainYellow,
                       color: 'white'

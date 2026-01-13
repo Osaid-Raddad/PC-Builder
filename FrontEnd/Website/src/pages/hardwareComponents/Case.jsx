@@ -874,7 +874,7 @@ const Case = () => {
                       e.stopPropagation();
                       navigate(`/product/case/${caseItem.id}`);
                     }}
-                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer flex-1"
+                    className="px-6 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                     style={{
                       backgroundColor: colors.mainYellow,
                       color: 'white'

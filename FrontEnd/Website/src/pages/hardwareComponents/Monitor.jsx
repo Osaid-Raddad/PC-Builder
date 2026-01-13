@@ -872,7 +872,7 @@ const Monitor = () => {
                       e.stopPropagation();
                       navigate(`/product/monitor/${monitor.id}`);
                     }}
-                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer flex-1"
+                    className="px-6 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                     style={{
                       backgroundColor: selectedMonitor?.id === monitor.id ? 'white' : colors.mainYellow,
                       color: selectedMonitor?.id === monitor.id ? colors.mainYellow : 'white',

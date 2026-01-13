@@ -282,7 +282,7 @@ const Expansion = () => {
                             addComponent('expansion', expansion);
                             navigate('/builder');
                           }}
-                          className="flex-1 px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                          className="px-6 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                           style={{
                             backgroundColor: selectedExpansion?.id === expansion.id ? colors.mainYellow : 'white',
                             color: selectedExpansion?.id === expansion.id ? 'white' : colors.mainYellow,
@@ -328,7 +328,7 @@ const Expansion = () => {
                       e.stopPropagation();
                       navigate(`/product/expansion/${expansion.id}`);
                     }}
-                    className="flex-1 px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    className="px-6 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                     style={{
                       backgroundColor: selectedExpansion?.id === expansion.id ? 'white' : colors.mainYellow,
                       color: selectedExpansion?.id === expansion.id ? colors.mainYellow : 'white',

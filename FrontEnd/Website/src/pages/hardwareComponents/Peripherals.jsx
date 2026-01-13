@@ -284,7 +284,7 @@ const Peripherals = () => {
                             addComponent('peripherals', peripheral);
                             navigate('/builder');
                           }}
-                          className="flex-1 px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                          className="px-6 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                           style={{
                             backgroundColor: selectedPeripheral?.id === peripheral.id ? colors.mainYellow : 'white',
                             color: selectedPeripheral?.id === peripheral.id ? 'white' : colors.mainYellow,
@@ -330,7 +330,7 @@ const Peripherals = () => {
                       e.stopPropagation();
                       navigate(`/product/peripherals/${peripheral.id}`);
                     }}
-                    className="flex-1 px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    className="px-6 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                     style={{
                       backgroundColor: selectedPeripheral?.id === peripheral.id ? 'white' : colors.mainYellow,
                       color: selectedPeripheral?.id === peripheral.id ? colors.mainYellow : 'white',

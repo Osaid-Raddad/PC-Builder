@@ -282,7 +282,7 @@ const Accessories = () => {
                             addComponent('accessories', accessory);
                             navigate('/builder');
                           }}
-                          className="flex-1 px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                          className="px-6 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                           style={{
                             backgroundColor: selectedAccessory?.id === accessory.id ? colors.mainYellow : 'white',
                             color: selectedAccessory?.id === accessory.id ? 'white' : colors.mainYellow,
@@ -330,7 +330,7 @@ const Accessories = () => {
                       e.stopPropagation();
                       navigate(`/product/accessories/${accessory.id}`);
                     }}
-                    className="flex-1 px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    className="px-6 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                     style={{
                       backgroundColor: selectedAccessory?.id === accessory.id ? 'white' : colors.mainYellow,
                       color: selectedAccessory?.id === accessory.id ? colors.mainYellow : 'white',
