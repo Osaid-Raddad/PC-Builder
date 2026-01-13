@@ -600,6 +600,19 @@ const CPU = () => {
                         Select
                       </button>
                       <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          navigate(`/product/cpu/${cpu.id}`);
+                        }}
+                        className="px-4 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+                        style={{ 
+                          backgroundColor: colors.mainYellow,
+                          color: 'white'
+                        }}
+                      >
+                        Details
+                      </button>
+                      <button
                         className="px-4 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
                         style={{ 
                           backgroundColor: isInCompare(cpu.id) ? colors.accent : 'white',

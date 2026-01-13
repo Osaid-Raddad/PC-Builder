@@ -257,7 +257,7 @@ const Builder = () => {
                           handleComponentClick(component.id);
                         }}
                         className="flex-1 py-2 rounded-lg font-semibold text-sm hover:opacity-80 transition-opacity"
-                        style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+                        style={{ backgroundColor: colors.mainYellow, color: 'white' , cursor: 'pointer'}}
                       >
                         Change
                       </button>
@@ -267,7 +267,7 @@ const Builder = () => {
                           removeComponent(component.id);
                         }}
                         className="flex-1 py-2 rounded-lg font-semibold text-sm hover:opacity-80 transition-opacity"
-                        style={{ backgroundColor: '#F44336', color: 'white' }}
+                        style={{ backgroundColor: '#F44336', color: 'white' , cursor: 'pointer'}}
                       >
                         Remove
                       </button>

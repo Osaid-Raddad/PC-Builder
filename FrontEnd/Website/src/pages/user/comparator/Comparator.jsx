@@ -98,7 +98,7 @@ const Comparator = () => {
             <button
               onClick={() => navigate('/products/cpu')}
               className="px-6 py-3 rounded-lg font-semibold hover:opacity-80 transition-opacity"
-              style={{ backgroundColor: colors.mainYellow, color: 'white' }}
+              style={{ backgroundColor: colors.mainYellow, color: 'white' , cursor: 'pointer'}}
             >
               Browse Products
             </button>
