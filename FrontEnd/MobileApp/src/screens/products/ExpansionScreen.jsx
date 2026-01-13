@@ -99,7 +99,10 @@ export default function ExpansionScreen({ navigation }) {
     return (
     <TouchableOpacity
       style={[styles.productCard, isSelected && styles.productCardSelected]}
-      onPress={() => navigation.navigate("ProductDetails", { product: item })}
+      onPress={() => navigation.navigate('ProductDetails', { 
+        category: 'expansion', 
+        productId: item.id 
+      })}
     >
       <View style={styles.productInfo}>
         <Text style={styles.productBrand}>{item.brand}</Text>
@@ -132,22 +135,6 @@ export default function ExpansionScreen({ navigation }) {
                 name={isSelected ? "check" : "plus"} 
                 size={20} 
                 color={isSelected ? colors.success : colors.mainBlack} 
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.detailsButton}
-              onPress={(e) => {
-                e.stopPropagation();
-                navigation.navigate('ProductDetails', { 
-                  category: 'expansion', 
-                  productId: item.id 
-                });
-              }}
-            >
-              <Feather 
-                name="info" 
-                size={20} 
-                color={colors.mainBlack} 
               />
             </TouchableOpacity>
             <TouchableOpacity

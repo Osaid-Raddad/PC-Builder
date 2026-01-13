@@ -136,7 +136,13 @@ export default function GPUScreen({ navigation }) {
     const inCompare = isInCompare(item.id);
     
     return (
-    <TouchableOpacity style={[styles.productCard, isSelected && styles.productCardSelected]}>
+    <TouchableOpacity 
+      style={[styles.productCard, isSelected && styles.productCardSelected]}
+      onPress={() => navigation.navigate('ProductDetails', { 
+        category: 'gpu', 
+        productId: item.id 
+      })}
+    >
       <View style={styles.productImage}>
         <Feather name="zap" size={48} color={colors.mainYellow} />
         {isSelected && (
@@ -159,7 +165,10 @@ export default function GPUScreen({ navigation }) {
       <View style={styles.actionButtons}>
         <TouchableOpacity 
           style={[styles.addButton, isSelected && styles.addButtonSelected]}
-          onPress={() => handleAddToBuild(item)}
+          onPress={(e) => {
+            e.stopPropagation();
+            handleAddToBuild(item);
+          }}
         >
           <Feather 
             name={isSelected ? "check" : "plus"} 
@@ -168,21 +177,11 @@ export default function GPUScreen({ navigation }) {
           />
         </TouchableOpacity>
         <TouchableOpacity 
-          style={styles.detailsButton}
-          onPress={() => navigation.navigate('ProductDetails', { 
-            category: 'gpu', 
-            productId: item.id 
-          })}
-        >
-          <Feather 
-            name="info" 
-            size={20} 
-            color={colors.mainBlack} 
-          />
-        </TouchableOpacity>
-        <TouchableOpacity 
           style={[styles.compareButton, inCompare && styles.compareButtonActive]}
-          onPress={() => handleCompareToggle(item)}
+          onPress={(e) => {
+            e.stopPropagation();
+            handleCompareToggle(item);
+          }}
         >
           <MaterialCommunityIcons 
             name={inCompare ? "check" : "compare"} 
