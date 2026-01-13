@@ -34,7 +34,7 @@ export default function PeripheralsScreen({ navigation, route }) {
 
   const handleAddToBuild = (product) => {
     const componentType = 'peripherals';
-    const isSelected = selectedComponents[componentType]?.model === product.model;
+    const isSelected = selectedComponents[componentType]?.name === product.name;
     
     if (isSelected) {
       removeComponent(componentType);

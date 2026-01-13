@@ -34,7 +34,7 @@ export default function ExpansionScreen({ navigation, route }) {
 
   const handleAddToBuild = (product) => {
     const componentType = 'expansion';
-    const isSelected = selectedComponents[componentType]?.model === product.model;
+    const isSelected = selectedComponents[componentType]?.name === product.name;
     
     if (isSelected) {
       removeComponent(componentType);

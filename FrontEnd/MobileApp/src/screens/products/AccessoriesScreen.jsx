@@ -57,7 +57,7 @@ export default function AccessoriesScreen({ navigation, route }) {
 
   const handleAddToBuild = (product) => {
     const componentType = 'accessories';
-    const isSelected = selectedComponents[componentType]?.model === product.model;
+    const isSelected = selectedComponents[componentType]?.name === product.name;
     
     if (isSelected) {
       removeComponent(componentType);
