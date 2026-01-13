@@ -13,6 +13,7 @@ import BuilderScreen from "../screens/builder/BuilderScreen";
 import ProductsScreen from "../screens/products/ProductsScreen";
 import ComparatorScreen from "../screens/comparator/ComparatorScreen";
 import CompletedBuildsScreen from "../screens/completedBuilds/CompletedBuildsScreen";
+import BuildDetailsScreen from "../screens/completedBuilds/BuildDetailsScreen";
 import PostsScreen from "../screens/posts/PostsScreen";
 import NewsScreen from "../screens/news/NewsScreen";
 import ShopsScreen from "../screens/shops/ShopsScreen";
@@ -53,6 +54,7 @@ import MonitorScreen from "../screens/products/MonitorScreen";
 import ExpansionScreen from "../screens/products/ExpansionScreen";
 import PeripheralsScreen from "../screens/products/PeripheralsScreen";
 import AccessoriesScreen from "../screens/products/AccessoriesScreen";
+import ProductDetailsScreen from "../screens/products/ProductDetailsScreen";
 
 const Stack = createStackNavigator();
 
@@ -95,6 +97,10 @@ export default function AppNavigator() {
           name="CompletedBuilds"
           component={CompletedBuildsScreen}
         />
+        <Stack.Screen
+          name="BuildDetails"
+          component={BuildDetailsScreen}
+        />
 
         {/* Products */}
         <Stack.Screen name="Products" component={ProductsScreen} />
@@ -110,6 +116,7 @@ export default function AppNavigator() {
         <Stack.Screen name="Expansion" component={ExpansionScreen} />
         <Stack.Screen name="Peripherals" component={PeripheralsScreen} />
         <Stack.Screen name="Accessories" component={AccessoriesScreen} />
+        <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
 
         {/* Community */}
         <Stack.Screen name="Posts" component={PostsScreen} />

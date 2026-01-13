@@ -17,28 +17,37 @@ import { useCompare } from "../../context/CompareContext";
 
 const MOCK_PRODUCTS = (coolersData?.cpuCoolers || []).map(cooler => ({
   ...cooler,
-  name: `${cooler.manufacturer} ${cooler.model}`,
-  brand: cooler.manufacturer,
+  name: cooler.model ? `${cooler.brand || cooler.manufacturer} ${cooler.model}` : (cooler.brand || cooler.manufacturer),
+  brand: cooler.brand || cooler.manufacturer,
 }));
 
-export default function CoolerScreen({ navigation }) {
-  const { addComponent, selectedComponents } = useBuild();
+export default function CoolerScreen({ navigation, route }) {
+  const { addComponent, removeComponent, selectedComponents } = useBuild();
+  const { source } = route.params || {}; // 'builder' or 'comparator'
   const { addToCompare, isInCompare, removeFromCompare, getCategory, compareList } = useCompare();
   const [selectedFilter, setSelectedFilter] = useState("all");
 
   const handleAddToBuild = (product) => {
-    addComponent('cooler', product);
-    Alert.alert(
-      "CPU Cooler Added",
-      `${product.name} has been added to your build.`,
-      [
-        { text: "Continue Browsing", style: "cancel" },
-        {
-          text: "View Build",
-          onPress: () => navigation.navigate("Builder"),
-        },
-      ]
-    );
+    const componentType = 'cooler';
+    const isSelected = selectedComponents[componentType]?.model === product.model;
+    
+    if (isSelected) {
+      removeComponent(componentType);
+      Alert.alert("Removed", `${product.name} removed from your build.`);
+    } else {
+      addComponent(componentType, product);
+      Alert.alert(
+        "Added to Build",
+        `${product.name} has been added to your build.`,
+        [
+          { text: "Continue Browsing", style: "cancel" },
+          {
+            text: "View Build",
+            onPress: () => navigation.navigate("Builder"),
+          },
+        ]
+      );
+    }
   };
 
   const handleCompareToggle = (product) => {
@@ -83,7 +92,13 @@ export default function CoolerScreen({ navigation }) {
     const inCompare = isInCompare(item.id);
     
     return (
-    <TouchableOpacity style={[styles.productCard, isSelected && styles.productCardSelected]}>
+    <TouchableOpacity 
+      style={[styles.productCard, isSelected && styles.productCardSelected]}
+      onPress={() => navigation.navigate('ProductDetails', { 
+        category: 'cooler', 
+        productId: item.id 
+      })}
+    >
       <View style={styles.productImage}>
         <Feather name="wind" size={48} color={colors.mainYellow} />
         {isSelected && (
@@ -103,33 +118,45 @@ export default function CoolerScreen({ navigation }) {
           </View>
         </View>
       </View>
-      <View style={styles.actionButtons}>
-        <TouchableOpacity 
-          style={[
-            styles.compareButton,
-            inCompare && styles.compareButtonActive,
-          ]}
-          onPress={() => handleCompareToggle(item)}
-        >
-          <MaterialCommunityIcons
-            name="compare"
-            size={20}
-            color={inCompare ? colors.mainYellow : colors.text}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={[styles.addButton, isSelected && styles.addButtonSelected]}
-          onPress={() => handleAddToBuild(item)}
-        >
-          <Feather 
-            name={isSelected ? "check" : "plus"} 
-            size={20} 
-            color={isSelected ? colors.success : colors.mainBlack} 
-          />
-        </TouchableOpacity>
-      </View>
+      {(source === 'builder' || source === 'comparator' || source) && (
+        <View style={styles.actionButtons}>
+          {source !== 'comparator' && (
+            <TouchableOpacity 
+              style={[styles.addButton, isSelected && styles.addButtonSelected]}
+              onPress={(e) => {
+                e.stopPropagation();
+                handleAddToBuild(item);
+              }}
+            >
+              <Feather 
+                name={isSelected ? "check" : "plus"} 
+                size={20} 
+                color={isSelected ? colors.success : colors.mainBlack} 
+              />
+            </TouchableOpacity>
+          )}
+          {source !== 'builder' && (
+            <TouchableOpacity 
+              style={[
+                styles.compareButton,
+                inCompare && styles.compareButtonActive,
+              ]}
+              onPress={(e) => {
+                e.stopPropagation();
+                handleCompareToggle(item);
+              }}
+            >
+              <MaterialCommunityIcons
+                name={inCompare ? "check" : "compare"}
+                size={20}
+                color={inCompare ? "white" : colors.mainYellow}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
     </TouchableOpacity>
-    );
+  );
   };
 
   return (
@@ -292,15 +319,25 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: colors.cardBg,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainYellow,
     justifyContent: "center",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: colors.border,
   },
   compareButtonActive: {
-    backgroundColor: colors.mainYellow + "20",
+    backgroundColor: colors.mainYellow,
     borderColor: colors.mainYellow,
+  },
+  detailsButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainBlack,
+    justifyContent: "center",
+    alignItems: "center",
   },
   addButton: {
     width: 40,

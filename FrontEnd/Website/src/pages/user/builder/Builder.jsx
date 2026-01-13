@@ -54,21 +54,21 @@ const Builder = () => {
     console.log(`Selecting component: ${componentId}`);
     // Navigate to products page for the specific component
     const routeMap = {
-      'cpu': '/products/cpu',
-      'cooler': '/products/cooler',
-      'motherboard': '/products/motherboard',
-      'memory': '/products/memory',
-      'storage': '/products/storage',
-      'gpu': '/products/gpu',
-      'case': '/products/case',
-      'psu': '/products/power-supply',
-      'monitor': '/products/monitor',
-      'expansion': '/products/expansion',
-      'peripherals': '/products/peripherals',
-      'accessories': '/products/accessories'
+      'cpu': '/products/cpu?source=builder',
+      'cooler': '/products/cooler?source=builder',
+      'motherboard': '/products/motherboard?source=builder',
+      'memory': '/products/memory?source=builder',
+      'storage': '/products/storage?source=builder',
+      'gpu': '/products/gpu?source=builder',
+      'case': '/products/case?source=builder',
+      'psu': '/products/power-supply?source=builder',
+      'monitor': '/products/monitor?source=builder',
+      'expansion': '/products/expansion?source=builder',
+      'peripherals': '/products/peripherals?source=builder',
+      'accessories': '/products/accessories?source=builder'
     };
     
-    navigate(routeMap[componentId] || `/products/${componentId}`);
+    navigate(routeMap[componentId] || `/products/${componentId}?source=builder`);
   };
 
   const calculateTotal = () => {

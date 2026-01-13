@@ -17,15 +17,19 @@ import storageData from "../../data/components/storage.json";
 import { useBuild } from "../../context/BuildContext";
 import { useCompare } from "../../context/CompareContext";
 
-const MOCK_PRODUCTS = (storageData?.storage || []).map(storage => ({
-  ...storage,
-  name: `${storage.manufacturer} ${storage.model}`,
-  brand: storage.manufacturer,
-  capacity: `${storage.capacityGB}GB`,
-}));
+const MOCK_PRODUCTS = (storageData?.storage || []).map(storage => {
+  const brandName = storage.brand || storage.manufacturer;
+  return {
+    ...storage,
+    name: storage.model ? `${brandName} ${storage.model}` : brandName,
+    brand: brandName,
+    capacity: `${storage.capacityGB}GB`,
+  };
+});
 
-export default function StorageScreen({ navigation }) {
-  const { addComponent, selectedComponents } = useBuild();
+export default function StorageScreen({ navigation, route }) {
+  const { addComponent, removeComponent, selectedComponents } = useBuild();
+  const { source } = route.params || {}; // 'builder' or 'comparator'
   const { addToCompare, isInCompare, removeFromCompare, getCategory, compareList } = useCompare();
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [filters, setFilters] = useState({
@@ -64,18 +68,26 @@ export default function StorageScreen({ navigation }) {
   };
 
   const handleAddToBuild = (product) => {
-    addComponent('storage', product);
-    Alert.alert(
-      "Storage Added",
-      `${product.name} has been added to your build.`,
-      [
-        { text: "Continue Browsing", style: "cancel" },
-        {
-          text: "View Build",
-          onPress: () => navigation.navigate("Builder"),
-        },
-      ]
-    );
+    const componentType = 'storage';
+    const isSelected = selectedComponents[componentType]?.model === product.model;
+    
+    if (isSelected) {
+      removeComponent(componentType);
+      Alert.alert("Removed", `${product.name} removed from your build.`);
+    } else {
+      addComponent(componentType, product);
+      Alert.alert(
+        "Added to Build",
+        `${product.name} has been added to your build.`,
+        [
+          { text: "Continue Browsing", style: "cancel" },
+          {
+            text: "View Build",
+            onPress: () => navigation.navigate("Builder"),
+          },
+        ]
+      );
+    }
   };
 
   const handleCompareToggle = (product) => {
@@ -120,7 +132,13 @@ export default function StorageScreen({ navigation }) {
     const inCompare = isInCompare(item.id);
     
     return (
-    <TouchableOpacity style={[styles.productCard, isSelected && styles.productCardSelected]}>
+    <TouchableOpacity 
+      style={[styles.productCard, isSelected && styles.productCardSelected]}
+      onPress={() => navigation.navigate('ProductDetails', { 
+        category: 'storage', 
+        productId: item.id 
+      })}
+    >
       <View style={styles.productImage}>
         <Feather name="hard-drive" size={48} color={colors.mainYellow} />
         {isSelected && (
@@ -140,28 +158,40 @@ export default function StorageScreen({ navigation }) {
           </View>
         </View>
       </View>
-      <View style={styles.actionButtons}>
-        <TouchableOpacity 
-          style={[styles.addButton, isSelected && styles.addButtonSelected]}
-          onPress={() => handleAddToBuild(item)}
-        >
-          <Feather 
-            name={isSelected ? "check" : "plus"} 
-            size={20} 
-            color={isSelected ? colors.success : colors.mainBlack} 
-          />
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={[styles.compareButton, inCompare && styles.compareButtonActive]}
-          onPress={() => handleCompareToggle(item)}
-        >
-          <MaterialCommunityIcons 
-            name={inCompare ? "check" : "compare"} 
-            size={20} 
-            color={inCompare ? "white" : colors.mainYellow} 
-          />
-        </TouchableOpacity>
-      </View>
+      {(source === 'builder' || source === 'comparator' || source) && (
+        <View style={styles.actionButtons}>
+          {source !== 'comparator' && (
+            <TouchableOpacity 
+              style={[styles.addButton, isSelected && styles.addButtonSelected]}
+              onPress={(e) => {
+                e.stopPropagation();
+                handleAddToBuild(item);
+              }}
+            >
+              <Feather 
+                name={isSelected ? "check" : "plus"} 
+                size={20} 
+                color={isSelected ? colors.success : colors.mainBlack} 
+              />
+            </TouchableOpacity>
+          )}
+          {source !== 'builder' && (
+            <TouchableOpacity 
+              style={[styles.compareButton, inCompare && styles.compareButtonActive]}
+              onPress={(e) => {
+                e.stopPropagation();
+                handleCompareToggle(item);
+              }}
+            >
+              <MaterialCommunityIcons 
+                name={inCompare ? "check" : "compare"} 
+                size={20} 
+                color={inCompare ? "white" : colors.mainYellow} 
+              />
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
     </TouchableOpacity>
     );
   };
@@ -671,6 +701,24 @@ const styles = StyleSheet.create({
   },
   addButtonSelected: {
     backgroundColor: colors.success + "20",
+  },  detailsButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainBlack,
+    justifyContent: "center",
+    alignItems: "center",
+  },  detailsButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainBlack,
+    justifyContent: "center",
+    alignItems: "center",
   },
   compareButton: {
     width: 40,

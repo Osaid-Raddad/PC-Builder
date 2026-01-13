@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useBuild } from '../../context/BuildContext';
 import { useCompare } from '../../context/CompareContext';
 import toast from 'react-hot-toast';
@@ -13,6 +13,8 @@ import casesData from '../../data/components/cases.json';
 
 const Case = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const source = searchParams.get('source'); // 'builder' or 'comparator'
   const { addComponent } = useBuild();
   const { compareList, addToCompare, isInCompare, removeFromCompare, getCategory } = useCompare();
   const [selectedCase, setSelectedCase] = useState(null);
@@ -810,59 +812,72 @@ const Case = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="grid grid-cols-3 gap-3">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      addComponent('case', caseItem);
-                      navigate('/builder');
-                    }}
-                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
-                    style={{
-                      backgroundColor: selectedCase?.id === caseItem.id ? colors.mainYellow : 'white',
-                      color: selectedCase?.id === caseItem.id ? 'white' : colors.mainYellow,
-                      border: `2px solid ${colors.mainYellow}`
-                    }}
-                  >
-                    {selectedCase?.id === caseItem.id ? 'Selected' : 'Select'}
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const currentCategory = getCategory();
-                      if (currentCategory && currentCategory !== 'case') {
-                        toast.error(`You can only compare Cases together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
-                        return;
-                      }
-                      if (isInCompare(caseItem.id)) {
-                        removeFromCompare(caseItem.id);
-                      } else {
-                        if (compareList.length >= 4) {
-                          toast.error('You can compare up to 4 products at once.', { duration: 3000 });
-                          return;
-                        }
-                        addToCompare(caseItem, 'case');
-                      }
-                    }}
-                    className="px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
-                    style={{
-                      backgroundColor: isInCompare(caseItem.id) ? colors.mainYellow : 'white',
-                      color: isInCompare(caseItem.id) ? 'white' : colors.mainYellow,
-                      border: `2px solid ${colors.mainYellow}`
-                    }}
-                  >
-                    {isInCompare(caseItem.id) ? '✓' : '+'}
-                  </button>
+                <div className="flex gap-3 justify-end">
+                  {/* Only show action buttons if source exists (from builder or comparator) */}
+                  {source && (
+                    <>
+                      {/* Add to Build button - hide if from comparator */}
+                      {source !== 'comparator' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            addComponent('case', caseItem);
+                            navigate('/builder');
+                          }}
+                          className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer flex-1"
+                          style={{
+                            backgroundColor: selectedCase?.id === caseItem.id ? colors.mainYellow : 'white',
+                            color: selectedCase?.id === caseItem.id ? 'white' : colors.mainYellow,
+                            border: `2px solid ${colors.mainYellow}`
+                          }}
+                        >
+                          {selectedCase?.id === caseItem.id ? 'Selected' : 'Select'}
+                        </button>
+                      )}
+                      
+                      {/* Compare button - hide if from builder */}
+                      {source !== 'builder' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const currentCategory = getCategory();
+                            if (currentCategory && currentCategory !== 'case') {
+                              toast.error(`You can only compare Cases together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
+                              return;
+                            }
+                            if (isInCompare(caseItem.id)) {
+                              removeFromCompare(caseItem.id);
+                            } else {
+                              if (compareList.length >= 4) {
+                                toast.error('You can compare up to 4 products at once.', { duration: 3000 });
+                                return;
+                              }
+                              addToCompare(caseItem, 'case');
+                            }
+                          }}
+                          className="px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
+                          style={{
+                            backgroundColor: isInCompare(caseItem.id) ? colors.mainYellow : 'white',
+                            color: isInCompare(caseItem.id) ? 'white' : colors.mainYellow,
+                            border: `2px solid ${colors.mainYellow}`
+                          }}
+                        >
+                          {isInCompare(caseItem.id) ? '✓' : '+'}
+                        </button>
+                      )}
+                    </>
+                  )}
+                  
+                  {/* Details button - always show */}
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate(`/product/case/${caseItem.id}`);
                     }}
-                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    className="px-6 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                     style={{
-                      backgroundColor: selectedCase?.id === caseItem.id ? 'white' : colors.mainYellow,
-                      color: selectedCase?.id === caseItem.id ? colors.mainYellow : 'white',
-                      border: selectedCase?.id === caseItem.id ? `2px solid ${colors.mainYellow}` : 'none'
+                      backgroundColor: colors.mainYellow,
+                      color: 'white'
                     }}
                   >
                     Details

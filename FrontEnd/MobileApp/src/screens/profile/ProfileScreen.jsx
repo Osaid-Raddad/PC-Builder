@@ -44,6 +44,9 @@ export default function ProfileScreen({ navigation }) {
   const [appointmentsLoading, setAppointmentsLoading] = useState(false);
   const [appointmentFilter, setAppointmentFilter] = useState('all');
   const [ratingAppointment, setRatingAppointment] = useState(null);
+  const [savedBuilds, setSavedBuilds] = useState([]);
+  const [buildsLoading, setBuildsLoading] = useState(false);
+  const [buildsFetched, setBuildsFetched] = useState(false);
 
   useEffect(() => {
     checkAuthenticationAndFetchData();
@@ -55,6 +58,9 @@ export default function ProfileScreen({ navigation }) {
     }
     if (activeTab === 'appointments' && appointments.length === 0 && (userData?.role === 'Admin' || userData?.role === 'SuperAdmin')) {
       fetchAppointments();
+    }
+    if (activeTab === 'builds' && !buildsFetched) {
+      fetchSavedBuilds();
     }
   }, [activeTab, userData]);
 
@@ -136,6 +142,64 @@ export default function ProfileScreen({ navigation }) {
     } finally {
       setPostsLoading(false);
     }
+  };
+
+  const fetchSavedBuilds = async () => {
+    try {
+      setBuildsLoading(true);
+      const buildsJson = await AsyncStorage.getItem('savedBuilds');
+      const builds = buildsJson ? JSON.parse(buildsJson) : [];
+      setSavedBuilds(builds);
+      setBuildsFetched(true);
+      
+      // Update builds count
+      setUserData(prev => ({
+        ...prev,
+        stats: {
+          ...prev.stats,
+          builds: builds.length
+        }
+      }));
+    } catch (error) {
+      console.error('Error fetching saved builds:', error);
+    } finally {
+      setBuildsLoading(false);
+    }
+  };
+
+  const deleteBuild = (buildId) => {
+    Alert.alert(
+      "Delete Build",
+      "Are you sure you want to delete this build?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          onPress: async () => {
+            try {
+              const buildsJson = await AsyncStorage.getItem('savedBuilds');
+              const builds = buildsJson ? JSON.parse(buildsJson) : [];
+              const updatedBuilds = builds.filter(b => b.id !== buildId);
+              await AsyncStorage.setItem('savedBuilds', JSON.stringify(updatedBuilds));
+              setSavedBuilds(updatedBuilds);
+              
+              // Update builds count
+              setUserData(prev => ({
+                ...prev,
+                stats: {
+                  ...prev.stats,
+                  builds: updatedBuilds.length
+                }
+              }));
+            } catch (error) {
+              console.error('Error deleting build:', error);
+              Alert.alert("Error", "Failed to delete build");
+            }
+          }
+        }
+      ],
+      { cancelable: true }
+    );
   };
 
   const fetchAppointments = async () => {
@@ -451,13 +515,69 @@ export default function ProfileScreen({ navigation }) {
           )}
 
           {activeTab === 'builds' && (
-            <View style={styles.emptyState}>
-              <Feather name="box" size={40} color={colors.mainYellow} />
-              <Text style={styles.emptyTitle}>No Builds Yet</Text>
-              <TouchableOpacity style={styles.emptyButton} onPress={() => navigation.navigate('Builder')}>
-                <Text style={styles.emptyButtonText}>Start Building</Text>
-              </TouchableOpacity>
-            </View>
+            <>
+              {buildsLoading ? (
+                <ActivityIndicator size="large" color={colors.mainYellow} />
+              ) : savedBuilds.length === 0 ? (
+                <View style={styles.emptyState}>
+                  <Feather name="box" size={40} color={colors.mainYellow} />
+                  <Text style={styles.emptyTitle}>No Builds Yet</Text>
+                  <TouchableOpacity style={styles.emptyButton} onPress={() => navigation.navigate('Builder')}>
+                    <Text style={styles.emptyButtonText}>Start Building</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : (
+                <View style={styles.buildsContainer}>
+                  {savedBuilds.map(build => (
+                    <View key={build.id} style={styles.buildCard}>
+                      <View style={styles.buildHeader}>
+                        <View style={styles.buildIconContainer}>
+                          <Feather name="cpu" size={24} color={colors.mainYellow} />
+                        </View>
+                        <View style={styles.buildInfo}>
+                          <Text style={styles.buildName}>{build.name}</Text>
+                          <Text style={styles.buildDate}>
+                            {new Date(build.createdAt).toLocaleDateString('en-US', {
+                              month: 'short',
+                              day: 'numeric',
+                              year: 'numeric'
+                            })}
+                          </Text>
+                        </View>
+                        <TouchableOpacity
+                          style={styles.buildDeleteButton}
+                          onPress={() => deleteBuild(build.id)}
+                        >
+                          <Feather name="trash-2" size={18} color={colors.error} />
+                        </TouchableOpacity>
+                      </View>
+                      
+                      <View style={styles.buildStats}>
+                        <View style={styles.buildStatItem}>
+                          <Feather name="package" size={16} color={colors.text} />
+                          <Text style={styles.buildStatText}>{build.componentCount} Components</Text>
+                        </View>
+                        <View style={styles.buildStatItem}>
+                          <Feather name="zap" size={16} color={colors.text} />
+                          <Text style={styles.buildStatText}>{build.totalPower}W</Text>
+                        </View>
+                        <View style={styles.buildStatItem}>
+                          <Feather name="dollar-sign" size={16} color={colors.mainYellow} />
+                          <Text style={styles.buildStatPrice}>${build.totalPrice.toFixed(0)}</Text>
+                        </View>
+                      </View>
+
+                      {build.compatibility && !build.compatibility.isCompatible && (
+                        <View style={styles.buildWarning}>
+                          <Feather name="alert-triangle" size={14} color={colors.error} />
+                          <Text style={styles.buildWarningText}>Compatibility Issues</Text>
+                        </View>
+                      )}
+                    </View>
+                  ))}
+                </View>
+              )}
+            </>
           )}
 
           {activeTab === 'posts' && (
@@ -1093,4 +1213,89 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: colors.mainBlack,
     marginBottom: 8,
-  },});
+  },
+  buildsContainer: {
+    gap: 12,
+  },
+  buildCard: {
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  buildHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  buildIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: colors.mainYellow + '20',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  buildInfo: {
+    flex: 1,
+  },
+  buildName: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: colors.mainBlack,
+    marginBottom: 4,
+  },
+  buildDate: {
+    fontSize: 12,
+    color: colors.text,
+  },
+  buildDeleteButton: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: colors.error + '10',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  buildStats: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: colors.platinum,
+  },
+  buildStatItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  buildStatText: {
+    fontSize: 13,
+    color: colors.text,
+    fontWeight: '500',
+  },
+  buildStatPrice: {
+    fontSize: 14,
+    color: colors.mainYellow,
+    fontWeight: '700',
+  },
+  buildWarning: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: 8,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: colors.error + '20',
+  },
+  buildWarningText: {
+    fontSize: 12,
+    color: colors.error,
+    fontWeight: '500',
+  },
+});

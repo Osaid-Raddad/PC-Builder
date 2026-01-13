@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useBuild } from '../../context/BuildContext';
 import { useCompare } from '../../context/CompareContext';
 import toast from 'react-hot-toast';
@@ -13,6 +13,8 @@ import cpusData from '../../data/components/cpus.json';
 
 const CPU = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const source = searchParams.get('source'); // 'builder' or 'comparator'
   const { addComponent } = useBuild();
   const { addToCompare, isInCompare, removeFromCompare, compareList, getCategory, clearCompare } = useCompare();
   const [currentPage, setCurrentPage] = useState(1);
@@ -589,16 +591,57 @@ const CPU = () => {
                       ${cpu.price}
                     </span>
                     <div className="flex gap-2">
-                      <button
-                        className="px-4 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
-                        style={{ backgroundColor: colors.mainYellow, color: 'white' }}
-                        onClick={() => {
-                          addComponent('cpu', cpu);
-                          navigate('/builder');
-                        }}
-                      >
-                        Select
-                      </button>
+                      {/* Only show action buttons if source exists (from builder or comparator) */}
+                      {source && (
+                        <>
+                          {/* Add to Build button - hide if from comparator */}
+                          {source !== 'comparator' && (
+                            <button
+                              className="px-4 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+                              style={{ color: colors.mainYellow , border: `2px solid ${colors.mainYellow}`, backgroundColor: 'white' }}
+                              onClick={() => {
+                                addComponent('cpu', cpu);
+                                navigate('/builder');
+                              }}
+                            >
+                              Select
+                            </button>
+                          )}
+                          
+                          {/* Compare button - hide if from builder */}
+                          {source !== 'builder' && (
+                            <button
+                              className="px-4 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
+                              style={{ 
+                                backgroundColor: isInCompare(cpu.id) ? colors.accent : 'white',
+                                color: isInCompare(cpu.id) ? 'white' : colors.accent,
+                                border: `2px solid ${colors.accent}`
+                              }}
+                              onClick={() => {
+                                if (isInCompare(cpu.id)) {
+                                  removeFromCompare(cpu.id);
+                                } else {
+                                  const category = getCategory();
+                                  if (category && category !== 'cpu') {
+                                    toast.error(`You can only compare products from the same category. Clear your current ${category} comparison first.`, { duration: 3000 });
+                                    return;
+                                  }
+                                  if (compareList.length >= 4) {
+                                    toast.error('You can compare up to 4 products at once.', { duration: 3000 });
+                                    return;
+                                  }
+                                  addToCompare(cpu, 'cpu');
+                                }
+                              }}
+                              title={isInCompare(cpu.id) ? 'Remove from compare' : 'Add to compare'}
+                            >
+                              {isInCompare(cpu.id) ? '✓' : '+'}
+                            </button>
+                          )}
+                        </>
+                      )}
+                      
+                      {/* Details button - always show */}
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -611,33 +654,6 @@ const CPU = () => {
                         }}
                       >
                         Details
-                      </button>
-                      <button
-                        className="px-4 py-2 rounded-lg font-semibold hover:opacity-80 transition-opacity cursor-pointer"
-                        style={{ 
-                          backgroundColor: isInCompare(cpu.id) ? colors.accent : 'white',
-                          color: isInCompare(cpu.id) ? 'white' : colors.accent,
-                          border: `2px solid ${colors.accent}`
-                        }}
-                        onClick={() => {
-                          if (isInCompare(cpu.id)) {
-                            removeFromCompare(cpu.id);
-                          } else {
-                            const category = getCategory();
-                            if (category && category !== 'cpu') {
-                              toast.error(`You can only compare products from the same category. Clear your current ${category} comparison first.`, { duration: 3000 });
-                              return;
-                            }
-                            if (compareList.length >= 4) {
-                              toast.error('You can compare up to 4 products at once.', { duration: 3000 });
-                              return;
-                            }
-                            addToCompare(cpu, 'cpu');
-                          }
-                        }}
-                        title={isInCompare(cpu.id) ? 'Remove from compare' : 'Add to compare'}
-                      >
-                        {isInCompare(cpu.id) ? '✓' : '+'}
                       </button>
                     </div>
                   </div>

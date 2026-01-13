@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useBuild } from '../../context/BuildContext';
 import { useCompare } from '../../context/CompareContext';
 import toast from 'react-hot-toast';
@@ -13,6 +13,8 @@ import gpusData from '../../data/components/gpus.json';
 
 const GPU = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const source = searchParams.get('source'); // 'builder' or 'comparator'
   const { addComponent } = useBuild();
   const { compareList, addToCompare, isInCompare, removeFromCompare, getCategory } = useCompare();
   const [selectedGPU, setSelectedGPU] = useState(null);
@@ -785,56 +787,69 @@ const GPU = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="grid grid-cols-3 gap-2">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      addComponent('gpu', gpu);
-                      navigate('/builder');
-                    }}
-                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
-                    style={{
-                      backgroundColor: selectedGPU?.id === gpu.id ? colors.mainYellow : 'white',
-                      color: selectedGPU?.id === gpu.id ? 'white' : colors.mainYellow,
-                      border: `2px solid ${colors.mainYellow}`
-                    }}
-                  >
-                    {selectedGPU?.id === gpu.id ? 'Selected' : 'Select'}
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const currentCategory = getCategory();
-                      if (currentCategory && currentCategory !== 'gpu') {
-                        toast.error(`You can only compare GPUs together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
-                        return;
-                      }
-                      if (isInCompare(gpu.id)) {
-                        removeFromCompare(gpu.id);
-                      } else {
-                        if (compareList.length >= 4) {
-                          toast.error('You can compare up to 4 products at once.', { duration: 3000 });
-                          return;
-                        }
-                        addToCompare(gpu, 'gpu');
-                      }
-                    }}
-                    className="px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
-                    style={{
-                      backgroundColor: isInCompare(gpu.id) ? colors.mainYellow : 'white',
-                      color: isInCompare(gpu.id) ? 'white' : colors.mainYellow,
-                      border: `2px solid ${colors.mainYellow}`
-                    }}
-                  >
-                    {isInCompare(gpu.id) ? '✓' : '+'}
-                  </button>
+                <div className="flex gap-2 justify-end">
+                  {/* Only show action buttons if source exists (from builder or comparator) */}
+                  {source && (
+                    <>
+                      {/* Add to Build button - hide if from comparator */}
+                      {source !== 'comparator' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            addComponent('gpu', gpu);
+                            navigate('/builder');
+                          }}
+                          className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer flex-1"
+                          style={{
+                            backgroundColor: selectedGPU?.id === gpu.id ? colors.mainYellow : 'white',
+                            color: selectedGPU?.id === gpu.id ? 'white' : colors.mainYellow,
+                            border: `2px solid ${colors.mainYellow}`
+                          }}
+                        >
+                          {selectedGPU?.id === gpu.id ? 'Selected' : 'Select'}
+                        </button>
+                      )}
+                      
+                      {/* Compare button - hide if from builder */}
+                      {source !== 'builder' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const currentCategory = getCategory();
+                            if (currentCategory && currentCategory !== 'gpu') {
+                              toast.error(`You can only compare GPUs together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
+                              return;
+                            }
+                            if (isInCompare(gpu.id)) {
+                              removeFromCompare(gpu.id);
+                            } else {
+                              if (compareList.length >= 4) {
+                                toast.error('You can compare up to 4 products at once.', { duration: 3000 });
+                                return;
+                              }
+                              addToCompare(gpu, 'gpu');
+                            }
+                          }}
+                          className="px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
+                          style={{
+                            backgroundColor: isInCompare(gpu.id) ? colors.mainYellow : 'white',
+                            color: isInCompare(gpu.id) ? 'white' : colors.mainYellow,
+                            border: `2px solid ${colors.mainYellow}`
+                          }}
+                        >
+                          {isInCompare(gpu.id) ? '✓' : '+'}
+                        </button>
+                      )}
+                    </>
+                  )}
+                  
+                  {/* Details button - always show */}
                   <button
                     onClick={(e) => handleProductClick(gpu.id, e)}
-                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    className="px-6 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                     style={{
-                      backgroundColor: selectedGPU?.id === gpu.id ? 'white' : colors.mainYellow,
-                      color: selectedGPU?.id === gpu.id ? colors.mainYellow : 'white',
-                      border: selectedGPU?.id === gpu.id ? `2px solid ${colors.mainYellow}` : 'none'
+                      backgroundColor: colors.mainYellow,
+                      color: 'white'
                     }}
                   >
                     Details

@@ -17,14 +17,18 @@ import gpusData from "../../data/components/gpus.json";
 import { useBuild } from "../../context/BuildContext";
 import { useCompare } from "../../context/CompareContext";
 
-const MOCK_PRODUCTS = (gpusData?.gpus || []).map(gpu => ({
-  ...gpu,
-  name: `${gpu.manufacturer} ${gpu.model}`,
-  brand: gpu.manufacturer,
-}));
+const MOCK_PRODUCTS = (gpusData?.gpus || []).map(gpu => {
+  const brandName = gpu.brand || gpu.manufacturer;
+  return {
+    ...gpu,
+    name: gpu.model ? `${brandName} ${gpu.model}` : brandName,
+    brand: brandName,
+  };
+});
 
-export default function GPUScreen({ navigation }) {
-  const { addComponent, selectedComponents } = useBuild();
+export default function GPUScreen({ navigation, route }) {
+  const { addComponent, removeComponent, selectedComponents } = useBuild();
+  const { source } = route.params || {}; // 'builder' or 'comparator'
   const { addToCompare, isInCompare, removeFromCompare, getCategory, compareList } = useCompare();
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [filters, setFilters] = useState({
@@ -77,18 +81,26 @@ export default function GPUScreen({ navigation }) {
   };
 
   const handleAddToBuild = (product) => {
-    addComponent('gpu', product);
-    Alert.alert(
-      "GPU Added",
-      `${product.name} has been added to your build.`,
-      [
-        { text: "Continue Browsing", style: "cancel" },
-        {
-          text: "View Build",
-          onPress: () => navigation.navigate("Builder"),
-        },
-      ]
-    );
+    const componentType = 'gpu';
+    const isSelected = selectedComponents[componentType]?.model === product.model;
+    
+    if (isSelected) {
+      removeComponent(componentType);
+      Alert.alert("Removed", `${product.name} removed from your build.`);
+    } else {
+      addComponent(componentType, product);
+      Alert.alert(
+        "Added to Build",
+        `${product.name} has been added to your build.`,
+        [
+          { text: "Continue Browsing", style: "cancel" },
+          {
+            text: "View Build",
+            onPress: () => navigation.navigate("Builder"),
+          },
+        ]
+      );
+    }
   };
 
   const handleCompareToggle = (product) => {
@@ -133,7 +145,13 @@ export default function GPUScreen({ navigation }) {
     const inCompare = isInCompare(item.id);
     
     return (
-    <TouchableOpacity style={[styles.productCard, isSelected && styles.productCardSelected]}>
+    <TouchableOpacity 
+      style={[styles.productCard, isSelected && styles.productCardSelected]}
+      onPress={() => navigation.navigate('ProductDetails', { 
+        category: 'gpu', 
+        productId: item.id 
+      })}
+    >
       <View style={styles.productImage}>
         <Feather name="zap" size={48} color={colors.mainYellow} />
         {isSelected && (
@@ -153,28 +171,40 @@ export default function GPUScreen({ navigation }) {
           </View>
         </View>
       </View>
-      <View style={styles.actionButtons}>
-        <TouchableOpacity 
-          style={[styles.addButton, isSelected && styles.addButtonSelected]}
-          onPress={() => handleAddToBuild(item)}
-        >
-          <Feather 
-            name={isSelected ? "check" : "plus"} 
-            size={20} 
-            color={isSelected ? colors.success : colors.mainBlack} 
-          />
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={[styles.compareButton, inCompare && styles.compareButtonActive]}
-          onPress={() => handleCompareToggle(item)}
-        >
-          <MaterialCommunityIcons 
-            name={inCompare ? "check" : "compare"} 
-            size={20} 
-            color={inCompare ? "white" : colors.mainYellow} 
-          />
-        </TouchableOpacity>
-      </View>
+      {(source === 'builder' || source === 'comparator' || source) && (
+        <View style={styles.actionButtons}>
+          {source !== 'comparator' && (
+            <TouchableOpacity 
+              style={[styles.addButton, isSelected && styles.addButtonSelected]}
+              onPress={(e) => {
+                e.stopPropagation();
+                handleAddToBuild(item);
+              }}
+            >
+              <Feather 
+                name={isSelected ? "check" : "plus"} 
+                size={20} 
+                color={isSelected ? colors.success : colors.mainBlack} 
+              />
+            </TouchableOpacity>
+          )}
+          {source !== 'builder' && (
+            <TouchableOpacity 
+              style={[styles.compareButton, inCompare && styles.compareButtonActive]}
+              onPress={(e) => {
+                e.stopPropagation();
+                handleCompareToggle(item);
+              }}
+            >
+              <MaterialCommunityIcons 
+                name={inCompare ? "check" : "compare"} 
+                size={20} 
+                color={inCompare ? "white" : colors.mainYellow} 
+              />
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
     </TouchableOpacity>
     );
   };
@@ -723,6 +753,16 @@ const styles = StyleSheet.create({
   },
   addButtonSelected: {
     backgroundColor: colors.success + "20",
+  },
+  detailsButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainBlack,
+    justifyContent: "center",
+    alignItems: "center",
   },
   compareButton: {
     width: 40,

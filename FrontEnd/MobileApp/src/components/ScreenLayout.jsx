@@ -37,6 +37,11 @@ export default function ScreenLayout({
   ];
 
   const handleQuickMenuPress = (targetScreen) => {
+    if (!navigation || !navigation.getState) {
+      console.warn('Navigation not available');
+      return;
+    }
+    
     const currentRoute = navigation.getState().routes[navigation.getState().index].name;
     const currentIndex = quickMenuItems.findIndex(item => item.screen === currentRoute);
     const targetIndex = quickMenuItems.findIndex(item => item.screen === targetScreen);
@@ -61,15 +66,21 @@ export default function ScreenLayout({
 
   const openMainChat = () => {
     setChatModalVisible(false);
-    navigation.navigate("Chat");
+    if (navigation && navigation.navigate) {
+      navigation.navigate("Chat");
+    }
   };
 
   const getCurrentRoute = () => {
+    if (!navigation || !navigation.getState) {
+      return '';
+    }
     return navigation.getState().routes[navigation.getState().index].name;
   };
 
   const getActiveIndex = () => {
     const currentRoute = getCurrentRoute();
+    if (!currentRoute) return 0;
     // Treat TechSupportProfile as Profile for the quick menu indicator
     if (currentRoute === 'TechSupportProfile') {
       return quickMenuItems.findIndex(item => item.screen === 'Profile');
@@ -78,6 +89,9 @@ export default function ScreenLayout({
   };
 
   useEffect(() => {
+    if (!navigation || !navigation.getState) {
+      return;
+    }
     const activeIndex = getActiveIndex();
     const itemWidth = screenWidth / quickMenuItems.length;
     const targetPosition = activeIndex * itemWidth;
@@ -88,7 +102,7 @@ export default function ScreenLayout({
       friction: 8,
       tension: 80,
     }).start();
-  }, [navigation.getState().index]);
+  }, [navigation?.getState?.()?.index]);
 
   const content = scrollable ? (
     <ScrollView

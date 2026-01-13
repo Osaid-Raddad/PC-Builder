@@ -16,8 +16,9 @@ import expansionData from "../../data/components/expansion.json";
 import { useBuild } from "../../context/BuildContext";
 import { useCompare } from "../../context/CompareContext";
 
-export default function ExpansionScreen({ navigation }) {
-  const { addComponent, selectedComponents } = useBuild();
+export default function ExpansionScreen({ navigation, route }) {
+  const { addComponent, removeComponent, selectedComponents } = useBuild();
+  const { source } = route.params || {}; // 'builder' or 'comparator'
   const { addToCompare, isInCompare, removeFromCompare, getCategory, compareList } = useCompare();
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("All");
@@ -32,18 +33,26 @@ export default function ExpansionScreen({ navigation }) {
   const brands = ['All', ...new Set(expansionList.map(e => e.brand))];
 
   const handleAddToBuild = (product) => {
-    addComponent('expansion', product);
-    Alert.alert(
-      "Expansion Card Added",
-      `${product.name} has been added to your build.`,
-      [
-        { text: "Continue Browsing", style: "cancel" },
-        {
-          text: "View Build",
-          onPress: () => navigation.navigate("Builder"),
-        },
-      ]
-    );
+    const componentType = 'expansion';
+    const isSelected = selectedComponents[componentType]?.name === product.name;
+    
+    if (isSelected) {
+      removeComponent(componentType);
+      Alert.alert("Removed", `${product.name} removed from your build.`);
+    } else {
+      addComponent(componentType, product);
+      Alert.alert(
+        "Added to Build",
+        `${product.name} has been added to your build.`,
+        [
+          { text: "Continue Browsing", style: "cancel" },
+          {
+            text: "View Build",
+            onPress: () => navigation.navigate("Builder"),
+          },
+        ]
+      );
+    }
   };
 
   const handleCompareToggle = (product) => {
@@ -99,7 +108,10 @@ export default function ExpansionScreen({ navigation }) {
     return (
     <TouchableOpacity
       style={[styles.productCard, isSelected && styles.productCardSelected]}
-      onPress={() => navigation.navigate("ProductDetails", { product: item })}
+      onPress={() => navigation.navigate('ProductDetails', { 
+        category: 'expansion', 
+        productId: item.id 
+      })}
     >
       <View style={styles.productInfo}>
         <Text style={styles.productBrand}>{item.brand}</Text>
@@ -120,34 +132,40 @@ export default function ExpansionScreen({ navigation }) {
         </View>
         <View style={styles.priceRow}>
           <Text style={styles.price}>${item.price}</Text>
-          <View style={styles.actionButtons}>
-            <TouchableOpacity
-              style={[styles.addButton, isSelected && styles.addButtonSelected]}
-              onPress={(e) => {
-                e.stopPropagation();
-                handleAddToBuild(item);
-              }}
-            >
-              <Feather 
-                name={isSelected ? "check" : "plus"} 
-                size={20} 
-                color={isSelected ? colors.success : colors.mainBlack} 
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.compareButton, inCompare && styles.compareButtonActive]}
-              onPress={(e) => {
-                e.stopPropagation();
-                handleCompareToggle(item);
-              }}
-            >
-              <MaterialCommunityIcons 
-                name="compare" 
-                size={20} 
-                color={inCompare ? colors.mainYellow : colors.mainBlack} 
-              />
-            </TouchableOpacity>
-          </View>
+          {(source === 'builder' || source === 'comparator' || source) && (
+            <View style={styles.actionButtons}>
+              {source !== 'comparator' && (
+                <TouchableOpacity
+                  style={[styles.addButton, isSelected && styles.addButtonSelected]}
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    handleAddToBuild(item);
+                  }}
+                >
+                  <Feather 
+                    name={isSelected ? "check" : "plus"} 
+                    size={20} 
+                    color={isSelected ? colors.success : colors.mainBlack} 
+                  />
+                </TouchableOpacity>
+              )}
+              {source !== 'builder' && (
+                <TouchableOpacity
+                  style={[styles.compareButton, inCompare && styles.compareButtonActive]}
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    handleCompareToggle(item);
+                  }}
+                >
+                  <MaterialCommunityIcons 
+                    name={inCompare ? "check" : "compare"} 
+                    size={20} 
+                    color={inCompare ? "white" : colors.mainYellow} 
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -409,17 +427,28 @@ const styles = StyleSheet.create({
   addButtonSelected: {
     backgroundColor: colors.success + "20",
   },
-  compareButton: {
-    backgroundColor: colors.platinum,
+  detailsButton: {
     width: 40,
     height: 40,
     borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainBlack,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  compareButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainYellow,
     justifyContent: "center",
     alignItems: "center",
   },
   compareButtonActive: {
-    backgroundColor: colors.mainYellow + "40",
-    borderWidth: 2,
+    backgroundColor: colors.mainYellow,
     borderColor: colors.mainYellow,
   },
   productCardSelected: {

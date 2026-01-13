@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useBuild } from '../../context/BuildContext';
 import { useCompare } from '../../context/CompareContext';
 import toast from 'react-hot-toast';
@@ -13,6 +13,8 @@ import accessoriesData from '../../data/components/accessories.json';
 
 const Accessories = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const source = searchParams.get('source'); // 'builder' or 'comparator'
   const { addComponent } = useBuild();
   const { compareList, addToCompare, isInCompare, removeFromCompare, getCategory } = useCompare();
   const [selectedAccessory, setSelectedAccessory] = useState(null);
@@ -270,55 +272,65 @@ const Accessories = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="grid grid-cols-3 gap-3">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      addComponent('accessories', accessory);
-                      navigate('/builder');
-                    }}
-                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
-                    style={{
-                      backgroundColor: selectedAccessory?.id === accessory.id ? colors.mainYellow : 'white',
-                      color: selectedAccessory?.id === accessory.id ? 'white' : colors.mainYellow,
-                      border: `2px solid ${colors.mainYellow}`
-                    }}
-                  >
-                    {selectedAccessory?.id === accessory.id ? 'Selected' : 'Select'}
-                  </button>
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      const currentCategory = getCategory();
-                      if (currentCategory && currentCategory !== 'accessories') {
-                        toast.error(`You can only compare Accessories together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
-                        return;
-                      }
-                      if (isInCompare(accessory.id)) {
-                        removeFromCompare(accessory.id);
-                      } else {
-                        if (compareList.length >= 4) {
-                          toast.error('You can compare up to 4 products at once.', { duration: 3000 });
-                          return;
-                        }
-                        addToCompare(accessory, 'accessories');
-                      }
-                    }}
-                    className="px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
-                    style={{
-                      backgroundColor: isInCompare(accessory.id) ? colors.mainYellow : 'white',
-                      color: isInCompare(accessory.id) ? 'white' : colors.mainYellow,
-                      border: `2px solid ${colors.mainYellow}`
-                    }}
-                  >
-                    {isInCompare(accessory.id) ? '✓' : '+'}
-                  </button>
+                <div className="flex gap-3 justify-end">
+                  {source && (
+                    <>
+                      {source !== 'comparator' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            addComponent('accessories', accessory);
+                            navigate('/builder');
+                          }}
+                          className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer flex-1"
+                          style={{
+                            backgroundColor: selectedAccessory?.id === accessory.id ? colors.mainYellow : 'white',
+                            color: selectedAccessory?.id === accessory.id ? 'white' : colors.mainYellow,
+                            border: `2px solid ${colors.mainYellow}`
+                          }}
+                        >
+                          {selectedAccessory?.id === accessory.id ? 'Selected' : 'Select'}
+                        </button>
+                      )}
+                      
+                      {source !== 'builder' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            const currentCategory = getCategory();
+                            if (currentCategory && currentCategory !== 'accessories') {
+                              toast.error(`You can only compare Accessories together. Clear the ${currentCategory} comparison first.`, { duration: 3000 });
+                              return;
+                            }
+                            if (isInCompare(accessory.id)) {
+                              removeFromCompare(accessory.id);
+                            } else {
+                              if (compareList.length >= 4) {
+                                toast.error('You can compare up to 4 products at once.', { duration: 3000 });
+                                return;
+                              }
+                              addToCompare(accessory, 'accessories');
+                            }
+                          }}
+                          className="flex-1 px-3 py-2 rounded-lg font-bold transition-all hover:opacity-90 cursor-pointer"
+                          style={{
+                            backgroundColor: isInCompare(accessory.id) ? colors.mainYellow : 'white',
+                            color: isInCompare(accessory.id) ? 'white' : colors.mainYellow,
+                            border: `2px solid ${colors.mainYellow}`
+                          }}
+                        >
+                          {isInCompare(accessory.id) ? '✓' : '+'}
+                        </button>
+                      )}
+                    </>
+                  )}
+
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       navigate(`/product/accessories/${accessory.id}`);
                     }}
-                    className="px-4 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
+                    className="px-6 py-2 rounded-lg font-semibold transition-opacity hover:opacity-90 cursor-pointer"
                     style={{
                       backgroundColor: selectedAccessory?.id === accessory.id ? 'white' : colors.mainYellow,
                       color: selectedAccessory?.id === accessory.id ? colors.mainYellow : 'white',
