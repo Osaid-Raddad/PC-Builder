@@ -19,7 +19,7 @@ import { useCompare } from "../../context/CompareContext";
 
 const MOCK_PRODUCTS = (cpusData?.cpus || []).map(cpu => ({
   ...cpu,
-  name: `${cpu.brand} ${cpu.model}`,
+  name: cpu.model ? `${cpu.brand} ${cpu.model}` : cpu.brand,
   clockSpeed: cpu.baseClockGHz,
 }));
 
@@ -172,6 +172,19 @@ export default function CPUScreen({ navigation }) {
             name={inCompare ? "check" : "compare"} 
             size={20} 
             color={inCompare ? "white" : colors.mainYellow} 
+          />
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.detailsButton}
+          onPress={() => navigation.navigate('ProductDetails', { 
+            category: 'cpu', 
+            productId: item.id 
+          })}
+        >
+          <Feather 
+            name="info" 
+            size={20} 
+            color={colors.mainBlack} 
           />
         </TouchableOpacity>
       </View>
@@ -899,6 +912,16 @@ const styles = StyleSheet.create({
   },
   addButtonSelected: {
     backgroundColor: colors.success + "20",
+  },
+  detailsButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainBlack,
+    justifyContent: "center",
+    alignItems: "center",
   },
   compareButton: {
     width: 40,

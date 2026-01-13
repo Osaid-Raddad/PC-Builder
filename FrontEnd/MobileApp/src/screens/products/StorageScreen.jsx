@@ -17,12 +17,15 @@ import storageData from "../../data/components/storage.json";
 import { useBuild } from "../../context/BuildContext";
 import { useCompare } from "../../context/CompareContext";
 
-const MOCK_PRODUCTS = (storageData?.storage || []).map(storage => ({
-  ...storage,
-  name: `${storage.manufacturer} ${storage.model}`,
-  brand: storage.manufacturer,
-  capacity: `${storage.capacityGB}GB`,
-}));
+const MOCK_PRODUCTS = (storageData?.storage || []).map(storage => {
+  const brandName = storage.brand || storage.manufacturer;
+  return {
+    ...storage,
+    name: storage.model ? `${brandName} ${storage.model}` : brandName,
+    brand: brandName,
+    capacity: `${storage.capacityGB}GB`,
+  };
+});
 
 export default function StorageScreen({ navigation }) {
   const { addComponent, selectedComponents } = useBuild();
@@ -149,6 +152,19 @@ export default function StorageScreen({ navigation }) {
             name={isSelected ? "check" : "plus"} 
             size={20} 
             color={isSelected ? colors.success : colors.mainBlack} 
+          />
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.detailsButton}
+          onPress={() => navigation.navigate('ProductDetails', { 
+            category: 'storage', 
+            productId: item.id 
+          })}
+        >
+          <Feather 
+            name="info" 
+            size={20} 
+            color={colors.mainBlack} 
           />
         </TouchableOpacity>
         <TouchableOpacity 
@@ -671,6 +687,24 @@ const styles = StyleSheet.create({
   },
   addButtonSelected: {
     backgroundColor: colors.success + "20",
+  },  detailsButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainBlack,
+    justifyContent: "center",
+    alignItems: "center",
+  },  detailsButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainBlack,
+    justifyContent: "center",
+    alignItems: "center",
   },
   compareButton: {
     width: 40,

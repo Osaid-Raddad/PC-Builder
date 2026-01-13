@@ -15,11 +15,14 @@ import casesData from "../../data/components/cases.json";
 import { useBuild } from "../../context/BuildContext";
 import { useCompare } from "../../context/CompareContext";
 
-const MOCK_PRODUCTS = (casesData?.cases || []).map(caseItem => ({
-  ...caseItem,
-  name: `${caseItem.manufacturer} ${caseItem.model}`,
-  brand: caseItem.manufacturer,
-}));
+const MOCK_PRODUCTS = (casesData?.cases || []).map(caseItem => {
+  const brandName = caseItem.brand || caseItem.manufacturer;
+  return {
+    ...caseItem,
+    name: caseItem.model ? `${brandName} ${caseItem.model}` : brandName,
+    brand: brandName,
+  };
+});
 
 export default function CaseScreen({ navigation }) {
   const { addComponent, selectedComponents } = useBuild();
@@ -115,6 +118,19 @@ export default function CaseScreen({ navigation }) {
             name="compare"
             size={20}
             color={inCompare ? colors.mainYellow : colors.text}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.detailsButton}
+          onPress={() => navigation.navigate('ProductDetails', { 
+            category: 'case', 
+            productId: item.id 
+          })}
+        >
+          <Feather 
+            name="info" 
+            size={20} 
+            color={colors.mainBlack} 
           />
         </TouchableOpacity>
         <TouchableOpacity 
@@ -301,6 +317,16 @@ const styles = StyleSheet.create({
   compareButtonActive: {
     backgroundColor: colors.mainYellow + "20",
     borderColor: colors.mainYellow,
+  },
+  detailsButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainBlack,
+    justifyContent: "center",
+    alignItems: "center",
   },
   addButton: {
     width: 40,

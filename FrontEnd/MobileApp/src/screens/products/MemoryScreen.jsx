@@ -17,13 +17,16 @@ import memoryData from "../../data/components/memory.json";
 import { useBuild } from "../../context/BuildContext";
 import { useCompare } from "../../context/CompareContext";
 
-const MOCK_PRODUCTS = (memoryData?.memory || []).map(mem => ({
-  ...mem,
-  name: `${mem.manufacturer} ${mem.model}`,
-  brand: mem.manufacturer,
-  capacity: `${mem.capacityGB}GB`,
-  speed: mem.speed,
-}));
+const MOCK_PRODUCTS = (memoryData?.memory || []).map(mem => {
+  const brandName = mem.brand || mem.manufacturer;
+  return {
+    ...mem,
+    name: mem.model ? `${brandName} ${mem.model}` : brandName,
+    brand: brandName,
+    capacity: `${mem.capacityGB}GB`,
+    speed: mem.speed,
+  };
+});
 
 export default function MemoryScreen({ navigation }) {
   const { addComponent, selectedComponents } = useBuild();
@@ -160,6 +163,19 @@ export default function MemoryScreen({ navigation }) {
             name={isSelected ? "check" : "plus"} 
             size={20} 
             color={isSelected ? colors.success : colors.mainBlack} 
+          />
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.detailsButton}
+          onPress={() => navigation.navigate('ProductDetails', { 
+            category: 'memory', 
+            productId: item.id 
+          })}
+        >
+          <Feather 
+            name="info" 
+            size={20} 
+            color={colors.mainBlack} 
           />
         </TouchableOpacity>
         <TouchableOpacity 
@@ -812,6 +828,24 @@ const styles = StyleSheet.create({
   },
   addButtonSelected: {
     backgroundColor: colors.success + "20",
+  },  detailsButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainBlack,
+    justifyContent: "center",
+    alignItems: "center",
+  },  detailsButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainBlack,
+    justifyContent: "center",
+    alignItems: "center",
   },
   compareButton: {
     width: 40,

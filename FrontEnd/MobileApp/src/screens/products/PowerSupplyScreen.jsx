@@ -15,11 +15,14 @@ import psuData from "../../data/components/powerSupplies.json";
 import { useBuild } from "../../context/BuildContext";
 import { useCompare } from "../../context/CompareContext";
 
-const MOCK_PRODUCTS = (psuData?.powerSupplies || []).map(psu => ({
-  ...psu,
-  name: `${psu.manufacturer} ${psu.model}`,
-  brand: psu.manufacturer,
-}));
+const MOCK_PRODUCTS = (psuData?.powerSupplies || []).map(psu => {
+  const brandName = psu.brand || psu.manufacturer;
+  return {
+    ...psu,
+    name: psu.model ? `${brandName} ${psu.model}` : brandName,
+    brand: brandName,
+  };
+});
 
 export default function PowerSupplyScreen({ navigation }) {
   const { addComponent, selectedComponents } = useBuild();
@@ -115,6 +118,19 @@ export default function PowerSupplyScreen({ navigation }) {
             name="compare"
             size={20}
             color={inCompare ? colors.mainYellow : colors.text}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.detailsButton}
+          onPress={() => navigation.navigate('ProductDetails', { 
+            category: 'power-supply', 
+            productId: item.id 
+          })}
+        >
+          <Feather 
+            name="info" 
+            size={20} 
+            color={colors.mainBlack} 
           />
         </TouchableOpacity>
         <TouchableOpacity 
@@ -297,6 +313,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderColor: colors.border,
+  },
+  detailsButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainBlack,
+    justifyContent: "center",
+    alignItems: "center",
   },
   compareButtonActive: {
     backgroundColor: colors.mainYellow + "20",

@@ -53,6 +53,7 @@ import MonitorScreen from "../screens/products/MonitorScreen";
 import ExpansionScreen from "../screens/products/ExpansionScreen";
 import PeripheralsScreen from "../screens/products/PeripheralsScreen";
 import AccessoriesScreen from "../screens/products/AccessoriesScreen";
+import ProductDetailsScreen from "../screens/products/ProductDetailsScreen";
 
 const Stack = createStackNavigator();
 
@@ -110,6 +111,7 @@ export default function AppNavigator() {
         <Stack.Screen name="Expansion" component={ExpansionScreen} />
         <Stack.Screen name="Peripherals" component={PeripheralsScreen} />
         <Stack.Screen name="Accessories" component={AccessoriesScreen} />
+        <Stack.Screen name="ProductDetails" component={ProductDetailsScreen} />
 
         {/* Community */}
         <Stack.Screen name="Posts" component={PostsScreen} />

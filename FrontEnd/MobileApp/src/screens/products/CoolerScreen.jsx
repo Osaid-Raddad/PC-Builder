@@ -17,8 +17,8 @@ import { useCompare } from "../../context/CompareContext";
 
 const MOCK_PRODUCTS = (coolersData?.cpuCoolers || []).map(cooler => ({
   ...cooler,
-  name: `${cooler.manufacturer} ${cooler.model}`,
-  brand: cooler.manufacturer,
+  name: cooler.model ? `${cooler.brand || cooler.manufacturer} ${cooler.model}` : (cooler.brand || cooler.manufacturer),
+  brand: cooler.brand || cooler.manufacturer,
 }));
 
 export default function CoolerScreen({ navigation }) {
@@ -115,6 +115,19 @@ export default function CoolerScreen({ navigation }) {
             name="compare"
             size={20}
             color={inCompare ? colors.mainYellow : colors.text}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.detailsButton}
+          onPress={() => navigation.navigate('ProductDetails', { 
+            category: 'cooler', 
+            productId: item.id 
+          })}
+        >
+          <Feather 
+            name="info" 
+            size={20} 
+            color={colors.mainBlack} 
           />
         </TouchableOpacity>
         <TouchableOpacity 
@@ -301,6 +314,16 @@ const styles = StyleSheet.create({
   compareButtonActive: {
     backgroundColor: colors.mainYellow + "20",
     borderColor: colors.mainYellow,
+  },
+  detailsButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainBlack,
+    justifyContent: "center",
+    alignItems: "center",
   },
   addButton: {
     width: 40,

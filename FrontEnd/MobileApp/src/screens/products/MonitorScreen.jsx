@@ -159,6 +159,19 @@ export default function MonitorScreen({ navigation }) {
           />
         </TouchableOpacity>
         <TouchableOpacity 
+          style={styles.detailsButton}
+          onPress={() => navigation.navigate('ProductDetails', { 
+            category: 'monitor', 
+            productId: item.id 
+          })}
+        >
+          <Feather 
+            name="info" 
+            size={20} 
+            color={colors.mainBlack} 
+          />
+        </TouchableOpacity>
+        <TouchableOpacity 
           style={[styles.compareButton, inCompare && styles.compareButtonActive]}
           onPress={() => handleCompareToggle(item)}
         >
@@ -834,6 +847,16 @@ const styles = StyleSheet.create({
   },
   addButtonSelected: {
     backgroundColor: colors.success + "20",
+  },
+  detailsButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainBlack,
+    justifyContent: "center",
+    alignItems: "center",
   },
   compareButton: {
     width: 40,

@@ -17,11 +17,14 @@ import motherboardsData from "../../data/components/motherboards.json";
 import { useBuild } from "../../context/BuildContext";
 import { useCompare } from "../../context/CompareContext";
 
-const MOCK_PRODUCTS = (motherboardsData?.motherboards || []).map(mb => ({
-  ...mb,
-  name: `${mb.manufacturer} ${mb.model}`,
-  brand: mb.manufacturer,
-}));
+const MOCK_PRODUCTS = (motherboardsData?.motherboards || []).map(mb => {
+  const brandName = mb.brand || mb.manufacturer;
+  return {
+    ...mb,
+    name: mb.model ? `${brandName} ${mb.model}` : brandName,
+    brand: brandName,
+  };
+});
 
 export default function MotherboardScreen({ navigation }) {
   const { addComponent, selectedComponents } = useBuild();
@@ -156,6 +159,19 @@ export default function MotherboardScreen({ navigation }) {
             name={isSelected ? "check" : "plus"} 
             size={20} 
             color={isSelected ? colors.success : colors.mainBlack} 
+          />
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={styles.detailsButton}
+          onPress={() => navigation.navigate('ProductDetails', { 
+            category: 'motherboard', 
+            productId: item.id 
+          })}
+        >
+          <Feather 
+            name="info" 
+            size={20} 
+            color={colors.mainBlack} 
           />
         </TouchableOpacity>
         <TouchableOpacity 
@@ -808,6 +824,24 @@ const styles = StyleSheet.create({
   },
   addButtonSelected: {
     backgroundColor: colors.success + "20",
+  },  detailsButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainBlack,
+    justifyContent: "center",
+    alignItems: "center",
+  },  detailsButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainBlack,
+    justifyContent: "center",
+    alignItems: "center",
   },
   compareButton: {
     width: 40,
