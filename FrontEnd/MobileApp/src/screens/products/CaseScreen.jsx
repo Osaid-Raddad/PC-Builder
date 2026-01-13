@@ -25,24 +25,32 @@ const MOCK_PRODUCTS = (casesData?.cases || []).map(caseItem => {
 });
 
 export default function CaseScreen({ navigation, route }) {
-  const { addComponent, selectedComponents } = useBuild();
+  const { addComponent, removeComponent, selectedComponents } = useBuild();
   const { source } = route.params || {}; // 'builder' or 'comparator'
   const { addToCompare, isInCompare, removeFromCompare, getCategory, compareList } = useCompare();
   const [selectedFilter, setSelectedFilter] = useState("all");
 
   const handleAddToBuild = (product) => {
-    addComponent('case', product);
-    Alert.alert(
-      "Case Added",
-      `${product.name} has been added to your build.`,
-      [
-        { text: "Continue Browsing", style: "cancel" },
-        {
-          text: "View Build",
-          onPress: () => navigation.navigate("Builder"),
-        },
-      ]
-    );
+    const componentType = 'case';
+    const isSelected = selectedComponents[componentType]?.model === product.model;
+    
+    if (isSelected) {
+      removeComponent(componentType);
+      Alert.alert("Removed", `${product.name} removed from your build.`);
+    } else {
+      addComponent(componentType, product);
+      Alert.alert(
+        "Added to Build",
+        `${product.name} has been added to your build.`,
+        [
+          { text: "Continue Browsing", style: "cancel" },
+          {
+            text: "View Build",
+            onPress: () => navigation.navigate("Builder"),
+          },
+        ]
+      );
+    }
   };
 
   const handleCompareToggle = (product) => {

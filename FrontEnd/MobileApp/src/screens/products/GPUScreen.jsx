@@ -27,7 +27,7 @@ const MOCK_PRODUCTS = (gpusData?.gpus || []).map(gpu => {
 });
 
 export default function GPUScreen({ navigation, route }) {
-  const { addComponent, selectedComponents } = useBuild();
+  const { addComponent, removeComponent, selectedComponents } = useBuild();
   const { source } = route.params || {}; // 'builder' or 'comparator'
   const { addToCompare, isInCompare, removeFromCompare, getCategory, compareList } = useCompare();
   const [showFilterModal, setShowFilterModal] = useState(false);
@@ -81,18 +81,26 @@ export default function GPUScreen({ navigation, route }) {
   };
 
   const handleAddToBuild = (product) => {
-    addComponent('gpu', product);
-    Alert.alert(
-      "GPU Added",
-      `${product.name} has been added to your build.`,
-      [
-        { text: "Continue Browsing", style: "cancel" },
-        {
-          text: "View Build",
-          onPress: () => navigation.navigate("Builder"),
-        },
-      ]
-    );
+    const componentType = 'gpu';
+    const isSelected = selectedComponents[componentType]?.model === product.model;
+    
+    if (isSelected) {
+      removeComponent(componentType);
+      Alert.alert("Removed", `${product.name} removed from your build.`);
+    } else {
+      addComponent(componentType, product);
+      Alert.alert(
+        "Added to Build",
+        `${product.name} has been added to your build.`,
+        [
+          { text: "Continue Browsing", style: "cancel" },
+          {
+            text: "View Build",
+            onPress: () => navigation.navigate("Builder"),
+          },
+        ]
+      );
+    }
   };
 
   const handleCompareToggle = (product) => {

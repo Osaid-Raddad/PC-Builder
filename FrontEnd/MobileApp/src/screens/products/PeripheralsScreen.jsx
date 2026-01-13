@@ -17,7 +17,7 @@ import { useBuild } from "../../context/BuildContext";
 import { useCompare } from "../../context/CompareContext";
 
 export default function PeripheralsScreen({ navigation, route }) {
-  const { addComponent, selectedComponents } = useBuild();
+  const { addComponent, removeComponent, selectedComponents } = useBuild();
   const { source } = route.params || {}; // 'builder' or 'comparator'
   const { addToCompare, isInCompare, removeFromCompare, getCategory, compareList } = useCompare();
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,18 +33,26 @@ export default function PeripheralsScreen({ navigation, route }) {
   const brands = ['All', ...new Set(peripheralList.map(p => p.brand))];
 
   const handleAddToBuild = (product) => {
-    addComponent('peripherals', product);
-    Alert.alert(
-      "Peripheral Added",
-      `${product.name} has been added to your build.`,
-      [
-        { text: "Continue Browsing", style: "cancel" },
-        {
-          text: "View Build",
-          onPress: () => navigation.navigate("Builder"),
-        },
-      ]
-    );
+    const componentType = 'peripherals';
+    const isSelected = selectedComponents[componentType]?.model === product.model;
+    
+    if (isSelected) {
+      removeComponent(componentType);
+      Alert.alert("Removed", `${product.name} removed from your build.`);
+    } else {
+      addComponent(componentType, product);
+      Alert.alert(
+        "Added to Build",
+        `${product.name} has been added to your build.`,
+        [
+          { text: "Continue Browsing", style: "cancel" },
+          {
+            text: "View Build",
+            onPress: () => navigation.navigate("Builder"),
+          },
+        ]
+      );
+    }
   };
 
   const handleCompareToggle = (product) => {
