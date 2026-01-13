@@ -13,6 +13,7 @@ import BuilderScreen from "../screens/builder/BuilderScreen";
 import ProductsScreen from "../screens/products/ProductsScreen";
 import ComparatorScreen from "../screens/comparator/ComparatorScreen";
 import CompletedBuildsScreen from "../screens/completedBuilds/CompletedBuildsScreen";
+import BuildDetailsScreen from "../screens/completedBuilds/BuildDetailsScreen";
 import PostsScreen from "../screens/posts/PostsScreen";
 import NewsScreen from "../screens/news/NewsScreen";
 import ShopsScreen from "../screens/shops/ShopsScreen";
@@ -95,6 +96,10 @@ export default function AppNavigator() {
         <Stack.Screen
           name="CompletedBuilds"
           component={CompletedBuildsScreen}
+        />
+        <Stack.Screen
+          name="BuildDetails"
+          component={BuildDetailsScreen}
         />
 
         {/* Products */}
