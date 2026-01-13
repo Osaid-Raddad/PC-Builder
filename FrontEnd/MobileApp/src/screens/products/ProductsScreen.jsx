@@ -13,8 +13,9 @@ import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ScreenLayout from "../../components/ScreenLayout";
 import colors from "../../config/colors";
 
-export default function ProductsScreen({ navigation }) {
+export default function ProductsScreen({ navigation, route }) {
   const [searchQuery, setSearchQuery] = useState("");
+  const { source } = route.params || {}; // 'builder' or 'comparator'
 
   const categories = [
     {
@@ -111,7 +112,7 @@ export default function ProductsScreen({ navigation }) {
   const renderCategory = ({ item }) => (
     <TouchableOpacity
       style={styles.categoryCard}
-      onPress={() => navigation.navigate(item.screen)}
+      onPress={() => navigation.navigate(item.screen, { source })}
     >
       <View
         style={[styles.iconContainer, { backgroundColor: item.color + "20" }]}

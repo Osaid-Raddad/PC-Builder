@@ -28,8 +28,9 @@ const MOCK_PRODUCTS = (memoryData?.memory || []).map(mem => {
   };
 });
 
-export default function MemoryScreen({ navigation }) {
+export default function MemoryScreen({ navigation, route }) {
   const { addComponent, selectedComponents } = useBuild();
+  const { source } = route.params || {}; // 'builder' or 'comparator'
   const { addToCompare, isInCompare, removeFromCompare, getCategory, compareList } = useCompare();
   const [showFilterModal, setShowFilterModal] = useState(false);
   const [filters, setFilters] = useState({
@@ -160,34 +161,40 @@ export default function MemoryScreen({ navigation }) {
           </View>
         </View>
       </View>
-      <View style={styles.actionButtons}>
-        <TouchableOpacity 
-          style={[styles.addButton, isSelected && styles.addButtonSelected]}
-          onPress={(e) => {
-            e.stopPropagation();
-            handleAddToBuild(item);
-          }}
-        >
-          <Feather 
-            name={isSelected ? "check" : "plus"} 
-            size={20} 
-            color={isSelected ? colors.success : colors.mainBlack} 
-          />
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={[styles.compareButton, inCompare && styles.compareButtonActive]}
-          onPress={(e) => {
-            e.stopPropagation();
-            handleCompareToggle(item);
-          }}
-        >
-          <MaterialCommunityIcons 
-            name={inCompare ? "check" : "compare"} 
-            size={20} 
-            color={inCompare ? "white" : colors.mainYellow} 
-          />
-        </TouchableOpacity>
-      </View>
+      {(source === 'builder' || source === 'comparator' || source) && (
+        <View style={styles.actionButtons}>
+          {source !== 'comparator' && (
+            <TouchableOpacity 
+              style={[styles.addButton, isSelected && styles.addButtonSelected]}
+              onPress={(e) => {
+                e.stopPropagation();
+                handleAddToBuild(item);
+              }}
+            >
+              <Feather 
+                name={isSelected ? "check" : "plus"} 
+                size={20} 
+                color={isSelected ? colors.success : colors.mainBlack} 
+              />
+            </TouchableOpacity>
+          )}
+          {source !== 'builder' && (
+            <TouchableOpacity 
+              style={[styles.compareButton, inCompare && styles.compareButtonActive]}
+              onPress={(e) => {
+                e.stopPropagation();
+                handleCompareToggle(item);
+              }}
+            >
+              <MaterialCommunityIcons 
+                name={inCompare ? "check" : "compare"} 
+                size={20} 
+                color={inCompare ? "white" : colors.mainYellow} 
+              />
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
     </TouchableOpacity>
     );
   };

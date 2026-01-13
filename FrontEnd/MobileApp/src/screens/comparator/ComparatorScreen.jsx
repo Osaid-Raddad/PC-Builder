@@ -144,7 +144,7 @@ export default function ComparatorScreen({ navigation }) {
             </Text>
             <TouchableOpacity
               style={styles.addButton}
-              onPress={() => navigation.navigate("Products")}
+              onPress={() => navigation.navigate("Products", { source: 'comparator' })}
             >
               <Feather name="grid" size={20} color={colors.mainBlack} />
               <Text style={styles.addButtonText}>Browse Products</Text>

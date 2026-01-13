@@ -16,8 +16,9 @@ import peripheralsData from "../../data/components/peripherals.json";
 import { useBuild } from "../../context/BuildContext";
 import { useCompare } from "../../context/CompareContext";
 
-export default function PeripheralsScreen({ navigation }) {
+export default function PeripheralsScreen({ navigation, route }) {
   const { addComponent, selectedComponents } = useBuild();
+  const { source } = route.params || {}; // 'builder' or 'comparator'
   const { addToCompare, isInCompare, removeFromCompare, getCategory, compareList } = useCompare();
   const [searchTerm, setSearchTerm] = useState("");
   const [typeFilter, setTypeFilter] = useState("All");
@@ -123,34 +124,40 @@ export default function PeripheralsScreen({ navigation }) {
         </View>
         <View style={styles.priceRow}>
           <Text style={styles.price}>${item.price}</Text>
-          <View style={styles.actionButtons}>
-            <TouchableOpacity
-              style={[styles.addButton, isSelected && styles.addButtonSelected]}
-              onPress={(e) => {
-                e.stopPropagation();
-                handleAddToBuild(item);
-              }}
-            >
-              <Feather 
-                name={isSelected ? "check" : "plus"} 
-                size={20} 
-                color={isSelected ? colors.success : colors.mainBlack} 
-              />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.compareButton, inCompare && styles.compareButtonActive]}
-              onPress={(e) => {
-                e.stopPropagation();
-                handleCompareToggle(item);
-              }}
-            >
-              <MaterialCommunityIcons 
-                name="compare" 
-                size={20} 
-                color={inCompare ? colors.mainYellow : colors.mainBlack} 
-              />
-            </TouchableOpacity>
-          </View>
+          {(source === 'builder' || source === 'comparator' || source) && (
+            <View style={styles.actionButtons}>
+              {source !== 'comparator' && (
+                <TouchableOpacity
+                  style={[styles.addButton, isSelected && styles.addButtonSelected]}
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    handleAddToBuild(item);
+                  }}
+                >
+                  <Feather 
+                    name={isSelected ? "check" : "plus"} 
+                    size={20} 
+                    color={isSelected ? colors.success : colors.mainBlack} 
+                  />
+                </TouchableOpacity>
+              )}
+              {source !== 'builder' && (
+                <TouchableOpacity
+                  style={[styles.compareButton, inCompare && styles.compareButtonActive]}
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    handleCompareToggle(item);
+                  }}
+                >
+                  <MaterialCommunityIcons 
+                    name={inCompare ? "check" : "compare"} 
+                    size={20} 
+                    color={inCompare ? "white" : colors.mainYellow} 
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -423,16 +430,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   compareButton: {
-    backgroundColor: colors.platinum,
     width: 40,
     height: 40,
     borderRadius: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: colors.mainYellow,
     justifyContent: "center",
     alignItems: "center",
   },
   compareButtonActive: {
-    backgroundColor: colors.mainYellow + "40",
-    borderWidth: 2,
+    backgroundColor: colors.mainYellow,
     borderColor: colors.mainYellow,
   },
   productCardSelected: {

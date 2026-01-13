@@ -66,7 +66,7 @@ export default function BuilderScreen({ navigation }) {
   };
 
   const handleSelectComponent = (screen) => {
-    navigation.navigate(screen);
+    navigation.navigate(screen, { source: 'builder' });
   };
 
   const handleRemoveComponent = (componentId, componentName) => {
