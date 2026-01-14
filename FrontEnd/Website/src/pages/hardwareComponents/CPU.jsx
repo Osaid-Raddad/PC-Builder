@@ -675,7 +675,7 @@ const CPU = () => {
                   <div className="flex justify-between items-start mb-4">
                     <span 
                       className="px-3 py-1 rounded-full text-xs font-semibold text-white"
-                      style={{ backgroundColor: colors.mainYellow }}
+                      style={{ backgroundColor: cpu.brand === 'AMD' ? '#E30613' : cpu.brand === 'Intel' ? '#0071C5' : colors.mainYellow }}
                     >
                       {cpu.brand}
                     </span>

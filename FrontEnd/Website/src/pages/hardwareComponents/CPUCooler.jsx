@@ -492,12 +492,31 @@ const CPUCooler = () => {
                 >
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-4">
-                      <span 
-                        className="px-3 py-1 rounded-full text-xs font-semibold text-white"
-                        style={{ backgroundColor: product.type === 'Air' ? '#4CAF50' : '#2196F3' }}
-                      >
-                        {product.type} Cooling
-                      </span>
+                      <div className="flex gap-2">
+                        <span 
+                          className="px-3 py-1 rounded-full text-xs font-semibold text-white"
+                          style={{ backgroundColor: product.type === 'Air Cooler' ? '#4CAF50' : '#2196F3' }}
+                        >
+                          {product.type} Cooling
+                        </span>
+                        <span 
+                          className="px-3 py-1 rounded-full text-xs font-semibold text-white"
+                          style={{ 
+                            backgroundColor: 
+                              product.brand === 'Noctua' ? '#9B7653' : 
+                              product.brand === 'Corsair' ? '#F4C430' : 
+                              product.brand === 'be quiet!' ? '#FF6600' : 
+                              product.brand === 'NZXT' ? '#7D12FF' : 
+                              product.brand === 'Cooler Master' ? '#663399' : 
+                              product.brand === 'Arctic' ? '#00B4D8' : 
+                              product.brand === 'Deepcool' ? '#E31E24' : 
+                              product.brand === 'Thermaltake' ? '#00A6FF' : 
+                              colors.mainYellow 
+                          }}
+                        >
+                          {product.brand}
+                        </span>
+                      </div>
                       {selectedCooler?.id === product.id && (
                         <span className="text-2xl">✓</span>
                       )}
