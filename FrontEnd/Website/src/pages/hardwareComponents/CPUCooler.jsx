@@ -102,7 +102,43 @@ const CPUCooler = () => {
       !filters.rating ||
       (cooler.rating && cooler.rating >= filters.rating);
     
-    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating;
+    // Color
+    const matchesColor = filters.color.length === 0 || 
+      !cooler.color ||
+      filters.color.includes(cooler.color);
+    
+    // Height
+    const matchesHeight = !cooler.heightMm || 
+      (cooler.heightMm >= filters.height.min && 
+       cooler.heightMm <= filters.height.max);
+    
+    // Bearing
+    const matchesBearing = filters.bearing.length === 0 || 
+      !cooler.bearing ||
+      filters.bearing.includes(cooler.bearing);
+    
+    // CPU Socket
+    const matchesCpuSocket = filters.cpuSocket.length === 0 || 
+      !cooler.socketCompatibility ||
+      filters.cpuSocket.some(socket => 
+        Array.isArray(cooler.socketCompatibility) ? 
+          cooler.socketCompatibility.includes(socket) : 
+          cooler.socketCompatibility === socket
+      );
+    
+    // Water Cooled
+    const matchesWaterCooled = filters.waterCooled === null || 
+      !cooler.hasOwnProperty('waterCooled') ||
+      cooler.waterCooled === filters.waterCooled;
+    
+    // Fanless
+    const matchesFanless = filters.fanless === null || 
+      !cooler.hasOwnProperty('fanless') ||
+      cooler.fanless === filters.fanless;
+    
+    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating &&
+           matchesColor && matchesHeight && matchesBearing && matchesCpuSocket &&
+           matchesWaterCooled && matchesFanless;
   });
 
   const handleSelectCooler = (cooler) => {

@@ -135,14 +135,72 @@ const HardwareDetail = () => {
         return (
           <>
             <SpecItem label="Brand" value={hardware.brand} />
-            <SpecItem label="Cores" value={hardware.cores} />
-            <SpecItem label="Threads" value={hardware.threads} />
+            <SpecItem label="Model" value={hardware.model} />
+            <SpecItem label="Series" value={hardware.series || 'N/A'} />
+            <SpecItem label="Core Family" value={hardware.coreFamily || 'N/A'} />
+            <SpecItem label="Microarchitecture" value={hardware.microarchitecture || 'N/A'} />
+            <SpecItem label="Socket" value={hardware.socket} />
+            
+            {/* Core & Thread Configuration */}
+            <div className="col-span-2 pt-3 pb-2 border-t" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-bold text-sm" style={{ color: colors.mainBlack }}>Performance</h3>
+            </div>
+            <SpecItem label="Performance Cores" value={hardware.performanceCoreCount || hardware.cores} />
+            <SpecItem label="Performance Threads" value={hardware.performanceThreadCount || hardware.threads} />
+            <SpecItem label="Total Cores" value={hardware.cores} />
+            <SpecItem label="Total Threads" value={hardware.threads} />
+            <SpecItem label="SMT Support" value={hardware.smt ? 'Yes' : 'No'} icon={hardware.smt ? <FiCheck /> : <FiX />} />
+            
+            {/* Clock Speeds */}
+            <div className="col-span-2 pt-3 pb-2 border-t" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-bold text-sm" style={{ color: colors.mainBlack }}>Clock Speeds</h3>
+            </div>
+            <SpecItem label="Performance Core Clock" value={`${hardware.performanceCoreClockGHz || hardware.baseClockGHz} GHz`} />
             <SpecItem label="Base Clock" value={`${hardware.baseClockGHz} GHz`} />
             <SpecItem label="Boost Clock" value={`${hardware.boostClockGHz} GHz`} />
-            <SpecItem label="TDP" value={`${hardware.tdpWatts}W`} />
-            <SpecItem label="Socket" value={hardware.socket} />
+            
+            {/* Cache */}
+            <div className="col-span-2 pt-3 pb-2 border-t" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-bold text-sm" style={{ color: colors.mainBlack }}>Cache Memory</h3>
+            </div>
+            <SpecItem label="L2 Cache" value={`${hardware.l2CacheMB} MB`} />
+            <SpecItem label="L3 Cache" value={`${hardware.l3CacheMB} MB`} />
+            <SpecItem label="Total Cache" value={`${(hardware.l2CacheMB || 0) + (hardware.l3CacheMB || 0)} MB`} />
+            
+            {/* Graphics & Features */}
+            <div className="col-span-2 pt-3 pb-2 border-t" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-bold text-sm" style={{ color: colors.mainBlack }}>Features</h3>
+            </div>
             <SpecItem label="Integrated Graphics" value={hardware.integratedGraphics || 'No'} icon={hardware.integratedGraphics ? <FiCheck /> : <FiX />} />
-            {hardware.performanceScore && <SpecItem label="Performance Score" value={hardware.performanceScore} />}
+            <SpecItem label="ECC Memory Support" value={hardware.eccSupport ? 'Yes' : 'No'} icon={hardware.eccSupport ? <FiCheck /> : <FiX />} />
+            <SpecItem label="Includes Cooler" value={hardware.includesCooler ? 'Yes' : 'No'} icon={hardware.includesCooler ? <FiCheck /> : <FiX />} />
+            
+            {/* Power & Thermal */}
+            <div className="col-span-2 pt-3 pb-2 border-t" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-bold text-sm" style={{ color: colors.mainBlack }}>Power & Thermal</h3>
+            </div>
+            <SpecItem label="TDP" value={`${hardware.tdpWatts}W`} />
+            <SpecItem label="Max Operating Temp" value={hardware.maxTempC ? `${hardware.maxTempC}°C` : 'N/A'} />
+            
+            {/* Performance */}
+            {hardware.performanceScore && (
+              <>
+                <div className="col-span-2 pt-3 pb-2 border-t" style={{ borderColor: colors.platinum }}>
+                  <h3 className="font-bold text-sm" style={{ color: colors.mainBlack }}>Benchmark</h3>
+                </div>
+                <SpecItem label="Performance Score" value={hardware.performanceScore} />
+              </>
+            )}
+            
+            {/* Rating */}
+            {hardware.rating && (
+              <>
+                <div className="col-span-2 pt-3 pb-2 border-t" style={{ borderColor: colors.platinum }}>
+                  <h3 className="font-bold text-sm" style={{ color: colors.mainBlack }}>Rating</h3>
+                </div>
+                <SpecItem label="User Rating" value={`${hardware.rating} / 5.0 ⭐`} />
+              </>
+            )}
           </>
         );
       case 'gpu':

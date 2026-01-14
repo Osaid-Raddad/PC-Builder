@@ -126,7 +126,149 @@ const Motherboard = () => {
       !filters.rating ||
       (mb.rating && mb.rating >= filters.rating);
     
-    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating;
+    // Socket
+    const matchesSocket = filters.socket.length === 0 || 
+      !mb.socket ||
+      filters.socket.includes(mb.socket);
+    
+    // Form Factor
+    const matchesFormFactor = filters.formFactor.length === 0 || 
+      !mb.formFactor ||
+      filters.formFactor.includes(mb.formFactor);
+    
+    // Chipset
+    const matchesChipset = filters.chipset.length === 0 || 
+      !mb.chipset ||
+      filters.chipset.includes(mb.chipset);
+    
+    // Memory Max
+    const matchesMemoryMax = !mb.memoryMaxGB || 
+      (mb.memoryMaxGB >= filters.memoryMax.min && 
+       mb.memoryMaxGB <= filters.memoryMax.max);
+    
+    // Memory Type
+    const matchesMemoryType = filters.memoryType.length === 0 || 
+      !mb.memoryType ||
+      filters.memoryType.includes(mb.memoryType);
+    
+    // Memory Slots
+    const matchesMemorySlots = filters.memorySlots.length === 0 || 
+      !mb.memorySlots ||
+      filters.memorySlots.includes(mb.memorySlots.toString());
+    
+    // Color
+    const matchesColor = filters.color.length === 0 || 
+      !mb.color ||
+      filters.color.includes(mb.color);
+    
+    // SLI/Crossfire
+    const matchesSliCrossfire = filters.sliCrossfire.length === 0 || 
+      !mb.sliCrossfire ||
+      filters.sliCrossfire.includes(mb.sliCrossfire);
+    
+    // PCIe x16 Slots
+    const matchesPcieX16 = filters.pcieX16Slots.length === 0 || 
+      mb.pcieX16Slots === undefined ||
+      filters.pcieX16Slots.includes(mb.pcieX16Slots.toString());
+    
+    // PCIe x8 Slots
+    const matchesPcieX8 = filters.pcieX8Slots.length === 0 || 
+      mb.pcieX8Slots === undefined ||
+      filters.pcieX8Slots.includes(mb.pcieX8Slots.toString());
+    
+    // PCIe x4 Slots
+    const matchesPcieX4 = filters.pcieX4Slots.length === 0 || 
+      mb.pcieX4Slots === undefined ||
+      filters.pcieX4Slots.includes(mb.pcieX4Slots.toString());
+    
+    // PCIe x1 Slots
+    const matchesPcieX1 = filters.pcieX1Slots.length === 0 || 
+      mb.pcieX1Slots === undefined ||
+      filters.pcieX1Slots.includes(mb.pcieX1Slots.toString());
+    
+    // PCI Slots
+    const matchesPciSlots = filters.pciSlots.length === 0 || 
+      mb.pciSlots === undefined ||
+      filters.pciSlots.includes(mb.pciSlots.toString());
+    
+    // SATA 3 Gb/s Ports
+    const matchesSata3 = filters.sata3Ports.length === 0 || 
+      mb.sata3GbsPorts === undefined ||
+      filters.sata3Ports.includes(mb.sata3GbsPorts.toString());
+    
+    // SATA 6 Gb/s Ports
+    const matchesSata6 = filters.sata6Ports.length === 0 || 
+      mb.sata6GbsPorts === undefined ||
+      filters.sata6Ports.includes(mb.sata6GbsPorts.toString());
+    
+    // M.2 Slots (B Key)
+    const matchesM2B = filters.m2SlotsB.length === 0 || 
+      mb.m2SlotsBKey === undefined ||
+      filters.m2SlotsB.includes(mb.m2SlotsBKey.toString());
+    
+    // M.2 Slots (E Key)
+    const matchesM2E = filters.m2SlotsE.length === 0 || 
+      mb.m2SlotsEKey === undefined ||
+      filters.m2SlotsE.includes(mb.m2SlotsEKey.toString());
+    
+    // mSATA Slots
+    const matchesMsata = filters.msataSlots.length === 0 || 
+      mb.msataSlots === undefined ||
+      filters.msataSlots.includes(mb.msataSlots.toString());
+    
+    // Onboard Ethernet
+    const matchesEthernet = filters.onboardEthernet.length === 0 || 
+      !mb.onboardEthernet ||
+      filters.onboardEthernet.includes(mb.onboardEthernet);
+    
+    // Onboard Video
+    const matchesOnboardVideo = filters.onboardVideo === null || 
+      !mb.hasOwnProperty('onboardVideo') ||
+      mb.onboardVideo === filters.onboardVideo;
+    
+    // USB 2.0 Headers
+    const matchesUsb2Headers = filters.usb2Headers.length === 0 || 
+      mb.usb2Headers === undefined ||
+      filters.usb2Headers.includes(mb.usb2Headers.toString());
+    
+    // USB 3.2 Gen 1 Headers
+    const matchesUsb3Gen1Headers = filters.usb3Gen1Headers.length === 0 || 
+      mb.usb3Gen1Headers === undefined ||
+      filters.usb3Gen1Headers.includes(mb.usb3Gen1Headers.toString());
+    
+    // USB 3.2 Gen 2 Headers
+    const matchesUsb3Gen2Headers = filters.usb3Gen2Headers.length === 0 || 
+      mb.usb3Gen2Headers === undefined ||
+      filters.usb3Gen2Headers.includes(mb.usb3Gen2Headers.toString());
+    
+    // USB 3.2 Gen 2x2 Headers
+    const matchesUsb3Gen2x2Headers = filters.usb3Gen2x2Headers.length === 0 || 
+      mb.usb3Gen2x2Headers === undefined ||
+      filters.usb3Gen2x2Headers.includes(mb.usb3Gen2x2Headers.toString());
+    
+    // Supports ECC
+    const matchesSupportsECC = filters.supportsECC === null || 
+      !mb.hasOwnProperty('supportsECC') ||
+      mb.supportsECC === filters.supportsECC;
+    
+    // Wireless Networking
+    const matchesWirelessNetworking = filters.wirelessNetworking === null || 
+      !mb.hasOwnProperty('wirelessNetworking') ||
+      mb.wirelessNetworking === filters.wirelessNetworking;
+    
+    // Back Connect Connectors
+    const matchesBackConnectConnectors = filters.backConnectConnectors === null || 
+      !mb.hasOwnProperty('backConnectConnectors') ||
+      mb.backConnectConnectors === filters.backConnectConnectors;
+    
+    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating &&
+           matchesSocket && matchesFormFactor && matchesChipset && matchesMemoryMax &&
+           matchesMemoryType && matchesMemorySlots && matchesColor && matchesSliCrossfire &&
+           matchesPcieX16 && matchesPcieX8 && matchesPcieX4 && matchesPcieX1 && matchesPciSlots &&
+           matchesSata3 && matchesSata6 && matchesM2B && matchesM2E && matchesMsata &&
+           matchesEthernet && matchesOnboardVideo && matchesUsb2Headers && matchesUsb3Gen1Headers &&
+           matchesUsb3Gen2Headers && matchesUsb3Gen2x2Headers && matchesSupportsECC &&
+           matchesWirelessNetworking && matchesBackConnectConnectors;
   });
 
   // Pagination logic

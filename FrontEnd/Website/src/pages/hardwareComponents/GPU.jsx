@@ -82,7 +82,113 @@ const GPU = () => {
       !filters.rating ||
       (gpu.rating && gpu.rating >= filters.rating);
     
-    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating;
+    // Chipset
+    const matchesChipset = filters.chipset.length === 0 || 
+      !gpu.chipset ||
+      filters.chipset.includes(gpu.chipset);
+    
+    // Memory
+    const matchesMemory = filters.memory.length === 0 || 
+      !gpu.memoryGB ||
+      filters.memory.includes(`${gpu.memoryGB}GB`);
+    
+    // Memory Type
+    const matchesMemoryType = filters.memoryType.length === 0 || 
+      !gpu.memoryType ||
+      filters.memoryType.includes(gpu.memoryType);
+    
+    // Core Clock
+    const matchesCoreClock = !gpu.coreClockMHz || 
+      (gpu.coreClockMHz >= filters.coreClock.min && 
+       gpu.coreClockMHz <= filters.coreClock.max);
+    
+    // Boost Clock
+    const matchesBoostClock = !gpu.boostClockMHz || 
+      (gpu.boostClockMHz >= filters.boostClock.min && 
+       gpu.boostClockMHz <= filters.boostClock.max);
+    
+    // Interface
+    const matchesInterface = filters.interface.length === 0 || 
+      !gpu.interface ||
+      filters.interface.includes(gpu.interface);
+    
+    // Color
+    const matchesColor = filters.color.length === 0 || 
+      !gpu.color ||
+      filters.color.includes(gpu.color);
+    
+    // SLI/Crossfire
+    const matchesSliCrossfire = filters.sliCrossfire.length === 0 || 
+      !gpu.sliCrossfire ||
+      filters.sliCrossfire.includes(gpu.sliCrossfire);
+    
+    // Frame Sync
+    const matchesFrameSync = filters.frameSync.length === 0 || 
+      !gpu.frameSync ||
+      filters.frameSync.includes(gpu.frameSync);
+    
+    // Length
+    const matchesLength = !gpu.lengthMm || 
+      (gpu.lengthMm >= filters.length.min && 
+       gpu.lengthMm <= filters.length.max);
+    
+    // TDP
+    const matchesTdp = !gpu.tdpWatts || 
+      (gpu.tdpWatts >= filters.tdp.min && 
+       gpu.tdpWatts <= filters.tdp.max);
+    
+    // DVI Ports
+    const matchesDviPorts = filters.dviPorts.length === 0 || 
+      gpu.dviPorts === undefined ||
+      filters.dviPorts.includes(gpu.dviPorts.toString());
+    
+    // HDMI Ports
+    const matchesHdmiPorts = filters.hdmiPorts.length === 0 || 
+      gpu.hdmiPorts === undefined ||
+      filters.hdmiPorts.includes(gpu.hdmiPorts.toString());
+    
+    // Mini HDMI Ports
+    const matchesMiniHdmiPorts = filters.miniHdmiPorts.length === 0 || 
+      gpu.miniHdmiPorts === undefined ||
+      filters.miniHdmiPorts.includes(gpu.miniHdmiPorts.toString());
+    
+    // DisplayPort Ports
+    const matchesDisplayPortPorts = filters.displayPortPorts.length === 0 || 
+      gpu.displayPortPorts === undefined ||
+      filters.displayPortPorts.includes(gpu.displayPortPorts.toString());
+    
+    // Mini DisplayPort Ports
+    const matchesMiniDisplayPortPorts = filters.miniDisplayPortPorts.length === 0 || 
+      gpu.miniDisplayPortPorts === undefined ||
+      filters.miniDisplayPortPorts.includes(gpu.miniDisplayPortPorts.toString());
+    
+    // Case Expansion Slot Width
+    const matchesCaseExpansionSlotWidth = filters.caseExpansionSlotWidth.length === 0 || 
+      !gpu.caseExpansionSlotWidth ||
+      filters.caseExpansionSlotWidth.includes(gpu.caseExpansionSlotWidth.toString());
+    
+    // Total Slot Width
+    const matchesTotalSlotWidth = filters.totalSlotWidth.length === 0 || 
+      !gpu.totalSlotWidth ||
+      filters.totalSlotWidth.includes(gpu.totalSlotWidth.toString());
+    
+    // Cooling
+    const matchesCooling = filters.cooling.length === 0 || 
+      !gpu.cooling ||
+      filters.cooling.includes(gpu.cooling);
+    
+    // External Power
+    const matchesExternalPower = filters.externalPower.length === 0 || 
+      !gpu.externalPower ||
+      filters.externalPower.includes(gpu.externalPower);
+    
+    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating &&
+           matchesChipset && matchesMemory && matchesMemoryType && matchesCoreClock &&
+           matchesBoostClock && matchesInterface && matchesColor && matchesSliCrossfire &&
+           matchesFrameSync && matchesLength && matchesTdp && matchesDviPorts &&
+           matchesHdmiPorts && matchesMiniHdmiPorts && matchesDisplayPortPorts &&
+           matchesMiniDisplayPortPorts && matchesCaseExpansionSlotWidth && matchesTotalSlotWidth &&
+           matchesCooling && matchesExternalPower;
   });
   
   console.log('Filtered GPUs:', filteredGPUs.length);
