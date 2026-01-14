@@ -206,14 +206,192 @@ const HardwareDetail = () => {
       case 'gpu':
         return (
           <>
+            {/* Basic Information */}
             <SpecItem label="Brand" value={hardware.brand} />
-            <SpecItem label="Chipset" value={hardware.chipset} />
-            <SpecItem label="Memory" value={`${hardware.memoryGB} GB ${hardware.memoryType}`} />
-            <SpecItem label="Core Clock" value={`${hardware.coreClockMHz} MHz`} />
+            <SpecItem label="Model" value={hardware.model} />
+            {hardware.manufacturer && <SpecItem label="Manufacturer" value={hardware.manufacturer} />}
+            {hardware.chipset && <SpecItem label="Chipset" value={hardware.chipset} />}
+            {hardware.architecture && <SpecItem label="Architecture" value={hardware.architecture} />}
+            
+            {/* Memory Specifications */}
+            <div className="col-span-2 pt-3 pb-2 border-t" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-bold text-sm" style={{ color: colors.mainBlack }}>Memory</h3>
+            </div>
+            <SpecItem label="Memory Size" value={`${hardware.memoryGB} GB`} />
+            <SpecItem label="Memory Type" value={hardware.memoryType} />
+            <SpecItem 
+              label="Memory Bandwidth" 
+              value={hardware.memoryType === 'GDDR6X' ? 'Up to 1008 GB/s' : 
+                     hardware.memoryType === 'GDDR6' ? 'Up to 448 GB/s' : 
+                     hardware.memoryType === 'HBM2' ? 'Up to 1024 GB/s' : 
+                     hardware.memoryType === 'GDDR5X' ? 'Up to 484 GB/s' :
+                     'Up to 256 GB/s'} 
+            />
+
+            {/* Clock Speeds */}
+            <div className="col-span-2 pt-3 pb-2 border-t" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-bold text-sm" style={{ color: colors.mainBlack }}>Clock Speeds</h3>
+            </div>
+            <SpecItem label="Base Core Clock" value={`${hardware.coreClockMHz} MHz`} />
             <SpecItem label="Boost Clock" value={`${hardware.boostClockMHz} MHz`} />
+            <SpecItem 
+              label="Clock Boost" 
+              value={`+${hardware.boostClockMHz - hardware.coreClockMHz} MHz (${((hardware.boostClockMHz - hardware.coreClockMHz) / hardware.coreClockMHz * 100).toFixed(1)}%)`} 
+            />
+
+            {/* Display & Connectivity */}
+            <div className="col-span-2 pt-3 pb-2 border-t" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-bold text-sm" style={{ color: colors.mainBlack }}>Display & Connectivity</h3>
+            </div>
+            {hardware.interface && <SpecItem label="Interface" value={hardware.interface} />}
+            {hardware.ports && (
+              <>
+                {hardware.ports.hdmi !== undefined && (
+                  <SpecItem 
+                    label="HDMI Ports" 
+                    value={`${hardware.ports.hdmi} Port${hardware.ports.hdmi !== 1 ? 's' : ''}`} 
+                  />
+                )}
+                {hardware.ports.displayPort !== undefined && (
+                  <SpecItem 
+                    label="DisplayPort" 
+                    value={`${hardware.ports.displayPort} Port${hardware.ports.displayPort !== 1 ? 's' : ''}`} 
+                  />
+                )}
+                {hardware.ports.dvi !== undefined && hardware.ports.dvi > 0 && (
+                  <SpecItem label="DVI Ports" value={hardware.ports.dvi} />
+                )}
+                {hardware.ports.miniHdmi !== undefined && hardware.ports.miniHdmi > 0 && (
+                  <SpecItem label="Mini-HDMI" value={hardware.ports.miniHdmi} />
+                )}
+                {hardware.ports.miniDisplayPort !== undefined && hardware.ports.miniDisplayPort > 0 && (
+                  <SpecItem label="Mini-DP" value={hardware.ports.miniDisplayPort} />
+                )}
+                <SpecItem 
+                  label="Total Outputs" 
+                  value={`${(hardware.ports.hdmi || 0) + (hardware.ports.displayPort || 0) + (hardware.ports.dvi || 0) + (hardware.ports.miniHdmi || 0) + (hardware.ports.miniDisplayPort || 0)} Ports`} 
+                />
+              </>
+            )}
+
+            {/* Visual & Aesthetics */}
+            {(hardware.color || hardware.rgb !== undefined) && (
+              <>
+                <div className="col-span-2 pt-3 pb-2 border-t" style={{ borderColor: colors.platinum }}>
+                  <h3 className="font-bold text-sm" style={{ color: colors.mainBlack }}>Aesthetics</h3>
+                </div>
+                {hardware.color && <SpecItem label="Color" value={hardware.color} />}
+                {hardware.rgb !== undefined && (
+                  <SpecItem 
+                    label="RGB Lighting" 
+                    value={hardware.rgb ? '✓ Yes' : '✗ No'} 
+                    icon={hardware.rgb ? <FiCheck /> : <FiX />}
+                  />
+                )}
+              </>
+            )}
+
+            {/* Advanced Features */}
+            <div className="col-span-2 pt-3 pb-2 border-t" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-bold text-sm" style={{ color: colors.mainBlack }}>Advanced Features</h3>
+            </div>
+            {hardware.hasOwnProperty('rayTracing') && (
+              <SpecItem 
+                label="Ray Tracing" 
+                value={hardware.rayTracing ? '✓ Yes' : '✗ No'} 
+                icon={hardware.rayTracing ? <FiCheck /> : <FiX />}
+              />
+            )}
+            {hardware.hasOwnProperty('dlssOrFsr') && (
+              <SpecItem 
+                label={hardware.brand === 'NVIDIA' ? 'DLSS' : hardware.brand === 'AMD' ? 'FSR' : 'XeSS'} 
+                value={hardware.dlssOrFsr ? '✓ Supported' : '✗ Not Supported'} 
+                icon={hardware.dlssOrFsr ? <FiCheck /> : <FiX />}
+              />
+            )}
+            {hardware.frameSync && (
+              <SpecItem label="Frame Sync" value={hardware.frameSync} />
+            )}
+            {hardware.multiGpu && (
+              <SpecItem label="Multi-GPU" value={hardware.multiGpu} />
+            )}
+            <SpecItem 
+              label="DirectX" 
+              value={(hardware.chipset?.includes('RTX 40') || hardware.architecture === 'Ada Lovelace' || hardware.architecture === 'RDNA 3') ? 
+                'DirectX 12 Ultimate' : 
+                hardware.rayTracing ? 'DirectX 12' : 'DirectX 11'
+              } 
+            />
+
+            {/* Power & Thermal */}
+            <div className="col-span-2 pt-3 pb-2 border-t" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-bold text-sm" style={{ color: colors.mainBlack }}>Power & Thermal</h3>
+            </div>
             <SpecItem label="TDP" value={`${hardware.tdpWatts}W`} />
-            <SpecItem label="Length" value={`${hardware.lengthMM} mm`} />
-            {hardware.performanceScore && <SpecItem label="Performance Score" value={hardware.performanceScore} />}
+            {hardware.externalPower && (
+              <SpecItem label="Power Connector" value={hardware.externalPower} />
+            )}
+            {hardware.cooling && (
+              <SpecItem label="Cooling Solution" value={hardware.cooling} />
+            )}
+            <SpecItem 
+              label="Recommended PSU" 
+              value={`${hardware.tdpWatts >= 350 ? '850W' : 
+                       hardware.tdpWatts >= 250 ? '750W' : 
+                       hardware.tdpWatts >= 200 ? '650W' : 
+                       hardware.tdpWatts >= 150 ? '550W' : 
+                       '450W'}+`} 
+            />
+
+            {/* Physical Specifications */}
+            <div className="col-span-2 pt-3 pb-2 border-t" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-bold text-sm" style={{ color: colors.mainBlack }}>Physical</h3>
+            </div>
+            {hardware.lengthMM && (
+              <SpecItem label="Length" value={`${hardware.lengthMM}mm`} />
+            )}
+            {hardware.slotWidth && (
+              <SpecItem label="Slot Width" value={hardware.slotWidth} />
+            )}
+            {hardware.totalSlotWidth && (
+              <SpecItem label="Total Slot Width" value={hardware.totalSlotWidth} />
+            )}
+
+            {/* Compatibility */}
+            <div className="col-span-2 pt-3 pb-2 border-t" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-bold text-sm" style={{ color: colors.mainBlack }}>Compatibility</h3>
+            </div>
+            <SpecItem 
+              label="PCIe" 
+              value={hardware.interface?.includes('4.0') ? 'PCIe 4.0 (3.0 Compatible)' : 'PCIe 3.0 (2.0 Compatible)'} 
+            />
+            <SpecItem label="OS Support" value="Windows 11/10, Linux" />
+
+            {/* Pricing */}
+            <div className="col-span-2 pt-3 pb-2 border-t" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-bold text-sm" style={{ color: colors.mainBlack }}>Pricing</h3>
+            </div>
+            <SpecItem label="Price" value={`$${hardware.price.toFixed(2)}`} />
+            {hardware.rating && (
+              <SpecItem 
+                label="User Rating" 
+                value={`⭐ ${hardware.rating.toFixed(1)} / 5.0`} 
+              />
+            )}
+
+            {/* Use Case */}
+            <div className="col-span-2 pt-3 pb-2 border-t" style={{ borderColor: colors.platinum }}>
+              <h3 className="font-bold text-sm" style={{ color: colors.mainBlack }}>Best For</h3>
+            </div>
+            <SpecItem 
+              label="Use Case" 
+              value={hardware.price >= 1000 ? '4K Gaming, 8K Editing, 3D Rendering' : 
+                     hardware.price >= 600 ? '4K Gaming, Content Creation' : 
+                     hardware.price >= 400 ? '1440p Gaming, Video Editing' : 
+                     hardware.price >= 250 ? '1080p Gaming, Streaming' : 
+                     'Casual Gaming, General Use'
+              } 
+            />
           </>
         );
       case 'motherboard':
