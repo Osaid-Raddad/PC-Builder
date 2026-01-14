@@ -67,6 +67,9 @@ export default function LoginScreen({ navigation }) {
         await AsyncStorage.setItem('authToken', response.data.token);
       }
       
+      // Store email for password verification
+      await AsyncStorage.setItem('email', email.trim());
+      
       if (response.data.fullName) {
         await AsyncStorage.setItem('fullName', response.data.fullName);
       }

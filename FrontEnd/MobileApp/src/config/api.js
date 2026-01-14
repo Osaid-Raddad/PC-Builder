@@ -33,16 +33,7 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response) {
-      // Server responded with error
-      console.error("API Error:", error.response.status, error.response.data);
-    } else if (error.request) {
-      // Request made but no response
-      console.error("Network Error:", error.message);
-    } else {
-      // Other errors
-      console.error("Error:", error.message);
-    }
+    // Silently pass errors to be handled by components
     return Promise.reject(error);
   }
 );
