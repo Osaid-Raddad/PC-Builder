@@ -22,6 +22,9 @@ export default function Navbar() {
   const [userName, setUserName] = useState('');
   const [userRole, setUserRole] = useState('');
   const [profileImage, setProfileImage] = useState(null);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [dashboardPassword, setDashboardPassword] = useState('');
+  const [isVerifyingPassword, setIsVerifyingPassword] = useState(false);
 
   // Check authentication status on component mount
   useEffect(() => {
@@ -165,6 +168,55 @@ export default function Navbar() {
 
   const toggleUserMenu = () => {
     setIsUserMenuOpen(!isUserMenuOpen);
+  };
+
+  const handleDashboardClick = () => {
+    setShowPasswordModal(true);
+    setIsUserMenuOpen(false);
+  };
+
+  const verifyPasswordAndNavigate = async () => {
+    if (!dashboardPassword.trim()) {
+      toast.error('Please enter your password');
+      return;
+    }
+
+    setIsVerifyingPassword(true);
+    
+    try {
+      // Get the stored email from localStorage
+      const email = localStorage.getItem('email');
+      
+      if (!email) {
+        toast.error('Session error. Please login again.');
+        setIsVerifyingPassword(false);
+        return;
+      }
+
+      const response = await apiClient.post('/Identity/Account/Login', {
+        email: email,
+        password: dashboardPassword
+      });
+
+      if (response.data.token) {
+        // Password verified successfully
+        setShowPasswordModal(false);
+        setDashboardPassword('');
+        toast.success('Access granted');
+        navigate('/admin');
+      }
+    } catch (error) {
+      console.error('Password verification error:', error);
+      toast.error('Incorrect password. Access denied.');
+      setDashboardPassword(''); // Clear password on error
+    } finally {
+      setIsVerifyingPassword(false);
+    }
+  };
+
+  const closePasswordModal = () => {
+    setShowPasswordModal(false);
+    setDashboardPassword('');
   };
 
   // Close dropdown when clicking outside
@@ -435,7 +487,7 @@ export default function Navbar() {
                         <>
                           <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
                           <button
-                            onClick={() => handleNavigation('/admin')}
+                            onClick={handleDashboardClick}
                             className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                             style={{ color: 'white' }}
                             onMouseEnter={(e) => {
@@ -596,7 +648,7 @@ export default function Navbar() {
                         <>
                           <div style={{ height: '1px', backgroundColor: colors.platinum, opacity: 0.3 }} />
                           <button
-                            onClick={() => handleNavigation('/admin')}
+                            onClick={handleDashboardClick}
                             className="w-full text-left px-4 py-3 flex items-center gap-3 transition-all duration-200 hover:bg-opacity-80 cursor-pointer"
                             style={{ color: 'white' }}
                             onMouseEnter={(e) => {
@@ -651,6 +703,88 @@ export default function Navbar() {
           </div>
         </div>
       </div>
+
+      {/* Password Modal for Dashboard Access */}
+      {showPasswordModal && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ backgroundColor: 'rgba(0, 0, 0, 0.95)' }}
+          onClick={closePasswordModal}
+        >
+          <div 
+            className="rounded-lg shadow-2xl p-6 w-full max-w-md mx-4"
+            style={{ backgroundColor: colors.jet }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold" style={{ color: colors.mainYellow}}>
+                Dashboard Access
+              </h2>
+              <button
+                onClick={closePasswordModal}
+                className="text-2xl transition-colors"
+                style={{ color: colors.platinum , cursor: 'pointer' }}
+                onMouseEnter={(e) => e.currentTarget.style.color = colors.mainYellow}
+                onMouseLeave={(e) => e.currentTarget.style.color = colors.platinum}
+              >
+                <FiX />
+              </button>
+            </div>
+            
+            <p className="mb-4" style={{ color: colors.alabaster }}>
+              Please enter your password to access the admin dashboard.
+            </p>
+            
+            <input
+              type="password"
+              value={dashboardPassword}
+              onChange={(e) => setDashboardPassword(e.target.value)}
+              onKeyPress={(e) => e.key === 'Enter' && verifyPasswordAndNavigate()}
+              placeholder="Enter your password"
+              className="w-full px-4 py-3 rounded-md mb-4 outline-none focus:ring-2 transition-all"
+              style={{ 
+                backgroundColor: colors.mainBlack,
+                color: colors.alabaster,
+                border: `2px solid ${colors.platinum}`
+              }}
+              onFocus={(e) => e.target.style.borderColor = colors.mainYellow}
+              onBlur={(e) => e.target.style.borderColor = colors.platinum}
+              autoFocus
+            />
+            
+            <div className="flex gap-3">
+              <button
+                onClick={closePasswordModal}
+                className="flex-1 px-4 py-2 rounded-md font-medium transition-all"
+                style={{ 
+                  backgroundColor: colors.platinum,
+                  color: colors.mainBlack,
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => e.currentTarget.style.opacity = '0.8'}
+                onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={verifyPasswordAndNavigate}
+                disabled={isVerifyingPassword}
+                className="flex-1 px-4 py-2 rounded-md font-medium transition-all"
+                style={{ 
+                  backgroundColor: colors.mainYellow,
+                  color: colors.mainBlack,
+                  opacity: isVerifyingPassword ? 0.6 : 1,
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => !isVerifyingPassword && (e.currentTarget.style.opacity = '0.9')}
+                onMouseLeave={(e) => !isVerifyingPassword && (e.currentTarget.style.opacity = '1')}
+              >
+                {isVerifyingPassword ? 'Verifying...' : 'Access Dashboard'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Mobile Menu */}
       {isMobileMenuOpen && (

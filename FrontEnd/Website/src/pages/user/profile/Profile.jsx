@@ -239,7 +239,7 @@ const Profile = () => {
   };
 
   const handleDeleteAccount = async () => {
-    // Ask for confirmation with SweetAlert
+    // First, show warning and ask for confirmation
     const result = await Swal.fire({
       title: 'Delete Account?',
       text: 'Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.',
@@ -253,6 +253,61 @@ const Profile = () => {
     });
     
     if (!result.isConfirmed) {
+      return;
+    }
+
+    // Then, ask for password verification
+    const { value: password } = await Swal.fire({
+      title: 'Verify Your Identity',
+      text: 'Please enter your password to confirm account deletion',
+      input: 'password',
+      inputPlaceholder: 'Enter your password',
+      inputAttributes: {
+        autocapitalize: 'off',
+        autocorrect: 'off'
+      },
+      showCancelButton: true,
+      confirmButtonColor: '#F9B233',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Verify',
+      cancelButtonText: 'Cancel',
+      inputValidator: (value) => {
+        if (!value) {
+          return 'You need to enter your password!';
+        }
+      }
+    });
+
+    if (!password) {
+      return;
+    }
+
+    // Verify password
+    try {
+      const email = localStorage.getItem('email');
+      
+      if (!email) {
+        toast.error('Session error. Please login again.');
+        return;
+      }
+
+      const response = await apiClient.post('/Identity/Account/Login', {
+        email: email,
+        password: password
+      });
+
+      if (!response.data.token) {
+        toast.error('Password verification failed');
+        return;
+      }
+    } catch (error) {
+      console.error('Password verification error:', error);
+      await Swal.fire({
+        title: 'Incorrect Password',
+        text: 'The password you entered is incorrect. Please try again.',
+        icon: 'error',
+        confirmButtonColor: '#F9B233'
+      });
       return;
     }
     

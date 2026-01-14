@@ -42,6 +42,9 @@ const SignIn = ({ onSwitchToSignUp }) => {
         localStorage.setItem('authToken', response.data.token);
       }
       
+      // Store email for password verification
+      localStorage.setItem('email', data.email);
+      
       // Store full name if available
       if (response.data.fullName) {
         localStorage.setItem('fullName', response.data.fullName);
