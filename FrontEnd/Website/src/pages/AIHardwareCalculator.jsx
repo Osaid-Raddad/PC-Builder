@@ -250,7 +250,7 @@ const AIHardwareCalculator = () => {
           </h3>
           <div className="grid md:grid-cols-3 gap-6">
             <div className="flex gap-4">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold" 
+              <div className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold" 
                    style={{ backgroundColor: colors.mainYellow, color: colors.mainBlack }}>
                 1
               </div>
@@ -260,7 +260,7 @@ const AIHardwareCalculator = () => {
               </div>
             </div>
             <div className="flex gap-4">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold"
+              <div className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold"
                    style={{ backgroundColor: colors.mainYellow, color: colors.mainBlack }}>
                 2
               </div>
@@ -270,7 +270,7 @@ const AIHardwareCalculator = () => {
               </div>
             </div>
             <div className="flex gap-4">
-              <div className="flex-shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold"
+              <div className="shrink-0 w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold"
                    style={{ backgroundColor: colors.mainYellow, color: colors.mainBlack }}>
                 3
               </div>
@@ -525,7 +525,7 @@ const AIHardwareCalculator = () => {
           boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
         }}>
           <div className="flex gap-4">
-            <div className="text-3xl flex-shrink-0">ℹ️</div>
+            <div className="text-3xl shrink-0">ℹ️</div>
             <div>
               <h4 className="text-xl font-bold mb-3" style={{ color: colors.mainBlack }}>
                 About This Calculator
@@ -779,7 +779,7 @@ const AIHardwareCalculator = () => {
                   borderLeft: `4px solid ${colors.mainYellow}`
                 }}>
                   <div className="flex gap-4">
-                    <div className="text-2xl flex-shrink-0">💡</div>
+                    <div className="text-2xl shrink-0">💡</div>
                     <div>
                       <p style={{ color: colors.mainBlack, lineHeight: '1.6' }}>
                         <strong style={{ color: colors.mainYellow }}>Pro Tip:</strong> For {selectedWorkload === 'training' ? 'training workloads' : 'inference tasks'}, 
