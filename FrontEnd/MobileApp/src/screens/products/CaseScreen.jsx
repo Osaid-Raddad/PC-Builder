@@ -90,6 +90,16 @@ export default function CaseScreen({ navigation, route }) {
     }
   };
 
+  // Filter products based on selected filters
+  const filteredProducts = MOCK_PRODUCTS.filter(product => {
+    if (product.price < filters.priceRange?.min || product.price > filters.priceRange?.max) return false;
+    if (filters.manufacturers?.length > 0 && !filters.manufacturers.includes(product.manufacturer)) return false;
+    if (filters.rating > 0 && product.rating < filters.rating) return false;
+    if (filters.type?.length > 0 && !filters.type.includes(product.type)) return false;
+    if (filters.color?.length > 0 && !filters.color.includes(product.color)) return false;
+    return true;
+  });
+
   const renderProduct = ({ item }) => {
     const isSelected = selectedComponents.case?.model === item.model;
     const inCompare = isInCompare(item.id);
@@ -166,7 +176,7 @@ export default function CaseScreen({ navigation, route }) {
     <ScreenLayout navigation={navigation} scrollable={false} showFooter={false}>
       <View style={styles.container}>
         <FlatList
-          data={MOCK_PRODUCTS}
+          data={filteredProducts}
           renderItem={renderProduct}
           keyExtractor={(item) => item.id}
           ListHeaderComponent={

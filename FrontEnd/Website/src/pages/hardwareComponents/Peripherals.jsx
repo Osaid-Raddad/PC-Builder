@@ -288,7 +288,8 @@ const Peripherals = () => {
                           style={{
                             backgroundColor: selectedPeripheral?.id === peripheral.id ? colors.mainYellow : 'white',
                             color: selectedPeripheral?.id === peripheral.id ? 'white' : colors.mainYellow,
-                            border: `2px solid ${colors.mainYellow}`
+                            border: `2px solid ${colors.mainYellow}`,
+                            width: '100% '
                           }}
                         >
                           {selectedPeripheral?.id === peripheral.id ? 'Selected' : 'Select'}

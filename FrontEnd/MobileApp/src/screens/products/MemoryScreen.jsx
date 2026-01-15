@@ -138,6 +138,16 @@ export default function MemoryScreen({ navigation, route }) {
     }
   };
 
+  // Filter products based on selected filters
+  const filteredProducts = MOCK_PRODUCTS.filter(product => {
+    if (product.price < filters.priceRange?.min || product.price > filters.priceRange?.max) return false;
+    if (filters.manufacturers?.length > 0 && !filters.manufacturers.includes(product.manufacturer)) return false;
+    if (filters.rating > 0 && product.rating < filters.rating) return false;
+    if (filters.speed?.length > 0 && !filters.speed.includes(product.speed?.toString())) return false;
+    if (filters.capacity?.length > 0 && !filters.capacity.includes(product.capacity?.toString())) return false;
+    return true;
+  });
+
   const renderProduct = ({ item }) => {
     const isSelected = selectedComponents.memory?.model === item.model;
     const inCompare = isInCompare(item.id);
@@ -211,7 +221,7 @@ export default function MemoryScreen({ navigation, route }) {
     <ScreenLayout navigation={navigation} scrollable={false} showFooter={false}>
       <View style={styles.container}>
         <FlatList
-          data={MOCK_PRODUCTS}
+          data={filteredProducts}
           renderItem={renderProduct}
           keyExtractor={(item) => item.id}
           ListHeaderComponent={
