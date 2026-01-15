@@ -140,7 +140,7 @@ export default function CPUScreen({ navigation, route }) {
   // Filter products based on selected filters
   const filteredProducts = MOCK_PRODUCTS.filter(product => {
     if (product.price < filters.priceRange?.min || product.price > filters.priceRange?.max) return false;
-    if (filters.manufacturers?.length > 0 && !filters.manufacturers.includes(product.manufacturer)) return false;
+    if (filters.manufacturers?.length > 0 && !filters.manufacturers.includes(product.brand)) return false;
     if (filters.rating > 0 && product.rating < filters.rating) return false;
     if (filters.cores?.length > 0 && !filters.cores.includes(product.coreCount?.toString())) return false;
     if (filters.socket?.length > 0 && !filters.socket.includes(product.socket)) return false;

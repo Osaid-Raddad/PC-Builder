@@ -143,7 +143,7 @@ export default function GPUScreen({ navigation, route }) {
   // Filter products based on selected filters
   const filteredProducts = MOCK_PRODUCTS.filter(product => {
     if (product.price < filters.priceRange?.min || product.price > filters.priceRange?.max) return false;
-    if (filters.manufacturers?.length > 0 && !filters.manufacturers.includes(product.manufacturer)) return false;
+    if (filters.manufacturers?.length > 0 && !filters.manufacturers.includes(product.brand)) return false;
     if (filters.rating > 0 && product.rating < filters.rating) return false;
     if (filters.memory?.length > 0 && !filters.memory.includes(product.memory?.toString())) return false;
     if (filters.chipset?.length > 0 && !filters.chipset.includes(product.chipset)) return false;
