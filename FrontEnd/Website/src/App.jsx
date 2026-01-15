@@ -37,7 +37,7 @@ import Comparator from './pages/user/comparator/Comparator.jsx';
 import TermsOfService from './pages/user/termsOfService/TermsOfService.jsx';
 import FAQ from './pages/user/faq/FAQ.jsx';
 import BuildingGuides from './pages/user/buildingGuides/BuildingGuides.jsx';
-import AIHardwareCalculator from './pages/AIHardwareCalculator.jsx';
+import AIHardwareCalculator from './pages/aiCalculator/AIHardwareCalculator.jsx';
 
 // Admin Imports
 import AdminDashboard from './pages/admin/AdminDashboard';
