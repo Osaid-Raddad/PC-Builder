@@ -216,8 +216,16 @@ export default function AIHardwareCalculatorScreen({ navigation }) {
   };
 
   const handleCustomModel = () => {
-    setShowCustomInput(true);
-    setSelectedModel(null);
+    Alert.alert(
+      "Coming Soon! 🚀",
+      "The Custom AI Model feature is currently under development. Stay tuned for updates!",
+      [
+        {
+          text: "Got it!",
+          style: "default"
+        }
+      ]
+    );
   };
 
   const renderRecommendations = () => {
