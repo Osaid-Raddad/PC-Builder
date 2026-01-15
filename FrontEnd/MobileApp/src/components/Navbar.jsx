@@ -60,6 +60,12 @@ export default function Navbar({ navigation }) {
       screen: "Comparator",
     },
     {
+      label: "AI Hardware Calculator",
+      icon: "brain",
+      iconSet: "MaterialCommunityIcons",
+      screen: "AIHardwareCalculator",
+    },
+    {
       label: "Builds",
       icon: "monitor",
       iconSet: "Feather",

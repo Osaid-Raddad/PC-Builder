@@ -323,41 +323,61 @@ export default function AIHardwareCalculatorScreen({ navigation }) {
   return (
     <ScreenLayout navigation={navigation} scrollable={false}>
       <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-        <View style={styles.header}>
-          <View style={styles.headerIconContainer}>
-            <MaterialCommunityIcons name="brain" size={50} color={colors.mainYellow} />
+        {/* Creative Header with Gradient Effect */}
+        <View style={styles.headerContainer}>
+          <View style={styles.headerGradient}>
+            <View style={styles.headerDecor}>
+              <View style={styles.headerCircle1} />
+              <View style={styles.headerCircle2} />
+            </View>
+            <View style={styles.header}>
+              <View style={styles.headerIconContainer}>
+                <MaterialCommunityIcons name="brain" size={50} color={colors.mainYellow} />
+                <View style={styles.iconGlow} />
+              </View>
+              <Text style={styles.title}>AI Hardware Calculator</Text>
+              <View style={styles.subtitleContainer}>
+                <MaterialCommunityIcons name="lightning-bolt" size={16} color={colors.mainYellow} />
+                <Text style={styles.subtitle}>
+                  Powered by AI • Get instant hardware specs
+                </Text>
+              </View>
+            </View>
           </View>
-          <Text style={styles.title}>AI Hardware Calculator</Text>
-          <Text style={styles.subtitle}>
-            Get precise hardware recommendations for your AI projects
-          </Text>
         </View>
 
         {/* Instructions */}
         <View style={styles.instructionsCard}>
+          <View style={styles.instructionsHeader}>
+            <MaterialCommunityIcons name="rocket-launch" size={24} color={colors.mainYellow} />
+            <Text style={styles.instructionsTitle}>Quick Start Guide</Text>
+          </View>
           <View style={styles.instructionStep}>
             <View style={styles.stepNumber}>
               <Text style={styles.stepNumberText}>1</Text>
             </View>
-            <Text style={styles.instructionText}>
-              Choose if you're running or training models
-            </Text>
+            <View style={styles.stepContent}>
+              <Text style={styles.instructionText}>Choose your workload type</Text>
+              <Text style={styles.instructionSubtext}>Running or training models</Text>
+            </View>
           </View>
           <View style={styles.instructionStep}>
             <View style={styles.stepNumber}>
               <Text style={styles.stepNumberText}>2</Text>
             </View>
-            <Text style={styles.instructionText}>
-              Select your AI model type
-            </Text>
+            <View style={styles.stepContent}>
+              <Text style={styles.instructionText}>Select your AI model</Text>
+              <Text style={styles.instructionSubtext}>From LLMs to image generation</Text>
+            </View>
           </View>
           <View style={styles.instructionStep}>
             <View style={styles.stepNumber}>
               <Text style={styles.stepNumberText}>3</Text>
             </View>
-            <Text style={styles.instructionText}>
-              Get detailed hardware specifications
-            </Text>
+            <View style={styles.stepContent}>
+              <Text style={styles.instructionText}>Get detailed specs</Text>
+              <Text style={styles.instructionSubtext}>Complete hardware recommendations</Text>
+            </View>
           </View>
         </View>
 
@@ -392,11 +412,13 @@ export default function AIHardwareCalculatorScreen({ navigation }) {
               ]}
               onPress={() => setWorkloadType("inference")}
             >
-              <MaterialCommunityIcons
-                name="play-circle-outline"
-                size={24}
-                color={workloadType === "inference" ? colors.mainBlack : colors.mainBlack}
-              />
+              <View style={styles.workloadIconCircle}>
+                <MaterialCommunityIcons
+                  name="play-circle-outline"
+                  size={32}
+                  color={workloadType === "inference" ? colors.mainBlack : colors.mainYellow}
+                />
+              </View>
               <Text
                 style={[
                   styles.workloadButtonText,
@@ -411,6 +433,11 @@ export default function AIHardwareCalculatorScreen({ navigation }) {
               ]}>
                 Running pre-trained models
               </Text>
+              {workloadType === "inference" && (
+                <View style={styles.selectedIndicator}>
+                  <MaterialCommunityIcons name="check-circle" size={20} color={colors.success} />
+                </View>
+              )}
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -420,11 +447,13 @@ export default function AIHardwareCalculatorScreen({ navigation }) {
               ]}
               onPress={() => setWorkloadType("training")}
             >
-              <MaterialCommunityIcons
-                name="school-outline"
-                size={28}
-                color={workloadType === "training" ? colors.mainBlack : colors.mainBlack}
-              />
+              <View style={styles.workloadIconCircle}>
+                <MaterialCommunityIcons
+                  name="school-outline"
+                  size={32}
+                  color={workloadType === "training" ? colors.mainBlack : colors.mainYellow}
+                />
+              </View>
               <Text
                 style={[
                   styles.workloadButtonText,
@@ -439,6 +468,11 @@ export default function AIHardwareCalculatorScreen({ navigation }) {
               ]}>
                 Training & fine-tuning models
               </Text>
+              {workloadType === "training" && (
+                <View style={styles.selectedIndicator}>
+                  <MaterialCommunityIcons name="check-circle" size={20} color={colors.success} />
+                </View>
+              )}
             </TouchableOpacity>
           </View>
         </View>
@@ -583,73 +617,148 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.mainBeige,
-    padding: 20,
   },
-  header: {
-    alignItems: "center",
-    marginBottom: 25,
+  headerContainer: {
+    overflow: "hidden",
   },
-  headerIconContainer: {
-    backgroundColor: colors.mainWhite,
+  headerGradient: {
+    backgroundColor: colors.mainBlack,
+    position: "relative",
+  },
+  headerDecor: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+  },
+  headerCircle1: {
+    position: "absolute",
+    width: 150,
+    height: 150,
+    borderRadius: 75,
+    backgroundColor: colors.mainYellow,
+    opacity: 0.1,
+    top: -50,
+    right: -30,
+  },
+  headerCircle2: {
+    position: "absolute",
     width: 80,
     height: 80,
     borderRadius: 40,
+    backgroundColor: colors.mainYellow,
+    opacity: 0.08,
+    bottom: -20,
+    left: -20,
+  },
+  header: {
+    alignItems: "center",
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+  },
+  headerIconContainer: {
+    position: "relative",
+    backgroundColor: "rgba(255, 193, 7, 0.1)",
+    width: 100,
+    height: 100,
+    borderRadius: 50,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 15,
-    shadowColor: colors.mainBlack,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    marginBottom: 20,
+    borderWidth: 3,
+    borderColor: colors.mainYellow,
+  },
+  iconGlow: {
+    position: "absolute",
+    width: 110,
+    height: 110,
+    borderRadius: 55,
+    borderWidth: 2,
+    borderColor: colors.mainYellow,
+    opacity: 0.3,
   },
   title: {
-    fontSize: 28,
+    fontSize: 32,
     fontWeight: "bold",
-    color: colors.mainBlack,
+    color: colors.mainYellow,
     textAlign: "center",
   },
+  subtitleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 12,
+    gap: 6,
+  },
   subtitle: {
-    fontSize: 15,
-    color: colors.mainBlack,
-    marginTop: 8,
+    fontSize: 14,
+    color: colors.alabaster,
     textAlign: "center",
-    paddingHorizontal: 20,
   },
   instructionsCard: {
     backgroundColor: colors.mainWhite,
+    marginHorizontal: 20,
+    marginTop: 40,
+    marginBottom: 30,
     padding: 20,
-    borderRadius: 12,
-    marginBottom: 25,
-    borderLeftWidth: 4,
+    borderRadius: 16,
+    borderLeftWidth: 6,
     borderLeftColor: colors.mainYellow,
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
   },
-  instructionStep: {
+  instructionsHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 12,
+    gap: 10,
+    marginBottom: 20,
   },
-  stepNumber: {
-    backgroundColor: colors.mainYellow,
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    alignItems: "center",
-    justifyContent: "center",
-    marginRight: 12,
-  },
-  stepNumberText: {
-    fontSize: 14,
+  instructionsTitle: {
+    fontSize: 18,
     fontWeight: "bold",
     color: colors.mainBlack,
   },
-  instructionText: {
-    flex: 1,
-    fontSize: 14,
+  instructionStep: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginBottom: 16,
+  },
+  stepNumber: {
+    backgroundColor: colors.mainYellow,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 14,
+    elevation: 2,
+    shadowColor: colors.mainYellow,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.3,
+    shadowRadius: 2,
+  },
+  stepNumberText: {
+    fontSize: 16,
+    fontWeight: "bold",
     color: colors.mainBlack,
+  },
+  stepContent: {
+    flex: 1,
+  },
+  instructionText: {
+    fontSize: 15,
+    fontWeight: "600",
+    color: colors.mainBlack,
+    marginBottom: 4,
+  },
+  instructionSubtext: {
+    fontSize: 12,
+    color: colors.primary,
   },
   section: {
     marginBottom: 25,
+    marginHorizontal: 20,
   },
   sectionHeader: {
     flexDirection: "row",
@@ -658,7 +767,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
     color: colors.mainBlack,
   },
@@ -673,10 +782,10 @@ const styles = StyleSheet.create({
   },
   infoBox: {
     backgroundColor: "#E3F2FD",
-    padding: 15,
-    borderRadius: 8,
+    padding: 16,
+    borderRadius: 12,
     marginBottom: 15,
-    borderLeftWidth: 3,
+    borderLeftWidth: 4,
     borderLeftColor: colors.primary,
   },
   infoBoxText: {
@@ -696,28 +805,39 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.mainWhite,
     padding: 20,
-    borderRadius: 12,
+    borderRadius: 16,
     alignItems: "center",
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: "#E0E0E0",
-    shadowColor: colors.mainBlack,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    position: "relative",
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   workloadButtonActive: {
     backgroundColor: colors.mainYellow,
     borderColor: colors.mainYellow,
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 3,
+    elevation: 6,
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    transform: [{ scale: 1.02 }],
+  },
+  workloadIconCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "rgba(255, 193, 7, 0.15)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 12,
   },
   workloadButtonText: {
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: "bold",
     color: colors.mainBlack,
-    marginTop: 10,
+    marginTop: 8,
   },
   workloadButtonTextActive: {
     color: colors.mainBlack,
@@ -725,35 +845,43 @@ const styles = StyleSheet.create({
   workloadButtonDesc: {
     fontSize: 12,
     color: colors.mainBlack,
-    marginTop: 5,
+    marginTop: 6,
     textAlign: "center",
   },
   workloadButtonDescActive: {
     color: colors.mainBlack,
-    opacity: 0.7,
+    opacity: 0.8,
+  },
+  selectedIndicator: {
+    position: "absolute",
+    top: 10,
+    right: 10,
   },
   modelsGrid: {
-    gap: 15,
+    gap: 16,
   },
   modelCard: {
     backgroundColor: colors.mainWhite,
-    padding: 20,
-    borderRadius: 12,
+    padding: 22,
+    borderRadius: 16,
     borderWidth: 2,
     borderColor: "#E0E0E0",
-    shadowColor: colors.mainBlack,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
+    position: "relative",
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
   },
   modelCardActive: {
     borderColor: colors.mainYellow,
     backgroundColor: "#FFFBF0",
     borderWidth: 3,
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 3,
+    elevation: 6,
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    shadowColor: colors.mainYellow,
+    transform: [{ scale: 1.01 }],
   },
   modelHeader: {
     flexDirection: "row",
@@ -835,6 +963,7 @@ const styles = StyleSheet.create({
     color: colors.mainBlack,
   },
   customButton: {
+    marginHorizontal: 30,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
@@ -1029,6 +1158,7 @@ const styles = StyleSheet.create({
     color: colors.mainBlack,
   },
   performanceNote: {
+    marginHorizontal: 20,
     flexDirection: "row",
     alignItems: "flex-start",
     backgroundColor: "#FFF8E1",
@@ -1050,6 +1180,7 @@ const styles = StyleSheet.create({
     color: colors.mainBlack,
   },
   infoCard: {
+    marginHorizontal: 20,
     flexDirection: "row",
     alignItems: "flex-start",
     backgroundColor: colors.mainWhite,
