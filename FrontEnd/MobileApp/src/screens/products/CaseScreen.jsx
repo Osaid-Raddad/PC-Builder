@@ -90,13 +90,19 @@ export default function CaseScreen({ navigation, route }) {
     }
   };
 
-  // Filter products based on selected filters
+  // Filter products based on selected filter
   const filteredProducts = MOCK_PRODUCTS.filter(product => {
-    if (product.price < filters.priceRange?.min || product.price > filters.priceRange?.max) return false;
-    if (filters.manufacturers?.length > 0 && !filters.manufacturers.includes(product.manufacturer)) return false;
-    if (filters.rating > 0 && product.rating < filters.rating) return false;
-    if (filters.type?.length > 0 && !filters.type.includes(product.type)) return false;
-    if (filters.color?.length > 0 && !filters.color.includes(product.color)) return false;
+    if (selectedFilter === "all") return true;
+    
+    // Filter by form factor (intel/amd could be form factor categories like ATX, Micro ATX, etc.)
+    const formFactor = product.type?.toLowerCase() || '';
+    if (selectedFilter === "intel") {
+      return formFactor.includes("atx") || formFactor.includes("mid");
+    }
+    if (selectedFilter === "amd") {
+      return formFactor.includes("mini") || formFactor.includes("micro");
+    }
+    
     return true;
   });
 

@@ -87,13 +87,19 @@ export default function CoolerScreen({ navigation, route }) {
     }
   };
 
-  // Filter products based on selected filters
+  // Filter products based on selected filter
   const filteredProducts = MOCK_PRODUCTS.filter(product => {
-    if (product.price < filters.priceRange?.min || product.price > filters.priceRange?.max) return false;
-    if (filters.manufacturers?.length > 0 && !filters.manufacturers.includes(product.manufacturer)) return false;
-    if (filters.rating > 0 && product.rating < filters.rating) return false;
-    if (filters.fanSize?.length > 0 && !filters.fanSize.includes(product.fanSize?.toString())) return false;
-    if (filters.type?.length > 0 && !filters.type.includes(product.type)) return false;
+    if (selectedFilter === "all") return true;
+    
+    // Filter by socket compatibility (intel/amd)
+    const socketType = product.socket?.toLowerCase() || '';
+    if (selectedFilter === "intel") {
+      return socketType.includes("lga") || socketType.includes("intel");
+    }
+    if (selectedFilter === "amd") {
+      return socketType.includes("am") || socketType.includes("tr") || socketType.includes("amd");
+    }
+    
     return true;
   });
 

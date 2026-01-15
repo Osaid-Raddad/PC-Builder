@@ -90,13 +90,21 @@ export default function PowerSupplyScreen({ navigation, route }) {
     }
   };
 
-  // Filter products based on selected filters
+  // Filter products based on selected filter
   const filteredProducts = MOCK_PRODUCTS.filter(product => {
-    if (product.price < filters.priceRange?.min || product.price > filters.priceRange?.max) return false;
-    if (filters.manufacturers?.length > 0 && !filters.manufacturers.includes(product.manufacturer)) return false;
-    if (filters.rating > 0 && product.rating < filters.rating) return false;
-    if (filters.wattage?.length > 0 && !filters.wattage.includes(product.wattage?.toString())) return false;
-    if (filters.efficiency?.length > 0 && !filters.efficiency.includes(product.efficiency)) return false;
+    if (selectedFilter === "all") return true;
+    
+    // Filter by wattage ranges
+    const wattage = product.wattage || 0;
+    if (selectedFilter === "intel") {
+      // Low to mid range (for basic builds)
+      return wattage >= 400 && wattage <= 650;
+    }
+    if (selectedFilter === "amd") {
+      // High range (for gaming/performance builds)
+      return wattage >= 700;
+    }
+    
     return true;
   });
 
