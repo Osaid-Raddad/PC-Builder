@@ -37,6 +37,7 @@ import Comparator from './pages/user/comparator/Comparator.jsx';
 import TermsOfService from './pages/user/termsOfService/TermsOfService.jsx';
 import FAQ from './pages/user/faq/FAQ.jsx';
 import BuildingGuides from './pages/user/buildingGuides/BuildingGuides.jsx';
+import AIHardwareCalculator from './pages/AIHardwareCalculator.jsx';
 
 // Admin Imports
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -100,6 +101,7 @@ function AppContent() {
           <Route path="/faq" element={<FAQ />} />
           <Route path="/building-guides" element={<BuildingGuides />} />
           <Route path="/quantum-computing" element={<QuantumComputing />} />
+          <Route path="/ai-calculator" element={<AIHardwareCalculator />} />
           {/* Product Category Routes */}
           <Route path="/products/cpu" element={<CPU />} />
           <Route path="/products/gpu" element={<GPU />} />

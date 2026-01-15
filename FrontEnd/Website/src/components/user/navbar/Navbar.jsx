@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiSearch, FiMenu, FiX, FiUser, FiChevronDown, FiShoppingBag, FiLogOut, FiHeart, FiMessageCircle, FiHeadphones, FiZap } from 'react-icons/fi';
-import { FaTools, FaBoxOpen, FaNewspaper, FaEdit, FaUserCircle, FaMemory, FaHdd, FaDesktop } from 'react-icons/fa';
+import { FaTools, FaBoxOpen, FaNewspaper, FaEdit, FaUserCircle, FaMemory, FaHdd, FaDesktop, FaBrain } from 'react-icons/fa';
 import { PiDesktopTowerFill } from 'react-icons/pi';
 import { BsFillMotherboardFill, BsGpuCard } from 'react-icons/bs';
 import { GiComputerFan } from 'react-icons/gi';
