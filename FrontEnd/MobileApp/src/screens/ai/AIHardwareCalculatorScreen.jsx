@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,9 @@ import {
   TouchableOpacity,
   TextInput,
   Alert,
+  Modal,
+  Animated,
+  Pressable,
 } from "react-native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ScreenLayout from "../../components/ScreenLayout";
@@ -56,6 +59,42 @@ const AI_MODELS = [
     useCases: ["Research", "Custom AI Solutions"],
   },
 ];
+
+// Category color mapping
+const getCategoryColor = (category) => {
+  switch (category) {
+    case "LLM":
+      return {
+        primary: "#6366F1", // Indigo
+        light: "#EEF2FF",
+        badge: "#6366F1",
+      };
+    case "Image Generation":
+      return {
+        primary: "#EC4899", // Pink
+        light: "#FCE7F3",
+        badge: "#EC4899",
+      };
+    case "Audio":
+      return {
+        primary: "#10B981", // Green
+        light: "#D1FAE5",
+        badge: "#10B981",
+      };
+    case "Custom":
+      return {
+        primary: "#F59E0B", // Amber
+        light: "#FEF3C7",
+        badge: "#F59E0B",
+      };
+    default:
+      return {
+        primary: colors.primary,
+        light: "#E3F2FD",
+        badge: colors.primary,
+      };
+  }
+};
 
 const HARDWARE_RECOMMENDATIONS = {
   1: {
@@ -204,6 +243,17 @@ export default function AIHardwareCalculatorScreen({ navigation }) {
   const [customDescription, setCustomDescription] = useState("");
   const [showCustomInput, setShowCustomInput] = useState(false);
   const [showWorkloadInfo, setShowWorkloadInfo] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [isThinking, setIsThinking] = useState(false);
+  const [modalRecommendations, setModalRecommendations] = useState(null);
+  const [modalModel, setModalModel] = useState(null);
+  
+  // Animation values
+  const brainScale = useRef(new Animated.Value(1)).current;
+  const dot1Opacity = useRef(new Animated.Value(0)).current;
+  const dot2Opacity = useRef(new Animated.Value(0)).current;
+  const dot3Opacity = useRef(new Animated.Value(0)).current;
+  const progressWidth = useRef(new Animated.Value(0)).current;
 
   const handleModelSelect = (model) => {
     // Toggle selection - if same model is clicked, deselect it
@@ -211,8 +261,85 @@ export default function AIHardwareCalculatorScreen({ navigation }) {
       setSelectedModel(null);
     } else {
       setSelectedModel(model);
+      
+      // Show modal with thinking animation
+      setShowModal(true);
+      setIsThinking(true);
+      setModalModel(model);
+      
+      // Start animations
+      startThinkingAnimations();
+      
+      // Get recommendations
+      const recs = HARDWARE_RECOMMENDATIONS[model.id]?.[workloadType];
+      
+      // Show thinking animation for 2 seconds
+      setTimeout(() => {
+        setIsThinking(false);
+        setModalRecommendations(recs);
+        stopThinkingAnimations();
+      }, 2000);
     }
     setShowCustomInput(false);
+  };
+  
+  const startThinkingAnimations = () => {
+    // Brain pulse animation
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(brainScale, {
+          toValue: 1.2,
+          duration: 600,
+          useNativeDriver: true,
+        }),
+        Animated.timing(brainScale, {
+          toValue: 1,
+          duration: 600,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+    
+    // Dot animations
+    [dot1Opacity, dot2Opacity, dot3Opacity].forEach((dot, index) => {
+      Animated.loop(
+        Animated.sequence([
+          Animated.delay(index * 200),
+          Animated.timing(dot, {
+            toValue: 1,
+            duration: 400,
+            useNativeDriver: true,
+          }),
+          Animated.timing(dot, {
+            toValue: 0,
+            duration: 400,
+            useNativeDriver: true,
+          }),
+        ])
+      ).start();
+    });
+    
+    // Progress bar
+    Animated.timing(progressWidth, {
+      toValue: 1,
+      duration: 2000,
+      useNativeDriver: false,
+    }).start();
+  };
+  
+  const stopThinkingAnimations = () => {
+    brainScale.stopAnimation();
+    dot1Opacity.stopAnimation();
+    dot2Opacity.stopAnimation();
+    dot3Opacity.stopAnimation();
+    progressWidth.stopAnimation();
+    
+    // Reset values
+    brainScale.setValue(1);
+    dot1Opacity.setValue(0);
+    dot2Opacity.setValue(0);
+    dot3Opacity.setValue(0);
+    progressWidth.setValue(0);
   };
 
   const handleCustomModel = () => {
@@ -312,11 +439,13 @@ export default function AIHardwareCalculatorScreen({ navigation }) {
           style={styles.buildButton}
           onPress={() => {
             Alert.alert(
-              "Start Building",
-              "Would you like to browse components to build this configuration?",
+              "Coming Soon! 🛠️",
+              "The auto-build feature is currently under development. Soon you'll be able to automatically add these components to your build!",
               [
-                { text: "Cancel", style: "cancel" },
-                { text: "Go to Builder", onPress: () => navigation.navigate("Builder") },
+                {
+                  text: "Got it!",
+                  style: "default"
+                }
               ]
             );
           }}
@@ -418,7 +547,7 @@ export default function AIHardwareCalculatorScreen({ navigation }) {
                 styles.workloadButton,
                 workloadType === "inference" && styles.workloadButtonActive,
               ]}
-              onPress={() => setWorkloadType("inference")}
+              onPress={() => setWorkloadType(workloadType === "inference" ? null : "inference")}
             >
               <View style={styles.workloadIconCircle}>
                 <MaterialCommunityIcons
@@ -453,7 +582,7 @@ export default function AIHardwareCalculatorScreen({ navigation }) {
                 styles.workloadButton,
                 workloadType === "training" && styles.workloadButtonActive,
               ]}
-              onPress={() => setWorkloadType("training")}
+              onPress={() => setWorkloadType(workloadType === "training" ? null : "training")}
             >
               <View style={styles.workloadIconCircle}>
                 <MaterialCommunityIcons
@@ -485,65 +614,87 @@ export default function AIHardwareCalculatorScreen({ navigation }) {
           </View>
         </View>
 
-        {/* Model Selection */}
+        {/* Model Selection - Only show when workload is selected */}
+        {workloadType && (
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>Step 2: Select AI Model Type</Text>
           <Text style={styles.sectionDescription}>
             Choose the type of AI model you want to work with
           </Text>
           <View style={styles.modelsGrid}>
-            {AI_MODELS.map((model) => (
+            {AI_MODELS.map((model) => {
+              const categoryColors = getCategoryColor(model.category);
+              const isSelected = selectedModel?.id === model.id;
+              
+              return (
               <TouchableOpacity
                 key={model.id}
                 style={[
                   styles.modelCard,
-                  selectedModel?.id === model.id && styles.modelCardActive,
+                  { backgroundColor: isSelected ? categoryColors.light : "#FFFBF0" },
+                  isSelected && styles.modelCardActive,
+                  isSelected && { borderColor: categoryColors.primary },
                 ]}
                 onPress={() => handleModelSelect(model)}
               >
                 <View style={styles.modelHeader}>
-                  <MaterialCommunityIcons
-                    name={
-                      model.category === "LLM"
-                        ? "text-box-outline"
-                        : model.category === "Image Generation"
-                        ? "image-outline"
-                        : model.category === "Audio"
-                        ? "microphone"
-                        : "cog-outline"
-                    }
-                    size={28}
-                    color={selectedModel?.id === model.id ? colors.mainYellow : colors.primary}
-                  />
-                  {selectedModel?.id === model.id && (
+                  <View style={[
+                    styles.categoryIconCircle,
+                    { backgroundColor: categoryColors.light }
+                  ]}>
+                    <MaterialCommunityIcons
+                      name={
+                        model.category === "LLM"
+                          ? "text-box-outline"
+                          : model.category === "Image Generation"
+                          ? "image-outline"
+                          : model.category === "Audio"
+                          ? "microphone"
+                          : "cog-outline"
+                      }
+                      size={28}
+                      color={categoryColors.primary}
+                    />
+                  </View>
+                  {isSelected && (
                     <MaterialCommunityIcons
                       name="check-circle"
-                      size={20}
+                      size={24}
                       color={colors.success}
                       style={styles.checkIcon}
                     />
                   )}
                 </View>
                 <Text style={styles.modelName}>{model.name}</Text>
-                <View style={styles.categoryBadge}>
+                <View style={[
+                  styles.categoryBadge,
+                  { backgroundColor: categoryColors.badge }
+                ]}>
                   <Text style={styles.categoryBadgeText}>{model.category}</Text>
                 </View>
                 <Text style={styles.modelDescription}>{model.description}</Text>
                 <Text style={styles.useCasesLabel}>Common uses:</Text>
                 <View style={styles.useCasesContainer}>
                   {model.useCases.slice(0, 2).map((useCase, index) => (
-                    <View key={index} style={styles.useCaseTag}>
-                      <Feather name="check" size={12} color={colors.primary} />
-                      <Text style={styles.useCaseText}>{useCase}</Text>
+                    <View key={index} style={[
+                      styles.useCaseTag,
+                      { backgroundColor: categoryColors.light }
+                    ]}>
+                      <Feather name="check" size={12} color={categoryColors.primary} />
+                      <Text style={[styles.useCaseText, { color: categoryColors.primary }]}>{useCase}</Text>
                     </View>
                   ))}
                 </View>
               </TouchableOpacity>
-            ))}
+              );
+            })}
           </View>
         </View>
+        )}
 
-        {/* Custom Model Input */}
+        {/* Custom Model Input - Only show when workload is selected */}
+        {workloadType && (
+        <>
         <View style={styles.orDivider}>
           <View style={styles.orLine} />
           <Text style={styles.orText}>OR</Text>
@@ -557,6 +708,8 @@ export default function AIHardwareCalculatorScreen({ navigation }) {
           <Feather name="edit-3" size={22} color={colors.primary} />
           <Text style={styles.customButtonText}>Describe Your Custom AI Project</Text>
         </TouchableOpacity>
+        </>
+        )}
 
         {showCustomInput && (
           <View style={styles.customInputCard}>
@@ -617,6 +770,190 @@ export default function AIHardwareCalculatorScreen({ navigation }) {
           </View>
         </View>
       </ScrollView>
+      
+      {/* Thinking Modal */}
+      <Modal
+        visible={showModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => {
+          setShowModal(false);
+          setIsThinking(false);
+          setModalRecommendations(null);
+          stopThinkingAnimations();
+        }}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            {isThinking ? (
+              <View style={styles.thinkingContainer}>
+                {/* Close Button */}
+                <TouchableOpacity
+                  style={styles.modalCloseButton}
+                  onPress={() => {
+                    setShowModal(false);
+                    setIsThinking(false);
+                    setModalRecommendations(null);
+                    stopThinkingAnimations();
+                  }}
+                >
+                  <Feather name="x" size={24} color={colors.mainBlack} />
+                </TouchableOpacity>
+                
+                <Animated.Text 
+                  style={[styles.thinkingBrain, { transform: [{ scale: brainScale }] }]}
+                >
+                  🧠
+                </Animated.Text>
+                
+                <Text style={styles.thinkingTitle}>Analyzing Your Requirements...</Text>
+                <Text style={styles.thinkingSubtitle}>
+                  Our AI is calculating the perfect hardware configuration for you
+                </Text>
+                
+                {/* Loading Dots */}
+                <View style={styles.loadingDotsContainer}>
+                  <Animated.View style={[styles.loadingDot, { opacity: dot1Opacity }]} />
+                  <Animated.View style={[styles.loadingDot, { opacity: dot2Opacity }]} />
+                  <Animated.View style={[styles.loadingDot, { opacity: dot3Opacity }]} />
+                </View>
+                
+                {/* Progress Bar */}
+                <View style={styles.progressBarContainer}>
+                  <Animated.View 
+                    style={[
+                      styles.progressBar,
+                      {
+                        width: progressWidth.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: ['0%', '100%']
+                        })
+                      }
+                    ]}
+                  />
+                </View>
+                
+                <View style={styles.thinkingMessagesContainer}>
+                  <Text style={styles.thinkingMessage}>Analyzing CPU needs...</Text>
+                  <Text style={styles.thinkingMessage}>Calculating GPU requirements...</Text>
+                  <Text style={styles.thinkingMessage}>Optimizing memory...</Text>
+                </View>
+              </View>
+            ) : modalRecommendations && modalModel ? (
+              <>
+                {/* Close Button */}
+                <TouchableOpacity
+                  style={styles.modalCloseButton}
+                  onPress={() => {
+                    setShowModal(false);
+                    setIsThinking(false);
+                    setModalRecommendations(null);
+                    stopThinkingAnimations();
+                  }}
+                >
+                  <Feather name="x" size={24} color={colors.mainBlack} />
+                </TouchableOpacity>
+                
+                <ScrollView style={styles.modalScrollView} showsVerticalScrollIndicator={false}>
+                {/* Results Header */}
+                <View style={styles.modalHeader}>
+                  <View style={styles.modalHeaderLeft}>
+                    <View style={styles.successIcon}>
+                      <Text style={styles.successIconText}>✓</Text>
+                    </View>
+                    <View style={styles.modalHeaderTextContainer}>
+                      <Text style={styles.modalTitle} numberOfLines={1} adjustsFontSizeToFit>Recommendations</Text>
+                      <Text style={styles.modalSubtitle} numberOfLines={1}>
+                        {modalModel.name}
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={styles.workloadBadge}>
+                    <Text style={styles.workloadBadgeText}>
+                      {workloadType === "inference" ? "🚀" : "🎓"}
+                    </Text>
+                  </View>
+                </View>
+
+                {/* Specs Grid */}
+                <View style={styles.modalSpecsGrid}>
+                  <View style={[styles.modalSpecCard, { borderLeftColor: colors.primary }]}>
+                    <Text style={styles.modalSpecIcon}>🖥️</Text>
+                    <Text style={styles.modalSpecLabel}>PROCESSOR</Text>
+                    <Text style={styles.modalSpecValue}>{modalRecommendations.cpu}</Text>
+                    <Text style={[styles.modalSpecDetail, { color: colors.primary }]}>
+                      {modalRecommendations.cpuCores}
+                    </Text>
+                  </View>
+
+                  <View style={[styles.modalSpecCard, { borderLeftColor: colors.secondary }]}>
+                    <Text style={styles.modalSpecIcon}>🧮</Text>
+                    <Text style={styles.modalSpecLabel}>MEMORY</Text>
+                    <Text style={styles.modalSpecValue}>{modalRecommendations.ram}</Text>
+                  </View>
+
+                  <View style={[styles.modalSpecCard, { borderLeftColor: colors.success }]}>
+                    <Text style={styles.modalSpecIcon}>🎮</Text>
+                    <Text style={styles.modalSpecLabel}>GRAPHICS CARD</Text>
+                    <Text style={styles.modalSpecValue}>{modalRecommendations.gpu}</Text>
+                    <Text style={[styles.modalSpecDetail, { color: colors.success }]}>
+                      {modalRecommendations.vram} VRAM
+                    </Text>
+                  </View>
+
+                  <View style={[styles.modalSpecCard, { borderLeftColor: colors.warning }]}>
+                    <Text style={styles.modalSpecIcon}>💾</Text>
+                    <Text style={styles.modalSpecLabel}>STORAGE</Text>
+                    <Text style={styles.modalSpecValue}>{modalRecommendations.storage}</Text>
+                  </View>
+
+                  <View style={[styles.modalSpecCard, { borderLeftColor: colors.error }]}>
+                    <Text style={styles.modalSpecIcon}>⚡</Text>
+                    <Text style={styles.modalSpecLabel}>POWER SUPPLY</Text>
+                    <Text style={styles.modalSpecValue}>{modalRecommendations.powerSupply}</Text>
+                  </View>
+
+                  <View style={[styles.modalSpecCard, styles.modalCostCard]}>
+                    <Text style={styles.modalSpecIcon}>💰</Text>
+                    <Text style={styles.modalCostLabel}>ESTIMATED BUDGET</Text>
+                    <Text style={styles.modalCostValue}>{modalRecommendations.estimatedCost}</Text>
+                  </View>
+                </View>
+
+                {/* Action Buttons */}
+                <View style={styles.modalActionButtons}>
+                  <TouchableOpacity
+                    style={styles.modalPrimaryButton}
+                    onPress={() => {
+                      Alert.alert(
+                        "Coming Soon! 🛠️",
+                        "The auto-build feature is currently under development. Soon you'll be able to automatically add these components to your build!",
+                        [{ text: "Got it!", style: "default" }]
+                      );
+                    }}
+                  >
+                    <Text style={styles.modalPrimaryButtonText}>🛠️ Build This Configuration</Text>
+                  </TouchableOpacity>
+                </View>
+
+                {/* Performance Tip */}
+                <View style={styles.modalTipCard}>
+                  <Text style={styles.modalTipIcon}>💡</Text>
+                  <Text style={styles.modalTipText}>
+                    <Text style={{ fontWeight: "bold", color: colors.mainYellow }}>Pro Tip: </Text>
+                    For {workloadType === "training" ? "training workloads" : "inference tasks"}, 
+                    ensure adequate cooling and consider{" "}
+                    {workloadType === "training" 
+                      ? "multi-GPU setups for faster training" 
+                      : "GPU with sufficient VRAM for your batch size"}.
+                  </Text>
+                </View>
+              </ScrollView>
+              </>
+            ) : null}
+          </View>
+        </View>
+      </Modal>
     </ScreenLayout>
   );
 }
@@ -702,7 +1039,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   instructionsCard: {
-    backgroundColor: colors.mainWhite,
+    backgroundColor: 'white',
     marginHorizontal: 20,
     marginTop: 40,
     marginBottom: 30,
@@ -775,6 +1112,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   sectionTitle: {
+    marginTop: 15,
     fontSize: 20,
     fontWeight: "bold",
     color: colors.mainBlack,
@@ -811,7 +1149,7 @@ const styles = StyleSheet.create({
   },
   workloadButton: {
     flex: 1,
-    backgroundColor: colors.mainWhite,
+    backgroundColor: 'white',
     padding: 20,
     borderRadius: 16,
     alignItems: "center",
@@ -869,7 +1207,7 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   modelCard: {
-    backgroundColor: colors.mainWhite,
+    backgroundColor: "white",
     padding: 22,
     borderRadius: 16,
     borderWidth: 2,
@@ -883,7 +1221,7 @@ const styles = StyleSheet.create({
   },
   modelCardActive: {
     borderColor: colors.mainYellow,
-    backgroundColor: "#FFFBF0",
+    backgroundColor: "white",
     borderWidth: 3,
     elevation: 6,
     shadowOpacity: 0.2,
@@ -910,11 +1248,17 @@ const styles = StyleSheet.create({
   },
   categoryBadge: {
     alignSelf: "flex-start",
-    backgroundColor: colors.primary,
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
     marginBottom: 8,
+  },
+  categoryIconCircle: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    alignItems: "center",
+    justifyContent: "center",
   },
   categoryBadgeText: {
     fontSize: 11,
@@ -943,7 +1287,6 @@ const styles = StyleSheet.create({
   useCaseTag: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#E8F5E9",
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 12,
@@ -951,7 +1294,6 @@ const styles = StyleSheet.create({
   },
   useCaseText: {
     fontSize: 12,
-    color: colors.success,
     fontWeight: "500",
   },
   orDivider: {
@@ -1191,7 +1533,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     flexDirection: "row",
     alignItems: "flex-start",
-    backgroundColor: colors.mainWhite,
+    backgroundColor: 'white',
     padding: 18,
     borderRadius: 8,
     gap: 12,
@@ -1213,5 +1555,254 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.mainBlack,
     lineHeight: 18,
+  },
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.7)",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  modalContainer: {
+    width: "100%",
+    maxHeight: "90%",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 20,
+    padding: 0,
+    elevation: 10,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+  },
+  modalCloseButton: {
+    position: "absolute",
+    top: 12,
+    right: 12,
+    zIndex: 100,
+    backgroundColor: colors.mainBeige,
+    borderRadius: 20,
+    width: 36,
+    height: 36,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+  },
+  // Thinking Animation Styles
+  thinkingContainer: {
+    padding: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 400,
+  },
+  thinkingBrain: {
+    fontSize: 80,
+    marginBottom: 20,
+  },
+  thinkingTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: colors.mainBlack,
+    textAlign: "center",
+    marginBottom: 8,
+  },
+  thinkingSubtitle: {
+    fontSize: 14,
+    color: colors.mainBlack,
+    textAlign: "center",
+    marginBottom: 30,
+    paddingHorizontal: 20,
+  },
+  loadingDotsContainer: {
+    flexDirection: "row",
+    gap: 12,
+    marginBottom: 30,
+  },
+  loadingDot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: colors.mainYellow,
+  },
+  progressBarContainer: {
+    width: "100%",
+    height: 6,
+    backgroundColor: "#E0E0E0",
+    borderRadius: 3,
+    overflow: "hidden",
+    marginBottom: 30,
+  },
+  progressBar: {
+    height: "100%",
+    backgroundColor: colors.mainYellow,
+    borderRadius: 3,
+  },
+  thinkingMessagesContainer: {
+    alignItems: "center",
+    gap: 6,
+  },
+  thinkingMessage: {
+    fontSize: 13,
+    color: colors.mainBlack,
+    textAlign: "center",
+  },
+  // Results Modal Styles
+  modalScrollView: {
+    padding: 20,
+  },
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 24,
+    paddingBottom: 20,
+    borderBottomWidth: 2,
+    borderBottomColor: "#F0F0F0",
+  },
+  modalHeaderLeft: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    flex: 1,
+    marginRight: 12,
+  },
+  modalHeaderTextContainer: {
+    flex: 1,
+    minWidth: 0,
+  },
+  successIcon: {
+    backgroundColor: colors.success,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  successIconText: {
+    fontSize: 28,
+    color: colors.mainWhite,
+    fontWeight: "bold",
+  },
+  modalTitle: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: colors.mainBlack,
+  },
+  modalSubtitle: {
+    fontSize: 11,
+    color: colors.mainBlack,
+    marginTop: 2,
+  },
+  workloadBadge: {
+    backgroundColor: colors.mainYellow,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 20,
+    minWidth: 36,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  workloadBadgeText: {
+    fontSize: 18,
+    color: colors.mainBlack,
+  },
+  modalSpecsGrid: {
+    gap: 12,
+    marginBottom: 20,
+  },
+  modalSpecCard: {
+    backgroundColor: colors.mainWhite,
+    borderWidth: 1,
+    borderColor: "#E0E0E0",
+    borderLeftWidth: 4,
+    borderRadius: 12,
+    padding: 16,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+  },
+  modalSpecIcon: {
+    fontSize: 24,
+    marginBottom: 8,
+  },
+  modalSpecLabel: {
+    fontSize: 10,
+    fontWeight: "bold",
+    color: colors.mainBlack,
+    letterSpacing: 1,
+    marginBottom: 4,
+  },
+  modalSpecValue: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: colors.mainBlack,
+    marginBottom: 2,
+  },
+  modalSpecDetail: {
+    fontSize: 12,
+    fontWeight: "600",
+  },
+  modalCostCard: {
+    backgroundColor: "rgba(76, 175, 80, 0.05)",
+    borderColor: colors.success,
+  },
+  modalCostLabel: {
+    fontSize: 10,
+    fontWeight: "bold",
+    color: colors.success,
+    letterSpacing: 1,
+    marginBottom: 4,
+  },
+  modalCostValue: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: colors.success,
+  },
+  modalActionButtons: {
+    gap: 12,
+    marginBottom: 20,
+  },
+  modalPrimaryButton: {
+    backgroundColor: colors.mainYellow,
+    paddingVertical: 16,
+    borderRadius: 12,
+    alignItems: "center",
+    elevation: 3,
+    shadowColor: colors.mainYellow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+  },
+  modalPrimaryButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: colors.mainBlack,
+  },
+  modalTipCard: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    backgroundColor: "rgba(243, 189, 74, 0.1)",
+    padding: 16,
+    borderRadius: 12,
+    gap: 12,
+    borderLeftWidth: 4,
+    borderLeftColor: colors.mainYellow,
+    marginBottom: 10,
+  },
+  modalTipIcon: {
+    fontSize: 20,
+  },
+  modalTipText: {
+    flex: 1,
+    fontSize: 13,
+    color: colors.mainBlack,
+    lineHeight: 20,
   },
 });
