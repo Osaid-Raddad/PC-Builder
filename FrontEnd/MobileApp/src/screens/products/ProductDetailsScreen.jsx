@@ -463,7 +463,7 @@ export default function ProductDetailsScreen({ route, navigation }) {
           style={styles.addButton}
           onPress={handleAddToBuild}
         >
-          <MaterialIcons name="add-shopping-cart" size={24} color="white" />
+          <Feather name="plus" size={24} color="white" />
           <Text style={styles.addButtonText}>Add to Build</Text>
         </TouchableOpacity>
 
