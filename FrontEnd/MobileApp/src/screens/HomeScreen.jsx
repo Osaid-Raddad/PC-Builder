@@ -40,13 +40,6 @@ export default function HomeScreen({ navigation }) {
       screen: "Shops",
     },
     {
-      title: "AI Hardware Calculator",
-      description: "Find hardware for AI workloads",
-      icon: "brain",
-      color: colors.mainYellow,
-      screen: "AIHardwareCalculator",
-    },
-    {
       title: "Guides",
       description: "Learn from expert tutorials",
       icon: "book-open-variant",
@@ -57,7 +50,7 @@ export default function HomeScreen({ navigation }) {
       title: "Completed Builds",
       description: "Explore community builds",
       icon: "check-decagram",
-      color: colors.primary,
+      color: colors.mainYellow,
       screen: "CompletedBuilds",
     },
     {
