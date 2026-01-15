@@ -200,7 +200,7 @@ export default function CompletedBuildsScreen({ navigation }) {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const buildsPerPage = 6;
+  const buildsPerPage = 3;
 
   const categories = ["All", "Gaming", "Workstation", "Budget", "Office", "Mini-ITX"];
 
@@ -455,50 +455,81 @@ export default function CompletedBuildsScreen({ navigation }) {
             </View>
           }
           ListFooterComponent={
-            filteredBuilds.length > buildsPerPage ? (
-              <View style={styles.paginationContainer}>
-                <TouchableOpacity
-                  style={[styles.pageButton, currentPage === 1 && styles.pageButtonDisabled]}
-                  onPress={() => handlePageChange(currentPage - 1)}
-                  disabled={currentPage === 1}
-                >
-                  <Feather name="chevron-left" size={20} color={colors.mainYellow} />
-                </TouchableOpacity>
+            <>
+              {filteredBuilds.length > buildsPerPage && (
+                <View style={styles.paginationContainer}>
+                  <TouchableOpacity
+                    style={[styles.pageButton, currentPage === 1 && styles.pageButtonDisabled]}
+                    onPress={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                  >
+                    <Feather name="chevron-left" size={20} color={colors.mainYellow} />
+                  </TouchableOpacity>
 
-                <View style={styles.pageNumbers}>
-                  {[...Array(totalPages)].map((_, index) => (
-                    <TouchableOpacity
-                      key={index + 1}
-                      style={[
-                        styles.pageNumberButton,
-                        currentPage === index + 1 && styles.pageNumberButtonActive,
-                      ]}
-                      onPress={() => handlePageChange(index + 1)}
-                    >
-                      <Text
+                  <View style={styles.pageNumbers}>
+                    {[...Array(totalPages)].map((_, index) => (
+                      <TouchableOpacity
+                        key={index + 1}
                         style={[
-                          styles.pageNumberText,
-                          currentPage === index + 1 && styles.pageNumberTextActive,
+                          styles.pageNumberButton,
+                          currentPage === index + 1 && styles.pageNumberButtonActive,
                         ]}
+                        onPress={() => handlePageChange(index + 1)}
                       >
-                        {index + 1}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
+                        <Text
+                          style={[
+                            styles.pageNumberText,
+                            currentPage === index + 1 && styles.pageNumberTextActive,
+                          ]}
+                        >
+                          {index + 1}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
 
-                <TouchableOpacity
-                  style={[
-                    styles.pageButton,
-                    currentPage === totalPages && styles.pageButtonDisabled,
-                  ]}
-                  onPress={() => handlePageChange(currentPage + 1)}
-                  disabled={currentPage === totalPages}
-                >
-                  <Feather name="chevron-right" size={20} color={colors.mainYellow} />
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[
+                      styles.pageButton,
+                      currentPage === totalPages && styles.pageButtonDisabled,
+                    ]}
+                    onPress={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                  >
+                    <Feather name="chevron-right" size={20} color={colors.mainYellow} />
+                  </TouchableOpacity>
+                </View>
+              )}
+
+              {/* Call to Action */}
+              <View style={styles.ctaContainer}>
+                <Text style={styles.ctaTitle}>Ready to Build Your Dream?</Text>
+                <Text style={styles.ctaDescription}>
+                  Start building your custom PC with our interactive builder or share your completed build with the community!
+                </Text>
+                <View style={styles.ctaButtons}>
+                  <TouchableOpacity
+                    style={styles.startBuildButton}
+                    onPress={() => {
+                      navigation.navigate("Builder");
+                    }}
+                  >
+                    <MaterialCommunityIcons name="hammer-wrench" size={20} color={colors.mainBlack} />
+                    <Text style={styles.startBuildButtonText}>Start Your Build</Text>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity
+                    style={styles.submitBuildButton}
+                    onPress={() => {
+                      navigation.navigate("SubmitBuild");
+                    }}
+                  >
+                    <Feather name="upload" size={20} color={colors.mainYellow} />
+                    <Text style={styles.submitBuildButtonText}>Submit Your Build</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            ) : null
+            </>
           }
           contentContainerStyle={styles.listContainer}
         />
@@ -798,5 +829,69 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingHorizontal: 40,
   },
+  ctaContainer: {
+    marginTop: 32,
+    padding: 24,
+    backgroundColor: "white",
+    borderRadius: 16,
+    borderWidth: 2,
+    borderColor: colors.mainYellow,
+    alignItems: "center",
+  },
+  ctaTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: colors.mainBlack,
+    textAlign: "center",
+    marginBottom: 12,
+  },
+  ctaDescription: {
+    fontSize: 16,
+    color: colors.jet,
+    textAlign: "center",
+    lineHeight: 24,
+    marginBottom: 24,
+    paddingHorizontal: 10,
+  },
+  ctaButtons: {
+    width: "100%",
+    gap: 12,
+  },
+  startBuildButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: colors.mainYellow,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    gap: 10,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+  },
+  startBuildButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: colors.mainBlack,
+  },
+  submitBuildButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "white",
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: colors.mainYellow,
+    gap: 10,
+  },
+  submitBuildButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: colors.mainYellow,
+  },
 });
-

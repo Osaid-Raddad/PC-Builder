@@ -11,6 +11,7 @@ import {
   RefreshControl,
   Modal,
   TextInput,
+  Clipboard,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -339,6 +340,24 @@ export default function TechSupportProfileScreen({ navigation }) {
         },
       ]
     );
+  };
+
+  const handleGenerateMeeting = (appointmentId) => {
+    const roomName = `TechSupport-${appointmentId}-${Date.now()}`;
+    const meetingLink = `https://meet.jit.si/${roomName}`;
+    
+    setAppointments((prev) =>
+      prev.map((apt) =>
+        apt.id === appointmentId ? { ...apt, meetingLink } : apt
+      )
+    );
+    
+    Alert.alert("Success", "Meeting link generated! Share it with the user.");
+  };
+
+  const handleCopyMeetingLink = (meetingLink) => {
+    Clipboard.setString(meetingLink);
+    Alert.alert("Copied!", "Meeting link copied to clipboard.");
   };
 
   // Schedule editing handlers
@@ -788,9 +807,17 @@ export default function TechSupportProfileScreen({ navigation }) {
                       <Text style={styles.appointmentEmail}>{appointment.userEmail}</Text>
                     )}
                     {appointment.meetingLink && (
-                      <Text style={styles.meetingLink} numberOfLines={1}>
-                        {appointment.meetingLink}
-                      </Text>
+                      <View style={styles.meetingLinkContainer}>
+                        <Text style={styles.meetingLink} numberOfLines={1}>
+                          {appointment.meetingLink}
+                        </Text>
+                        <TouchableOpacity
+                          style={styles.copyButton}
+                          onPress={() => handleCopyMeetingLink(appointment.meetingLink)}
+                        >
+                          <Feather name="copy" size={16} color={colors.mainYellow} />
+                        </TouchableOpacity>
+                      </View>
                     )}
 
                     {/* Action Buttons */}
@@ -814,13 +841,24 @@ export default function TechSupportProfileScreen({ navigation }) {
                     )}
 
                     {appointment.status === "accepted" && (
-                      <TouchableOpacity
-                        style={[styles.actionButton, styles.completeButton]}
-                        onPress={() => handleCompleteAppointment(appointment.id)}
-                      >
-                        <Feather name="check-circle" size={16} color="white" />
-                        <Text style={styles.actionButtonText}>Mark as Completed</Text>
-                      </TouchableOpacity>
+                      <View style={styles.appointmentActions}>
+                        <TouchableOpacity
+                          style={[styles.actionButton, styles.completeButton]}
+                          onPress={() => handleCompleteAppointment(appointment.id)}
+                        >
+                          <Feather name="check-circle" size={16} color="white" />
+                          <Text style={styles.actionButtonText}>Mark as Completed</Text>
+                        </TouchableOpacity>
+                        {!appointment.meetingLink && (
+                          <TouchableOpacity
+                            style={[styles.actionButton, styles.generateMeetingButton]}
+                            onPress={() => handleGenerateMeeting(appointment.id)}
+                          >
+                            <Feather name="video" size={16} color="white" />
+                            <Text style={styles.actionButtonText}>Generate Meeting</Text>
+                          </TouchableOpacity>
+                        )}
+                      </View>
                     )}
                   </View>
                 ))
@@ -1425,7 +1463,9 @@ const styles = StyleSheet.create({
   },
   completeButton: {
     backgroundColor: "#6b7280",
-    marginTop: 12,
+  },
+  generateMeetingButton: {
+    backgroundColor: colors.mainYellow,
   },
   actionButtonText: {
     color: "white",
@@ -1436,6 +1476,24 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.text,
     marginTop: 4,
+  },
+  meetingLinkContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.alabaster,
+    padding: 8,
+    borderRadius: 6,
+    marginTop: 8,
+    gap: 8,
+  },
+  meetingLink: {
+    flex: 1,
+    fontSize: 12,
+    color: colors.mainBlack,
+    fontWeight: "500",
+  },
+  copyButton: {
+    padding: 4,
   },
   // Schedule editing
   scheduleControls: {

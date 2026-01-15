@@ -139,6 +139,59 @@ export default function HomeScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
+        {/* AI Hardware Calculator Special Banner */}
+        <TouchableOpacity
+          style={styles.aiCalculatorBanner}
+          onPress={() => navigation.navigate("AIHardwareCalculator")}
+          activeOpacity={0.9}
+        >
+          <View style={styles.aiCalculatorGradient}>
+            {/* Decorative Elements */}
+            <View style={styles.aiCalculatorDecor}>
+              <View style={styles.decorCircle1} />
+              <View style={styles.decorCircle2} />
+              <View style={styles.decorCircle3} />
+            </View>
+            
+            <View style={styles.aiCalculatorContent}>
+              <View style={styles.aiCalculatorLeft}>
+                <View style={styles.newBadge}>
+                  <MaterialCommunityIcons name="lightning-bolt" size={12} color={colors.mainBlack} />
+                  <Text style={styles.newBadgeText}>NEW</Text>
+                </View>
+                <Text style={styles.aiCalculatorTitle}>AI Hardware{"\n"}Calculator</Text>
+                <Text style={styles.aiCalculatorSubtitle}>
+                  🤖 Find perfect specs for your AI projects
+                </Text>
+                <View style={styles.aiCalculatorFeatures}>
+                  <View style={styles.featureTag}>
+                    <MaterialCommunityIcons name="lightning-bolt" size={14} color={colors.mainYellow} />
+                    <Text style={styles.featureTagText}>LLMs</Text>
+                  </View>
+                  <View style={styles.featureTag}>
+                    <MaterialCommunityIcons name="image-outline" size={14} color={colors.mainYellow} />
+                    <Text style={styles.featureTagText}>Image Gen</Text>
+                  </View>
+                  <View style={styles.featureTag}>
+                    <MaterialCommunityIcons name="brain" size={14} color={colors.mainYellow} />
+                    <Text style={styles.featureTagText}>Custom</Text>
+                  </View>
+                </View>
+              </View>
+              
+              <View style={styles.aiCalculatorRight}>
+                <View style={styles.aiIconContainer}>
+                  <MaterialCommunityIcons name="brain" size={50} color={colors.mainYellow} />
+                  <View style={styles.pulseRing} />
+                </View>
+                <View style={styles.arrowButton}>
+                  <MaterialCommunityIcons name="arrow-right" size={24} color={colors.mainBlack} />
+                </View>
+              </View>
+            </View>
+          </View>
+        </TouchableOpacity>
+
         {/* Features Grid */}
         <View style={styles.featuresSection}>
           <Text style={styles.sectionTitle}>Features</Text>
@@ -207,59 +260,6 @@ export default function HomeScreen({ navigation }) {
             ))}
           </View>
         </View>
-
-        {/* AI Hardware Calculator Special Banner */}
-        <TouchableOpacity
-          style={styles.aiCalculatorBanner}
-          onPress={() => navigation.navigate("AIHardwareCalculator")}
-          activeOpacity={0.9}
-        >
-          <View style={styles.aiCalculatorGradient}>
-            {/* Decorative Elements */}
-            <View style={styles.aiCalculatorDecor}>
-              <View style={styles.decorCircle1} />
-              <View style={styles.decorCircle2} />
-              <View style={styles.decorCircle3} />
-            </View>
-            
-            <View style={styles.aiCalculatorContent}>
-              <View style={styles.aiCalculatorLeft}>
-                <View style={styles.newBadge}>
-                  <MaterialCommunityIcons name="sparkles" size={12} color={colors.mainBlack} />
-                  <Text style={styles.newBadgeText}>NEW</Text>
-                </View>
-                <Text style={styles.aiCalculatorTitle}>AI Hardware{"\n"}Calculator</Text>
-                <Text style={styles.aiCalculatorSubtitle}>
-                  🤖 Find perfect specs for your AI projects
-                </Text>
-                <View style={styles.aiCalculatorFeatures}>
-                  <View style={styles.featureTag}>
-                    <MaterialCommunityIcons name="lightning-bolt" size={14} color={colors.mainYellow} />
-                    <Text style={styles.featureTagText}>LLMs</Text>
-                  </View>
-                  <View style={styles.featureTag}>
-                    <MaterialCommunityIcons name="image-outline" size={14} color={colors.mainYellow} />
-                    <Text style={styles.featureTagText}>Image Gen</Text>
-                  </View>
-                  <View style={styles.featureTag}>
-                    <MaterialCommunityIcons name="brain" size={14} color={colors.mainYellow} />
-                    <Text style={styles.featureTagText}>Custom</Text>
-                  </View>
-                </View>
-              </View>
-              
-              <View style={styles.aiCalculatorRight}>
-                <View style={styles.aiIconContainer}>
-                  <MaterialCommunityIcons name="brain" size={50} color={colors.mainYellow} />
-                  <View style={styles.pulseRing} />
-                </View>
-                <View style={styles.arrowButton}>
-                  <MaterialCommunityIcons name="arrow-right" size={24} color={colors.mainBlack} />
-                </View>
-              </View>
-            </View>
-          </View>
-        </TouchableOpacity>
 
         {/* Stats Section */}
         <View style={styles.statsSection}>
@@ -340,7 +340,7 @@ const styles = StyleSheet.create({
   },
   aiCalculatorBanner: {
     marginHorizontal: 20,
-    marginTop: 10,
+    marginTop: 30,
     marginBottom: 10,
     borderRadius: 20,
     overflow: "hidden",
