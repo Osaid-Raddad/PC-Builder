@@ -47,10 +47,17 @@ export default function HomeScreen({ navigation }) {
       screen: "BuildingGuides",
     },
     {
+      title: "AI Hardware Calculator",
+      description: "Find hardware for AI workloads",
+      icon: "brain",
+      color: colors.mainYellow,
+      screen: "AIHardwareCalculator",
+    },
+    {
       title: "Completed Builds",
       description: "Explore community builds",
       icon: "check-decagram",
-      color: colors.mainYellow,
+      color: colors.primary,
       screen: "CompletedBuilds",
     },
     {
