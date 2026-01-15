@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Navbar from '../components/user/navbar/Navbar.jsx';
-import Footer from '../components/user/footer/Footer.jsx';
-import colors from '../config/colors';
+import Navbar from '../../components/user/navbar/Navbar.jsx';
+import Footer from '../../components/user/footer/Footer.jsx';
+import colors from '../../config/colors';
 import Swal from 'sweetalert2';
 
 const AI_MODELS = [
