@@ -90,6 +90,22 @@ export default function CaseScreen({ navigation, route }) {
     }
   };
 
+  // Filter products based on selected filter
+  const filteredProducts = MOCK_PRODUCTS.filter(product => {
+    if (selectedFilter === "all") return true;
+    
+    // Filter by form factor (intel/amd could be form factor categories like ATX, Micro ATX, etc.)
+    const formFactor = product.type?.toLowerCase() || '';
+    if (selectedFilter === "intel") {
+      return formFactor.includes("atx") || formFactor.includes("mid");
+    }
+    if (selectedFilter === "amd") {
+      return formFactor.includes("mini") || formFactor.includes("micro");
+    }
+    
+    return true;
+  });
+
   const renderProduct = ({ item }) => {
     const isSelected = selectedComponents.case?.model === item.model;
     const inCompare = isInCompare(item.id);
@@ -166,7 +182,7 @@ export default function CaseScreen({ navigation, route }) {
     <ScreenLayout navigation={navigation} scrollable={false} showFooter={false}>
       <View style={styles.container}>
         <FlatList
-          data={MOCK_PRODUCTS}
+          data={filteredProducts}
           renderItem={renderProduct}
           keyExtractor={(item) => item.id}
           ListHeaderComponent={

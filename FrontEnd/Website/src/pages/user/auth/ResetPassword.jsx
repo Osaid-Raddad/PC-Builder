@@ -236,7 +236,7 @@ const ResetPassword = () => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full bg-[#F3BD4A] text-white py-3 rounded-lg font-semibold hover:bg-[#e6bc4a] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+              className="w-full bg-[#F3BD4A] text-white py-3 rounded-lg font-semibold hover:bg-[#e6bc4a] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl cursor-pointer"
             >
               {isLoading ? 'Resetting Password...' : 'Reset Password'}
             </button>

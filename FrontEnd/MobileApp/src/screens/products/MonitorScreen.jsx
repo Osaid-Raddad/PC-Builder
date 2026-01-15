@@ -131,6 +131,16 @@ export default function MonitorScreen({ navigation, route }) {
     }
   };
 
+  // Filter products based on selected filters
+  const filteredProducts = MOCK_PRODUCTS.filter(product => {
+    if (product.price < filters.priceRange?.min || product.price > filters.priceRange?.max) return false;
+    if (filters.manufacturers?.length > 0 && !filters.manufacturers.includes(product.manufacturer)) return false;
+    if (filters.rating > 0 && product.rating < filters.rating) return false;
+    if (filters.screenSize?.length > 0 && !filters.screenSize.includes(product.screenSize?.toString())) return false;
+    if (filters.resolution?.length > 0 && !filters.resolution.includes(product.resolution)) return false;
+    return true;
+  });
+
   const renderProduct = ({ item }) => {
     const isSelected = selectedComponents.monitor?.model === item.model;
     const inCompare = isInCompare(item.id);
@@ -204,7 +214,7 @@ export default function MonitorScreen({ navigation, route }) {
     <ScreenLayout navigation={navigation} scrollable={false} showFooter={false}>
       <View style={styles.container}>
         <FlatList
-          data={MOCK_PRODUCTS}
+          data={filteredProducts}
           renderItem={renderProduct}
           keyExtractor={(item) => item.id}
           ListHeaderComponent={

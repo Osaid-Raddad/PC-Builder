@@ -357,6 +357,48 @@ export default function ProfileScreen({ navigation }) {
     }
   };
 
+  const handleDashboardClick = () => {
+    Alert.prompt(
+      'Dashboard Access',
+      'Please enter your password to access the admin dashboard',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Verify',
+          onPress: async (password) => {
+            if (!password || password.trim() === '') {
+              Alert.alert('Error', 'Please enter your password');
+              return;
+            }
+
+            try {
+              const email = await AsyncStorage.getItem('email');
+              
+              if (!email) {
+                Alert.alert('Error', 'Session error. Please login again.');
+                return;
+              }
+
+              const response = await apiClient.post('/Identity/Account/Login', {
+                email: email,
+                password: password
+              });
+
+              if (response.data.token) {
+                Alert.alert('Success', 'Access granted');
+                navigation.navigate('Dashboard');
+              }
+            } catch (error) {
+              console.error('Password verification error:', error);
+              Alert.alert('Error', 'Incorrect password. Access denied.');
+            }
+          }
+        }
+      ],
+      'secure-text'
+    );
+  };
+
   const handleLogout = () => {
     Alert.alert('Logout', 'Are you sure?', [
       { text: 'Cancel' },
@@ -371,22 +413,71 @@ export default function ProfileScreen({ navigation }) {
   };
 
   const handleDeleteAccount = () => {
-    Alert.alert('Delete Account', 'This cannot be undone!', [
-      { text: 'Cancel' },
-      {
-        text: 'Delete',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            await apiClient.delete('/Profile/Profile/delete');
-            await AsyncStorage.multiRemove(['authToken', 'fullName', 'userRole']);
-            navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
-          } catch (error) {
-            Alert.alert('Error', 'Failed to delete account');
+    Alert.alert(
+      'Delete Account?',
+      'Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Yes, delete it!',
+          style: 'destructive',
+          onPress: () => {
+            // After confirmation, ask for password
+            Alert.prompt(
+              'Verify Your Identity',
+              'Please enter your password to confirm account deletion',
+              [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                  text: 'Verify',
+                  style: 'destructive',
+                  onPress: async (password) => {
+                    if (!password || password.trim() === '') {
+                      Alert.alert('Error', 'Please enter your password');
+                      return;
+                    }
+
+                    try {
+                      // Verify password first
+                      const email = await AsyncStorage.getItem('email');
+                      
+                      if (!email) {
+                        Alert.alert('Error', 'Session error. Please login again.');
+                        return;
+                      }
+
+                      const response = await apiClient.post('/Identity/Account/Login', {
+                        email: email,
+                        password: password
+                      });
+
+                      if (!response.data.token) {
+                        Alert.alert('Error', 'Password verification failed');
+                        return;
+                      }
+
+                      // Password verified, proceed with deletion
+                      await apiClient.delete('/Profile/Profile/delete');
+                      await AsyncStorage.multiRemove(['authToken', 'fullName', 'userRole', 'email']);
+                      Alert.alert('Success', 'Your account has been deleted successfully.');
+                      navigation.reset({ index: 0, routes: [{ name: 'Home' }] });
+                    } catch (error) {
+                      console.error('Error:', error);
+                      if (error.response?.status === 401 || error.response?.status === 400) {
+                        Alert.alert('Error', 'Incorrect password. Please try again.');
+                      } else {
+                        Alert.alert('Error', 'Failed to delete account. Please try again.');
+                      }
+                    }
+                  }
+                }
+              ],
+              'secure-text'
+            );
           }
         }
-      }
-    ]);
+      ]
+    );
   };
 
   if (isLoading || !userData) {
@@ -465,7 +556,7 @@ export default function ProfileScreen({ navigation }) {
           {(userData?.role === 'Admin' || userData?.role === 'SuperAdmin') && (
             <TouchableOpacity 
               style={styles.dashboardButton} 
-              onPress={() => navigation.navigate('Dashboard')}
+              onPress={handleDashboardClick}
             >
               <Feather name="bar-chart-2" size={18} color="white" />
               <Text style={styles.dashboardButtonText}>Admin Dashboard</Text>

@@ -115,6 +115,36 @@ export default function AccessoriesScreen({ navigation, route }) {
     }
   };
 
+  // Filter products based on selected filters
+  const filteredProducts = MOCK_PRODUCTS.filter(product => {
+    // Price range filter
+    if (product.price < filters.priceRange?.min || product.price > filters.priceRange?.max) {
+      return false;
+    }
+
+    // Manufacturer filter
+    if (filters.manufacturers?.length > 0 && !filters.manufacturers.includes(product.brand)) {
+      return false;
+    }
+
+    // Rating filter
+    if (filters.rating > 0 && product.rating < filters.rating) {
+      return false;
+    }
+
+    // Type filter
+    if (filters.type?.length > 0 && !filters.type.includes(product.type)) {
+      return false;
+    }
+
+    // Color filter
+    if (filters.color?.length > 0 && !filters.color.includes(product.color)) {
+      return false;
+    }
+
+    return true;
+  });
+
   const renderProduct = ({ item }) => {
     const isSelected = selectedComponents.accessories?.id === item.id;
     const inCompare = isInCompare(item.id);
@@ -188,7 +218,7 @@ export default function AccessoriesScreen({ navigation, route }) {
     <ScreenLayout navigation={navigation} scrollable={false} showFooter={false}>
       <View style={styles.container}>
         <FlatList
-          data={MOCK_PRODUCTS}
+          data={filteredProducts}
           renderItem={renderProduct}
           keyExtractor={(item) => item.id}
           ListHeaderComponent={

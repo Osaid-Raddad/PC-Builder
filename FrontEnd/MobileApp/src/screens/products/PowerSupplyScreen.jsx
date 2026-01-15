@@ -90,6 +90,24 @@ export default function PowerSupplyScreen({ navigation, route }) {
     }
   };
 
+  // Filter products based on selected filter
+  const filteredProducts = MOCK_PRODUCTS.filter(product => {
+    if (selectedFilter === "all") return true;
+    
+    // Filter by wattage ranges
+    const wattage = product.wattage || 0;
+    if (selectedFilter === "intel") {
+      // Low to mid range (for basic builds)
+      return wattage >= 400 && wattage <= 650;
+    }
+    if (selectedFilter === "amd") {
+      // High range (for gaming/performance builds)
+      return wattage >= 700;
+    }
+    
+    return true;
+  });
+
   const renderProduct = ({ item }) => {
     const isSelected = selectedComponents.psu?.model === item.model;
     const inCompare = isInCompare(item.id);
@@ -166,7 +184,7 @@ export default function PowerSupplyScreen({ navigation, route }) {
     <ScreenLayout navigation={navigation} scrollable={false} showFooter={false}>
       <View style={styles.container}>
         <FlatList
-          data={MOCK_PRODUCTS}
+          data={filteredProducts}
           renderItem={renderProduct}
           keyExtractor={(item) => item.id}
           ListHeaderComponent={

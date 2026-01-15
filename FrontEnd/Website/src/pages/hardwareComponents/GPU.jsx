@@ -24,27 +24,19 @@ const GPU = () => {
   const [itemsPerPage] = useState(12);
   
   const [filters, setFilters] = useState({
-    priceRange: { min: 0, max: 2000 },
+    priceRange: { min: 99, max: 2500 },
     manufacturers: [],
     rating: null,
-    chipset: [],
     memory: [],
     memoryType: [],
     coreClock: { min: 0, max: 3000 },
     boostClock: { min: 0, max: 3500 },
     interface: [],
-    color: [],
-    sliCrossfire: [],
     frameSync: [],
-    length: { min: 0, max: 400 },
+    lengthMM: { min: 0, max: 400 },
     tdp: { min: 0, max: 600 },
-    dviPorts: [],
     hdmiPorts: [],
-    miniHdmiPorts: [],
     displayPortPorts: [],
-    miniDisplayPortPorts: [],
-    caseExpansionSlotWidth: [],
-    totalSlotWidth: [],
     cooling: [],
     externalPower: []
   });
@@ -75,14 +67,69 @@ const GPU = () => {
     
     // Manufacturers
     const matchesManufacturer = filters.manufacturers.length === 0 || 
-      filters.manufacturers.includes(gpu.brand);
+      filters.manufacturers.includes(gpu.manufacturer);
     
     // Rating (optional field)
     const matchesRating = filters.rating === null || 
       !filters.rating ||
       (gpu.rating && gpu.rating >= filters.rating);
     
-    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating;
+    // Memory - direct number comparison
+    const matchesMemory = filters.memory.length === 0 || 
+      filters.memory.includes(gpu.memoryGB);
+    
+    // Memory Type
+    const matchesMemoryType = filters.memoryType.length === 0 || 
+      filters.memoryType.includes(gpu.memoryType);
+    
+    // Core Clock
+    const matchesCoreClock = gpu.coreClockMHz >= filters.coreClock.min && 
+                             gpu.coreClockMHz <= filters.coreClock.max;
+    
+    // Boost Clock
+    const matchesBoostClock = gpu.boostClockMHz >= filters.boostClock.min && 
+                              gpu.boostClockMHz <= filters.boostClock.max;
+    
+    // Interface
+    const matchesInterface = filters.interface.length === 0 || 
+      filters.interface.includes(gpu.interface);
+    
+    // Frame Sync
+    const matchesFrameSync = filters.frameSync.length === 0 || 
+      filters.frameSync.includes(gpu.frameSync);
+    
+    // Length
+    const matchesLength = !gpu.lengthMM || 
+      (gpu.lengthMM >= filters.lengthMM.min && gpu.lengthMM <= filters.lengthMM.max);
+    
+    // TDP
+    const matchesTdp = gpu.tdpWatts >= filters.tdp.min && 
+                       gpu.tdpWatts <= filters.tdp.max;
+    
+    // HDMI Ports - direct number comparison from ports.hdmi
+    const matchesHdmiPorts = filters.hdmiPorts.length === 0 || 
+      (gpu.ports && gpu.ports.hdmi !== undefined &&
+       filters.hdmiPorts.includes(gpu.ports.hdmi));
+    
+    // DisplayPort Ports - direct number comparison from ports.displayPort
+    const matchesDisplayPortPorts = filters.displayPortPorts.length === 0 || 
+      (gpu.ports && gpu.ports.displayPort !== undefined &&
+       filters.displayPortPorts.includes(gpu.ports.displayPort));
+    
+    // Cooling
+    const matchesCooling = filters.cooling.length === 0 || 
+      filters.cooling.includes(gpu.cooling);
+    
+    // External Power
+    const matchesExternalPower = filters.externalPower.length === 0 || 
+      filters.externalPower.includes(gpu.externalPower);
+    
+    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating &&
+           matchesMemory && matchesMemoryType && matchesCoreClock &&
+           matchesBoostClock && matchesInterface &&
+           matchesFrameSync && matchesLength && matchesTdp &&
+           matchesHdmiPorts && matchesDisplayPortPorts &&
+           matchesCooling && matchesExternalPower;
   });
   
   console.log('Filtered GPUs:', filteredGPUs.length);
@@ -108,27 +155,19 @@ const GPU = () => {
 
   const resetFilters = () => {
     setFilters({
-      priceRange: { min: 0, max: 2000 },
+      priceRange: { min: 99, max: 2500 },
       manufacturers: [],
       rating: null,
-      chipset: [],
       memory: [],
       memoryType: [],
       coreClock: { min: 0, max: 3000 },
       boostClock: { min: 0, max: 3500 },
       interface: [],
-      color: [],
-      sliCrossfire: [],
       frameSync: [],
-      length: { min: 0, max: 400 },
+      lengthMM: { min: 0, max: 400 },
       tdp: { min: 0, max: 600 },
-      dviPorts: [],
       hdmiPorts: [],
-      miniHdmiPorts: [],
       displayPortPorts: [],
-      miniDisplayPortPorts: [],
-      caseExpansionSlotWidth: [],
-      totalSlotWidth: [],
       cooling: [],
       externalPower: []
     });
@@ -212,8 +251,8 @@ const GPU = () => {
               <div className="space-y-2">
                 <input
                   type="range"
-                  min="0"
-                  max="2000"
+                  min="99"
+                  max="2500"
                   value={filters.priceRange.max}
                   onChange={(e) => handleFilterChange('priceRange', { ...filters.priceRange, max: parseInt(e.target.value) })}
                   className="w-full"
@@ -268,33 +307,13 @@ const GPU = () => {
               </div>
             </div>
 
-            {/* Chipset Filter */}
-            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
-              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
-                Chipset
-              </h3>
-              <div className="space-y-2">
-                {['NVIDIA GeForce RTX 4090', 'NVIDIA GeForce RTX 4080', 'NVIDIA GeForce RTX 4070 Ti', 'AMD Radeon RX 7900 XTX', 'AMD Radeon RX 7900 XT', 'AMD Radeon RX 7800 XT'].map(chipset => (
-                  <label key={chipset} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={filters.chipset.includes(chipset)}
-                      onChange={() => handleCheckboxToggle('chipset', chipset)}
-                      className="cursor-pointer"
-                    />
-                    <span className="text-xs" style={{ color: colors.jet }}>{chipset}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
             {/* Memory Filter */}
             <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
               <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
                 Memory
               </h3>
               <div className="space-y-2">
-                {['4GB', '6GB', '8GB', '10GB', '12GB', '16GB', '20GB', '24GB'].map(memory => (
+                {[4, 6, 8, 10, 11, 12, 16, 20, 24].map(memory => (
                   <label key={memory} className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
@@ -302,7 +321,7 @@ const GPU = () => {
                       onChange={() => handleCheckboxToggle('memory', memory)}
                       className="cursor-pointer"
                     />
-                    <span style={{ color: colors.jet }}>{memory}</span>
+                    <span style={{ color: colors.jet }}>{memory}GB</span>
                   </label>
                 ))}
               </div>
@@ -378,7 +397,7 @@ const GPU = () => {
                 Interface
               </h3>
               <div className="space-y-2">
-                {['PCIe 4.0 x16', 'PCIe 3.0 x16', 'PCIe 5.0 x16'].map(interfaceType => (
+                {['PCIe 5.0', 'PCIe 4.0', 'PCIe 3.0'].map(interfaceType => (
                   <label key={interfaceType} className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
@@ -391,47 +410,7 @@ const GPU = () => {
                 ))}
               </div>
             </div>
-
-            {/* Color Filter */}
-            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
-              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
-                Color
-              </h3>
-              <div className="space-y-2">
-                {['Black', 'White', 'Silver', 'RGB', 'Red', 'Blue'].map(color => (
-                  <label key={color} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={filters.color.includes(color)}
-                      onChange={() => handleCheckboxToggle('color', color)}
-                      className="cursor-pointer"
-                    />
-                    <span style={{ color: colors.jet }}>{color}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* SLI/CrossFire Filter */}
-            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
-              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
-                SLI/CrossFire
-              </h3>
-              <div className="space-y-2">
-                {['SLI', 'CrossFire', 'None'].map(option => (
-                  <label key={option} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={filters.sliCrossfire.includes(option)}
-                      onChange={() => handleCheckboxToggle('sliCrossfire', option)}
-                      className="cursor-pointer"
-                    />
-                    <span style={{ color: colors.jet }}>{option}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
+            
             {/* Frame Sync Filter */}
             <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
               <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
@@ -463,13 +442,13 @@ const GPU = () => {
                   min="0"
                   max="400"
                   step="10"
-                  value={filters.length.max}
-                  onChange={(e) => handleFilterChange('length', { ...filters.length, max: parseInt(e.target.value) })}
+                  value={filters.lengthMM.max}
+                  onChange={(e) => handleFilterChange('lengthMM', { ...filters.lengthMM, max: parseInt(e.target.value) })}
                   className="w-full"
                 />
                 <div className="flex justify-between text-sm" style={{ color: colors.jet }}>
-                  <span>{filters.length.min} mm</span>
-                  <span>{filters.length.max} mm</span>
+                  <span>{filters.lengthMM.min} mm</span>
+                  <span>{filters.lengthMM.max} mm</span>
                 </div>
               </div>
             </div>
@@ -496,58 +475,18 @@ const GPU = () => {
               </div>
             </div>
 
-            {/* DVI Ports Filter */}
-            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
-              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
-                DVI Ports
-              </h3>
-              <div className="space-y-2">
-                {['0', '1', '2', '3+'].map(ports => (
-                  <label key={ports} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={filters.dviPorts.includes(ports)}
-                      onChange={() => handleCheckboxToggle('dviPorts', ports)}
-                      className="cursor-pointer"
-                    />
-                    <span style={{ color: colors.jet }}>{ports}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
             {/* HDMI Ports Filter */}
             <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
               <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
                 HDMI Ports
               </h3>
               <div className="space-y-2">
-                {['0', '1', '2', '3', '4+'].map(ports => (
+                {[0, 1, 2, 3].map(ports => (
                   <label key={ports} className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={filters.hdmiPorts.includes(ports)}
                       onChange={() => handleCheckboxToggle('hdmiPorts', ports)}
-                      className="cursor-pointer"
-                    />
-                    <span style={{ color: colors.jet }}>{ports}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Mini-HDMI Ports Filter */}
-            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
-              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
-                Mini-HDMI Ports
-              </h3>
-              <div className="space-y-2">
-                {['0', '1', '2+'].map(ports => (
-                  <label key={ports} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={filters.miniHdmiPorts.includes(ports)}
-                      onChange={() => handleCheckboxToggle('miniHdmiPorts', ports)}
                       className="cursor-pointer"
                     />
                     <span style={{ color: colors.jet }}>{ports}</span>
@@ -562,7 +501,7 @@ const GPU = () => {
                 DisplayPort Ports
               </h3>
               <div className="space-y-2">
-                {['0', '1', '2', '3', '4+'].map(ports => (
+                {[1, 2, 3, 4].map(ports => (
                   <label key={ports} className="flex items-center gap-2 cursor-pointer">
                     <input
                       type="checkbox"
@@ -571,66 +510,6 @@ const GPU = () => {
                       className="cursor-pointer"
                     />
                     <span style={{ color: colors.jet }}>{ports}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Mini-DisplayPort Ports Filter */}
-            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
-              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
-                Mini-DisplayPort Ports
-              </h3>
-              <div className="space-y-2">
-                {['0', '1', '2+'].map(ports => (
-                  <label key={ports} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={filters.miniDisplayPortPorts.includes(ports)}
-                      onChange={() => handleCheckboxToggle('miniDisplayPortPorts', ports)}
-                      className="cursor-pointer"
-                    />
-                    <span style={{ color: colors.jet }}>{ports}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Case Expansion Slot Width Filter */}
-            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
-              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
-                Case Expansion Slot Width
-              </h3>
-              <div className="space-y-2">
-                {['1', '2', '2.5', '3', '3.5', '4'].map(width => (
-                  <label key={width} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={filters.caseExpansionSlotWidth.includes(width)}
-                      onChange={() => handleCheckboxToggle('caseExpansionSlotWidth', width)}
-                      className="cursor-pointer"
-                    />
-                    <span style={{ color: colors.jet }}>{width} Slots</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* Total Slot Width Filter */}
-            <div className="mb-6 pb-6 border-b" style={{ borderColor: colors.platinum }}>
-              <h3 className="font-semibold mb-3" style={{ color: colors.mainBlack }}>
-                Total Slot Width
-              </h3>
-              <div className="space-y-2">
-                {['1', '2', '2.5', '3', '3.5', '4'].map(width => (
-                  <label key={width} className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={filters.totalSlotWidth.includes(width)}
-                      onChange={() => handleCheckboxToggle('totalSlotWidth', width)}
-                      className="cursor-pointer"
-                    />
-                    <span style={{ color: colors.jet }}>{width} Slots</span>
                   </label>
                 ))}
               </div>
@@ -754,11 +633,23 @@ const GPU = () => {
                   <span 
                     className="px-3 py-1 rounded-full text-xs font-semibold"
                     style={{ 
-                      backgroundColor: gpu.brand === 'NVIDIA' ? '#76B900' : '#ED1C24',
+                      backgroundColor: 
+                        (gpu.manufacturer === 'ASUS' || gpu.manufacturer === 'Asus') ? '#1e3a8a' :
+                        (gpu.manufacturer === 'MSI') ? '#ed1c24' :
+                        (gpu.manufacturer === 'Gigabyte') ? '#ff6600' :
+                        (gpu.manufacturer === 'Zotac') ? '#000000' :
+                        (gpu.manufacturer === 'Sapphire') ? '#0066cc' :
+                        (gpu.manufacturer === 'PowerColor') ? '#dc2626' :
+                        (gpu.manufacturer === 'XFX') ? '#7c3aed' :
+                        (gpu.manufacturer === 'EVGA') ? '#059669' :
+                        (gpu.manufacturer === 'PNY') ? '#fbbf24' :
+                        (gpu.manufacturer === 'Palit') ? '#3b82f6' :
+                        gpu.brand === 'NVIDIA' ? '#76B900' : 
+                        gpu.brand === 'AMD' ? '#ED1C24' : '#0071C5',
                       color: 'white'
                     }}
                   >
-                    {gpu.brand}
+                    {gpu.manufacturer || gpu.brand}
                   </span>
                   {selectedGPU?.id === gpu.id && (
                     <span className="text-2xl">✓</span>
@@ -769,15 +660,103 @@ const GPU = () => {
                   {gpu.name}
                 </h3>
 
+                {/* Feature Badges */}
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {(gpu.chipset || gpu.architecture) && (
+                    <span 
+                      className="px-2 py-1 rounded text-xs font-semibold"
+                      style={{ 
+                        backgroundColor: colors.platinum,
+                        color: colors.jet
+                      }}
+                    >
+                      {gpu.chipset || gpu.architecture}
+                    </span>
+                  )}
+                  {gpu.cooling && (
+                    <span 
+                      className="px-2 py-1 rounded text-xs font-semibold"
+                      style={{ 
+                        backgroundColor: '#3b82f6',
+                        color: 'white'
+                      }}
+                    >
+                      {gpu.cooling}
+                    </span>
+                  )}
+                  {gpu.rgb && (
+                    <span 
+                      className="px-2 py-1 rounded text-xs font-semibold"
+                      style={{ 
+                        backgroundColor: '#ec4899',
+                        color: 'white'
+                      }}
+                    >
+                      RGB
+                    </span>
+                  )}
+                  {gpu.rayTracing && (
+                    <span 
+                      className="px-2 py-1 rounded text-xs font-semibold"
+                      style={{ 
+                        backgroundColor: '#10b981',
+                        color: 'white'
+                      }}
+                    >
+                      Ray Tracing
+                    </span>
+                  )}
+                  {gpu.dlssOrFsr && (
+                    <span 
+                      className="px-2 py-1 rounded text-xs font-semibold"
+                      style={{ 
+                        backgroundColor: '#8b5cf6',
+                        color: 'white'
+                      }}
+                    >
+                      DLSS/FSR
+                    </span>
+                  )}
+                  {gpu.interface && (
+                    <span 
+                      className="px-2 py-1 rounded text-xs font-semibold"
+                      style={{ 
+                        backgroundColor: colors.mainYellow,
+                        color: 'white'
+                      }}
+                    >
+                      {gpu.interface}
+                    </span>
+                  )}
+                </div>
+
                 <div className="space-y-2 mb-4">
+                  {gpu.manufacturer && (
+                    <div className="flex justify-between text-sm">
+                      <span style={{ color: colors.jet }}>Manufacturer:</span>
+                      <span className="font-semibold" style={{ color: colors.mainBlack }}>{gpu.manufacturer}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-sm">
                     <span style={{ color: colors.jet }}>Memory:</span>
                     <span className="font-semibold" style={{ color: colors.mainBlack }}>{gpu.memory}</span>
                   </div>
                   <div className="flex justify-between text-sm">
+                    <span style={{ color: colors.jet }}>Boost Clock:</span>
+                    <span className="font-semibold" style={{ color: colors.mainBlack }}>{gpu.boostClockMHz} MHz</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
                     <span style={{ color: colors.jet }}>TDP:</span>
                     <span className="font-semibold" style={{ color: colors.mainBlack }}>{gpu.tdp}</span>
                   </div>
+                  {gpu.rating && (
+                    <div className="flex justify-between text-sm">
+                      <span style={{ color: colors.jet }}>Rating:</span>
+                      <span className="font-semibold" style={{ color: colors.mainYellow }}>
+                        ⭐ {gpu.rating.toFixed(1)}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
                 <div className="pt-4 border-t mb-4" style={{ borderColor: colors.platinum }}>

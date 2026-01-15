@@ -102,7 +102,43 @@ const CPUCooler = () => {
       !filters.rating ||
       (cooler.rating && cooler.rating >= filters.rating);
     
-    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating;
+    // Color
+    const matchesColor = filters.color.length === 0 || 
+      !cooler.color ||
+      filters.color.includes(cooler.color);
+    
+    // Height
+    const matchesHeight = !cooler.heightMm || 
+      (cooler.heightMm >= filters.height.min && 
+       cooler.heightMm <= filters.height.max);
+    
+    // Bearing
+    const matchesBearing = filters.bearing.length === 0 || 
+      !cooler.bearing ||
+      filters.bearing.includes(cooler.bearing);
+    
+    // CPU Socket
+    const matchesCpuSocket = filters.cpuSocket.length === 0 || 
+      !cooler.socketCompatibility ||
+      filters.cpuSocket.some(socket => 
+        Array.isArray(cooler.socketCompatibility) ? 
+          cooler.socketCompatibility.includes(socket) : 
+          cooler.socketCompatibility === socket
+      );
+    
+    // Water Cooled
+    const matchesWaterCooled = filters.waterCooled === null || 
+      !cooler.hasOwnProperty('waterCooled') ||
+      cooler.waterCooled === filters.waterCooled;
+    
+    // Fanless
+    const matchesFanless = filters.fanless === null || 
+      !cooler.hasOwnProperty('fanless') ||
+      cooler.fanless === filters.fanless;
+    
+    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating &&
+           matchesColor && matchesHeight && matchesBearing && matchesCpuSocket &&
+           matchesWaterCooled && matchesFanless;
   });
 
   const handleSelectCooler = (cooler) => {
@@ -456,12 +492,31 @@ const CPUCooler = () => {
                 >
                   <div className="p-6">
                     <div className="flex justify-between items-start mb-4">
-                      <span 
-                        className="px-3 py-1 rounded-full text-xs font-semibold text-white"
-                        style={{ backgroundColor: product.type === 'Air' ? '#4CAF50' : '#2196F3' }}
-                      >
-                        {product.type} Cooling
-                      </span>
+                      <div className="flex gap-2">
+                        <span 
+                          className="px-3 py-1 rounded-full text-xs font-semibold text-white"
+                          style={{ backgroundColor: product.type === 'Air Cooler' ? '#4CAF50' : '#2196F3' }}
+                        >
+                          {product.type} Cooling
+                        </span>
+                        <span 
+                          className="px-3 py-1 rounded-full text-xs font-semibold text-white"
+                          style={{ 
+                            backgroundColor: 
+                              product.brand === 'Noctua' ? '#9B7653' : 
+                              product.brand === 'Corsair' ? '#F4C430' : 
+                              product.brand === 'be quiet!' ? '#FF6600' : 
+                              product.brand === 'NZXT' ? '#7D12FF' : 
+                              product.brand === 'Cooler Master' ? '#663399' : 
+                              product.brand === 'Arctic' ? '#00B4D8' : 
+                              product.brand === 'Deepcool' ? '#E31E24' : 
+                              product.brand === 'Thermaltake' ? '#00A6FF' : 
+                              colors.mainYellow 
+                          }}
+                        >
+                          {product.brand}
+                        </span>
+                      </div>
                       {selectedCooler?.id === product.id && (
                         <span className="text-2xl">✓</span>
                       )}

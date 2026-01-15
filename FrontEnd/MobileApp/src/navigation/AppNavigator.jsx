@@ -56,6 +56,9 @@ import PeripheralsScreen from "../screens/products/PeripheralsScreen";
 import AccessoriesScreen from "../screens/products/AccessoriesScreen";
 import ProductDetailsScreen from "../screens/products/ProductDetailsScreen";
 
+// AI Tools
+import AIHardwareCalculatorScreen from "../screens/ai/AIHardwareCalculatorScreen";
+
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
@@ -93,6 +96,7 @@ export default function AppNavigator() {
         {/* Builder & Tools */}
         <Stack.Screen name="Builder" component={BuilderScreen} />
         <Stack.Screen name="Comparator" component={ComparatorScreen} />
+        <Stack.Screen name="AIHardwareCalculator" component={AIHardwareCalculatorScreen} />
         <Stack.Screen
           name="CompletedBuilds"
           component={CompletedBuildsScreen}

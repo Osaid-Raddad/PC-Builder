@@ -87,6 +87,22 @@ export default function CoolerScreen({ navigation, route }) {
     }
   };
 
+  // Filter products based on selected filter
+  const filteredProducts = MOCK_PRODUCTS.filter(product => {
+    if (selectedFilter === "all") return true;
+    
+    // Filter by socket compatibility (intel/amd)
+    const socketType = product.socket?.toLowerCase() || '';
+    if (selectedFilter === "intel") {
+      return socketType.includes("lga") || socketType.includes("intel");
+    }
+    if (selectedFilter === "amd") {
+      return socketType.includes("am") || socketType.includes("tr") || socketType.includes("amd");
+    }
+    
+    return true;
+  });
+
   const renderProduct = ({ item }) => {
     const isSelected = selectedComponents.cooler?.model === item.model;
     const inCompare = isInCompare(item.id);
@@ -163,7 +179,7 @@ export default function CoolerScreen({ navigation, route }) {
     <ScreenLayout navigation={navigation} scrollable={false} showFooter={false}>
       <View style={styles.container}>
         <FlatList
-          data={MOCK_PRODUCTS}
+          data={filteredProducts}
           renderItem={renderProduct}
           keyExtractor={(item) => item.id}
           ListHeaderComponent={

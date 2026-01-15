@@ -286,7 +286,8 @@ const Expansion = () => {
                           style={{
                             backgroundColor: selectedExpansion?.id === expansion.id ? colors.mainYellow : 'white',
                             color: selectedExpansion?.id === expansion.id ? 'white' : colors.mainYellow,
-                            border: `2px solid ${colors.mainYellow}`
+                            border: `2px solid ${colors.mainYellow}`,
+                            width: '100%'
                           }}
                         >
                           {selectedExpansion?.id === expansion.id ? 'Selected' : 'Select'}
@@ -315,7 +316,7 @@ const Expansion = () => {
                           style={{
                             backgroundColor: isInCompare(expansion.id) ? colors.mainYellow : 'white',
                             color: isInCompare(expansion.id) ? 'white' : colors.mainYellow,
-                            border: `2px solid ${colors.mainYellow}`
+                            border: `2px solid ${colors.mainYellow}`,
                           }}
                         >
                           {isInCompare(expansion.id) ? '✓' : '+'}

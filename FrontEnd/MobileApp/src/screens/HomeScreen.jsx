@@ -208,6 +208,59 @@ export default function HomeScreen({ navigation }) {
           </View>
         </View>
 
+        {/* AI Hardware Calculator Special Banner */}
+        <TouchableOpacity
+          style={styles.aiCalculatorBanner}
+          onPress={() => navigation.navigate("AIHardwareCalculator")}
+          activeOpacity={0.9}
+        >
+          <View style={styles.aiCalculatorGradient}>
+            {/* Decorative Elements */}
+            <View style={styles.aiCalculatorDecor}>
+              <View style={styles.decorCircle1} />
+              <View style={styles.decorCircle2} />
+              <View style={styles.decorCircle3} />
+            </View>
+            
+            <View style={styles.aiCalculatorContent}>
+              <View style={styles.aiCalculatorLeft}>
+                <View style={styles.newBadge}>
+                  <MaterialCommunityIcons name="sparkles" size={12} color={colors.mainBlack} />
+                  <Text style={styles.newBadgeText}>NEW</Text>
+                </View>
+                <Text style={styles.aiCalculatorTitle}>AI Hardware{"\n"}Calculator</Text>
+                <Text style={styles.aiCalculatorSubtitle}>
+                  🤖 Find perfect specs for your AI projects
+                </Text>
+                <View style={styles.aiCalculatorFeatures}>
+                  <View style={styles.featureTag}>
+                    <MaterialCommunityIcons name="lightning-bolt" size={14} color={colors.mainYellow} />
+                    <Text style={styles.featureTagText}>LLMs</Text>
+                  </View>
+                  <View style={styles.featureTag}>
+                    <MaterialCommunityIcons name="image-outline" size={14} color={colors.mainYellow} />
+                    <Text style={styles.featureTagText}>Image Gen</Text>
+                  </View>
+                  <View style={styles.featureTag}>
+                    <MaterialCommunityIcons name="brain" size={14} color={colors.mainYellow} />
+                    <Text style={styles.featureTagText}>Custom</Text>
+                  </View>
+                </View>
+              </View>
+              
+              <View style={styles.aiCalculatorRight}>
+                <View style={styles.aiIconContainer}>
+                  <MaterialCommunityIcons name="brain" size={50} color={colors.mainYellow} />
+                  <View style={styles.pulseRing} />
+                </View>
+                <View style={styles.arrowButton}>
+                  <MaterialCommunityIcons name="arrow-right" size={24} color={colors.mainBlack} />
+                </View>
+              </View>
+            </View>
+          </View>
+        </TouchableOpacity>
+
         {/* Stats Section */}
         <View style={styles.statsSection}>
           <Text style={styles.sectionTitle}>Join Our Community</Text>
@@ -284,6 +337,156 @@ const styles = StyleSheet.create({
     color: colors.mainBlack,
     fontSize: 16,
     fontWeight: "600",
+  },
+  aiCalculatorBanner: {
+    marginHorizontal: 20,
+    marginTop: 10,
+    marginBottom: 10,
+    borderRadius: 20,
+    overflow: "hidden",
+    elevation: 8,
+    shadowColor: colors.mainYellow,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+  },
+  aiCalculatorGradient: {
+    backgroundColor: colors.mainBlack,
+    position: "relative",
+  },
+  aiCalculatorDecor: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+  },
+  decorCircle1: {
+    position: "absolute",
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: colors.mainYellow,
+    opacity: 0.1,
+    top: -30,
+    right: -20,
+  },
+  decorCircle2: {
+    position: "absolute",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: colors.mainYellow,
+    opacity: 0.08,
+    bottom: -20,
+    left: 20,
+  },
+  decorCircle3: {
+    position: "absolute",
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.mainYellow,
+    opacity: 0.12,
+    top: 40,
+    left: -10,
+  },
+  aiCalculatorContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 20,
+    paddingVertical: 24,
+  },
+  aiCalculatorLeft: {
+    flex: 1,
+    paddingRight: 15,
+  },
+  newBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: colors.mainYellow,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 12,
+    alignSelf: "flex-start",
+    marginBottom: 12,
+    gap: 4,
+  },
+  newBadgeText: {
+    fontSize: 11,
+    fontWeight: "800",
+    color: colors.mainBlack,
+    letterSpacing: 1,
+  },
+  aiCalculatorTitle: {
+    fontSize: 24,
+    fontWeight: "800",
+    color: colors.mainYellow,
+    marginBottom: 8,
+    lineHeight: 30,
+  },
+  aiCalculatorSubtitle: {
+    fontSize: 14,
+    color: colors.alabaster,
+    marginBottom: 12,
+    lineHeight: 20,
+  },
+  aiCalculatorFeatures: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 6,
+  },
+  featureTag: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "rgba(255, 193, 7, 0.15)",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 8,
+    gap: 4,
+    borderWidth: 1,
+    borderColor: "rgba(255, 193, 7, 0.3)",
+  },
+  featureTagText: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: colors.mainYellow,
+  },
+  aiCalculatorRight: {
+    alignItems: "center",
+    gap: 12,
+  },
+  aiIconContainer: {
+    position: "relative",
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: "rgba(255, 193, 7, 0.1)",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 2,
+    borderColor: colors.mainYellow,
+  },
+  pulseRing: {
+    position: "absolute",
+    width: 90,
+    height: 90,
+    borderRadius: 45,
+    borderWidth: 2,
+    borderColor: colors.mainYellow,
+    opacity: 0.3,
+  },
+  arrowButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: colors.mainYellow,
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 4,
+    shadowColor: colors.mainYellow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 4,
   },
   featuresSection: {
     padding: 20,
@@ -362,6 +565,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.mainYellow,
   },
   statsSection: {
+    marginTop: 40,
     paddingBottom: 30,
     backgroundColor: colors.mainBlack,
   },

@@ -17,6 +17,7 @@ const CPU = () => {
   const source = searchParams.get('source'); // 'builder' or 'comparator'
   const { addComponent } = useBuild();
   const { addToCompare, isInCompare, removeFromCompare, compareList, getCategory, clearCompare } = useCompare();
+  const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(12);
   
@@ -32,7 +33,7 @@ const CPU = () => {
   
   // Filter states
   const [filters, setFilters] = useState({
-    priceRange: { min: 0, max: 2000 },
+    priceRange: { min: 20, max: 2000 },
     manufacturers: [],
     rating: 0,
     coreCount: [],
@@ -73,7 +74,7 @@ const CPU = () => {
 
   const resetFilters = () => {
     setFilters({
-      priceRange: { min: 0, max: 2000 },
+      priceRange: { min: 20, max: 2000 },
       manufacturers: [],
       rating: 0,
       coreCount: [],
@@ -93,11 +94,115 @@ const CPU = () => {
     });
   };
 
+  // Filter CPUs based on all criteria
+  const filteredCPUs = cpuList.filter(cpu => {
+    // Search term
+    const matchesSearch = searchTerm === '' || 
+      cpu.model.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      cpu.brand.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Price range
+    const matchesPrice = cpu.price >= filters.priceRange.min && cpu.price <= filters.priceRange.max;
+    
+    // Manufacturers
+    const matchesManufacturer = filters.manufacturers.length === 0 || 
+      filters.manufacturers.includes(cpu.brand);
+    
+    // Rating
+    const matchesRating = !filters.rating || 
+      (cpu.rating && cpu.rating >= filters.rating);
+    
+    // Core Count - use 'cores' from JSON
+    const matchesCoreCount = filters.coreCount.length === 0 || 
+      filters.coreCount.includes(cpu.cores);
+    
+    // Thread Count - use 'threads' from JSON
+    const matchesThreadCount = filters.threadCount.length === 0 || 
+      filters.threadCount.includes(cpu.threads);
+    
+    // Performance Core Clock - use 'baseClockGHz' from JSON
+    const matchesCoreClock = 
+      (cpu.baseClockGHz >= filters.performanceCoreClock.min && 
+       cpu.baseClockGHz <= filters.performanceCoreClock.max);
+    
+    // L2 Cache - use actual l2CacheMB from JSON
+    const matchesL2Cache = filters.l2Cache.length === 0 || 
+      !cpu.l2CacheMB ||
+      filters.l2Cache.some(cacheVal => {
+        const numericCache = parseFloat(cacheVal.replace(/[^\d.]/g, ''));
+        return Math.abs(cpu.l2CacheMB - numericCache) < 1;
+      });
+    
+    // L3 Cache - use actual l3CacheMB from JSON
+    const matchesL3Cache = filters.l3Cache.length === 0 || 
+      !cpu.l3CacheMB ||
+      filters.l3Cache.some(cacheVal => {
+        const numericCache = parseFloat(cacheVal.replace(/[^\d.]/g, ''));
+        return Math.abs(cpu.l3CacheMB - numericCache) < 1;
+      });
+    
+    // TDP
+    const matchesTdp = 
+      (cpu.tdpWatts >= filters.tdp.min && 
+       cpu.tdpWatts <= filters.tdp.max);
+    
+    // Series - use actual series from JSON
+    const matchesSeries = filters.series.length === 0 || 
+      !cpu.series ||
+      filters.series.includes(cpu.series);
+    
+    // Microarchitecture - use actual microarchitecture from JSON
+    const matchesMicroarchitecture = filters.microarchitecture.length === 0 || 
+      !cpu.microarchitecture ||
+      filters.microarchitecture.includes(cpu.microarchitecture);
+    
+    // Core Family - use actual coreFamily from JSON
+    const matchesCoreFamily = filters.coreFamily.length === 0 || 
+      !cpu.coreFamily ||
+      filters.coreFamily.includes(cpu.coreFamily);
+    
+    // Socket
+    const matchesSocket = filters.socket.length === 0 || 
+      filters.socket.includes(cpu.socket);
+    
+    // Integrated Graphics - check if integratedGraphics field exists and is not null
+    const hasIGPU = cpu.integratedGraphics !== null && cpu.integratedGraphics !== undefined;
+    const matchesIntegratedGraphics = filters.integratedGraphics === null || 
+      (filters.integratedGraphics === true && hasIGPU) ||
+      (filters.integratedGraphics === false && !hasIGPU);
+    
+    // SMT (Simultaneous Multithreading) - use actual smt from JSON
+    const matchesSmt = filters.smt === null || 
+      !cpu.hasOwnProperty('smt') ||
+      cpu.smt === filters.smt;
+    
+    // ECC Support - use actual eccSupport from JSON
+    const matchesEccSupport = filters.eccSupport === null || 
+      !cpu.hasOwnProperty('eccSupport') ||
+      cpu.eccSupport === filters.eccSupport;
+    
+    // Includes Cooler - use actual includesCooler from JSON
+    const matchesIncludesCooler = filters.includesCooler === null || 
+      !cpu.hasOwnProperty('includesCooler') ||
+      cpu.includesCooler === filters.includesCooler;
+    
+    return matchesSearch && matchesPrice && matchesManufacturer && matchesRating &&
+           matchesCoreCount && matchesThreadCount && matchesCoreClock && matchesL2Cache &&
+           matchesL3Cache && matchesTdp && matchesSeries && matchesMicroarchitecture &&
+           matchesCoreFamily && matchesSocket && matchesIntegratedGraphics && matchesSmt &&
+           matchesEccSupport && matchesIncludesCooler;
+  });
+
   // Pagination logic
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentCPUs = cpuList.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(cpuList.length / itemsPerPage);
+  const currentCPUs = filteredCPUs.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredCPUs.length / itemsPerPage);
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.mainBeige }}>
@@ -132,7 +237,7 @@ const CPU = () => {
             className="w-64 rounded-lg p-6 shadow-md overflow-y-auto"
             style={{ 
               backgroundColor: 'white',
-              maxHeight: 'calc(100vh - 250px)',
+              maxHeight: 'calc(130vh - 250px)',
               position: 'sticky',
               top: '20px'
             }}
@@ -158,7 +263,7 @@ const CPU = () => {
               <div className="space-y-2">
                 <input
                   type="range"
-                  min="0"
+                  min="20"
                   max="2000"
                   value={filters.priceRange.max}
                   onChange={(e) => handleFilterChange('priceRange', { ...filters.priceRange, max: parseInt(e.target.value) })}
@@ -536,6 +641,27 @@ const CPU = () => {
 
           {/* Products Area */}
           <div className="flex-1">
+            {/* Search Bar */}
+            <div className="mb-6">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Search CPUs..."
+                  value={searchTerm}
+                  onChange={handleSearch}
+                  className="w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:border-yellow-500"
+                  style={{ borderColor: colors.platinum , backgroundColor: 'white', color: colors.mainBlack }}
+                />
+              </div>
+            </div>
+
+            {/* Results Count */}
+            <div className="mb-4">
+              <span className="text-lg font-semibold" style={{ color: colors.mainBlack }}>
+                {filteredCPUs.length} CPU{filteredCPUs.length !== 1 ? 's' : ''} found
+              </span>
+            </div>
+
             {/* Product Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {currentCPUs.map((cpu, index) => (
@@ -549,7 +675,7 @@ const CPU = () => {
                   <div className="flex justify-between items-start mb-4">
                     <span 
                       className="px-3 py-1 rounded-full text-xs font-semibold text-white"
-                      style={{ backgroundColor: colors.mainYellow }}
+                      style={{ backgroundColor: cpu.brand === 'AMD' ? '#E30613' : cpu.brand === 'Intel' ? '#0071C5' : colors.mainYellow }}
                     >
                       {cpu.brand}
                     </span>
