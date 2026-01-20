@@ -1,14 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import { FiLock, FiEye, FiEyeOff, FiArrowLeft, FiShield } from 'react-icons/fi';
+import { FiLock, FiEye, FiEyeOff, FiArrowLeft, FiShield, FiClock, FiRefreshCw } from 'react-icons/fi';
 
 const ResetPassword = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(900); // 15 minutes in seconds
+  const [canResend, setCanResend] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
+  const [isResending, setIsResending] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const email = location.state?.email;
@@ -22,6 +26,97 @@ const ResetPassword = () => {
 
   const password = watch('password');
 
+  // Timer for code expiration (15 minutes)
+  useEffect(() => {
+    if (timeRemaining <= 0) return;
+
+    const timer = setInterval(() => {
+      setTimeRemaining((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          toast.error('Verification code has expired. Please request a new one.');
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Resend cooldown timer (60 seconds between resend attempts)
+  useEffect(() => {
+    if (resendCooldown <= 0) {
+      setCanResend(true);
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setResendCooldown((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          setCanResend(true);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
+
+  // Format time as MM:SS
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const handleResendCode = async () => {
+    if (!email) {
+      toast.error('Email is missing. Please restart the password reset process.');
+      navigate('/forgot-password');
+      return;
+    }
+
+    if (!canResend || resendCooldown > 0) {
+      toast.error(`Please wait ${resendCooldown} seconds before resending.`);
+      return;
+    }
+
+    setIsResending(true);
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_API_BASE_URL}/api/Identity/Account/Forgot-Password`,
+        { email }
+      );
+      
+      toast.success('New verification code sent to your email!');
+      setTimeRemaining(900); // Reset timer to 15 minutes
+      setCanResend(false);
+      setResendCooldown(60); // 60 second cooldown before next resend
+    } catch (error) {
+      console.error('Resend code error:', error);
+      
+      if (!error.response) {
+        toast.error('Unable to connect to the server. Please check your internet connection.');
+        return;
+      }
+      
+      const errorData = error.response?.data;
+      let errorMessage = '';
+      if (typeof errorData === 'string') {
+        errorMessage = errorData;
+      } else if (errorData) {
+        errorMessage = errorData.message || errorData.error || errorData.title || '';
+      }
+      
+      toast.error(errorMessage || 'Failed to resend code. Please try again.');
+    } finally {
+      setIsResending(false);
+    }
+  };
+
   const onSubmit = async (data) => {
     if (!email) {
       toast.error('Email is missing. Please restart the password reset process.');
@@ -29,9 +124,14 @@ const ResetPassword = () => {
       return;
     }
 
+    if (timeRemaining <= 0) {
+      toast.error('Verification code has expired. Please request a new one.');
+      return;
+    }
+
     setIsLoading(true);
     try {
-      await axios.patch(
+      const response = await axios.patch(
         `${import.meta.env.VITE_API_BASE_URL}/api/Identity/Account/Reset-Password`,
         {
           email: email,
@@ -39,6 +139,19 @@ const ResetPassword = () => {
           newPassword: data.password,
         }
       );
+      
+      // Check if response is 200 but with false message (incorrect code)
+      if (response.status === 200) {
+        const responseData = response.data;
+        
+        // Check if response indicates failure (false)
+        if (responseData === false || responseData === 'false' || 
+            (typeof responseData === 'object' && responseData.success === false)) {
+          toast.error('The verification code is incorrect. Please try again.', { duration: 4000 });
+          setIsLoading(false);
+          return;
+        }
+      }
       
       toast.success('Password reset successfully!');
       navigate('/signin');
@@ -60,20 +173,43 @@ const ResetPassword = () => {
       if (typeof errorData === 'string') {
         errorMessage = errorData;
       } else if (errorData) {
-        errorMessage = errorData.message || errorData.error || errorData.title || '';
+        // Try different possible error message properties
+        errorMessage = errorData.message || 
+                      errorData.error || 
+                      errorData.title || 
+                      errorData.Message || 
+                      errorData.Error ||
+                      '';
+        
+        // Handle validation errors array if present
+        if (errorData.errors && typeof errorData.errors === 'object') {
+          const errorMessages = Object.values(errorData.errors).flat();
+          if (errorMessages.length > 0) {
+            errorMessage = errorMessages.join(', ');
+          }
+        }
       }
       
-      console.log('Error status:', status);
-      console.log('Error message:', errorMessage);
-      console.log('Error data:', errorData);
+      console.log('Reset Password Error Details:', {
+        status,
+        errorMessage,
+        fullErrorData: errorData
+      });
       
-      // Show specific error messages
+      // Display backend response with appropriate error message
       if (errorMessage) {
-        toast.error(errorMessage);
+        // Show the exact backend message
+        toast.error(errorMessage, { duration: 5000 });
       } else if (status === 400) {
-        toast.error('Invalid verification code or password. Please try again.');
+        toast.error('Invalid verification code or password. Please check and try again.', { duration: 4000 });
+      } else if (status === 401) {
+        toast.error('Verification code has expired. Please request a new one.', { duration: 4000 });
+      } else if (status === 429) {
+        toast.error('Too many attempts. Please try again later.', { duration: 5000 });
+      } else if (status === 500) {
+        toast.error('Server error. Please try again later.', { duration: 4000 });
       } else {
-        toast.error('Failed to reset password. Please try again.');
+        toast.error('Failed to reset password. Please try again.', { duration: 4000 });
       }
     } finally {
       setIsLoading(false);
@@ -152,6 +288,7 @@ const ResetPassword = () => {
                 className="w-full px-4 py-3 bg-gray-100 border border-gray-200 rounded-lg text-[#1A1A1A] placeholder-gray-400 focus:outline-none focus:border-[#F3BD4A] focus:bg-white transition-colors"
                 placeholder="Enter 4-digit code"
                 maxLength={4}
+                disabled={timeRemaining <= 0}
               />
               {errors.code && (
                 <p className="mt-1 text-sm text-red-500">{errors.code.message}</p>
@@ -235,7 +372,7 @@ const ResetPassword = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={isLoading || timeRemaining <= 0}
               className="w-full bg-[#F3BD4A] text-white py-3 rounded-lg font-semibold hover:bg-[#e6bc4a] transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl cursor-pointer"
             >
               {isLoading ? 'Resetting Password...' : 'Reset Password'}
@@ -243,16 +380,34 @@ const ResetPassword = () => {
           </form>
 
           {/* Footer */}
-          <div className="mt-6 text-center">
-            <p className="text-gray-600 text-sm">
-              Didn't receive the code?{' '}
-              <Link
-                to="/forgot-password"
-                className="text-[#F3BD4A] hover:underline font-medium"
+          <div className="mt-6 space-y-3">
+            {/* Resend Code Button */}
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={handleResendCode}
+                disabled={isResending || !canResend || resendCooldown > 0}
+                className="inline-flex items-center gap-2 text-[#F3BD4A] hover:text-[#e6bc4a] font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                Resend Code
-              </Link>
-            </p>
+                <FiRefreshCw size={16} className={isResending ? 'animate-spin' : ''} />
+                {isResending ? 'Sending...' : 
+                 resendCooldown > 0 ? `Resend Code (${resendCooldown}s)` : 
+                 'Resend Code'}
+              </button>
+            </div>
+
+            {/* Back to Forgot Password */}
+            <div className="text-center">
+              <p className="text-gray-600 text-sm">
+                Need to change email?{' '}
+                <Link
+                  to="/forgot-password"
+                  className="text-[#F3BD4A] hover:underline font-medium"
+                >
+                  Go Back
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
       </div>
