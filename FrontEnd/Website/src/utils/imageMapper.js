@@ -694,3 +694,114 @@ export const getMotherboardImage = (manufacturer, model) => {
 
   return null;
 };
+
+// Memory/RAM Image Mapping
+export const memoryImageMap = {
+  // Corsair
+  "Corsair Dominator Platinum DDR4": "Corsair Dominator Platinum DDR4.jpg",
+  "Dominator Platinum DDR4": "Corsair Dominator Platinum DDR4.jpg",
+  "Corsair Dominator Platinum RGB DDR5": "Corsair Dominator Platinum RGB DDR5.jpg",
+  "Dominator Platinum RGB DDR5": "Corsair Dominator Platinum RGB DDR5.jpg",
+  "Corsair Dominator Titanium DDR5": "Corsair Dominator Titanium DDR5.jpg",
+  "Dominator Titanium DDR5": "Corsair Dominator Titanium DDR5.jpg",
+  "Corsair Vengeance DDR5": "Corsair Vengeance DDR5.jpg",
+  "Vengeance DDR5": "Corsair Vengeance DDR5.jpg",
+  "Corsair Vengeance LPX DDR4": "Corsair Vengeance LPX DDR4.jpg",
+  "Vengeance LPX DDR4": "Corsair Vengeance LPX DDR4.jpg",
+  "Corsair Vengeance RGB DDR4": "Corsair Vengeance RGB DDR4.jpg",
+  "Vengeance RGB DDR4": "Corsair Vengeance RGB DDR4.jpg",
+  "Corsair Vengeance RGB DDR5": "Corsair Vengeance RGB DDR5.jpg",
+  "Vengeance RGB DDR5": "Corsair Vengeance RGB DDR5.jpg",
+  "Corsair Vengeance RGB Pro DDR4": "Corsair Vengeance RGB Pro DDR4.jpg",
+  "Vengeance RGB Pro DDR4": "Corsair Vengeance RGB Pro DDR4.jpg",
+  
+  // Crucial
+  "Crucial Ballistix DDR4": "Crucial Ballistix DDR4.jpg",
+  "Ballistix DDR4": "Crucial Ballistix DDR4.jpg",
+  "Crucial Ballistix Elite DDR4": "Crucial Ballistix Elite DDR4.jpg",
+  "Ballistix Elite DDR4": "Crucial Ballistix Elite DDR4.jpg",
+  "Crucial Ballistix MAX DDR4": "Crucial Ballistix MAX DDR4.jpg",
+  "Ballistix MAX DDR4": "Crucial Ballistix MAX DDR4.jpg",
+  "Crucial DDR4": "Crucial DDR4.jpg",
+  "Crucial DDR5": "Crucial DDR5.jpg",
+  "Crucial Pro DDR5": "Crucial Pro DDR5.jpg",
+  "Pro DDR5": "Crucial Pro DDR5.jpg",
+  
+  // G.Skill
+  "G.Skill Flare X5 DDR5": "G.Skill Flare X5 DDR5.jpg",
+  "Flare X5 DDR5": "G.Skill Flare X5 DDR5.jpg",
+  "G.Skill Ripjaws S5 DDR5": "G.Skill Ripjaws S5 DDR5.jpg",
+  "Ripjaws S5 DDR5": "G.Skill Ripjaws S5 DDR5.jpg",
+  "G.Skill Ripjaws V DDR4": "G.Skill Ripjaws V DDR4.jpg",
+  "Ripjaws V DDR4": "G.Skill Ripjaws V DDR4.jpg",
+  "G.Skill Trident Z DDR4": "G.Skill Trident Z DDR4.jpg",
+  "Trident Z DDR4": "G.Skill Trident Z DDR4.jpg",
+  "G.Skill Trident Z Neo DDR4": "G.Skill Trident Z Neo DDR4.jpg",
+  "Trident Z Neo DDR4": "G.Skill Trident Z Neo DDR4.jpg",
+  "G.Skill Trident Z RGB DDR4": "G.Skill Trident Z RGB DDR4.jpg",
+  "Trident Z RGB DDR4": "G.Skill Trident Z RGB DDR4.jpg",
+  "G.Skill Trident Z5 Neo": "G.Skill Trident Z5 Neo.jpg",
+  "Trident Z5 Neo": "G.Skill Trident Z5 Neo.jpg",
+  "G.Skill Trident Z5 RGB": "G.Skill Trident Z5 RGB.jpg",
+  "Trident Z5 RGB": "G.Skill Trident Z5 RGB.jpg",
+  "G.Skill Trident Z5 Royal": "G.Skill Trident Z5 Royal.jpg",
+  "Trident Z5 Royal": "G.Skill Trident Z5 Royal.jpg",
+  
+  // Kingston
+  "Kingston Fury Beast DDR4 RGB": "Kingston Fury Beast DDR4 RGB.jpg",
+  "Fury Beast DDR4 RGB": "Kingston Fury Beast DDR4 RGB.jpg",
+  "Kingston Fury Beast DDR5 RGB": "Kingston Fury Beast DDR5 RGB.jpg",
+  "Fury Beast DDR5 RGB": "Kingston Fury Beast DDR5 RGB.jpg",
+  "Kingston Fury Beast DDR5": "Kingston Fury Beast DDR5.jpg",
+  "Fury Beast DDR5": "Kingston Fury Beast DDR5.jpg",
+  "Kingston Fury Impact DDR4": "Kingston Fury Impact DDR4.jpg",
+  "Fury Impact DDR4": "Kingston Fury Impact DDR4.jpg",
+  "Kingston Fury Renegade DDR4": "Kingston Fury Renegade DDR4.jpg",
+  "Fury Renegade DDR4": "Kingston Fury Renegade DDR4.jpg",
+  "Kingston Fury Renegade DDR5 RGB": "Kingston Fury Renegade DDR5 RGB.jpg",
+  "Fury Renegade DDR5 RGB": "Kingston Fury Renegade DDR5 RGB.jpg",
+  "Kingston HyperX Fury DDR4": "Kingston HyperX Fury DDR4.jpg",
+  "HyperX Fury DDR4": "Kingston HyperX Fury DDR4.jpg",
+  
+  // TeamGroup
+  "TeamGroup T-Create Expert DDR5": "TeamGroup T-Create Expert DDR5.jpg",
+  "T-Create Expert DDR5": "TeamGroup T-Create Expert DDR5.jpg",
+  "TeamGroup T-Force Dark Za DDR4": "TeamGroup T-Force Dark Za DDR4.jpg",
+  "T-Force Dark Za DDR4": "TeamGroup T-Force Dark Za DDR4.jpg",
+  "TeamGroup T-Force Delta RGB DDR4": "TeamGroup T-Force Delta RGB DDR4.jpg",
+  "T-Force Delta RGB DDR4": "TeamGroup T-Force Delta RGB DDR4.jpg",
+  "TeamGroup T-Force Delta RGB DDR5": "TeamGroup T-Force Delta RGB DDR5.jpg",
+  "T-Force Delta RGB DDR5": "TeamGroup T-Force Delta RGB DDR5.jpg",
+  "TeamGroup T-Force Vulcan DDR4": "TeamGroup T-Force Vulcan DDR4.jpg",
+  "T-Force Vulcan DDR4": "TeamGroup T-Force Vulcan DDR4.jpg",
+  "TeamGroup T-Force Vulcan Z DDR4": "TeamGroup T-Force Vulcan Z DDR4.jpg",
+  "T-Force Vulcan Z DDR4": "TeamGroup T-Force Vulcan Z DDR4.jpg",
+  "TeamGroup T-Force Xtreem ARGB DDR4": "TeamGroup T-Force Xtreem ARGB DDR4.jpg",
+  "T-Force Xtreem ARGB DDR4": "TeamGroup T-Force Xtreem ARGB DDR4.jpg",
+};
+
+// Get Memory/RAM image path
+export const getMemoryImage = (manufacturer, model) => {
+  if (!manufacturer || !model) return null;
+
+  const fullName = `${manufacturer} ${model}`;
+
+  // Try exact match first
+  if (memoryImageMap[fullName]) {
+    return `/src/assets/Images/Memory/${memoryImageMap[fullName]}`;
+  }
+
+  // Try model only
+  if (memoryImageMap[model]) {
+    return `/src/assets/Images/Memory/${memoryImageMap[model]}`;
+  }
+
+  // Try partial match
+  for (const [key, value] of Object.entries(memoryImageMap)) {
+    if (fullName.includes(key) || key.includes(model)) {
+      return `/src/assets/Images/Memory/${value}`;
+    }
+  }
+
+  return null;
+};
