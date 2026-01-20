@@ -807,3 +807,98 @@ export const getMemoryImage = (manufacturer, model) => {
 
   return null;
 };
+
+// Storage Image Mapping
+export const storageImageMap = {
+  // Corsair
+  "Corsair MP600 PRO XT": "Corsair MP600 PRO XT.jpg",
+  "MP600 PRO XT": "Corsair MP600 PRO XT.jpg",
+
+  // Crucial
+  "Crucial BX500": "Crucial BX500.jpg",
+  BX500: "Crucial BX500.jpg",
+  "Crucial MX500": "Crucial MX500.jpg",
+  MX500: "Crucial MX500.jpg",
+  "Crucial P3 Plus": "Crucial P3 Plus.jpg",
+  "P3 Plus": "Crucial P3 Plus.jpg",
+  "Crucial P3": "Crucial P3.jpg",
+  P3: "Crucial P3.jpg",
+  "Crucial P5 Plus": "Crucial P5 Plus.jpg",
+  "P5 Plus": "Crucial P5 Plus.jpg",
+
+  // Kingston
+  "Kingston A400": "Kingston A400.jpg",
+  A400: "Kingston A400.jpg",
+  "Kingston Fury Renegade": "Kingston Fury Renegade.jpg",
+  "Fury Renegade": "Kingston Fury Renegade.jpg",
+  "Kingston KC3000": "Kingston KC3000.jpg",
+  KC3000: "Kingston KC3000.jpg",
+  "Kingston NV2": "Kingston NV2.png",
+  NV2: "Kingston NV2.png",
+
+  // Samsung
+  "Samsung 870 EVO": "Samsung 870 EVO.jpg",
+  "870 EVO": "Samsung 870 EVO.jpg",
+  "Samsung 870 QVO": "Samsung 870 QVO.jpg",
+  "870 QVO": "Samsung 870 QVO.jpg",
+  "Samsung 970 EVO Plus": "Samsung 970 EVO Plus.jpg",
+  "970 EVO Plus": "Samsung 970 EVO Plus.jpg",
+  "Samsung 980 PRO": "Samsung 980 PRO.jpg",
+  "980 PRO": "Samsung 980 PRO.jpg",
+  "Samsung 990 PRO": "Samsung 990 PRO.jpg",
+  "990 PRO": "Samsung 990 PRO.jpg",
+
+  // Seagate
+  "Seagate BarraCuda Compute": "Seagate BarraCuda Compute.jpg",
+  "BarraCuda Compute": "Seagate BarraCuda Compute.jpg",
+  "Seagate BarraCuda": "Seagate BarraCuda.jpg",
+  BarraCuda: "Seagate BarraCuda.jpg",
+  "Seagate Exos X18": "Seagate Exos X18.png",
+  "Exos X18": "Seagate Exos X18.png",
+  "Seagate FireCuda 530": "Seagate FireCuda 530.jpg",
+  "FireCuda 530": "Seagate FireCuda 530.jpg",
+  "Seagate IronWolf": "Seagate IronWolf.jpg",
+  IronWolf: "Seagate IronWolf.jpg",
+
+  // Western Digital (WD)
+  "WD Black SN770": "WD Black SN770.jpg",
+  "Black SN770": "WD Black SN770.jpg",
+  "WD Black SN850X": "WD Black SN850X.jpg",
+  "Black SN850X": "WD Black SN850X.jpg",
+  "WD Blue 3D NAND": "WD Blue 3D NAND.jpg",
+  "Blue 3D NAND": "WD Blue 3D NAND.jpg",
+  "WD Blue SN570": "WD Blue SN570.jpg",
+  "Blue SN570": "WD Blue SN570.jpg",
+  "WD Blue": "WD Blue.jpg",
+  "WD Green": "WD Green.jpg",
+  "WD Red Plus": "WD Red Plus.png",
+  "Red Plus": "WD Red Plus.png",
+  "WD Red Pro": "WD Red Pro.jpg",
+  "Red Pro": "WD Red Pro.jpg",
+};
+
+// Get Storage image path
+export const getStorageImage = (manufacturer, model) => {
+  if (!manufacturer || !model) return null;
+
+  const fullName = `${manufacturer} ${model}`;
+
+  // Try exact match first
+  if (storageImageMap[fullName]) {
+    return `/src/assets/Images/Storage/${storageImageMap[fullName]}`;
+  }
+
+  // Try model only
+  if (storageImageMap[model]) {
+    return `/src/assets/Images/Storage/${storageImageMap[model]}`;
+  }
+
+  // Try partial match
+  for (const [key, value] of Object.entries(storageImageMap)) {
+    if (fullName.includes(key) || key.includes(model)) {
+      return `/src/assets/Images/Storage/${value}`;
+    }
+  }
+
+  return null;
+};
