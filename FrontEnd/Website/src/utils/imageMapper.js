@@ -700,7 +700,8 @@ export const memoryImageMap = {
   // Corsair
   "Corsair Dominator Platinum DDR4": "Corsair Dominator Platinum DDR4.jpg",
   "Dominator Platinum DDR4": "Corsair Dominator Platinum DDR4.jpg",
-  "Corsair Dominator Platinum RGB DDR5": "Corsair Dominator Platinum RGB DDR5.jpg",
+  "Corsair Dominator Platinum RGB DDR5":
+    "Corsair Dominator Platinum RGB DDR5.jpg",
   "Dominator Platinum RGB DDR5": "Corsair Dominator Platinum RGB DDR5.jpg",
   "Corsair Dominator Titanium DDR5": "Corsair Dominator Titanium DDR5.jpg",
   "Dominator Titanium DDR5": "Corsair Dominator Titanium DDR5.jpg",
@@ -714,7 +715,7 @@ export const memoryImageMap = {
   "Vengeance RGB DDR5": "Corsair Vengeance RGB DDR5.jpg",
   "Corsair Vengeance RGB Pro DDR4": "Corsair Vengeance RGB Pro DDR4.jpg",
   "Vengeance RGB Pro DDR4": "Corsair Vengeance RGB Pro DDR4.jpg",
-  
+
   // Crucial
   "Crucial Ballistix DDR4": "Crucial Ballistix DDR4.jpg",
   "Ballistix DDR4": "Crucial Ballistix DDR4.jpg",
@@ -726,7 +727,7 @@ export const memoryImageMap = {
   "Crucial DDR5": "Crucial DDR5.jpg",
   "Crucial Pro DDR5": "Crucial Pro DDR5.jpg",
   "Pro DDR5": "Crucial Pro DDR5.jpg",
-  
+
   // G.Skill
   "G.Skill Flare X5 DDR5": "G.Skill Flare X5 DDR5.jpg",
   "Flare X5 DDR5": "G.Skill Flare X5 DDR5.jpg",
@@ -746,7 +747,7 @@ export const memoryImageMap = {
   "Trident Z5 RGB": "G.Skill Trident Z5 RGB.jpg",
   "G.Skill Trident Z5 Royal": "G.Skill Trident Z5 Royal.jpg",
   "Trident Z5 Royal": "G.Skill Trident Z5 Royal.jpg",
-  
+
   // Kingston
   "Kingston Fury Beast DDR4 RGB": "Kingston Fury Beast DDR4 RGB.jpg",
   "Fury Beast DDR4 RGB": "Kingston Fury Beast DDR4 RGB.jpg",
@@ -762,7 +763,7 @@ export const memoryImageMap = {
   "Fury Renegade DDR5 RGB": "Kingston Fury Renegade DDR5 RGB.jpg",
   "Kingston HyperX Fury DDR4": "Kingston HyperX Fury DDR4.jpg",
   "HyperX Fury DDR4": "Kingston HyperX Fury DDR4.jpg",
-  
+
   // TeamGroup
   "TeamGroup T-Create Expert DDR5": "TeamGroup T-Create Expert DDR5.jpg",
   "T-Create Expert DDR5": "TeamGroup T-Create Expert DDR5.jpg",
@@ -776,7 +777,8 @@ export const memoryImageMap = {
   "T-Force Vulcan DDR4": "TeamGroup T-Force Vulcan DDR4.jpg",
   "TeamGroup T-Force Vulcan Z DDR4": "TeamGroup T-Force Vulcan Z DDR4.jpg",
   "T-Force Vulcan Z DDR4": "TeamGroup T-Force Vulcan Z DDR4.jpg",
-  "TeamGroup T-Force Xtreem ARGB DDR4": "TeamGroup T-Force Xtreem ARGB DDR4.jpg",
+  "TeamGroup T-Force Xtreem ARGB DDR4":
+    "TeamGroup T-Force Xtreem ARGB DDR4.jpg",
   "T-Force Xtreem ARGB DDR4": "TeamGroup T-Force Xtreem ARGB DDR4.jpg",
 };
 
