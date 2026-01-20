@@ -10,6 +10,7 @@ import colors from '../../config/colors';
 import { FaMicrochip } from 'react-icons/fa';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
 import gpusData from '../../data/components/gpus.json';
+import { getGPUImage } from '../../utils/imageMapper';
 
 const GPU = () => {
   const navigate = useNavigate();
@@ -46,12 +47,24 @@ const GPU = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const gpuList = gpusData.gpus.map(gpu => ({
-    ...gpu,
-    name: `${gpu.brand} ${gpu.model}`, // Combine brand and model for display
-    memory: `${gpu.memoryGB}GB ${gpu.memoryType}`,
-    tdp: `${gpu.tdpWatts}W`
-  }));
+  const gpuList = gpusData.gpus.map(gpu => {
+    // Determine brand from chipset
+    const brand = gpu.chipset?.includes('GeForce') || gpu.chipset?.includes('GTX') || gpu.chipset?.includes('RTX') 
+      ? 'NVIDIA' 
+      : gpu.chipset?.includes('Radeon') || gpu.chipset?.includes('RX') 
+      ? 'AMD' 
+      : gpu.chipset?.includes('Arc') 
+      ? 'Intel' 
+      : 'Unknown';
+    
+    return {
+      ...gpu,
+      brand, // Add brand field
+      name: `${gpu.manufacturer} ${gpu.model}`, // Combine manufacturer and model for display
+      memory: `${gpu.memoryGB}GB ${gpu.memoryType}`,
+      tdp: `${gpu.tdpWatts}W`
+    };
+  });
   
   console.log('GPU List loaded:', gpuList.length, 'items');
   console.log('First GPU:', gpuList[0]);
@@ -60,7 +73,8 @@ const GPU = () => {
     // Search term
     const matchesSearch = searchTerm === '' ||
       gpu.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      gpu.brand.toLowerCase().includes(searchTerm.toLowerCase());
+      (gpu.brand && gpu.brand.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (gpu.model && gpu.model.toLowerCase().includes(searchTerm.toLowerCase()));
     
     // Price range
     const matchesPrice = gpu.price >= filters.priceRange.min && gpu.price <= filters.priceRange.max;
@@ -654,6 +668,28 @@ const GPU = () => {
                   {selectedGPU?.id === gpu.id && (
                     <span className="text-2xl">✓</span>
                   )}
+                </div>
+
+                {/* GPU Image */}
+                <div className="flex justify-center mb-4 h-48 items-center">
+                  {getGPUImage(gpu.manufacturer, gpu.model) ? (
+                    <img 
+                      src={getGPUImage(gpu.manufacturer, gpu.model)} 
+                      alt={gpu.name}
+                      className="max-h-full max-w-full object-contain"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  <div 
+                    className="text-center text-gray-400"
+                    style={{ display: getGPUImage(gpu.manufacturer, gpu.model) ? 'none' : 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}
+                  >
+                    <FaMicrochip size={64} style={{ color: colors.platinum, marginBottom: '8px' }} />
+                    <span className="text-sm">Image not found</span>
+                  </div>
                 </div>
 
                 <h3 className="text-xl font-bold mb-4" style={{ color: colors.mainBlack }}>
