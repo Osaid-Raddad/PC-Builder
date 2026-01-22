@@ -31,7 +31,7 @@ import ProductDetails from './pages/hardwareComponents/productDetails/ProductDet
 import Posts from './pages/user/posts/Posts';
 import TechSupport from './pages/techSupport/TechSupport.jsx';  
 import Profile from './pages/user/profile/Profile.jsx';
-import TechSupportProfile from './pages/TechSupport/TechProfile/TechSupportProfile';
+import TechSupportProfile from './pages/techSupport/TechProfile/TechSupportProfile';  
 import ProtectedRoute from './components/protected/ProtectedRoute.jsx';
 import Comparator from './pages/user/comparator/Comparator.jsx';
 import TermsOfService from './pages/user/termsOfService/TermsOfService.jsx';

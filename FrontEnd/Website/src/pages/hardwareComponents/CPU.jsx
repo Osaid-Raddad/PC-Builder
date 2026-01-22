@@ -9,6 +9,7 @@ import colors from '../../config/colors';
 import { BsCpuFill } from 'react-icons/bs';
 import { FiArrowLeft } from 'react-icons/fi';
 import cpusData from '../../data/components/cpus.json';
+import { getCPUImage } from '../../utils/imageMapper';
 
 
 const CPU = () => {
@@ -679,6 +680,28 @@ const CPU = () => {
                     >
                       {cpu.brand}
                     </span>
+                  </div>
+
+                  {/* CPU Image */}
+                  <div className="flex justify-center mb-4 h-48 items-center">
+                    {getCPUImage(cpu.model) ? (
+                      <img 
+                        src={getCPUImage(cpu.model)} 
+                        alt={cpu.model}
+                        className="max-h-full max-w-full object-contain"
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <div 
+                      className="text-center text-gray-400"
+                      style={{ display: getCPUImage(cpu.model) ? 'none' : 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}
+                    >
+                      <BsCpuFill size={64} style={{ color: colors.platinum, marginBottom: '8px' }} />
+                      <span className="text-sm">Image not found</span>
+                    </div>
                   </div>
 
                   <h3 className="text-xl font-bold mb-4" style={{ color: colors.mainBlack }}>
