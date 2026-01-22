@@ -75,8 +75,8 @@ const TechSupport = () => {
         email: tech.email,
         avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(tech.fullName)}&background=F9B233&color=fff`,
         specialization: 'PC Building & Support',
-        rating: 4.8,
-        reviews: 0,
+        rating: tech.rate || 0,
+        reviews: tech.completedSessionsCount || 0,
         experience: 'Certified',
         availability,
         status: tech.availabilities.length > 0 ? 'available' : 'busy'
