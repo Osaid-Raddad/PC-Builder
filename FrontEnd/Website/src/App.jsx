@@ -58,6 +58,7 @@ function AppContent() {
   const isNewsPage = location.pathname.includes('/news');
   const isChatPage = location.pathname.includes('/chat');
   const isAdminPage = location.pathname.includes('/admin');
+  const isAuthPage = ['/signin', '/signup', '/forgot-password', '/reset-password'].includes(location.pathname);
 
   return (
     <div>
@@ -139,7 +140,7 @@ function AppContent() {
       </Routes>
 
       {/* Show ChatBot on all pages except news and chat */}
-      {!isNewsPage && !isChatPage && !isAdminPage && <ChatBot />}
+      {!isNewsPage && !isChatPage && !isAdminPage && !isAuthPage && <ChatBot />}
     </div>
   );
 }

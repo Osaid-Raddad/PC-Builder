@@ -124,7 +124,7 @@ const Home = () => {
               </span>
             </button>
           </div>
-          <style jsx>{`
+          <style>{`
             @keyframes pulse-glow {
               0%, 100% {
                 box-shadow: 0 0 30px rgba(243, 189, 74, 0.5), 0 0 60px rgba(243, 189, 74, 0.3), inset 0 0 20px rgba(243, 189, 74, 0.1);

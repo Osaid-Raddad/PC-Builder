@@ -7,11 +7,17 @@
       "type": "Air Cooler",
       "height": 165,
       "tdpRating": 250,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 140,
       "fanCount": 2,
       "price": 109,
-      "image": "/images/coolers/noctua-nhd15.jpg"
+      "image": "/images/coolers/noctua-nhd15.jpg",
+      "powerConsumptionWatts": 16
     },
     {
       "id": 2,
@@ -20,11 +26,17 @@
       "type": "Air Cooler",
       "height": 158,
       "tdpRating": 200,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 1,
       "price": 79,
-      "image": "/images/coolers/noctua-nhu12s.jpg"
+      "image": "/images/coolers/noctua-nhu12s.jpg",
+      "powerConsumptionWatts": 6
     },
     {
       "id": 3,
@@ -33,11 +45,17 @@
       "type": "Air Cooler",
       "height": 163,
       "tdpRating": 250,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 135,
       "fanCount": 2,
       "price": 89,
-      "image": "/images/coolers/bequiet-dark-rock-pro4.jpg"
+      "image": "/images/coolers/bequiet-dark-rock-pro4.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 4,
@@ -46,11 +64,17 @@
       "type": "Air Cooler",
       "height": 159,
       "tdpRating": 200,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 135,
       "fanCount": 1,
       "price": 74,
-      "image": "/images/coolers/bequiet-dark-rock4.jpg"
+      "image": "/images/coolers/bequiet-dark-rock4.jpg",
+      "powerConsumptionWatts": 6
     },
     {
       "id": 5,
@@ -59,11 +83,17 @@
       "type": "Air Cooler",
       "height": 159,
       "tdpRating": 180,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 1,
       "price": 44,
-      "image": "/images/coolers/coolermaster-hyper212.jpg"
+      "image": "/images/coolers/coolermaster-hyper212.jpg",
+      "powerConsumptionWatts": 6
     },
     {
       "id": 6,
@@ -72,11 +102,17 @@
       "type": "Air Cooler",
       "height": 157,
       "tdpRating": 210,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 2,
       "price": 49,
-      "image": "/images/coolers/arctic-freezer34.jpg"
+      "image": "/images/coolers/arctic-freezer34.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 7,
@@ -85,11 +121,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 360,
       "tdpRating": 300,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 3,
       "price": 189,
-      "image": "/images/coolers/corsair-h150i.jpg"
+      "image": "/images/coolers/corsair-h150i.jpg",
+      "powerConsumptionWatts": 17
     },
     {
       "id": 8,
@@ -98,11 +140,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 240,
       "tdpRating": 250,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 2,
       "price": 149,
-      "image": "/images/coolers/corsair-h100i.jpg"
+      "image": "/images/coolers/corsair-h100i.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 9,
@@ -111,11 +159,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 280,
       "tdpRating": 275,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 140,
       "fanCount": 2,
       "price": 149,
-      "image": "/images/coolers/nzxt-kraken-x63.jpg"
+      "image": "/images/coolers/nzxt-kraken-x63.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 10,
@@ -124,11 +178,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 360,
       "tdpRating": 300,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 3,
       "price": 179,
-      "image": "/images/coolers/nzxt-kraken-x73.jpg"
+      "image": "/images/coolers/nzxt-kraken-x73.jpg",
+      "powerConsumptionWatts": 17
     },
     {
       "id": 11,
@@ -137,11 +197,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 280,
       "tdpRating": 280,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 140,
       "fanCount": 2,
       "price": 109,
-      "image": "/images/coolers/arctic-liquid-280.jpg"
+      "image": "/images/coolers/arctic-liquid-280.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 12,
@@ -150,11 +216,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 360,
       "tdpRating": 300,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 3,
       "price": 119,
-      "image": "/images/coolers/arctic-liquid-360.jpg"
+      "image": "/images/coolers/arctic-liquid-360.jpg",
+      "powerConsumptionWatts": 17
     },
     {
       "id": 13,
@@ -163,11 +235,17 @@
       "type": "Air Cooler",
       "height": 160,
       "tdpRating": 220,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 140,
       "fanCount": 1,
       "price": 94,
-      "image": "/images/coolers/noctua-nhd15s.jpg"
+      "image": "/images/coolers/noctua-nhd15s.jpg",
+      "powerConsumptionWatts": 8
     },
     {
       "id": 14,
@@ -176,11 +254,15 @@
       "type": "Air Cooler",
       "height": 37,
       "tdpRating": 95,
-      "socketCompatibility": ["LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 92,
       "fanCount": 1,
       "price": 49,
-      "image": "/images/coolers/noctua-nhl9i.jpg"
+      "image": "/images/coolers/noctua-nhl9i.jpg",
+      "powerConsumptionWatts": 6
     },
     {
       "id": 15,
@@ -189,11 +271,17 @@
       "type": "Air Cooler",
       "height": 155,
       "tdpRating": 150,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 1,
       "price": 39,
-      "image": "/images/coolers/bequiet-pure-rock2.jpg"
+      "image": "/images/coolers/bequiet-pure-rock2.jpg",
+      "powerConsumptionWatts": 6
     },
     {
       "id": 16,
@@ -202,11 +290,17 @@
       "type": "Air Cooler",
       "height": 169,
       "tdpRating": 190,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 1,
       "price": 54,
-      "image": "/images/coolers/bequiet-shadow-rock3.jpg"
+      "image": "/images/coolers/bequiet-shadow-rock3.jpg",
+      "powerConsumptionWatts": 6
     },
     {
       "id": 17,
@@ -215,11 +309,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 360,
       "tdpRating": 280,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 3,
       "price": 139,
-      "image": "/images/coolers/coolermaster-ml360r.jpg"
+      "image": "/images/coolers/coolermaster-ml360r.jpg",
+      "powerConsumptionWatts": 17
     },
     {
       "id": 18,
@@ -228,11 +328,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 240,
       "tdpRating": 230,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 2,
       "price": 79,
-      "image": "/images/coolers/coolermaster-ml240l.jpg"
+      "image": "/images/coolers/coolermaster-ml240l.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 19,
@@ -241,11 +347,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 420,
       "tdpRating": 350,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 140,
       "fanCount": 3,
       "price": 249,
-      "image": "/images/coolers/corsair-h170i.jpg"
+      "image": "/images/coolers/corsair-h170i.jpg",
+      "powerConsumptionWatts": 17
     },
     {
       "id": 20,
@@ -254,11 +366,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 280,
       "tdpRating": 280,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 140,
       "fanCount": 2,
       "price": 249,
-      "image": "/images/coolers/nzxt-kraken-z63.jpg"
+      "image": "/images/coolers/nzxt-kraken-z63.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 21,
@@ -267,11 +385,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 360,
       "tdpRating": 300,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 3,
       "price": 279,
-      "image": "/images/coolers/nzxt-kraken-z73.jpg"
+      "image": "/images/coolers/nzxt-kraken-z73.jpg",
+      "powerConsumptionWatts": 17
     },
     {
       "id": 22,
@@ -280,11 +404,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 360,
       "tdpRating": 280,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 3,
       "price": 169,
-      "image": "/images/coolers/thermaltake-floe-360.jpg"
+      "image": "/images/coolers/thermaltake-floe-360.jpg",
+      "powerConsumptionWatts": 17
     },
     {
       "id": 23,
@@ -293,11 +423,17 @@
       "type": "Air Cooler",
       "height": 160,
       "tdpRating": 260,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 2,
       "price": 64,
-      "image": "/images/coolers/deepcool-ak620.jpg"
+      "image": "/images/coolers/deepcool-ak620.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 24,
@@ -306,11 +442,17 @@
       "type": "Air Cooler",
       "height": 165,
       "tdpRating": 280,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 140,
       "fanCount": 2,
       "price": 89,
-      "image": "/images/coolers/deepcool-assassin3.jpg"
+      "image": "/images/coolers/deepcool-assassin3.jpg",
+      "powerConsumptionWatts": 16
     },
     {
       "id": 25,
@@ -319,11 +461,17 @@
       "type": "Air Cooler",
       "height": 154,
       "tdpRating": 250,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 2,
       "price": 59,
-      "image": "/images/coolers/scythe-fuma2.jpg"
+      "image": "/images/coolers/scythe-fuma2.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 26,
@@ -332,11 +480,17 @@
       "type": "Air Cooler",
       "height": 155,
       "tdpRating": 200,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 1,
       "price": 49,
-      "image": "/images/coolers/scythe-mugen5.jpg"
+      "image": "/images/coolers/scythe-mugen5.jpg",
+      "powerConsumptionWatts": 6
     },
     {
       "id": 27,
@@ -345,11 +499,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 120,
       "tdpRating": 180,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 1,
       "price": 89,
-      "image": "/images/coolers/corsair-h60i.jpg"
+      "image": "/images/coolers/corsair-h60i.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 28,
@@ -358,11 +518,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 120,
       "tdpRating": 150,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 1,
       "price": 79,
-      "image": "/images/coolers/nzxt-kraken-m22.jpg"
+      "image": "/images/coolers/nzxt-kraken-m22.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 29,
@@ -371,11 +537,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 240,
       "tdpRating": 250,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 2,
       "price": 99,
-      "image": "/images/coolers/arctic-liquid-240.jpg"
+      "image": "/images/coolers/arctic-liquid-240.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 30,
@@ -384,11 +556,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 420,
       "tdpRating": 350,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 140,
       "fanCount": 3,
       "price": 139,
-      "image": "/images/coolers/arctic-liquid-420.jpg"
+      "image": "/images/coolers/arctic-liquid-420.jpg",
+      "powerConsumptionWatts": 17
     },
     {
       "id": 31,
@@ -397,11 +575,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 360,
       "tdpRating": 300,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 3,
       "price": 129,
-      "image": "/images/coolers/lianli-galahad-360.jpg"
+      "image": "/images/coolers/lianli-galahad-360.jpg",
+      "powerConsumptionWatts": 17
     },
     {
       "id": 32,
@@ -410,11 +594,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 240,
       "tdpRating": 240,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 2,
       "price": 99,
-      "image": "/images/coolers/lianli-galahad-240.jpg"
+      "image": "/images/coolers/lianli-galahad-240.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 33,
@@ -423,11 +613,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 240,
       "tdpRating": 240,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 2,
       "price": 119,
-      "image": "/images/coolers/thermaltake-water30-240.jpg"
+      "image": "/images/coolers/thermaltake-water30-240.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 34,
@@ -436,11 +632,17 @@
       "type": "Air Cooler",
       "height": 159,
       "tdpRating": 180,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 1,
       "price": 49,
-      "image": "/images/coolers/coolermaster-hyper212-rgb.jpg"
+      "image": "/images/coolers/coolermaster-hyper212-rgb.jpg",
+      "powerConsumptionWatts": 6
     },
     {
       "id": 35,
@@ -449,11 +651,17 @@
       "type": "Air Cooler",
       "height": 159,
       "tdpRating": 180,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 1,
       "price": 39,
-      "image": "/images/coolers/coolermaster-hyper212-evo.jpg"
+      "image": "/images/coolers/coolermaster-hyper212-evo.jpg",
+      "powerConsumptionWatts": 6
     },
     {
       "id": 36,
@@ -462,11 +670,17 @@
       "type": "Air Cooler",
       "height": 70,
       "tdpRating": 120,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 1,
       "price": 59,
-      "image": "/images/coolers/noctua-nhl12s.jpg"
+      "image": "/images/coolers/noctua-nhl12s.jpg",
+      "powerConsumptionWatts": 6
     },
     {
       "id": 37,
@@ -475,11 +689,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 280,
       "tdpRating": 270,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 140,
       "fanCount": 2,
       "price": 119,
-      "image": "/images/coolers/bequiet-pure-loop-280.jpg"
+      "image": "/images/coolers/bequiet-pure-loop-280.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 38,
@@ -488,11 +708,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 360,
       "tdpRating": 290,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 3,
       "price": 139,
-      "image": "/images/coolers/bequiet-pure-loop-360.jpg"
+      "image": "/images/coolers/bequiet-pure-loop-360.jpg",
+      "powerConsumptionWatts": 17
     },
     {
       "id": 39,
@@ -501,11 +727,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 240,
       "tdpRating": 260,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 2,
       "price": 89,
-      "image": "/images/coolers/deepcool-ls520.jpg"
+      "image": "/images/coolers/deepcool-ls520.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 40,
@@ -514,11 +746,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 360,
       "tdpRating": 300,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 3,
       "price": 119,
-      "image": "/images/coolers/deepcool-ls720.jpg"
+      "image": "/images/coolers/deepcool-ls720.jpg",
+      "powerConsumptionWatts": 17
     },
     {
       "id": 41,
@@ -527,11 +765,17 @@
       "type": "Air Cooler",
       "height": 154,
       "tdpRating": 180,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 1,
       "price": 29,
-      "image": "/images/coolers/idcooling-se224.jpg"
+      "image": "/images/coolers/idcooling-se224.jpg",
+      "powerConsumptionWatts": 6
     },
     {
       "id": 42,
@@ -540,11 +784,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 280,
       "tdpRating": 270,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 140,
       "fanCount": 2,
       "price": 89,
-      "image": "/images/coolers/idcooling-frostflow-280.jpg"
+      "image": "/images/coolers/idcooling-frostflow-280.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 43,
@@ -553,11 +803,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 360,
       "tdpRating": 300,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 3,
       "price": 119,
-      "image": "/images/coolers/enermax-liqmax-360.jpg"
+      "image": "/images/coolers/enermax-liqmax-360.jpg",
+      "powerConsumptionWatts": 17
     },
     {
       "id": 44,
@@ -566,11 +822,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 360,
       "tdpRating": 300,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 3,
       "price": 139,
-      "image": "/images/coolers/msi-coreliquid-360.jpg"
+      "image": "/images/coolers/msi-coreliquid-360.jpg",
+      "powerConsumptionWatts": 17
     },
     {
       "id": 45,
@@ -579,11 +841,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 240,
       "tdpRating": 250,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 2,
       "price": 99,
-      "image": "/images/coolers/msi-coreliquid-240.jpg"
+      "image": "/images/coolers/msi-coreliquid-240.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 46,
@@ -592,11 +860,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 360,
       "tdpRating": 310,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 3,
       "price": 199,
-      "image": "/images/coolers/asus-ryuo-360.jpg"
+      "image": "/images/coolers/asus-ryuo-360.jpg",
+      "powerConsumptionWatts": 17
     },
     {
       "id": 47,
@@ -605,11 +879,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 240,
       "tdpRating": 240,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 2,
       "price": 119,
-      "image": "/images/coolers/asus-tuf-lc240.jpg"
+      "image": "/images/coolers/asus-tuf-lc240.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 48,
@@ -618,11 +898,17 @@
       "type": "Air Cooler",
       "height": 157,
       "tdpRating": 240,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 2,
       "price": 39,
-      "image": "/images/coolers/thermalright-peerless.jpg"
+      "image": "/images/coolers/thermalright-peerless.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 49,
@@ -631,11 +917,17 @@
       "type": "Air Cooler",
       "height": 159,
       "tdpRating": 240,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 140,
       "fanCount": 1,
       "price": 89,
-      "image": "/images/coolers/thermalright-macho.jpg"
+      "image": "/images/coolers/thermalright-macho.jpg",
+      "powerConsumptionWatts": 8
     },
     {
       "id": 50,
@@ -644,11 +936,17 @@
       "type": "AIO Liquid",
       "radiatorSize": 360,
       "tdpRating": 290,
-      "socketCompatibility": ["AM4", "AM5", "LGA1700", "LGA1200"],
+      "socketCompatibility": [
+        "AM4",
+        "AM5",
+        "LGA1700",
+        "LGA1200"
+      ],
       "fanSize": 120,
       "fanCount": 3,
       "price": 159,
-      "image": "/images/coolers/coolermaster-ml360-illusion.jpg"
+      "image": "/images/coolers/coolermaster-ml360-illusion.jpg",
+      "powerConsumptionWatts": 17
     }
   ]
 }

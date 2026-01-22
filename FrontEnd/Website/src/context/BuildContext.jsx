@@ -66,32 +66,53 @@ export const BuildProvider = ({ children }) => {
     
     // CPU TDP
     if (selectedComponents.cpu) {
-      totalPower += selectedComponents.cpu.tdpWatts || selectedComponents.cpu.tdp || 0;
+      totalPower += selectedComponents.cpu.tdpWatts || selectedComponents.cpu.powerConsumptionWatts || 0;
     }
     
     // GPU TDP
     if (selectedComponents.gpu) {
-      totalPower += selectedComponents.gpu.tdpWatts || selectedComponents.gpu.tdp || 0;
+      totalPower += selectedComponents.gpu.tdpWatts || selectedComponents.gpu.powerConsumptionWatts || 0;
     }
     
-    // Motherboard (estimate ~50W)
+    // Motherboard
     if (selectedComponents.motherboard) {
-      totalPower += 50;
+      totalPower += selectedComponents.motherboard.powerConsumptionWatts || 50;
     }
     
-    // RAM (~3W per module)
+    // RAM (per module)
     if (selectedComponents.memory) {
       const modules = selectedComponents.memory.modules || 2;
-      totalPower += modules * 3;
+      const powerPerModule = selectedComponents.memory.powerConsumptionWatts || 4;
+      totalPower += modules * powerPerModule;
     }
     
-    // Storage (~5W per drive)
+    // Storage
     if (selectedComponents.storage) {
-      totalPower += 5;
+      totalPower += selectedComponents.storage.powerConsumptionWatts || 5;
     }
     
-    // Case fans and other (~30W)
-    totalPower += 30;
+    // CPU Cooler (fans)
+    if (selectedComponents.cooler) {
+      totalPower += selectedComponents.cooler.powerConsumptionWatts || 10;
+    }
+    
+    // Case fans
+    if (selectedComponents.case) {
+      totalPower += selectedComponents.case.powerConsumptionWatts || 20;
+    }
+    
+    // Monitor (if included in build)
+    if (selectedComponents.monitor) {
+      totalPower += selectedComponents.monitor.powerConsumptionWatts || 0;
+    }
+    
+    // Expansion cards
+    if (selectedComponents.expansion) {
+      totalPower += selectedComponents.expansion.powerConsumptionWatts || 15;
+    }
+    
+    // Additional overhead (USB devices, RGB controllers, etc.)
+    totalPower += 20;
     
     return Math.round(totalPower);
   };

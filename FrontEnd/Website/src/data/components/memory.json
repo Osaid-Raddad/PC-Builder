@@ -11,7 +11,8 @@
       "casLatency": 36,
       "voltage": 1.35,
       "price": 179,
-      "image": "/images/memory/corsair-vengeance-ddr5-6000.jpg"
+      "image": "/images/memory/corsair-vengeance-ddr5-6000.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 2,
@@ -22,9 +23,10 @@
       "modules": 2,
       "speedMHz": 6400,
       "casLatency": 32,
-      "voltage": 1.40,
+      "voltage": 1.4,
       "price": 219,
-      "image": "/images/memory/gskill-trident-z5-6400.jpg"
+      "image": "/images/memory/gskill-trident-z5-6400.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 3,
@@ -37,7 +39,8 @@
       "casLatency": 40,
       "voltage": 1.25,
       "price": 149,
-      "image": "/images/memory/kingston-fury-ddr5-5600.jpg"
+      "image": "/images/memory/kingston-fury-ddr5-5600.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 4,
@@ -50,7 +53,8 @@
       "casLatency": 36,
       "voltage": 1.35,
       "price": 359,
-      "image": "/images/memory/corsair-dominator-ddr5-64gb.jpg"
+      "image": "/images/memory/corsair-dominator-ddr5-64gb.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 5,
@@ -63,7 +67,8 @@
       "casLatency": 30,
       "voltage": 1.35,
       "price": 199,
-      "image": "/images/memory/gskill-trident-z5-neo.jpg"
+      "image": "/images/memory/gskill-trident-z5-neo.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 6,
@@ -76,7 +81,8 @@
       "casLatency": 18,
       "voltage": 1.35,
       "price": 119,
-      "image": "/images/memory/corsair-vengeance-ddr4-3600.jpg"
+      "image": "/images/memory/corsair-vengeance-ddr4-3600.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 7,
@@ -89,7 +95,8 @@
       "casLatency": 16,
       "voltage": 1.35,
       "price": 99,
-      "image": "/images/memory/gskill-ripjaws-ddr4-3200.jpg"
+      "image": "/images/memory/gskill-ripjaws-ddr4-3200.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 8,
@@ -102,7 +109,8 @@
       "casLatency": 18,
       "voltage": 1.35,
       "price": 109,
-      "image": "/images/memory/kingston-fury-ddr4-3600.jpg"
+      "image": "/images/memory/kingston-fury-ddr4-3600.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 9,
@@ -115,7 +123,8 @@
       "casLatency": 16,
       "voltage": 1.35,
       "price": 114,
-      "image": "/images/memory/crucial-ballistix-ddr4.jpg"
+      "image": "/images/memory/crucial-ballistix-ddr4.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 10,
@@ -128,7 +137,8 @@
       "casLatency": 16,
       "voltage": 1.35,
       "price": 54,
-      "image": "/images/memory/corsair-lpx-ddr4-16gb.jpg"
+      "image": "/images/memory/corsair-lpx-ddr4-16gb.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 11,
@@ -141,7 +151,8 @@
       "casLatency": 16,
       "voltage": 1.35,
       "price": 129,
-      "image": "/images/memory/gskill-trident-z-ddr4.jpg"
+      "image": "/images/memory/gskill-trident-z-ddr4.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 12,
@@ -154,7 +165,8 @@
       "casLatency": 16,
       "voltage": 1.35,
       "price": 59,
-      "image": "/images/memory/kingston-hyperx-fury-ddr4.jpg"
+      "image": "/images/memory/kingston-hyperx-fury-ddr4.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 13,
@@ -165,9 +177,10 @@
       "modules": 2,
       "speedMHz": 4800,
       "casLatency": 40,
-      "voltage": 1.10,
+      "voltage": 1.1,
       "price": 139,
-      "image": "/images/memory/crucial-ddr5-4800.jpg"
+      "image": "/images/memory/crucial-ddr5-4800.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 14,
@@ -180,7 +193,8 @@
       "casLatency": 38,
       "voltage": 1.35,
       "price": 169,
-      "image": "/images/memory/teamgroup-delta-ddr5.jpg"
+      "image": "/images/memory/teamgroup-delta-ddr5.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 15,
@@ -191,9 +205,10 @@
       "modules": 2,
       "speedMHz": 6400,
       "casLatency": 32,
-      "voltage": 1.40,
+      "voltage": 1.4,
       "price": 249,
-      "image": "/images/memory/gskill-trident-z5-royal.jpg"
+      "image": "/images/memory/gskill-trident-z5-royal.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 16,
@@ -206,7 +221,8 @@
       "casLatency": 40,
       "voltage": 1.25,
       "price": 279,
-      "image": "/images/memory/corsair-vengeance-ddr5-64gb.jpg"
+      "image": "/images/memory/corsair-vengeance-ddr5-64gb.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 17,
@@ -219,7 +235,8 @@
       "casLatency": 40,
       "voltage": 1.25,
       "price": 89,
-      "image": "/images/memory/kingston-fury-ddr5-16gb.jpg"
+      "image": "/images/memory/kingston-fury-ddr5-16gb.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 18,
@@ -232,7 +249,8 @@
       "casLatency": 36,
       "voltage": 1.35,
       "price": 174,
-      "image": "/images/memory/gskill-ripjaws-s5.jpg"
+      "image": "/images/memory/gskill-ripjaws-s5.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 19,
@@ -243,9 +261,10 @@
       "modules": 2,
       "speedMHz": 6600,
       "casLatency": 32,
-      "voltage": 1.40,
+      "voltage": 1.4,
       "price": 299,
-      "image": "/images/memory/corsair-dominator-titanium.jpg"
+      "image": "/images/memory/corsair-dominator-titanium.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 20,
@@ -258,7 +277,8 @@
       "casLatency": 16,
       "voltage": 1.35,
       "price": 49,
-      "image": "/images/memory/teamgroup-vulcan-z.jpg"
+      "image": "/images/memory/teamgroup-vulcan-z.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 21,
@@ -271,7 +291,8 @@
       "casLatency": 18,
       "voltage": 1.35,
       "price": 139,
-      "image": "/images/memory/crucial-ballistix-max.jpg"
+      "image": "/images/memory/crucial-ballistix-max.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 22,
@@ -284,7 +305,8 @@
       "casLatency": 16,
       "voltage": 1.35,
       "price": 124,
-      "image": "/images/memory/gskill-trident-z-neo.jpg"
+      "image": "/images/memory/gskill-trident-z-neo.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 23,
@@ -297,7 +319,8 @@
       "casLatency": 16,
       "voltage": 1.35,
       "price": 189,
-      "image": "/images/memory/corsair-lpx-64gb.jpg"
+      "image": "/images/memory/corsair-lpx-64gb.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 24,
@@ -310,7 +333,8 @@
       "casLatency": 16,
       "voltage": 1.35,
       "price": 119,
-      "image": "/images/memory/kingston-fury-renegade.jpg"
+      "image": "/images/memory/kingston-fury-renegade.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 25,
@@ -323,7 +347,8 @@
       "casLatency": 14,
       "voltage": 1.45,
       "price": 99,
-      "image": "/images/memory/teamgroup-xtreem-argb.jpg"
+      "image": "/images/memory/teamgroup-xtreem-argb.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 26,
@@ -336,7 +361,8 @@
       "casLatency": 36,
       "voltage": 1.35,
       "price": 179,
-      "image": "/images/memory/gskill-flare-x5.jpg"
+      "image": "/images/memory/gskill-flare-x5.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 27,
@@ -349,7 +375,8 @@
       "casLatency": 18,
       "voltage": 1.35,
       "price": 64,
-      "image": "/images/memory/corsair-vengeance-rgb-16gb.jpg"
+      "image": "/images/memory/corsair-vengeance-rgb-16gb.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 28,
@@ -362,7 +389,8 @@
       "casLatency": 22,
       "voltage": 1.35,
       "price": 29,
-      "image": "/images/memory/crucial-ddr4-8gb.jpg"
+      "image": "/images/memory/crucial-ddr4-8gb.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 29,
@@ -375,7 +403,8 @@
       "casLatency": 40,
       "voltage": 1.25,
       "price": 289,
-      "image": "/images/memory/kingston-fury-ddr5-64gb.jpg"
+      "image": "/images/memory/kingston-fury-ddr5-64gb.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 30,
@@ -388,7 +417,8 @@
       "casLatency": 36,
       "voltage": 1.35,
       "price": 329,
-      "image": "/images/memory/gskill-trident-z5-64gb.jpg"
+      "image": "/images/memory/gskill-trident-z5-64gb.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 31,
@@ -401,7 +431,8 @@
       "casLatency": 18,
       "voltage": 1.35,
       "price": 109,
-      "image": "/images/memory/corsair-vengeance-pro-32gb.jpg"
+      "image": "/images/memory/corsair-vengeance-pro-32gb.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 32,
@@ -414,7 +445,8 @@
       "casLatency": 18,
       "voltage": 1.35,
       "price": 59,
-      "image": "/images/memory/teamgroup-delta-ddr4.jpg"
+      "image": "/images/memory/teamgroup-delta-ddr4.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 33,
@@ -427,7 +459,8 @@
       "casLatency": 46,
       "voltage": 1.25,
       "price": 159,
-      "image": "/images/memory/crucial-pro-ddr5.jpg"
+      "image": "/images/memory/crucial-pro-ddr5.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 34,
@@ -438,9 +471,10 @@
       "modules": 2,
       "speedMHz": 2666,
       "casLatency": 15,
-      "voltage": 1.20,
+      "voltage": 1.2,
       "price": 49,
-      "image": "/images/memory/kingston-fury-impact.jpg"
+      "image": "/images/memory/kingston-fury-impact.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 35,
@@ -453,7 +487,8 @@
       "casLatency": 14,
       "voltage": 1.35,
       "price": 79,
-      "image": "/images/memory/gskill-trident-z-16gb.jpg"
+      "image": "/images/memory/gskill-trident-z-16gb.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 36,
@@ -466,7 +501,8 @@
       "casLatency": 40,
       "voltage": 1.25,
       "price": 219,
-      "image": "/images/memory/corsair-vengeance-48gb.jpg"
+      "image": "/images/memory/corsair-vengeance-48gb.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 37,
@@ -479,7 +515,8 @@
       "casLatency": 38,
       "voltage": 1.35,
       "price": 169,
-      "image": "/images/memory/teamgroup-tcreate-expert.jpg"
+      "image": "/images/memory/teamgroup-tcreate-expert.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 38,
@@ -492,7 +529,8 @@
       "casLatency": 16,
       "voltage": 1.35,
       "price": 69,
-      "image": "/images/memory/crucial-ballistix-elite.jpg"
+      "image": "/images/memory/crucial-ballistix-elite.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 39,
@@ -505,7 +543,8 @@
       "casLatency": 16,
       "voltage": 1.35,
       "price": 199,
-      "image": "/images/memory/kingston-fury-64gb.jpg"
+      "image": "/images/memory/kingston-fury-64gb.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 40,
@@ -518,7 +557,8 @@
       "casLatency": 18,
       "voltage": 1.35,
       "price": 209,
-      "image": "/images/memory/gskill-ripjaws-64gb.jpg"
+      "image": "/images/memory/gskill-ripjaws-64gb.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 41,
@@ -531,7 +571,8 @@
       "casLatency": 18,
       "voltage": 1.35,
       "price": 149,
-      "image": "/images/memory/corsair-dominator-ddr4.jpg"
+      "image": "/images/memory/corsair-dominator-ddr4.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 42,
@@ -544,7 +585,8 @@
       "casLatency": 16,
       "voltage": 1.35,
       "price": 94,
-      "image": "/images/memory/teamgroup-vulcan-32gb.jpg"
+      "image": "/images/memory/teamgroup-vulcan-32gb.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 43,
@@ -555,9 +597,10 @@
       "modules": 2,
       "speedMHz": 4800,
       "casLatency": 40,
-      "voltage": 1.10,
+      "voltage": 1.1,
       "price": 79,
-      "image": "/images/memory/crucial-ddr5-16gb.jpg"
+      "image": "/images/memory/crucial-ddr5-16gb.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 44,
@@ -570,7 +613,8 @@
       "casLatency": 32,
       "voltage": 1.35,
       "price": 194,
-      "image": "/images/memory/kingston-renegade-ddr5.jpg"
+      "image": "/images/memory/kingston-renegade-ddr5.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 45,
@@ -583,7 +627,8 @@
       "casLatency": 36,
       "voltage": 1.35,
       "price": 249,
-      "image": "/images/memory/gskill-trident-z5-48gb.jpg"
+      "image": "/images/memory/gskill-trident-z5-48gb.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 46,
@@ -596,7 +641,8 @@
       "casLatency": 18,
       "voltage": 1.35,
       "price": 104,
-      "image": "/images/memory/corsair-lpx-32gb-3600.jpg"
+      "image": "/images/memory/corsair-lpx-32gb-3600.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 47,
@@ -609,7 +655,8 @@
       "casLatency": 18,
       "voltage": 1.35,
       "price": 54,
-      "image": "/images/memory/teamgroup-dark-za.jpg"
+      "image": "/images/memory/teamgroup-dark-za.jpg",
+      "powerConsumptionWatts": 3
     },
     {
       "id": 48,
@@ -622,7 +669,8 @@
       "casLatency": 46,
       "voltage": 1.25,
       "price": 299,
-      "image": "/images/memory/crucial-pro-64gb.jpg"
+      "image": "/images/memory/crucial-pro-64gb.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 49,
@@ -635,7 +683,8 @@
       "casLatency": 40,
       "voltage": 1.25,
       "price": 429,
-      "image": "/images/memory/kingston-fury-96gb.jpg"
+      "image": "/images/memory/kingston-fury-96gb.jpg",
+      "powerConsumptionWatts": 5
     },
     {
       "id": 50,
@@ -648,7 +697,8 @@
       "casLatency": 36,
       "voltage": 1.35,
       "price": 499,
-      "image": "/images/memory/gskill-trident-z5-96gb.jpg"
+      "image": "/images/memory/gskill-trident-z5-96gb.jpg",
+      "powerConsumptionWatts": 5
     }
   ]
 }

@@ -25,6 +25,11 @@ export class CompatibilityChecker {
       this.checkCPUMotherboardCompatibility(cpu, motherboard);
     }
 
+    // Check CPU and GPU bottleneck compatibility
+    if (cpu && gpu) {
+      this.checkCPUGPUCompatibility(cpu, gpu);
+    }
+
     // Check RAM and Motherboard compatibility
     if (memory && motherboard) {
       this.checkMemoryMotherboardCompatibility(memory, motherboard);
@@ -77,6 +82,46 @@ export class CompatibilityChecker {
         severity: 'critical',
         message: `CPU socket ${cpu.socket} is not compatible with motherboard socket ${motherboard.socket}`,
         components: ['cpu', 'motherboard']
+      });
+    }
+  }
+
+  /**
+   * Check CPU and GPU compatibility (bottleneck detection)
+   */
+  checkCPUGPUCompatibility(cpu, gpu) {
+    // Check for extreme performance mismatches
+    const cpuScore = cpu.performanceScore || 0;
+    const gpuPrice = gpu.price || 0;
+    
+    // Detect bottlenecks based on performance score vs GPU tier
+    // High-end GPUs ($1000+) need strong CPUs (8000+ performance score)
+    if (gpuPrice >= 1000 && cpuScore < 8000) {
+      this.warnings.push({
+        type: 'cpu_bottleneck',
+        severity: 'warning',
+        message: `High-end GPU may be bottlenecked by CPU. Consider a stronger processor for optimal performance`,
+        components: ['cpu', 'gpu']
+      });
+    }
+    
+    // Mid-range GPUs ($500-$999) need decent CPUs (6000+ performance score)
+    if (gpuPrice >= 500 && gpuPrice < 1000 && cpuScore < 6000) {
+      this.warnings.push({
+        type: 'cpu_bottleneck',
+        severity: 'warning',
+        message: `CPU may limit GPU performance in demanding tasks. Consider a mid-range or better processor`,
+        components: ['cpu', 'gpu']
+      });
+    }
+    
+    // Check for overkill CPU with weak GPU (budget imbalance)
+    if (cpuScore > 10000 && gpuPrice < 300) {
+      this.warnings.push({
+        type: 'gpu_underpowered',
+        severity: 'warning',
+        message: `Powerful CPU paired with entry-level GPU. Consider balancing your budget for better overall performance`,
+        components: ['cpu', 'gpu']
       });
     }
   }
@@ -191,30 +236,70 @@ export class CompatibilityChecker {
   }
 
   /**
-   * Check Power Supply wattage adequacy
+   * Check Power Supply wattage adequacy (comprehensive calculation)
    */
   checkPowerSupplyWattage(psu, cpu, gpu, build) {
-    // Calculate estimated power consumption
-    const cpuTDP = cpu.tdpWatts || 0;
-    const gpuTDP = gpu.tdpWatts || 0;
-    const systemOverhead = 100; // Motherboard, RAM, storage, fans, etc.
+    // Calculate estimated power consumption from all components
+    let totalPower = 0;
     
-    const estimatedWattage = cpuTDP + gpuTDP + systemOverhead;
-    const recommendedWattage = estimatedWattage * 1.2; // 20% headroom
+    // CPU TDP
+    totalPower += cpu.tdpWatts || cpu.powerConsumptionWatts || 0;
+    
+    // GPU TDP
+    totalPower += gpu.tdpWatts || gpu.powerConsumptionWatts || 0;
+    
+    // Motherboard power consumption
+    totalPower += build.motherboard?.powerConsumptionWatts || 50;
+    
+    // RAM power consumption (per module ~3-5W)
+    if (build.memory) {
+      const modules = build.memory.modules || 2;
+      const ramPowerPerModule = build.memory.powerConsumptionWatts || 4;
+      totalPower += modules * ramPowerPerModule;
+    }
+    
+    // Storage power consumption
+    if (build.storage) {
+      totalPower += build.storage.powerConsumptionWatts || 5;
+    }
+    
+    // CPU Cooler (fans)
+    if (build.cpuCooler) {
+      totalPower += build.cpuCooler.powerConsumptionWatts || 10;
+    }
+    
+    // Case fans and RGB (estimate)
+    totalPower += build.case?.powerConsumptionWatts || 30;
+    
+    // Other peripherals and overhead
+    totalPower += 20; // USB devices, RGB controllers, etc.
+    
+    const estimatedWattage = Math.ceil(totalPower);
+    const recommendedWattage = Math.ceil(estimatedWattage * 1.25); // 25% headroom for efficiency
 
     if (psu.wattage < estimatedWattage) {
       this.issues.push({
         type: 'insufficient_power',
         severity: 'critical',
-        message: `PSU wattage ${psu.wattage}W is insufficient. Estimated power: ${estimatedWattage}W. Recommended: ${Math.ceil(recommendedWattage)}W+`,
-        components: ['psu', 'cpu', 'gpu']
+        message: `PSU wattage ${psu.wattage}W is insufficient. Total system power: ${estimatedWattage}W. Recommended: ${recommendedWattage}W+`,
+        components: ['psu']
       });
     } else if (psu.wattage < recommendedWattage) {
       this.warnings.push({
         type: 'low_power_headroom',
         severity: 'warning',
-        message: `PSU wattage ${psu.wattage}W may be cutting it close. Estimated power: ${estimatedWattage}W. Recommended: ${Math.ceil(recommendedWattage)}W+ for better efficiency`,
-        components: ['psu', 'cpu', 'gpu']
+        message: `PSU wattage ${psu.wattage}W may be tight. Total system power: ${estimatedWattage}W. Recommended: ${recommendedWattage}W+ for optimal efficiency and headroom`,
+        components: ['psu']
+      });
+    }
+    
+    // Warning for overpowered PSU (wasteful)
+    if (psu.wattage > estimatedWattage * 2) {
+      this.warnings.push({
+        type: 'oversized_psu',
+        severity: 'warning',
+        message: `PSU wattage ${psu.wattage}W is much higher than needed (${estimatedWattage}W). PSUs are most efficient at 50-80% load`,
+        components: ['psu']
       });
     }
   }

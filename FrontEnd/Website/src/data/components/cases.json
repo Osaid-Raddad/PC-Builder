@@ -13,7 +13,8 @@
       "topFanSlots": 0,
       "includedFans": 2,
       "price": 149,
-      "image": "/images/cases/nzxt-h510-elite.jpg"
+      "image": "/images/cases/nzxt-h510-elite.jpg",
+      "powerConsumptionWatts": 16
     },
     {
       "id": 2,
@@ -28,7 +29,8 @@
       "topFanSlots": 2,
       "includedFans": 2,
       "price": 104,
-      "image": "/images/cases/corsair-4000d-airflow.jpg"
+      "image": "/images/cases/corsair-4000d-airflow.jpg",
+      "powerConsumptionWatts": 8
     },
     {
       "id": 3,
@@ -43,7 +45,8 @@
       "topFanSlots": 3,
       "includedFans": 0,
       "price": 139,
-      "image": "/images/cases/lianli-o11-dynamic.jpg"
+      "image": "/images/cases/lianli-o11-dynamic.jpg",
+      "powerConsumptionWatts": 0
     },
     {
       "id": 4,
@@ -58,7 +61,8 @@
       "topFanSlots": 3,
       "includedFans": 3,
       "price": 149,
-      "image": "/images/cases/fractal-meshify2.jpg"
+      "image": "/images/cases/fractal-meshify2.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 5,
@@ -73,7 +77,8 @@
       "topFanSlots": 3,
       "includedFans": 3,
       "price": 139,
-      "image": "/images/cases/phanteks-p500a.jpg"
+      "image": "/images/cases/phanteks-p500a.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 6,
@@ -88,7 +93,8 @@
       "topFanSlots": 2,
       "includedFans": 3,
       "price": 109,
-      "image": "/images/cases/bequiet-pure-500dx.jpg"
+      "image": "/images/cases/bequiet-pure-500dx.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 7,
@@ -103,7 +109,8 @@
       "topFanSlots": 2,
       "includedFans": 3,
       "price": 99,
-      "image": "/images/cases/coolermaster-td500.jpg"
+      "image": "/images/cases/coolermaster-td500.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 8,
@@ -118,7 +125,8 @@
       "topFanSlots": 3,
       "includedFans": 4,
       "price": 169,
-      "image": "/images/cases/nzxt-h710i.jpg"
+      "image": "/images/cases/nzxt-h710i.jpg",
+      "powerConsumptionWatts": 16
     },
     {
       "id": 9,
@@ -133,7 +141,8 @@
       "topFanSlots": 3,
       "includedFans": 2,
       "price": 164,
-      "image": "/images/cases/corsair-5000d.jpg"
+      "image": "/images/cases/corsair-5000d.jpg",
+      "powerConsumptionWatts": 8
     },
     {
       "id": 10,
@@ -148,7 +157,8 @@
       "topFanSlots": 2,
       "includedFans": 3,
       "price": 119,
-      "image": "/images/cases/lianli-lancool2.jpg"
+      "image": "/images/cases/lianli-lancool2.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 11,
@@ -163,7 +173,8 @@
       "topFanSlots": 2,
       "includedFans": 2,
       "price": 109,
-      "image": "/images/cases/fractal-meshify-c.jpg"
+      "image": "/images/cases/fractal-meshify-c.jpg",
+      "powerConsumptionWatts": 8
     },
     {
       "id": 12,
@@ -178,7 +189,8 @@
       "topFanSlots": 2,
       "includedFans": 3,
       "price": 89,
-      "image": "/images/cases/phanteks-p400a.jpg"
+      "image": "/images/cases/phanteks-p400a.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 13,
@@ -193,7 +205,8 @@
       "topFanSlots": 3,
       "includedFans": 2,
       "price": 179,
-      "image": "/images/cases/bequiet-dark-base-700.jpg"
+      "image": "/images/cases/bequiet-dark-base-700.jpg",
+      "powerConsumptionWatts": 8
     },
     {
       "id": 14,
@@ -208,7 +221,8 @@
       "topFanSlots": 2,
       "includedFans": 2,
       "price": 119,
-      "image": "/images/cases/coolermaster-h500.jpg"
+      "image": "/images/cases/coolermaster-h500.jpg",
+      "powerConsumptionWatts": 8
     },
     {
       "id": 15,
@@ -223,7 +237,8 @@
       "topFanSlots": 0,
       "includedFans": 2,
       "price": 89,
-      "image": "/images/cases/nzxt-h510.jpg"
+      "image": "/images/cases/nzxt-h510.jpg",
+      "powerConsumptionWatts": 8
     },
     {
       "id": 16,
@@ -238,7 +253,8 @@
       "topFanSlots": 2,
       "includedFans": 3,
       "price": 134,
-      "image": "/images/cases/corsair-4000x.jpg"
+      "image": "/images/cases/corsair-4000x.jpg",
+      "powerConsumptionWatts": 20
     },
     {
       "id": 17,
@@ -253,7 +269,8 @@
       "topFanSlots": 3,
       "includedFans": 0,
       "price": 189,
-      "image": "/images/cases/lianli-o11-evo.jpg"
+      "image": "/images/cases/lianli-o11-evo.jpg",
+      "powerConsumptionWatts": 0
     },
     {
       "id": 18,
@@ -268,7 +285,8 @@
       "topFanSlots": 3,
       "includedFans": 3,
       "price": 169,
-      "image": "/images/cases/fractal-define7.jpg"
+      "image": "/images/cases/fractal-define7.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 19,
@@ -283,7 +301,8 @@
       "topFanSlots": 3,
       "includedFans": 3,
       "price": 149,
-      "image": "/images/cases/phanteks-enthoo-pro2.jpg"
+      "image": "/images/cases/phanteks-enthoo-pro2.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 20,
@@ -298,7 +317,8 @@
       "topFanSlots": 3,
       "includedFans": 3,
       "price": 169,
-      "image": "/images/cases/bequiet-silent-802.jpg"
+      "image": "/images/cases/bequiet-silent-802.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 21,
@@ -313,7 +333,8 @@
       "topFanSlots": 2,
       "includedFans": 2,
       "price": 189,
-      "image": "/images/cases/coolermaster-h500p.jpg"
+      "image": "/images/cases/coolermaster-h500p.jpg",
+      "powerConsumptionWatts": 8
     },
     {
       "id": 22,
@@ -328,7 +349,8 @@
       "topFanSlots": 3,
       "includedFans": 4,
       "price": 139,
-      "image": "/images/cases/nzxt-h710.jpg"
+      "image": "/images/cases/nzxt-h710.jpg",
+      "powerConsumptionWatts": 16
     },
     {
       "id": 23,
@@ -343,7 +365,8 @@
       "topFanSlots": 3,
       "includedFans": 3,
       "price": 249,
-      "image": "/images/cases/corsair-7000d.jpg"
+      "image": "/images/cases/corsair-7000d.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 24,
@@ -358,7 +381,8 @@
       "topFanSlots": 2,
       "includedFans": 2,
       "price": 99,
-      "image": "/images/cases/lianli-lancool-216.jpg"
+      "image": "/images/cases/lianli-lancool-216.jpg",
+      "powerConsumptionWatts": 8
     },
     {
       "id": 25,
@@ -373,7 +397,8 @@
       "topFanSlots": 3,
       "includedFans": 5,
       "price": 209,
-      "image": "/images/cases/fractal-torrent.jpg"
+      "image": "/images/cases/fractal-torrent.jpg",
+      "powerConsumptionWatts": 20
     },
     {
       "id": 26,
@@ -388,7 +413,8 @@
       "topFanSlots": 0,
       "includedFans": 2,
       "price": 99,
-      "image": "/images/cases/nzxt-h210i.jpg"
+      "image": "/images/cases/nzxt-h210i.jpg",
+      "powerConsumptionWatts": 8
     },
     {
       "id": 27,
@@ -403,7 +429,8 @@
       "topFanSlots": 0,
       "includedFans": 2,
       "price": 159,
-      "image": "/images/cases/corsair-280x.jpg"
+      "image": "/images/cases/corsair-280x.jpg",
+      "powerConsumptionWatts": 16
     },
     {
       "id": 28,
@@ -418,7 +445,8 @@
       "topFanSlots": 3,
       "includedFans": 0,
       "price": 119,
-      "image": "/images/cases/lianli-o11-mini.jpg"
+      "image": "/images/cases/lianli-o11-mini.jpg",
+      "powerConsumptionWatts": 0
     },
     {
       "id": 29,
@@ -433,7 +461,8 @@
       "topFanSlots": 0,
       "includedFans": 0,
       "price": 89,
-      "image": "/images/cases/fractal-node202.jpg"
+      "image": "/images/cases/fractal-node202.jpg",
+      "powerConsumptionWatts": 0
     },
     {
       "id": 30,
@@ -448,7 +477,8 @@
       "topFanSlots": 2,
       "includedFans": 2,
       "price": 99,
-      "image": "/images/cases/coolermaster-nr200p.jpg"
+      "image": "/images/cases/coolermaster-nr200p.jpg",
+      "powerConsumptionWatts": 8
     },
     {
       "id": 31,
@@ -463,7 +493,8 @@
       "topFanSlots": 2,
       "includedFans": 1,
       "price": 149,
-      "image": "/images/cases/phanteks-evolv-shift2.jpg"
+      "image": "/images/cases/phanteks-evolv-shift2.jpg",
+      "powerConsumptionWatts": 4
     },
     {
       "id": 32,
@@ -478,7 +509,8 @@
       "topFanSlots": 0,
       "includedFans": 0,
       "price": 59,
-      "image": "/images/cases/silverstone-sg13.jpg"
+      "image": "/images/cases/silverstone-sg13.jpg",
+      "powerConsumptionWatts": 0
     },
     {
       "id": 33,
@@ -493,7 +525,8 @@
       "topFanSlots": 2,
       "includedFans": 2,
       "price": 79,
-      "image": "/images/cases/bequiet-pure-500.jpg"
+      "image": "/images/cases/bequiet-pure-500.jpg",
+      "powerConsumptionWatts": 8
     },
     {
       "id": 34,
@@ -508,7 +541,8 @@
       "topFanSlots": 0,
       "includedFans": 0,
       "price": 129,
-      "image": "/images/cases/thermaltake-core-p3.jpg"
+      "image": "/images/cases/thermaltake-core-p3.jpg",
+      "powerConsumptionWatts": 0
     },
     {
       "id": 35,
@@ -523,7 +557,8 @@
       "topFanSlots": 3,
       "includedFans": 3,
       "price": 499,
-      "image": "/images/cases/corsair-1000d.jpg"
+      "image": "/images/cases/corsair-1000d.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 36,
@@ -538,7 +573,8 @@
       "topFanSlots": 3,
       "includedFans": 0,
       "price": 129,
-      "image": "/images/cases/lianli-o11-air-mini.jpg"
+      "image": "/images/cases/lianli-o11-air-mini.jpg",
+      "powerConsumptionWatts": 0
     },
     {
       "id": 37,
@@ -553,7 +589,8 @@
       "topFanSlots": 3,
       "includedFans": 3,
       "price": 129,
-      "image": "/images/cases/nzxt-h7-flow.jpg"
+      "image": "/images/cases/nzxt-h7-flow.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 38,
@@ -568,7 +605,8 @@
       "topFanSlots": 2,
       "includedFans": 2,
       "price": 139,
-      "image": "/images/cases/fractal-north.jpg"
+      "image": "/images/cases/fractal-north.jpg",
+      "powerConsumptionWatts": 8
     },
     {
       "id": 39,
@@ -583,7 +621,8 @@
       "topFanSlots": 2,
       "includedFans": 2,
       "price": 79,
-      "image": "/images/cases/phanteks-p360a.jpg"
+      "image": "/images/cases/phanteks-p360a.jpg",
+      "powerConsumptionWatts": 8
     },
     {
       "id": 40,
@@ -598,7 +637,8 @@
       "topFanSlots": 3,
       "includedFans": 3,
       "price": 269,
-      "image": "/images/cases/bequiet-dark-pro-900.jpg"
+      "image": "/images/cases/bequiet-dark-pro-900.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 41,
@@ -613,7 +653,8 @@
       "topFanSlots": 0,
       "includedFans": 1,
       "price": 49,
-      "image": "/images/cases/coolermaster-q300l.jpg"
+      "image": "/images/cases/coolermaster-q300l.jpg",
+      "powerConsumptionWatts": 4
     },
     {
       "id": 42,
@@ -628,7 +669,8 @@
       "topFanSlots": 2,
       "includedFans": 2,
       "price": 79,
-      "image": "/images/cases/lianli-lancool-205.jpg"
+      "image": "/images/cases/lianli-lancool-205.jpg",
+      "powerConsumptionWatts": 8
     },
     {
       "id": 43,
@@ -643,7 +685,8 @@
       "topFanSlots": 3,
       "includedFans": 4,
       "price": 249,
-      "image": "/images/cases/corsair-5000x.jpg"
+      "image": "/images/cases/corsair-5000x.jpg",
+      "powerConsumptionWatts": 24
     },
     {
       "id": 44,
@@ -658,7 +701,8 @@
       "topFanSlots": 3,
       "includedFans": 4,
       "price": 219,
-      "image": "/images/cases/thermaltake-view71.jpg"
+      "image": "/images/cases/thermaltake-view71.jpg",
+      "powerConsumptionWatts": 24
     },
     {
       "id": 45,
@@ -673,7 +717,8 @@
       "topFanSlots": 3,
       "includedFans": 3,
       "price": 159,
-      "image": "/images/cases/nzxt-h9-flow.jpg"
+      "image": "/images/cases/nzxt-h9-flow.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 46,
@@ -688,7 +733,8 @@
       "topFanSlots": 2,
       "includedFans": 3,
       "price": 99,
-      "image": "/images/cases/fractal-pop-air.jpg"
+      "image": "/images/cases/fractal-pop-air.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 47,
@@ -703,7 +749,8 @@
       "topFanSlots": 3,
       "includedFans": 3,
       "price": 159,
-      "image": "/images/cases/phanteks-p600s.jpg"
+      "image": "/images/cases/phanteks-p600s.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 48,
@@ -718,7 +765,8 @@
       "topFanSlots": 2,
       "includedFans": 2,
       "price": 139,
-      "image": "/images/cases/bequiet-silent-601.jpg"
+      "image": "/images/cases/bequiet-silent-601.jpg",
+      "powerConsumptionWatts": 8
     },
     {
       "id": 49,
@@ -733,7 +781,8 @@
       "topFanSlots": 3,
       "includedFans": 3,
       "price": 499,
-      "image": "/images/cases/coolermaster-haf700.jpg"
+      "image": "/images/cases/coolermaster-haf700.jpg",
+      "powerConsumptionWatts": 12
     },
     {
       "id": 50,
@@ -748,7 +797,8 @@
       "topFanSlots": 3,
       "includedFans": 0,
       "price": 189,
-      "image": "/images/cases/lianli-o11-vision.jpg"
+      "image": "/images/cases/lianli-o11-vision.jpg",
+      "powerConsumptionWatts": 0
     }
   ]
 }
