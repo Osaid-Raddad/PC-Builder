@@ -1013,3 +1013,204 @@ export const getCaseImage = (manufacturer, model) => {
 
   return null;
 };
+
+// Power Supply (PSU) Image Mapping
+export const psuImageMap = {
+  // ASUS
+  "ASUS ROG Thor 1200P": "ASUS ROG Thor 1200P.jpg",
+  "ROG Thor 1200P": "ASUS ROG Thor 1200P.jpg",
+  "ASUS TUF Gaming 850W Gold": "ASUS TUF Gaming 850W Gold.jpg",
+  "TUF Gaming 850W Gold": "ASUS TUF Gaming 850W Gold.jpg",
+
+  // be quiet!
+  "be quiet! Dark Power Pro 12 1200W": "be quiet! Dark Power Pro 12 1200W.jpg",
+  "Dark Power Pro 12 1200W": "be quiet! Dark Power Pro 12 1200W.jpg",
+  "be quiet! Pure Power 11 600W": "be quiet! Pure Power 11 600W.jpg",
+  "Pure Power 11 600W": "be quiet! Pure Power 11 600W.jpg",
+  "be quiet! Pure Power 11 700W": "be quiet! Pure Power 11 700W.jpg",
+  "Pure Power 11 700W": "be quiet! Pure Power 11 700W.jpg",
+  "be quiet! Straight Power 11 750W": "be quiet! Straight Power 11 750W.jpg",
+  "Straight Power 11 750W": "be quiet! Straight Power 11 750W.jpg",
+
+  // Cooler Master
+  "Cooler Master MWE Gold 650": "Cooler Master MWE Gold 650.jpg",
+  "MWE Gold 650": "Cooler Master MWE Gold 650.jpg",
+  "Cooler Master MWE Gold 750": "Cooler Master MWE Gold 750.jpg",
+  "MWE Gold 750": "Cooler Master MWE Gold 750.jpg",
+  "Cooler Master V850 Gold": "Cooler Master V850 Gold.jpg",
+  "V850 Gold": "Cooler Master V850 Gold.jpg",
+
+  // Corsair
+  "Corsair CX650M": "Corsair CX650M.jpg",
+  CX650M: "Corsair CX650M.jpg",
+  "Corsair CX750M": "Corsair CX750M.jpg",
+  CX750M: "Corsair CX750M.jpg",
+  "Corsair HX1200i": "Corsair HX1200i.jpg",
+  HX1200i: "Corsair HX1200i.jpg",
+  "Corsair RM1000x": "Corsair RM1000x.jpg",
+  RM1000x: "Corsair RM1000x.jpg",
+  "Corsair RM750x": "Corsair RM750x.jpg",
+  RM750x: "Corsair RM750x.jpg",
+  "Corsair RM850x": "Corsair RM850x.jpg",
+  RM850x: "Corsair RM850x.jpg",
+  "Corsair SF600": "Corsair SF600.jpg",
+  SF600: "Corsair SF600.jpg",
+  "Corsair SF750": "Corsair SF750.jpg",
+  SF750: "Corsair SF750.jpg",
+
+  // EVGA
+  "EVGA SuperNOVA 1000 G6": "EVGA SuperNOVA 1000 G6.jpg",
+  "SuperNOVA 1000 G6": "EVGA SuperNOVA 1000 G6.jpg",
+  "EVGA SuperNOVA 650 GT": "EVGA SuperNOVA 650 GT.jpg",
+  "SuperNOVA 650 GT": "EVGA SuperNOVA 650 GT.jpg",
+  "EVGA SuperNOVA 750 GT": "EVGA SuperNOVA 750 GT.jpg",
+  "SuperNOVA 750 GT": "EVGA SuperNOVA 750 GT.jpg",
+  "EVGA SuperNOVA 850 G6": "EVGA SuperNOVA 850 G6.jpg",
+  "SuperNOVA 850 G6": "EVGA SuperNOVA 850 G6.jpg",
+
+  // MSI
+  "MSI MPG A750GF": "MSI MPG A750GF.jpg",
+  "MPG A750GF": "MSI MPG A750GF.jpg",
+  "MSI MPG A850GF": "MSI MPG A850GF.jpg",
+  "MPG A850GF": "MSI MPG A850GF.jpg",
+
+  // NZXT
+  "NZXT C850": "NZXT C850.jpg",
+  C850: "NZXT C850.jpg",
+
+  // Seasonic
+  "Seasonic FOCUS GX-650": "Seasonic FOCUS GX-650.jpg",
+  "FOCUS GX-650": "Seasonic FOCUS GX-650.jpg",
+  "Seasonic FOCUS GX-750": "Seasonic FOCUS GX-750.jpg",
+  "FOCUS GX-750": "Seasonic FOCUS GX-750.jpg",
+  "Seasonic FOCUS GX-850": "Seasonic FOCUS GX-850.jpg",
+  "FOCUS GX-850": "Seasonic FOCUS GX-850.jpg",
+  "Seasonic PRIME PX-850": "Seasonic PRIME PX-850.jpg",
+  "PRIME PX-850": "Seasonic PRIME PX-850.jpg",
+  "Seasonic PRIME TX-1000": "Seasonic PRIME TX-1000.jpg",
+  "PRIME TX-1000": "Seasonic PRIME TX-1000.jpg",
+
+  // Silverstone
+  "Silverstone SX650-G": "Silverstone SX650-G.jpg",
+  "SX650-G": "Silverstone SX650-G.jpg",
+  "Silverstone SX700-PT": "Silverstone SX700-PT.jpg",
+  "SX700-PT": "Silverstone SX700-PT.jpg",
+
+  // Thermaltake
+  "Thermaltake Smart 600W": "Thermaltake Smart 600W'.jpg",
+  "Smart 600W": "Thermaltake Smart 600W'.jpg",
+  "Thermaltake Smart 700W": "download.jpgThermaltake Smart 700W.jpg",
+  "Smart 700W": "download.jpgThermaltake Smart 700W.jpg",
+  "Thermaltake Toughpower GF1 750W": "Thermaltake Toughpower GF1 750W.jpg",
+  "Toughpower GF1 750W": "Thermaltake Toughpower GF1 750W.jpg",
+  "Thermaltake Toughpower GF1 850W": "Thermaltake Toughpower GF1 850W.jpg",
+  "Toughpower GF1 850W": "Thermaltake Toughpower GF1 850W.jpg",
+};
+
+// Get Power Supply (PSU) image path
+export const getPSUImage = (manufacturer, model) => {
+  if (!manufacturer || !model) return null;
+
+  const fullName = `${manufacturer} ${model}`;
+
+  // Try exact match first
+  if (psuImageMap[fullName]) {
+    return `/src/assets/Images/PowerSupply/${psuImageMap[fullName]}`;
+  }
+
+  // Try model only
+  if (psuImageMap[model]) {
+    return `/src/assets/Images/PowerSupply/${psuImageMap[model]}`;
+  }
+
+  // Try partial match
+  for (const [key, value] of Object.entries(psuImageMap)) {
+    if (fullName.includes(key) || key.includes(model)) {
+      return `/src/assets/Images/PowerSupply/${value}`;
+    }
+  }
+
+  return null;
+};
+
+// Monitor Image Mapping
+export const monitorImageMap = {
+  // Acer
+  "Acer Predator": "Acer Predator.jpg",
+  Predator: "Acer Predator.jpg",
+
+  // AOC
+  AOC: "AOC.jpg",
+
+  // ASUS
+  "ASUS ROG Swift PG279QM": "ASUS ROG Swift PG279QM.jpg",
+  "ROG Swift PG279QM": "ASUS ROG Swift PG279QM.jpg",
+  "ASUS TUF Gaming VG27AQ": "ASUS TUF Gaming VG27AQ.jpg",
+  "TUF Gaming VG27AQ": "ASUS TUF Gaming VG27AQ.jpg",
+
+  // BenQ
+  BenQ: "BenQ.jpg",
+
+  // Dell
+  "Dell S272": "Dell S272.jpg",
+  S272: "Dell S272.jpg",
+  "Dell UltraSharp U2720Q": "Dell UltraSharp U2720Q.jpg",
+  "UltraSharp U2720Q": "Dell UltraSharp U2720Q.jpg",
+  "Dell S2721DGF": "Dell S272.jpg", // Using similar model image
+  S2721DGF: "Dell S272.jpg",
+
+  // Gigabyte
+  Gigabyte: "Gigabyte.jpg",
+
+  // LG
+  "LG 27GL850-B": "LG 27GL850-B.jpg",
+  "27GL850-B": "LG 27GL850-B.jpg",
+  "LG 27UP850-W": "LG 27UP850-W.jpg",
+  "27UP850-W": "LG 27UP850-W.jpg",
+  "LG 34GN850-B": "LG 34GN850-B.jpg",
+  "34GN850-B": "LG 34GN850-B.jpg",
+
+  // MSI
+  "MSI Optix": "MSI Optix.jpg",
+  Optix: "MSI Optix.jpg",
+
+  // Samsung
+  "Samsung Odyssey G9": "Samsung Odyssey G9.jpg",
+  "Odyssey G9": "Samsung Odyssey G9.jpg",
+  "Samsung Odyssey": "Samsung Odyssey.jpg",
+  Odyssey: "Samsung Odyssey.jpg",
+
+  // ViewSonic
+  ViewSonic: "ViewSonic.jpg",
+};
+
+// Get Monitor image path
+export const getMonitorImage = (manufacturer, model) => {
+  if (!manufacturer || !model) return null;
+
+  const fullName = `${manufacturer} ${model}`;
+
+  // Try exact match first
+  if (monitorImageMap[fullName]) {
+    return `/src/assets/Images/Monitors/${monitorImageMap[fullName]}`;
+  }
+
+  // Try model only
+  if (monitorImageMap[model]) {
+    return `/src/assets/Images/Monitors/${monitorImageMap[model]}`;
+  }
+
+  // Try manufacturer only (for generic brand images)
+  if (monitorImageMap[manufacturer]) {
+    return `/src/assets/Images/Monitors/${monitorImageMap[manufacturer]}`;
+  }
+
+  // Try partial match
+  for (const [key, value] of Object.entries(monitorImageMap)) {
+    if (fullName.includes(key) || key.includes(model)) {
+      return `/src/assets/Images/Monitors/${value}`;
+    }
+  }
+
+  return null;
+};
