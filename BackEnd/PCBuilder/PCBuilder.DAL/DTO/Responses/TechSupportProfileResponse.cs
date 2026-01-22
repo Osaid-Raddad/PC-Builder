@@ -23,11 +23,11 @@ namespace PCBuilder.DAL.DTO.Responses
         public int? YearsOfExperience { get; set; }
         public double? Rate { get; set; }
         
+        public int CompletedSessionsCount { get; set; }
 
         public string Role { get; set; }
         public DateTime CreatedAt { get; set; }
 
-        public int CompletedSessionsCount { get; set; }
        
     }
 }

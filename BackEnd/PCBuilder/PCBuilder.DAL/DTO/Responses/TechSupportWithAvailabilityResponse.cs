@@ -12,6 +12,9 @@ namespace PCBuilder.DAL.DTO.Responses
         public string FullName { get; set; }
         public string Email { get; set; }
 
+        public double? Rate { get; set; }
+
+        public int CompletedSessionsCount { get; set; }
         public List<AvailabilityResponse> Availabilities { get; set; } = new();
     }
 }

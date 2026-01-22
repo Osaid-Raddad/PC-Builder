@@ -115,6 +115,8 @@ namespace PCBuilder.BLL.Services.Classes
                         TechSupportId = tech.Id,
                         FullName = tech.FullName,
                         Email = tech.Email,
+                        Rate = tech.Rate,
+                        CompletedSessionsCount = tech.CompletedSessionsCount,
                         Availabilities = validAvailabilities
                     };
                 })
