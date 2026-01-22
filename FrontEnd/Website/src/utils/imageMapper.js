@@ -902,3 +902,114 @@ export const getStorageImage = (manufacturer, model) => {
 
   return null;
 };
+
+// Case Image Mapping
+export const caseImageMap = {
+  // be quiet!
+  "be quiet! Pure Base 500DX": "be quiet! Pure Base 500DX.jpg",
+  "Pure Base 500DX": "be quiet! Pure Base 500DX.jpg",
+  "be quiet! Silent Base 802": "be quiet! Silent Base 802.jpg",
+  "Silent Base 802": "be quiet! Silent Base 802.jpg",
+  "be quiet! Dark Base 700": "download.jpgbe quiet! Dark Base 700.jpg",
+  "Dark Base 700": "download.jpgbe quiet! Dark Base 700.jpg",
+
+  // Cooler Master
+  "Cooler Master H500": "Cooler Master H500.jpg",
+  H500: "Cooler Master H500.jpg",
+  "Cooler Master MasterBox TD500 Mesh":
+    "Cooler Master MasterBox TD500 Mesh.jpg",
+  "MasterBox TD500 Mesh": "Cooler Master MasterBox TD500 Mesh.jpg",
+  "Cooler Master MasterCase H500P Mesh":
+    "Cooler Master MasterCase H500P Mesh.jpg",
+  "MasterCase H500P Mesh": "Cooler Master MasterCase H500P Mesh.jpg",
+  "Cooler Master NR200P": "Cooler Master NR200P.jpg",
+  NR200P: "Cooler Master NR200P.jpg",
+
+  // Corsair
+  "Corsair 4000D Airflow": "Corsair 4000D Airflow.jpg",
+  "4000D Airflow": "Corsair 4000D Airflow.jpg",
+  "Corsair 5000D Airflow": "Corsair 5000D Airflow.jpg",
+  "5000D Airflow": "Corsair 5000D Airflow.jpg",
+  "Corsair 7000D Airflow": "Corsair 7000D Airflow.jpg",
+  "7000D Airflow": "Corsair 7000D Airflow.jpg",
+  "Corsair Crystal 280X RGB": "Corsair Crystal 280X RGB.jpg",
+  "Crystal 280X RGB": "Corsair Crystal 280X RGB.jpg",
+  "Corsair iCUE 4000X RGB": "Corsair iCUE 4000X RGB.jpg",
+  "iCUE 4000X RGB": "Corsair iCUE 4000X RGB.jpg",
+
+  // Fractal Design
+  "Fractal Design Define 7": "Fractal Design Define 7.jpg",
+  "Define 7": "Fractal Design Define 7.jpg",
+  "Fractal Design Meshify 2": "Fractal Design Meshify 2.jpg",
+  "Meshify 2": "Fractal Design Meshify 2.jpg",
+  "Fractal Design Meshify C": "Fractal Design Meshify C.jpg",
+  "Meshify C": "Fractal Design Meshify C.jpg",
+  "Fractal Design Node 202": "Fractal Design Node 202.jpg",
+  "Node 202": "Fractal Design Node 202.jpg",
+  "Fractal Design Torrent": "Fractal Design Torrent.jpg",
+  Torrent: "Fractal Design Torrent.jpg",
+
+  // Lian Li
+  "Lian Li Lancool 216": "Lian Li Lancool 216.jpg",
+  "Lancool 216": "Lian Li Lancool 216.jpg",
+  "Lian Li Lancool II Mesh": "Lian Li Lancool II Mesh.jpg",
+  "Lancool II Mesh": "Lian Li Lancool II Mesh.jpg",
+  "Lian Li O11 Dynamic EVO": "Lian Li O11 Dynamic EVO.webp",
+  "O11 Dynamic EVO": "Lian Li O11 Dynamic EVO.webp",
+  "Lian Li O11 Dynamic Mini": "Lian Li O11 Dynamic Mini.jpg",
+  "O11 Dynamic Mini": "Lian Li O11 Dynamic Mini.jpg",
+  "Lian Li O11 Dynamic": "Lian Li O11 Dynamic.jpg",
+  "O11 Dynamic": "Lian Li O11 Dynamic.jpg",
+
+  // NZXT
+  "NZXT H210i": "NZXT H210i.jpg",
+  H210i: "NZXT H210i.jpg",
+  "NZXT H510 Elite": "NZXT H510 Elite.jpg",
+  "H510 Elite": "NZXT H510 Elite.jpg",
+  "NZXT H510": "NZXT H510.jpg",
+  H510: "NZXT H510.jpg",
+  "NZXT H710": "NZXT H710.jpg",
+  H710: "NZXT H710.jpg",
+  "NZXT H710i": "NZXT H710i.jpg",
+  H710i: "NZXT H710i.jpg",
+
+  // Phanteks
+  "Phanteks Eclipse P400A": "Phanteks Eclipse P400A.jpg",
+  "Eclipse P400A": "Phanteks Eclipse P400A.jpg",
+  "Phanteks Eclipse P500A": "Phanteks Eclipse P500A.jpg",
+  "Eclipse P500A": "Phanteks Eclipse P500A.jpg",
+  "Phanteks Enthoo Pro 2": "Phanteks Enthoo Pro 2.jpg",
+  "Enthoo Pro 2": "Phanteks Enthoo Pro 2.jpg",
+  "Phanteks Evolv Shift 2": "Phanteks Evolv Shift 2.jpg",
+  "Evolv Shift 2": "Phanteks Evolv Shift 2.jpg",
+
+  // Silverstone
+  "Silverstone SG13": "Silverstone SG13.jpg",
+  SG13: "Silverstone SG13.jpg",
+};
+
+// Get Case image path
+export const getCaseImage = (manufacturer, model) => {
+  if (!manufacturer || !model) return null;
+
+  const fullName = `${manufacturer} ${model}`;
+
+  // Try exact match first
+  if (caseImageMap[fullName]) {
+    return `/src/assets/Images/Cases/${caseImageMap[fullName]}`;
+  }
+
+  // Try model only
+  if (caseImageMap[model]) {
+    return `/src/assets/Images/Cases/${caseImageMap[model]}`;
+  }
+
+  // Try partial match
+  for (const [key, value] of Object.entries(caseImageMap)) {
+    if (fullName.includes(key) || key.includes(model)) {
+      return `/src/assets/Images/Cases/${value}`;
+    }
+  }
+
+  return null;
+};
