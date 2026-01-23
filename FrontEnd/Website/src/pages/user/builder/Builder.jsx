@@ -93,16 +93,19 @@ const Builder = () => {
       
       // Use compatibility check from context
       if (!compatCheck.isCompatible) {
+        const criticalCount = compatCheck.issues.filter(i => i.severity === 'critical').length;
         return { 
           status: 'incompatible', 
-          message: `${compatCheck.issues.length} Issues Found`, 
+          message: `${compatCheck.issues.length} Critical Issue${compatCheck.issues.length > 1 ? 's' : ''}`, 
+          subMessage: compatCheck.warnings.length > 0 ? `+ ${compatCheck.warnings.length} Warning${compatCheck.warnings.length > 1 ? 's' : ''}` : '',
           icon: <FaTimesCircle size={20} />,
           color: '#F44336'
         };
       } else if (compatCheck.hasWarnings) {
         return { 
           status: 'warning', 
-          message: `${compatCheck.warnings.length} Warnings`, 
+          message: `${compatCheck.warnings.length} Warning${compatCheck.warnings.length > 1 ? 's' : ''}`, 
+          subMessage: 'Review recommended',
           icon: <FaExclamationTriangle size={20} />,
           color: '#FF9800'
         };
@@ -110,6 +113,7 @@ const Builder = () => {
         return { 
           status: 'compatible', 
           message: 'All Compatible', 
+          subMessage: 'Build looks great!',
           icon: <FaCheckCircle size={20} />,
           color: '#4CAF50'
         };
@@ -186,9 +190,16 @@ const Builder = () => {
                       {compatibility.icon}
                     </span>
                   )}
-                  <p className="text-lg font-semibold" style={{ color: compatibility.color || colors.jet }}>
-                    {compatibility.message}
-                  </p>
+                  <div>
+                    <p className="text-lg font-semibold" style={{ color: compatibility.color || colors.jet }}>
+                      {compatibility.message}
+                    </p>
+                    {compatibility.subMessage && (
+                      <p className="text-xs" style={{ color: compatibility.color || colors.jet }}>
+                        {compatibility.subMessage}
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
               
@@ -336,24 +347,147 @@ const Builder = () => {
                   <div>
                     {compatCheck.issues.length > 0 && (
                       <div className="mb-4">
-                        <h4 className="font-semibold text-sm mb-2" style={{ color: '#F44336' }}>
-                          ⚠️ Critical Issues:
+                        <h4 className="font-semibold text-sm mb-3 flex items-center gap-2" style={{ color: '#F44336' }}>
+                          <FaTimesCircle size={18} />
+                          Critical Issues ({compatCheck.issues.length}):
                         </h4>
                         {compatCheck.issues.map((issue, idx) => (
-                          <div key={idx} className="p-2 mb-2 rounded" style={{ backgroundColor: '#FFEBEE' }}>
-                            <p className="text-sm" style={{ color: '#C62828' }}>{issue.message}</p>
+                          <div key={idx} className="p-4 mb-3 rounded-lg border-l-4" 
+                               style={{ 
+                                 backgroundColor: '#FFEBEE', 
+                                 borderLeftColor: '#F44336' 
+                               }}>
+                            <p className="text-sm font-semibold mb-2" style={{ color: '#C62828' }}>
+                              {issue.message}
+                            </p>
+                            {issue.details && (
+                              <div className="mt-3 pt-3 border-t" style={{ borderColor: '#FFCDD2' }}>
+                                <p className="text-xs font-semibold mb-2" style={{ color: '#B71C1C' }}>
+                                  Detailed Analysis:
+                                </p>
+                                <div className="space-y-1">
+                                  {issue.details.reason && (
+                                    <p className="text-xs" style={{ color: '#D32F2F' }}>
+                                      <span className="font-semibold">Reason:</span> {issue.details.reason}
+                                    </p>
+                                  )}
+                                  {issue.details.cpuPerformance && (
+                                    <p className="text-xs" style={{ color: '#D32F2F' }}>
+                                      <span className="font-semibold">CPU Performance:</span> {issue.details.cpuPerformance}
+                                    </p>
+                                  )}
+                                  {issue.details.requiredCPUPerformance && (
+                                    <p className="text-xs" style={{ color: '#D32F2F' }}>
+                                      <span className="font-semibold">Required:</span> {issue.details.requiredCPUPerformance}+ performance score
+                                    </p>
+                                  )}
+                                  {issue.details.minimumRequired && (
+                                    <p className="text-xs" style={{ color: '#D32F2F' }}>
+                                      <span className="font-semibold">Minimum Required:</span> {issue.details.minimumRequired}+ performance score
+                                    </p>
+                                  )}
+                                  {issue.details.gpuTier && (
+                                    <p className="text-xs" style={{ color: '#D32F2F' }}>
+                                      <span className="font-semibold">GPU Tier:</span> {issue.details.gpuTier}
+                                    </p>
+                                  )}
+                                  {issue.details.cpuTier && (
+                                    <p className="text-xs" style={{ color: '#D32F2F' }}>
+                                      <span className="font-semibold">CPU Tier:</span> {issue.details.cpuTier}
+                                    </p>
+                                  )}
+                                  {issue.details.expectedBottleneck && (
+                                    <p className="text-xs" style={{ color: '#D32F2F' }}>
+                                      <span className="font-semibold">Expected Performance Loss:</span> {issue.details.expectedBottleneck}
+                                    </p>
+                                  )}
+                                  {issue.details.performanceImpact && (
+                                    <p className="text-xs" style={{ color: '#D32F2F' }}>
+                                      <span className="font-semibold">Impact:</span> {issue.details.performanceImpact}
+                                    </p>
+                                  )}
+                                  {issue.details.impact && (
+                                    <p className="text-xs" style={{ color: '#D32F2F' }}>
+                                      <span className="font-semibold">Performance Impact:</span> {issue.details.impact}
+                                    </p>
+                                  )}
+                                  {issue.details.recommendation && (
+                                    <p className="text-xs mt-2 p-2 rounded" style={{ 
+                                      color: '#1B5E20',
+                                      backgroundColor: '#C8E6C9'
+                                    }}>
+                                      <span className="font-semibold">💡 Recommendation:</span> {issue.details.recommendation}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
                     )}
                     {compatCheck.warnings.length > 0 && (
                       <div className="mb-4">
-                        <h4 className="font-semibold text-sm mb-2" style={{ color: '#FF9800' }}>
-                          ⚡ Warnings:
+                        <h4 className="font-semibold text-sm mb-3 flex items-center gap-2" style={{ color: '#FF9800' }}>
+                          <FaExclamationTriangle size={18} />
+                          Warnings ({compatCheck.warnings.length}):
                         </h4>
                         {compatCheck.warnings.map((warning, idx) => (
-                          <div key={idx} className="p-2 mb-2 rounded" style={{ backgroundColor: '#FFF3E0' }}>
-                            <p className="text-sm" style={{ color: '#E65100' }}>{warning.message}</p>
+                          <div key={idx} className="p-4 mb-3 rounded-lg border-l-4" 
+                               style={{ 
+                                 backgroundColor: '#FFF3E0',
+                                 borderLeftColor: '#FF9800'
+                               }}>
+                            <p className="text-sm font-semibold mb-2" style={{ color: '#E65100' }}>
+                              {warning.message}
+                            </p>
+                            {warning.details && (
+                              <div className="mt-3 pt-3 border-t" style={{ borderColor: '#FFE0B2' }}>
+                                <p className="text-xs font-semibold mb-2" style={{ color: '#E65100' }}>
+                                  Additional Info:
+                                </p>
+                                <div className="space-y-1">
+                                  {warning.details.reason && (
+                                    <p className="text-xs" style={{ color: '#EF6C00' }}>
+                                      <span className="font-semibold">Reason:</span> {warning.details.reason}
+                                    </p>
+                                  )}
+                                  {warning.details.cpuPerformance && (
+                                    <p className="text-xs" style={{ color: '#EF6C00' }}>
+                                      <span className="font-semibold">CPU Performance:</span> {warning.details.cpuPerformance}
+                                    </p>
+                                  )}
+                                  {warning.details.recommendedCPUPerformance && (
+                                    <p className="text-xs" style={{ color: '#EF6C00' }}>
+                                      <span className="font-semibold">Recommended:</span> {warning.details.recommendedCPUPerformance}+ performance score
+                                    </p>
+                                  )}
+                                  {warning.details.gpuTier && (
+                                    <p className="text-xs" style={{ color: '#EF6C00' }}>
+                                      <span className="font-semibold">GPU Tier:</span> {warning.details.gpuTier}
+                                    </p>
+                                  )}
+                                  {warning.details.cpuTier && (
+                                    <p className="text-xs" style={{ color: '#EF6C00' }}>
+                                      <span className="font-semibold">CPU Tier:</span> {warning.details.cpuTier}
+                                    </p>
+                                  )}
+                                  {warning.details.expectedBottleneck && (
+                                    <p className="text-xs" style={{ color: '#EF6C00' }}>
+                                      <span className="font-semibold">Expected Performance Loss:</span> {warning.details.expectedBottleneck}
+                                    </p>
+                                  )}
+                                  {warning.details.recommendation && (
+                                    <p className="text-xs mt-2 p-2 rounded" style={{ 
+                                      color: '#1B5E20',
+                                      backgroundColor: '#C8E6C9'
+                                    }}>
+                                      <span className="font-semibold">💡 Recommendation:</span> {warning.details.recommendation}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>

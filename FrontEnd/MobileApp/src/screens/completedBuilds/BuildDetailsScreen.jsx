@@ -6,6 +6,7 @@ import {
   StyleSheet,
   ScrollView,
   Dimensions,
+  Image,
 } from "react-native";
 import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ScreenLayout from "../../components/ScreenLayout";
@@ -69,10 +70,10 @@ export default function BuildDetailsScreen({ route, navigation }) {
         {/* Build Image Gallery */}
         <View style={styles.imageGalleryContainer}>
           <View style={styles.mainImageContainer}>
-            <MaterialCommunityIcons
-              name="desktop-tower"
-              size={120}
-              color={colors.mainYellow}
+            <Image
+              source={build.image}
+              style={styles.mainImage}
+              resizeMode="cover"
             />
             <View style={styles.categoryBadge}>
               <Text style={styles.categoryBadgeText}>{build.category}</Text>
@@ -96,15 +97,12 @@ export default function BuildDetailsScreen({ route, navigation }) {
                 ]}
                 onPress={() => setSelectedImageIndex(index)}
               >
-                <MaterialCommunityIcons
-                  name="desktop-tower"
-                  size={32}
-                  color={
-                    selectedImageIndex === index
-                      ? colors.mainYellow
-                      : colors.platinum
-                  }
+                <Image
+                  source={build.image}
+                  style={styles.thumbnailImage}
+                  resizeMode="cover"
                 />
+              </TouchableOpacity>
               </TouchableOpacity>
             ))}
           </View>
@@ -253,9 +251,12 @@ const styles = StyleSheet.create({
   mainImageContainer: {
     height: 240,
     backgroundColor: colors.background,
-    justifyContent: "center",
-    alignItems: "center",
     position: "relative",
+    overflow: "hidden",
+  },
+  mainImage: {
+    width: "100%",
+    height: "100%",
   },
   categoryBadge: {
     position: "absolute",
@@ -299,11 +300,16 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderRadius: 8,
+    overflow: "hidden",
     backgroundColor: "white",
     justifyContent: "center",
     alignItems: "center",
     borderWidth: 2,
     borderColor: colors.platinum,
+  },
+  thumbnailImage: {
+    width: "100%",
+    height: "100%",
   },
   thumbnailActive: {
     borderColor: colors.mainYellow,

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { CompatibilityChecker } from '../utils/compatibilityChecker';
 
 const BuildContext = createContext();
 
@@ -118,136 +119,33 @@ export const BuildProvider = ({ children }) => {
   };
 
   const checkCompatibility = () => {
-    const issues = [];
-    const warnings = [];
+    // Use the comprehensive CompatibilityChecker class
+    const checker = new CompatibilityChecker();
     
-    const cpu = selectedComponents.cpu;
-    const motherboard = selectedComponents.motherboard;
-    const memory = selectedComponents.memory;
-    const gpu = selectedComponents.gpu;
-    const psu = selectedComponents.psu;
-    const caseComponent = selectedComponents.case;
-    const cooler = selectedComponents.cooler;
+    // Build the component object for the checker
+    const build = {
+      cpu: selectedComponents.cpu,
+      motherboard: selectedComponents.motherboard,
+      gpu: selectedComponents.gpu,
+      memory: selectedComponents.memory,
+      storage: selectedComponents.storage,
+      psu: selectedComponents.psu,
+      case: selectedComponents.case,
+      cpuCooler: selectedComponents.cooler
+    };
     
-    // CPU and Motherboard Socket Compatibility
-    if (cpu && motherboard) {
-      if (cpu.socket !== motherboard.socket) {
-        issues.push({
-          type: 'critical',
-          message: `CPU socket (${cpu.socket}) doesn't match motherboard socket (${motherboard.socket})`,
-          components: ['cpu', 'motherboard']
-        });
-      }
-    }
+    // Debug logging
+    console.log('🔍 Build Context - Selected Components:', selectedComponents);
+    console.log('🔍 Build object for checker:', build);
     
-    // Memory and Motherboard Compatibility
-    if (memory && motherboard) {
-      // Check memory type (DDR4/DDR5)
-      if (memory.type && motherboard.memoryType && memory.type !== motherboard.memoryType) {
-        issues.push({
-          type: 'critical',
-          message: `Memory type (${memory.type}) not supported by motherboard (${motherboard.memoryType})`,
-          components: ['memory', 'motherboard']
-        });
-      }
-      
-      // Check memory speed
-      if (memory.speed && motherboard.memoryMax) {
-        const memorySpeed = parseInt(memory.speed.replace(/\D/g, ''));
-        const motherboardMaxSpeed = parseInt(motherboard.memoryMax.replace(/\D/g, ''));
-        
-        if (memorySpeed > motherboardMaxSpeed) {
-          warnings.push({
-            type: 'warning',
-            message: `Memory speed (${memory.speed}) exceeds motherboard max (${motherboard.memoryMax}). Will run at reduced speed.`,
-            components: ['memory', 'motherboard']
-          });
-        }
-      }
-    }
-    
-    // Motherboard Form Factor and Case Compatibility
-    if (motherboard && caseComponent) {
-      const moboFormFactor = motherboard.formFactor;
-      const caseFormFactors = caseComponent.motherboardFormFactor || [];
-      
-      if (moboFormFactor && caseFormFactors.length > 0 && !caseFormFactors.includes(moboFormFactor)) {
-        issues.push({
-          type: 'critical',
-          message: `Motherboard form factor (${moboFormFactor}) not supported by case`,
-          components: ['motherboard', 'case']
-        });
-      }
-    }
-    
-    // GPU Length and Case Compatibility
-    if (gpu && caseComponent) {
-      const gpuLength = gpu.length || gpu.maximumLength;
-      const caseMaxGpuLength = caseComponent.maximumVideoCardLength;
-      
-      if (gpuLength && caseMaxGpuLength && gpuLength > caseMaxGpuLength) {
-        issues.push({
-          type: 'critical',
-          message: `GPU length (${gpuLength}mm) exceeds case maximum (${caseMaxGpuLength}mm)`,
-          components: ['gpu', 'case']
-        });
-      }
-    }
-    
-    // Power Supply Wattage Check
-    if (psu) {
-      const totalPower = calculateTotalPower();
-      const psuWattage = psu.wattage || psu.wattageW || 0;
-      const recommendedWattage = totalPower * 1.3; // 30% headroom recommended
-      
-      if (psuWattage < totalPower) {
-        issues.push({
-          type: 'critical',
-          message: `PSU wattage (${psuWattage}W) insufficient for system (needs ${totalPower}W minimum)`,
-          components: ['psu']
-        });
-      } else if (psuWattage < recommendedWattage) {
-        warnings.push({
-          type: 'warning',
-          message: `PSU wattage (${psuWattage}W) may be tight. Recommended: ${Math.round(recommendedWattage)}W for 30% headroom`,
-          components: ['psu']
-        });
-      }
-    }
-    
-    // CPU Cooler Clearance
-    if (cooler && caseComponent) {
-      const coolerHeight = cooler.height;
-      const caseMaxCoolerHeight = caseComponent.maximumCpuCoolerHeight;
-      
-      if (coolerHeight && caseMaxCoolerHeight && coolerHeight > caseMaxCoolerHeight) {
-        issues.push({
-          type: 'critical',
-          message: `CPU cooler height (${coolerHeight}mm) exceeds case maximum (${caseMaxCoolerHeight}mm)`,
-          components: ['cooler', 'case']
-        });
-      }
-    }
-    
-    // CPU Cooler and CPU TDP Compatibility
-    if (cooler && cpu) {
-      const cpuTdp = cpu.tdpWatts || cpu.tdp || 0;
-      const coolerTdp = cooler.tdpRating || cooler.tdp || 0;
-      
-      if (cpuTdp && coolerTdp && cpuTdp > coolerTdp) {
-        warnings.push({
-          type: 'warning',
-          message: `CPU TDP (${cpuTdp}W) may exceed cooler capacity (${coolerTdp}W). Consider a more powerful cooler.`,
-          components: ['cpu', 'cooler']
-        });
-      }
-    }
+    // Run the comprehensive compatibility check
+    const result = checker.checkBuild(build);
     
     return {
-      issues,
-      warnings,
-      isCompatible: issues.length === 0,
-      hasWarnings: warnings.length > 0
+      issues: result.issues,
+      warnings: result.warnings,
+      isCompatible: result.isCompatible,
+      hasWarnings: result.warnings.length > 0
     };
   };
 
