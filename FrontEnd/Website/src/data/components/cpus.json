@@ -25,7 +25,13 @@
       "performanceScore": 9200,
       "rating": 4.5,
       "price": 319,
-      "image": "/images/cpus/intel-i5-13600k.jpg"
+      "image": "/images/cpus/intel-i5-13600k.jpg",
+      "detailImages": [
+        "/images/cpus/intel-i5-13600k.jpg",
+        "/images/cpus/i5-13.jpg",
+        "/images/cpus/Intel Core i5-14600K.jpg",
+        "/images/cpus/i5-12.jpg"
+      ]
     },
     {
       "id": 2,

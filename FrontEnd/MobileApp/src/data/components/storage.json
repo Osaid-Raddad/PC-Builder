@@ -11,7 +11,13 @@
       "writeSpeedMBps": 5000,
       "formFactor": "M.2 2280",
       "price": 129,
-      "image": "/images/storage/samsung-980pro-1tb.jpg"
+      "image": "/images/storage/samsung-980pro-1tb.jpg",
+      "detailImages": [
+        "/images/storage/samsung-980pro-1tb.jpg",
+        "/images/storage/samsung-980pro-1tb.jpg",
+        "/images/storage/samsung-980pro-1tb.jpg",
+        "/images/storage/samsung-980pro-1tb.jpg"
+      ]
     },
     {
       "id": 2,
