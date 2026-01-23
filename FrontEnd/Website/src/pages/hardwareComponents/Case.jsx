@@ -10,6 +10,7 @@ import colors from '../../config/colors';
 import { FaDesktop } from 'react-icons/fa';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
 import casesData from '../../data/components/cases.json';
+import { getCaseImage } from '../../utils/imageMapper';
 
 const Case = () => {
   const navigate = useNavigate();
@@ -788,6 +789,31 @@ const Case = () => {
                   {selectedCase?.id === caseItem.id && (
                     <span className="text-2xl">✓</span>
                   )}
+                </div>
+
+                {/* Image Section */}
+                <div className="flex justify-center mb-4 h-48 items-center">
+                  {getCaseImage(caseItem.brand, caseItem.model) ? (
+                    <img
+                      src={getCaseImage(caseItem.brand, caseItem.model)}
+                      alt={caseItem.name}
+                      className="max-h-full max-w-full object-contain"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  <div
+                    className="flex-col items-center text-center"
+                    style={{
+                      display: getCaseImage(caseItem.brand, caseItem.model) ? 'none' : 'flex',
+                      color: colors.platinum
+                    }}
+                  >
+                    <FaDesktop size={64} style={{ color: colors.platinum }} />
+                    <span className="mt-2 text-sm">Image not found</span>
+                  </div>
                 </div>
 
                 <h3 className="text-xl font-bold mb-4" style={{ color: colors.mainBlack }}>

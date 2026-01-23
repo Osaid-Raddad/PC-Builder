@@ -89,12 +89,20 @@ const AppointmentsTab = () => {
     fetchAppointments();
   }, []);
 
+  // Check if appointment is expired
+  const isAppointmentExpired = (endDateTime) => {
+    const endDate = new Date(endDateTime);
+    const currentDate = new Date();
+    return currentDate > endDate;
+  };
+
   const filteredAppointments = appointments.filter(apt => {
     if (filter === 'all') return true;
     return apt.status === filter;
   });
 
-  const getStatusColor = (status) => {
+  const getStatusColor = (status, isExpired) => {
+    if (isExpired) return '#9ca3af';
     switch(status) {
       case 'pending': return '#FF9800';
       case 'accepted': return '#10b981';
@@ -104,7 +112,8 @@ const AppointmentsTab = () => {
     }
   };
 
-  const getStatusLabel = (status) => {
+  const getStatusLabel = (status, isExpired) => {
+    if (isExpired) return 'Expired';
     return status.charAt(0).toUpperCase() + status.slice(1);
   };
 
@@ -195,7 +204,9 @@ const AppointmentsTab = () => {
                 </p>
               </div>
             ) : (
-              filteredAppointments.map((appointment, index) => (
+              filteredAppointments.map((appointment, index) => {
+                const isExpired = isAppointmentExpired(appointment.endDateTime);
+                return (
                 <BounceCard key={appointment.id} index={index}>
                   <div 
                     className="bg-white rounded-lg shadow-lg p-6"
@@ -218,11 +229,11 @@ const AppointmentsTab = () => {
                             <span 
                               className="px-3 py-1 rounded-full text-xs font-bold"
                               style={{ 
-                                backgroundColor: getStatusColor(appointment.status) + '20',
-                                color: getStatusColor(appointment.status)
+                                backgroundColor: getStatusColor(appointment.status, isExpired) + '20',
+                                color: getStatusColor(appointment.status, isExpired)
                               }}
                             >
-                              {getStatusLabel(appointment.status)}
+                              {getStatusLabel(appointment.status, isExpired)}
                             </span>
                           </div>
                           <div className="space-y-2">
@@ -244,23 +255,32 @@ const AppointmentsTab = () => {
 
                       {/* Status Display */}
                       <div className="flex flex-col gap-2 min-w-[180px]">
-                        {appointment.status === 'pending' && (
+                        {isExpired && appointment.status !== 'completed' && appointment.status !== 'rejected' ? (
                           <div 
                             className="px-4 py-3 rounded-lg text-center font-semibold"
-                            style={{ backgroundColor: '#FF9800' + '20', color: '#FF9800' }}
+                            style={{ backgroundColor: '#9ca3af' + '20', color: '#9ca3af' }}
                           >
-                            ⏳ Waiting for confirmation
+                            ⏱ Expired
                           </div>
-                        )}
-                        {appointment.status === 'accepted' && (
-                          <div 
-                            className="px-4 py-3 rounded-lg text-center font-semibold"
-                            style={{ backgroundColor: '#10b981' + '20', color: '#10b981' }}
-                          >
-                            ✓ Confirmed
-                          </div>
-                        )}
-                        {appointment.status === 'completed' && (
+                        ) : (
+                          <>
+                            {appointment.status === 'pending' && (
+                              <div 
+                                className="px-4 py-3 rounded-lg text-center font-semibold"
+                                style={{ backgroundColor: '#FF9800' + '20', color: '#FF9800' }}
+                              >
+                                ⏳ Waiting for confirmation
+                              </div>
+                            )}
+                            {appointment.status === 'accepted' && (
+                              <div 
+                                className="px-4 py-3 rounded-lg text-center font-semibold"
+                                style={{ backgroundColor: '#10b981' + '20', color: '#10b981' }}
+                              >
+                                ✓ Confirmed
+                              </div>
+                            )}
+                            {appointment.status === 'completed' && (
                           <div className="space-y-2">
                             <div 
                               className="px-4 py-3 rounded-lg text-center font-semibold"
@@ -330,19 +350,22 @@ const AppointmentsTab = () => {
                             )}
                           </div>
                         )}
-                        {appointment.status === 'rejected' && (
-                          <div 
-                            className="px-4 py-3 rounded-lg text-center font-semibold"
-                            style={{ backgroundColor: '#ef4444' + '20', color: '#ef4444' }}
-                          >
-                            ✗ Rejected
-                          </div>
+                            {appointment.status === 'rejected' && (
+                              <div 
+                                className="px-4 py-3 rounded-lg text-center font-semibold"
+                                style={{ backgroundColor: '#ef4444' + '20', color: '#ef4444' }}
+                              >
+                                ✗ Rejected
+                              </div>
+                            )}
+                          </>
                         )}
                       </div>
                     </div>
                   </div>
                 </BounceCard>
-              ))
+                );
+              })
             )}
           </div>
         </>

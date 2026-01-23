@@ -10,6 +10,7 @@ import colors from '../../config/colors';
 import { BsMotherboard } from 'react-icons/bs';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
 import motherboardsData from '../../data/components/motherboards.json';
+import { getMotherboardImage } from '../../utils/imageMapper';
 
 const Motherboard = () => {
   const navigate = useNavigate();
@@ -1088,6 +1089,31 @@ const Motherboard = () => {
                   {selectedMotherboard?.id === motherboard.id && (
                     <span className="text-2xl">✓</span>
                   )}
+                </div>
+
+                {/* Image Section */}
+                <div className="flex justify-center mb-4 h-48 items-center">
+                  {getMotherboardImage(motherboard.brand, motherboard.model) ? (
+                    <img
+                      src={getMotherboardImage(motherboard.brand, motherboard.model)}
+                      alt={motherboard.name}
+                      className="max-h-full max-w-full object-contain"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  <div
+                    className="flex-col items-center text-center"
+                    style={{
+                      display: getMotherboardImage(motherboard.brand, motherboard.model) ? 'none' : 'flex',
+                      color: colors.platinum
+                    }}
+                  >
+                    <BsMotherboard size={64} style={{ color: colors.platinum }} />
+                    <span className="mt-2 text-sm">Image not found</span>
+                  </div>
                 </div>
 
                 <h3 className="text-xl font-bold mb-4" style={{ color: colors.mainBlack }}>

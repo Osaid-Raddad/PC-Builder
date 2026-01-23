@@ -14,6 +14,7 @@ import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ScreenLayout from "../../components/ScreenLayout";
 import colors from "../../config/colors";
 import cpusData from "../../data/components/cpus.json";
+import { getCPUImage } from "../../utils/imageMapper";
 import { useBuild } from "../../context/BuildContext";
 import { useCompare } from "../../context/CompareContext";
 
@@ -150,6 +151,7 @@ export default function CPUScreen({ navigation, route }) {
   const renderProduct = ({ item }) => {
     const isSelected = selectedComponents.cpu?.model === item.model;
     const inCompare = isInCompare(item.id);
+    const cpuImage = getCPUImage(item.model);
     
     return (
       <TouchableOpacity 
@@ -160,7 +162,11 @@ export default function CPUScreen({ navigation, route }) {
         })}
       >
         <View style={styles.productImage}>
-          <Feather name="cpu" size={48} color={colors.mainYellow} />
+          {cpuImage ? (
+            <Image source={cpuImage} style={styles.productImageActual} resizeMode="contain" />
+          ) : (
+            <Feather name="cpu" size={48} color={colors.mainYellow} />
+          )}
           {isSelected && (
             <View style={styles.selectedBadge}>
               <Feather name="check-circle" size={20} color={colors.success} />
@@ -885,6 +891,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginRight: 16,
+  },
+  productImageActual: {
+    width: "100%",
+    height: "100%",
   },
   productInfo: {
     flex: 1,

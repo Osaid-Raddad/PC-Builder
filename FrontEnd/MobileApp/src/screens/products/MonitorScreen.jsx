@@ -14,6 +14,7 @@ import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ScreenLayout from "../../components/ScreenLayout";
 import colors from "../../config/colors";
 import monitorsData from "../../data/components/monitors.json";
+import { getMonitorImage } from "../../utils/imageMapper";
 import { useBuild } from "../../context/BuildContext";
 import { useCompare } from "../../context/CompareContext";
 
@@ -144,6 +145,7 @@ export default function MonitorScreen({ navigation, route }) {
   const renderProduct = ({ item }) => {
     const isSelected = selectedComponents.monitor?.model === item.model;
     const inCompare = isInCompare(item.id);
+    const monitorImage = getMonitorImage(item.manufacturer || item.brand, item.model);
     
     return (
     <TouchableOpacity 
@@ -154,7 +156,11 @@ export default function MonitorScreen({ navigation, route }) {
       })}
     >
       <View style={styles.productImage}>
-        <Feather name="monitor" size={48} color={colors.mainYellow} />
+        {monitorImage ? (
+          <Image source={monitorImage} style={styles.productImageActual} resizeMode="contain" />
+        ) : (
+          <Feather name="monitor" size={48} color={colors.mainYellow} />
+        )}
         {isSelected && (
           <View style={styles.selectedBadge}>
             <Feather name="check-circle" size={20} color={colors.success} />
@@ -820,6 +826,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginRight: 16,
+  },
+  productImageActual: {
+    width: "100%",
+    height: "100%",
   },
   productInfo: {
     flex: 1,

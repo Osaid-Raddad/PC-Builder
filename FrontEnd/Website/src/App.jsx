@@ -31,7 +31,7 @@ import ProductDetails from './pages/hardwareComponents/productDetails/ProductDet
 import Posts from './pages/user/posts/Posts';
 import TechSupport from './pages/techSupport/TechSupport.jsx';  
 import Profile from './pages/user/profile/Profile.jsx';
-import TechSupportProfile from './pages/TechSupport/TechProfile/TechSupportProfile';
+import TechSupportProfile from './pages/techSupport/TechProfile/TechSupportProfile';  
 import ProtectedRoute from './components/protected/ProtectedRoute.jsx';
 import Comparator from './pages/user/comparator/Comparator.jsx';
 import TermsOfService from './pages/user/termsOfService/TermsOfService.jsx';
@@ -58,6 +58,7 @@ function AppContent() {
   const isNewsPage = location.pathname.includes('/news');
   const isChatPage = location.pathname.includes('/chat');
   const isAdminPage = location.pathname.includes('/admin');
+  const isAuthPage = ['/signin', '/signup', '/forgot-password', '/reset-password'].includes(location.pathname);
 
   return (
     <div>
@@ -139,7 +140,7 @@ function AppContent() {
       </Routes>
 
       {/* Show ChatBot on all pages except news and chat */}
-      {!isNewsPage && !isChatPage && !isAdminPage && <ChatBot />}
+      {!isNewsPage && !isChatPage && !isAdminPage && !isAuthPage && <ChatBot />}
     </div>
   );
 }

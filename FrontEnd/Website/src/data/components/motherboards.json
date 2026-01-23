@@ -14,6 +14,7 @@
       "pciE1Slots": 3,
       "m2Slots": 4,
       "sataSlots": 6,
+      "powerConsumptionWatts": 65,
       "price": 429,
       "image": "/images/motherboards/asus-rog-z790-e.jpg"
     },
@@ -32,7 +33,8 @@
       "m2Slots": 5,
       "sataSlots": 6,
       "price": 399,
-      "image": "/images/motherboards/msi-z790-carbon.jpg"
+      "image": "/images/motherboards/msi-z790-carbon.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 3,
@@ -49,7 +51,8 @@
       "m2Slots": 5,
       "sataSlots": 8,
       "price": 499,
-      "image": "/images/motherboards/gigabyte-z790-master.jpg"
+      "image": "/images/motherboards/gigabyte-z790-master.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 4,
@@ -66,7 +69,8 @@
       "m2Slots": 4,
       "sataSlots": 6,
       "price": 299,
-      "image": "/images/motherboards/asrock-z790-steel.jpg"
+      "image": "/images/motherboards/asrock-z790-steel.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 5,
@@ -83,7 +87,8 @@
       "m2Slots": 3,
       "sataSlots": 4,
       "price": 219,
-      "image": "/images/motherboards/asus-b760-plus.jpg"
+      "image": "/images/motherboards/asus-b760-plus.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 6,
@@ -100,7 +105,8 @@
       "m2Slots": 2,
       "sataSlots": 4,
       "price": 149,
-      "image": "/images/motherboards/msi-b760-p.jpg"
+      "image": "/images/motherboards/msi-b760-p.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 7,
@@ -117,7 +123,8 @@
       "m2Slots": 4,
       "sataSlots": 6,
       "price": 499,
-      "image": "/images/motherboards/asus-x670e-e.jpg"
+      "image": "/images/motherboards/asus-x670e-e.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 8,
@@ -134,7 +141,8 @@
       "m2Slots": 5,
       "sataSlots": 6,
       "price": 449,
-      "image": "/images/motherboards/msi-x670e-carbon.jpg"
+      "image": "/images/motherboards/msi-x670e-carbon.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 9,
@@ -151,7 +159,8 @@
       "m2Slots": 4,
       "sataSlots": 4,
       "price": 289,
-      "image": "/images/motherboards/gigabyte-x670-elite.jpg"
+      "image": "/images/motherboards/gigabyte-x670-elite.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 10,
@@ -168,7 +177,8 @@
       "m2Slots": 3,
       "sataSlots": 4,
       "price": 229,
-      "image": "/images/motherboards/asrock-b650e-steel.jpg"
+      "image": "/images/motherboards/asrock-b650e-steel.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 11,
@@ -185,7 +195,8 @@
       "m2Slots": 3,
       "sataSlots": 4,
       "price": 199,
-      "image": "/images/motherboards/asus-b650-plus.jpg"
+      "image": "/images/motherboards/asus-b650-plus.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 12,
@@ -202,7 +213,8 @@
       "m2Slots": 2,
       "sataSlots": 4,
       "price": 179,
-      "image": "/images/motherboards/msi-b650-p.jpg"
+      "image": "/images/motherboards/msi-b650-p.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 13,
@@ -219,7 +231,8 @@
       "m2Slots": 2,
       "sataSlots": 6,
       "price": 189,
-      "image": "/images/motherboards/asus-b550-f.jpg"
+      "image": "/images/motherboards/asus-b550-f.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 14,
@@ -236,7 +249,8 @@
       "m2Slots": 2,
       "sataSlots": 6,
       "price": 179,
-      "image": "/images/motherboards/msi-b550-tomahawk.jpg"
+      "image": "/images/motherboards/msi-b550-tomahawk.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 15,
@@ -253,7 +267,8 @@
       "m2Slots": 2,
       "sataSlots": 4,
       "price": 159,
-      "image": "/images/motherboards/gigabyte-b550-elite.jpg"
+      "image": "/images/motherboards/gigabyte-b550-elite.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 16,
@@ -270,7 +285,8 @@
       "m2Slots": 2,
       "sataSlots": 4,
       "price": 129,
-      "image": "/images/motherboards/asrock-b550m-steel.jpg"
+      "image": "/images/motherboards/asrock-b550m-steel.jpg",
+      "powerConsumptionWatts": 50
     },
     {
       "id": 17,
@@ -287,7 +303,8 @@
       "m2Slots": 2,
       "sataSlots": 8,
       "price": 329,
-      "image": "/images/motherboards/asus-x570-e.jpg"
+      "image": "/images/motherboards/asus-x570-e.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 18,
@@ -304,7 +321,8 @@
       "m2Slots": 3,
       "sataSlots": 6,
       "price": 379,
-      "image": "/images/motherboards/msi-x570s-carbon.jpg"
+      "image": "/images/motherboards/msi-x570s-carbon.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 19,
@@ -321,7 +339,8 @@
       "m2Slots": 3,
       "sataSlots": 4,
       "price": 189,
-      "image": "/images/motherboards/asus-z690-p.jpg"
+      "image": "/images/motherboards/asus-z690-p.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 20,
@@ -338,7 +357,8 @@
       "m2Slots": 4,
       "sataSlots": 6,
       "price": 219,
-      "image": "/images/motherboards/msi-z690-a.jpg"
+      "image": "/images/motherboards/msi-z690-a.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 21,
@@ -355,7 +375,8 @@
       "m2Slots": 3,
       "sataSlots": 4,
       "price": 169,
-      "image": "/images/motherboards/gigabyte-z690-ud.jpg"
+      "image": "/images/motherboards/gigabyte-z690-ud.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 22,
@@ -372,7 +393,8 @@
       "m2Slots": 3,
       "sataSlots": 6,
       "price": 249,
-      "image": "/images/motherboards/asrock-z690-extreme.jpg"
+      "image": "/images/motherboards/asrock-z690-extreme.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 23,
@@ -389,7 +411,8 @@
       "m2Slots": 3,
       "sataSlots": 4,
       "price": 189,
-      "image": "/images/motherboards/asus-b660-a.jpg"
+      "image": "/images/motherboards/asus-b660-a.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 24,
@@ -406,7 +429,8 @@
       "m2Slots": 2,
       "sataSlots": 4,
       "price": 149,
-      "image": "/images/motherboards/msi-b660m-mortar.jpg"
+      "image": "/images/motherboards/msi-b660m-mortar.jpg",
+      "powerConsumptionWatts": 50
     },
     {
       "id": 25,
@@ -423,7 +447,8 @@
       "m2Slots": 2,
       "sataSlots": 4,
       "price": 129,
-      "image": "/images/motherboards/gigabyte-b660-gaming.jpg"
+      "image": "/images/motherboards/gigabyte-b660-gaming.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 26,
@@ -440,7 +465,8 @@
       "m2Slots": 1,
       "sataSlots": 4,
       "price": 89,
-      "image": "/images/motherboards/asus-h610m-a.jpg"
+      "image": "/images/motherboards/asus-h610m-a.jpg",
+      "powerConsumptionWatts": 50
     },
     {
       "id": 27,
@@ -457,7 +483,8 @@
       "m2Slots": 1,
       "sataSlots": 4,
       "price": 79,
-      "image": "/images/motherboards/msi-h610m-g.jpg"
+      "image": "/images/motherboards/msi-h610m-g.jpg",
+      "powerConsumptionWatts": 50
     },
     {
       "id": 28,
@@ -474,7 +501,8 @@
       "m2Slots": 5,
       "sataSlots": 6,
       "price": 629,
-      "image": "/images/motherboards/asus-z790-hero.jpg"
+      "image": "/images/motherboards/asus-z790-hero.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 29,
@@ -491,7 +519,8 @@
       "m2Slots": 5,
       "sataSlots": 6,
       "price": 699,
-      "image": "/images/motherboards/gigabyte-x670e-xtreme.jpg"
+      "image": "/images/motherboards/gigabyte-x670e-xtreme.jpg",
+      "powerConsumptionWatts": 75
     },
     {
       "id": 30,
@@ -508,7 +537,8 @@
       "m2Slots": 2,
       "sataSlots": 4,
       "price": 109,
-      "image": "/images/motherboards/asrock-b550-phantom.jpg"
+      "image": "/images/motherboards/asrock-b550-phantom.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 31,
@@ -525,7 +555,8 @@
       "m2Slots": 1,
       "sataSlots": 4,
       "price": 79,
-      "image": "/images/motherboards/asus-b450m-a.jpg"
+      "image": "/images/motherboards/asus-b450m-a.jpg",
+      "powerConsumptionWatts": 50
     },
     {
       "id": 32,
@@ -542,7 +573,8 @@
       "m2Slots": 2,
       "sataSlots": 6,
       "price": 119,
-      "image": "/images/motherboards/msi-b450-tomahawk.jpg"
+      "image": "/images/motherboards/msi-b450-tomahawk.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 33,
@@ -559,7 +591,8 @@
       "m2Slots": 1,
       "sataSlots": 4,
       "price": 69,
-      "image": "/images/motherboards/gigabyte-a520m-elite.jpg"
+      "image": "/images/motherboards/gigabyte-a520m-elite.jpg",
+      "powerConsumptionWatts": 50
     },
     {
       "id": 34,
@@ -576,7 +609,8 @@
       "m2Slots": 2,
       "sataSlots": 4,
       "price": 389,
-      "image": "/images/motherboards/asus-z690-i.jpg"
+      "image": "/images/motherboards/asus-z690-i.jpg",
+      "powerConsumptionWatts": 40
     },
     {
       "id": 35,
@@ -593,7 +627,8 @@
       "m2Slots": 2,
       "sataSlots": 4,
       "price": 199,
-      "image": "/images/motherboards/msi-b550i-edge.jpg"
+      "image": "/images/motherboards/msi-b550i-edge.jpg",
+      "powerConsumptionWatts": 40
     },
     {
       "id": 36,
@@ -610,7 +645,8 @@
       "m2Slots": 2,
       "sataSlots": 4,
       "price": 269,
-      "image": "/images/motherboards/gigabyte-b650i-ultra.jpg"
+      "image": "/images/motherboards/gigabyte-b650i-ultra.jpg",
+      "powerConsumptionWatts": 40
     },
     {
       "id": 37,
@@ -627,7 +663,8 @@
       "m2Slots": 2,
       "sataSlots": 4,
       "price": 159,
-      "image": "/images/motherboards/asrock-b760m-itx.jpg"
+      "image": "/images/motherboards/asrock-b760m-itx.jpg",
+      "powerConsumptionWatts": 40
     },
     {
       "id": 38,
@@ -644,7 +681,8 @@
       "m2Slots": 4,
       "sataSlots": 4,
       "price": 319,
-      "image": "/images/motherboards/asus-z790-plus.jpg"
+      "image": "/images/motherboards/asus-z790-plus.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 39,
@@ -661,7 +699,8 @@
       "m2Slots": 4,
       "sataSlots": 6,
       "price": 349,
-      "image": "/images/motherboards/msi-x670e-tomahawk.jpg"
+      "image": "/images/motherboards/msi-x670e-tomahawk.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 40,
@@ -678,7 +717,8 @@
       "m2Slots": 2,
       "sataSlots": 4,
       "price": 109,
-      "image": "/images/motherboards/gigabyte-b760m-ds3h.jpg"
+      "image": "/images/motherboards/gigabyte-b760m-ds3h.jpg",
+      "powerConsumptionWatts": 50
     },
     {
       "id": 41,
@@ -695,7 +735,8 @@
       "m2Slots": 3,
       "sataSlots": 8,
       "price": 299,
-      "image": "/images/motherboards/asrock-x570-taichi.jpg"
+      "image": "/images/motherboards/asrock-x570-taichi.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 42,
@@ -712,7 +753,8 @@
       "m2Slots": 4,
       "sataSlots": 6,
       "price": 549,
-      "image": "/images/motherboards/asus-z790-creator.jpg"
+      "image": "/images/motherboards/asus-z790-creator.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 43,
@@ -729,7 +771,8 @@
       "m2Slots": 5,
       "sataSlots": 6,
       "price": 599,
-      "image": "/images/motherboards/msi-x670e-ace.jpg"
+      "image": "/images/motherboards/msi-x670e-ace.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 44,
@@ -746,7 +789,8 @@
       "m2Slots": 5,
       "sataSlots": 4,
       "price": 379,
-      "image": "/images/motherboards/gigabyte-z790-aero.jpg"
+      "image": "/images/motherboards/gigabyte-z790-aero.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 45,
@@ -763,7 +807,8 @@
       "m2Slots": 2,
       "sataSlots": 4,
       "price": 159,
-      "image": "/images/motherboards/asrock-b650m-riptide.jpg"
+      "image": "/images/motherboards/asrock-b650m-riptide.jpg",
+      "powerConsumptionWatts": 50
     },
     {
       "id": 46,
@@ -780,7 +825,8 @@
       "m2Slots": 4,
       "sataSlots": 4,
       "price": 249,
-      "image": "/images/motherboards/asus-x670-p.jpg"
+      "image": "/images/motherboards/asus-x670-p.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 47,
@@ -797,7 +843,8 @@
       "m2Slots": 4,
       "sataSlots": 6,
       "price": 369,
-      "image": "/images/motherboards/msi-z790-edge.jpg"
+      "image": "/images/motherboards/msi-z790-edge.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 48,
@@ -814,7 +861,8 @@
       "m2Slots": 3,
       "sataSlots": 4,
       "price": 219,
-      "image": "/images/motherboards/gigabyte-b650-pro.jpg"
+      "image": "/images/motherboards/gigabyte-b650-pro.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 49,
@@ -831,7 +879,8 @@
       "m2Slots": 4,
       "sataSlots": 6,
       "price": 259,
-      "image": "/images/motherboards/asrock-z790-pro.jpg"
+      "image": "/images/motherboards/asrock-z790-pro.jpg",
+      "powerConsumptionWatts": 65
     },
     {
       "id": 50,
@@ -848,7 +897,8 @@
       "m2Slots": 5,
       "sataSlots": 6,
       "price": 679,
-      "image": "/images/motherboards/asus-x670e-hero.jpg"
+      "image": "/images/motherboards/asus-x670e-hero.jpg",
+      "powerConsumptionWatts": 65
     }
   ]
 }

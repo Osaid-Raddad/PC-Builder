@@ -14,6 +14,7 @@ import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import ScreenLayout from "../../components/ScreenLayout";
 import colors from "../../config/colors";
 import gpusData from "../../data/components/gpus.json";
+import { getGPUImage } from "../../utils/imageMapper";
 import { useBuild } from "../../context/BuildContext";
 import { useCompare } from "../../context/CompareContext";
 
@@ -153,6 +154,7 @@ export default function GPUScreen({ navigation, route }) {
   const renderProduct = ({ item }) => {
     const isSelected = selectedComponents.gpu?.model === item.model;
     const inCompare = isInCompare(item.id);
+    const gpuImage = getGPUImage(item.manufacturer || item.brand, item.model);
     
     return (
     <TouchableOpacity 
@@ -163,7 +165,11 @@ export default function GPUScreen({ navigation, route }) {
       })}
     >
       <View style={styles.productImage}>
-        <Feather name="zap" size={48} color={colors.mainYellow} />
+        {gpuImage ? (
+          <Image source={gpuImage} style={styles.productImageActual} resizeMode="contain" />
+        ) : (
+          <Feather name="zap" size={48} color={colors.mainYellow} />
+        )}
         {isSelected && (
           <View style={styles.selectedBadge}>
             <Feather name="check-circle" size={20} color={colors.success} />
@@ -712,6 +718,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginRight: 16,
+  },
+  productImageActual: {
+    width: "100%",
+    height: "100%",
   },
   productInfo: {
     flex: 1,
