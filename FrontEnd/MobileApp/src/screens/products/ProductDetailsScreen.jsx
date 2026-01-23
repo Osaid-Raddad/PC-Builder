@@ -13,6 +13,17 @@ import { Feather, MaterialIcons } from '@expo/vector-icons';
 import ScreenLayout from '../../components/ScreenLayout';
 import colors from '../../config/colors';
 import { useBuild } from '../../context/BuildContext';
+import {
+  getCPUImage,
+  getGPUImage,
+  getMotherboardImage,
+  getMemoryImage,
+  getStorageImage,
+  getCaseImage,
+  getPSUImage,
+  getMonitorImage,
+  getCPUCoolerImage,
+} from '../../utils/imageMapper';
 
 // Import all product data
 import cpusData from '../../data/components/cpus.json';
@@ -115,18 +126,63 @@ export default function ProductDetailsScreen({ route, navigation }) {
     const brand = rawProduct.brand || rawProduct.manufacturer;
     const model = rawProduct.model || '';
 
+    // Get the appropriate image source using image mapper functions
+    let mainImageSource = null;
+    switch (category) {
+      case 'cpu':
+        mainImageSource = getCPUImage(model || `${brand} ${model}`);
+        break;
+      case 'gpu':
+        mainImageSource = getGPUImage(brand, model);
+        break;
+      case 'motherboard':
+        mainImageSource = getMotherboardImage(brand, model);
+        break;
+      case 'memory':
+        mainImageSource = getMemoryImage(brand, model);
+        break;
+      case 'storage':
+        mainImageSource = getStorageImage(brand, model);
+        break;
+      case 'case':
+        mainImageSource = getCaseImage(brand, model);
+        break;
+      case 'power-supply':
+      case 'powersupply':
+      case 'psu':
+        mainImageSource = getPSUImage(brand, model);
+        break;
+      case 'monitor':
+        mainImageSource = getMonitorImage(brand, model);
+        break;
+      case 'cooler':
+      case 'cpucooler':
+        mainImageSource = getCPUCoolerImage(brand, model);
+        break;
+      default:
+        mainImageSource = null;
+    }
+
+    // If no image source found, use placeholder
+    if (!mainImageSource) {
+      mainImageSource = { uri: rawProduct.image || 'https://via.placeholder.com/400x300/242423/f3bd4a?text=Product+Image' };
+    }
+
+    // Use detailImages if available, otherwise repeat the main image
+    const images = rawProduct.detailImages 
+      ? rawProduct.detailImages.map(imgPath => {
+          // For detail images, try to map them too or use URI
+          return { uri: imgPath };
+        })
+      : [mainImageSource, mainImageSource, mainImageSource, mainImageSource];
+
     return {
       ...rawProduct,
       componentKey,
       name: rawProduct.name || (model ? `${brand} ${model}` : brand),
       brand: brand,
       rating: rawProduct.rating || 4.5,
-      images: [
-        rawProduct.image || 'https://via.placeholder.com/400x300/242423/f3bd4a?text=Product+Image',
-        'https://via.placeholder.com/400x300/242423/efece1?text=View+2',
-        'https://via.placeholder.com/400x300/242423/CFDBD5?text=View+3',
-        'https://via.placeholder.com/400x300/242423/333533?text=View+4',
-      ],
+      images: images,
       specifications: generateSpecifications(rawProduct, category),
       features: generateFeatures(rawProduct, category),
       compatibility: generateCompatibility(rawProduct, category),
@@ -288,6 +344,23 @@ export default function ProductDetailsScreen({ route, navigation }) {
     }
   };
 
+  const renderStars = (rating) => {
+    const stars = [];
+    for (let i = 0; i < 5; i++) {
+      stars.push(
+        <Feather
+          key={i}
+          name="star"
+          size={16}
+          fill={i < Math.floor(rating) ? colors.mainYellow : 'transparent'}
+          color={i < Math.floor(rating) ? colors.mainYellow : colors.platinum}
+          style={styles.star}
+        />
+      );
+    }
+    return stars;
+  };
+
   if (!product) {
     return (
       <ScreenLayout>
@@ -304,22 +377,6 @@ export default function ProductDetailsScreen({ route, navigation }) {
       </ScreenLayout>
     );
   }
-
-  const renderStars = (rating) => {
-    const stars = [];
-    for (let i = 1; i <= 5; i++) {
-      stars.push(
-        <Feather
-          key={i}
-          name={i <= Math.floor(rating) ? 'star' : 'star'}
-          size={16}
-          color={i <= Math.floor(rating) ? colors.mainYellow : colors.platinum}
-          style={styles.star}
-        />
-      );
-    }
-    return stars;
-  };
 
   return (
     <ScreenLayout navigation={navigation} scrollable={false} showFooter={false}>
@@ -339,7 +396,7 @@ export default function ProductDetailsScreen({ route, navigation }) {
         {/* Image Gallery */}
         <View style={styles.imageSection}>
           <Image
-            source={{ uri: product.images[selectedImageIndex] }}
+            source={product.images[selectedImageIndex]}
             style={styles.mainImage}
             resizeMode="cover"
           />
@@ -353,7 +410,7 @@ export default function ProductDetailsScreen({ route, navigation }) {
                   selectedImageIndex === index && styles.thumbnailActive,
                 ]}
               >
-                <Image source={{ uri: img }} style={styles.thumbnailImage} />
+                <Image source={img} style={styles.thumbnailImage} />
               </TouchableOpacity>
             ))}
           </View>

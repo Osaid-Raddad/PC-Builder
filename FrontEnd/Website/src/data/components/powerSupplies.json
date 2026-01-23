@@ -9,7 +9,13 @@
       "modular": "Fully Modular",
       "formFactor": "ATX",
       "price": 189,
-      "image": "/images/psu/corsair-rm1000x.jpg"
+      "image": "/images/psu/corsair-rm1000x.jpg",
+      "detailImages": [
+        "/images/psu/corsair-rm1000x.jpg",
+        "/images/psu/corsair-rm1000x.jpg",
+        "/images/psu/corsair-rm1000x.jpg",
+        "/images/psu/corsair-rm1000x.jpg"
+      ]
     },
     {
       "id": 2,
