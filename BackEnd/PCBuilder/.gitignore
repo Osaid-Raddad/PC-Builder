@@ -1,0 +1,71 @@
+# =========================
+# Visual Studio
+# =========================
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# =========================
+# Build results
+# =========================
+bin/
+obj/
+
+# =========================
+# .NET
+# =========================
+*.dll
+*.exe
+*.pdb
+*.cache
+
+# =========================
+# ASP.NET Core
+# =========================
+appsettings.Development.json
+appsettings.Local.json
+appsettings.Production.json
+
+# =========================
+# Entity Framework / Databases
+# =========================
+*.db
+*.db-shm
+*.db-wal
+Migrations/*.csproj
+__EFMigrationsHistory
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# OS
+# =========================
+Thumbs.db
+.DS_Store
+
+# =========================
+# Tools / IDEs
+# =========================
+.vscode/
+.idea/
+_ReSharper*/
+*.DotSettings.user
+
+# =========================
+# User secrets
+# =========================
+secrets.json
+
+.vs/
+
+# Visual Studio / .NET
+bin/
+obj/
+*.user
+*.suo
+*.cache
