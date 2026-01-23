@@ -14,15 +14,15 @@ import ScreenLayout from "../../components/ScreenLayout";
 import colors from "../../config/colors";
 
 const PCBuilds = {
-  build1: require('../../../assets/Images/PCBuilds/1.jpg'),
-  build2: require('../../../assets/Images/PCBuilds/2.jpg'),
-  build3: require('../../../assets/Images/PCBuilds/3.jpg'),
-  build4: require('../../../assets/Images/PCBuilds/4.jpg'),
-  build5: require('../../../assets/Images/PCBuilds/5.jpg'),
-  build6: require('../../../assets/Images/PCBuilds/6.jpg'),
-  build7: require('../../../assets/Images/PCBuilds/7.jpg'),
-  build8: require('../../../assets/Images/PCBuilds/8.jpg'),
-  build9: require('../../../assets/Images/PCBuilds/9.jpg'),
+  build1: require('../../../assets/Setup1.jpg'),
+  build2: require('../../../assets/Setup2.jpg'),
+  build3: require('../../../assets/Setup3.jpg'),
+  build4: require('../../../assets/Setup4.jpg'),
+  build5: require('../../../assets/Setup1.jpg'),
+  build6: require('../../../assets/Setup2.jpg'),
+  build7: require('../../../assets/Setup3.jpg'),
+  build8: require('../../../assets/Setup4.jpg'),
+  build9: require('../../../assets/Setup1.jpg'),
 };
 
 const MOCK_BUILDS = [

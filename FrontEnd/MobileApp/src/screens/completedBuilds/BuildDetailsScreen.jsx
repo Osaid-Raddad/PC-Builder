@@ -103,7 +103,6 @@ export default function BuildDetailsScreen({ route, navigation }) {
                   resizeMode="cover"
                 />
               </TouchableOpacity>
-              </TouchableOpacity>
             ))}
           </View>
         </View>
