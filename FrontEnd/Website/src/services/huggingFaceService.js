@@ -62,15 +62,15 @@ export const generateAIResponse = async (userMessage, conversationHistory = []) 
  * Alternative: Use Hugging Face Inference API with better models
  */
 export const generateAIResponseWithBetterModel = async (userMessage, conversationHistory = []) => {
+  // Hugging Face API has CORS issues from browser - use fallback responses
+  // For production, implement a backend proxy to handle API calls
+  
+  if (!HF_API_TOKEN || HF_API_TOKEN === '') {
+    console.warn('Hugging Face API key not configured - using local knowledge');
+    return getFallbackResponse(userMessage);
+  }
+
   try {
-    // You can use models like:
-    // - 'mistralai/Mistral-7B-Instruct-v0.2' (requires Pro subscription)
-    // - 'meta-llama/Llama-2-7b-chat-hf' (requires Pro subscription)
-    // - 'tiiuae/falcon-7b-instruct' (free tier available)
-    // - 'google/flan-t5-xxl' (free tier available)
-    
-    const MODEL = 'google/flan-t5-xxl';
-    
     // Enhance prompt with PC knowledge context
     const enhancedPrompt = enhancePromptWithContext(userMessage);
 
@@ -89,14 +89,19 @@ export const generateAIResponseWithBetterModel = async (userMessage, conversatio
           Authorization: `Bearer ${HF_API_TOKEN}`,
           'Content-Type': 'application/json',
         },
-        timeout: 30000, // 30 second timeout
+        timeout: 10000, // 10 second timeout
       }
     );
 
     const aiResponse = response.data[0]?.generated_text || response.data.generated_text || response.data;
-    return typeof aiResponse === 'string' ? aiResponse.trim() : "I'm here to help with your PC building questions!";
+    return typeof aiResponse === 'string' ? aiResponse.trim() : getFallbackResponse(userMessage);
   } catch (error) {
-    console.error('Hugging Face Better Model Error:', error);
+    // CORS/Network errors are expected from browser - use fallback
+    if (error.code === 'ERR_NETWORK' || error.message.includes('CORS') || error.message.includes('Network Error')) {
+      console.log('Using local PC knowledge (Hugging Face requires backend proxy for production)');
+    } else {
+      console.error('Hugging Face API Error:', error.message);
+    }
     return getFallbackResponse(userMessage);
   }
 };

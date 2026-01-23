@@ -641,8 +641,8 @@ export class CompatibilityChecker {
   }
 
   /**
-   * Check Storage and M`${storage.brand} ${storage.model}`;
-    const moboName =
+   * Check Storage and Motherboard compatibility
+   */
   checkStorageMotherboardCompatibility(storage, motherboard) {
     const storageName = storage.name || `${storage.brand} ${storage.model}`;
     const moboName = motherboard.name || `${motherboard.brand} ${motherboard.model}`;
