@@ -110,6 +110,7 @@ namespace PCBuilder.BLL.Services.Classes
                         throw new InvalidOperationException(
                             $"Tech support ({tech.FullName}) has no valid availability schedule");
 
+
                     return new TechSupportWithAvailabilityResponse
                     {
                         TechSupportId = tech.Id,
