@@ -10,6 +10,7 @@ import colors from '../../config/colors';
 import { FaBolt } from 'react-icons/fa';
 import { FiArrowLeft, FiSearch } from 'react-icons/fi';
 import powerSuppliesData from '../../data/components/powerSupplies.json';
+import { getPSUImage } from '../../utils/imageMapper';
 
 const PowerSupply = () => {
   const navigate = useNavigate();
@@ -719,6 +720,31 @@ const PowerSupply = () => {
                   {selectedPSU?.id === psu.id && (
                     <span className="text-2xl">✓</span>
                   )}
+                </div>
+
+                {/* Image Section */}
+                <div className="flex justify-center mb-4 h-48 items-center">
+                  {getPSUImage(psu.brand, psu.model) ? (
+                    <img
+                      src={getPSUImage(psu.brand, psu.model)}
+                      alt={psu.name}
+                      className="max-h-full max-w-full object-contain"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  <div
+                    className="flex-col items-center text-center"
+                    style={{
+                      display: getPSUImage(psu.brand, psu.model) ? 'none' : 'flex',
+                      color: colors.platinum
+                    }}
+                  >
+                    <FaBolt size={64} style={{ color: colors.platinum }} />
+                    <span className="mt-2 text-sm">Image not found</span>
+                  </div>
                 </div>
 
                 <h3 className="text-xl font-bold mb-4" style={{ color: colors.mainBlack }}>
