@@ -14,7 +14,13 @@
       "includedFans": 2,
       "price": 149,
       "image": "/images/cases/nzxt-h510-elite.jpg",
-      "powerConsumptionWatts": 16
+      "powerConsumptionWatts": 16,
+      "detailImages": [
+        "/images/cases/nzxt-h510-elite.jpg",
+        "/images/cases/nzxt-h510-elite.jpg",
+        "/images/cases/nzxt-h510-elite.jpg",
+        "/images/cases/nzxt-h510-elite.jpg"
+      ]
     },
     {
       "id": 2,

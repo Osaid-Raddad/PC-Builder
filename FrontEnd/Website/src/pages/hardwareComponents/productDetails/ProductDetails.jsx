@@ -21,6 +21,17 @@ import Navbar from '../../../components/user/navbar/Navbar.jsx';
 import Footer from '../../../components/user/footer/Footer.jsx';
 import colors from '../../../config/colors.js';
 import { useBuild } from '../../../context/BuildContext';
+import {
+  getCPUImage,
+  getGPUImage,
+  getMotherboardImage,
+  getMemoryImage,
+  getStorageImage,
+  getCaseImage,
+  getPSUImage,
+  getMonitorImage,
+  getCPUCoolerImage
+} from '../../../utils/imageMapper';
 
 // Import all product data
 import cpusData from '../../../data/components/cpus.json';
@@ -137,7 +148,48 @@ const ProductDetails = () => {
 
       console.log('Found product:', rawProduct);
 
-      // Transform the product data to match the component's expected format
+      // Get proper image source using imageMapper functions
+      let mainImageSource = null;
+      const brand = rawProduct.brand || rawProduct.manufacturer;
+      const model = rawProduct.model;
+      
+      switch(category) {
+        case 'cpu':
+          mainImageSource = getCPUImage(model);
+          break;
+        case 'gpu':
+          mainImageSource = getGPUImage(brand, model);
+          break;
+        case 'motherboard':
+          mainImageSource = getMotherboardImage(brand, model);
+          break;
+        case 'memory':
+          mainImageSource = getMemoryImage(brand, model);
+          break;
+        case 'storage':
+          mainImageSource = getStorageImage(brand, model);
+          break;
+        case 'case':
+          mainImageSource = getCaseImage(brand, model);
+          break;
+        case 'power-supply':
+        case 'powersupply':
+          mainImageSource = getPSUImage(brand, model);
+          break;
+        case 'monitor':
+          mainImageSource = getMonitorImage(brand, model);
+          break;
+        case 'cooler':
+        case 'cpucooler':
+          mainImageSource = getCPUCoolerImage(brand, model);
+          break;
+        default:
+          mainImageSource = null;
+      }
+      
+      // Fallback to placeholder if no image found
+      const mainImage = mainImageSource || 'https://via.placeholder.com/800x600/242423/f3bd4a?text=Product+Image';
+      
       return {
         ...rawProduct,
         componentKey, // Store for AddToBuild functionality
@@ -151,10 +203,10 @@ const ProductDetails = () => {
         shares: Math.floor(Math.random() * 100) + 5,
         inStock: true,
         images: [
-          rawProduct.image || 'https://via.placeholder.com/800x600/242423/f3bd4a?text=Product+Image',
-          'https://via.placeholder.com/800x600/242423/efece1?text=Additional+View',
-          'https://via.placeholder.com/800x600/242423/CFDBD5?text=Side+View',
-          'https://via.placeholder.com/800x600/242423/333533?text=Detail+View'
+          mainImage,
+          mainImage,
+          mainImage,
+          mainImage
         ],
         description: generateDescription(rawProduct, category),
         specifications: generateSpecifications(rawProduct, category),

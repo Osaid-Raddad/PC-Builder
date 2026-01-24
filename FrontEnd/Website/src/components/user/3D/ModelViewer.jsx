@@ -42,7 +42,7 @@ class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.log('3D Model Error:', error, errorInfo);
+    console.error('3D Model Error:', error);
     this.props.onError?.();
   }
 
@@ -75,7 +75,6 @@ function ModelViewer({
   useEffect(() => {
     setIsLoading(true);
     setHasError(false);
-    // Set a timeout to hide loading indicator
     const timer = setTimeout(() => setIsLoading(false), 2000);
     return () => clearTimeout(timer);
   }, [modelPath]);

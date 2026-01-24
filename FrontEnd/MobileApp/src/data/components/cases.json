@@ -13,7 +13,13 @@
       "topFanSlots": 0,
       "includedFans": 2,
       "price": 149,
-      "image": "/images/cases/nzxt-h510-elite.jpg"
+      "image": "/images/cases/nzxt-h510-elite.jpg",
+      "detailImages": [
+        "/images/cases/nzxt-h510-elite.jpg",
+        "/images/cases/nzxt-h510-elite.jpg",
+        "/images/cases/nzxt-h510-elite.jpg",
+        "/images/cases/nzxt-h510-elite.jpg"
+      ]
     },
     {
       "id": 2,

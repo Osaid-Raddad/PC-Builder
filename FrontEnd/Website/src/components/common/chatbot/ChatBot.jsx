@@ -1,21 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaComments, FaTimes, FaPaperPlane } from 'react-icons/fa';
+import { FaComments, FaTimes, FaPaperPlane, FaSearch } from 'react-icons/fa';
 import { BsRobot } from 'react-icons/bs';
 import colors from '../../../config/colors.js';
 import toast from 'react-hot-toast';
+import { generateAIResponseWithBetterModel, needsInternetSearch } from '../../../services/huggingFaceService';
+import { searchInternet, formatSearchResults } from '../../../services/webSearchService';
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "Hi! I'm your PC Builder AI assistant. How can I help you today?",
+      text: "Hi! I'm your PC Builder AI assistant powered by Hugging Face. I can answer questions about PC hardware, building tips, and search the internet for latest information. How can I help you today?",
       sender: 'bot',
       timestamp: new Date()
     }
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -38,20 +41,67 @@ const ChatBot = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentMessage = inputMessage;
     setInputMessage('');
     setIsTyping(true);
 
-    // Simulate AI response (replace with actual API call)
-    setTimeout(() => {
+    try {
+      let botResponseText = '';
+      
+      // Check if question needs internet search
+      if (needsInternetSearch(currentMessage)) {
+        setIsSearching(true);
+        
+        // Search the internet
+        const searchResults = await searchInternet(currentMessage);
+        
+        if (searchResults) {
+          // Format search results
+          const searchInfo = formatSearchResults(searchResults);
+          
+          // Get AI response enhanced with search results
+          const aiContext = `Based on this information: ${searchInfo}\n\nAnswer the question: ${currentMessage}`;
+          botResponseText = await generateAIResponseWithBetterModel(aiContext, messages);
+          
+          // If AI response is too short, use the search results directly
+          if (botResponseText.length < 50) {
+            botResponseText = searchInfo;
+          }
+        } else {
+          // If search fails, use AI without search context
+          botResponseText = await generateAIResponseWithBetterModel(currentMessage, messages);
+        }
+        
+        setIsSearching(false);
+      } else {
+        // Regular AI response without search
+        botResponseText = await generateAIResponseWithBetterModel(currentMessage, messages);
+      }
+
       const botResponse = {
         id: Date.now() + 1,
-        text: getAIResponse(inputMessage),
+        text: botResponseText,
         sender: 'bot',
         timestamp: new Date()
       };
+      
       setMessages(prev => [...prev, botResponse]);
+    } catch (error) {
+      console.error('Error getting AI response:', error);
+      toast.error('Failed to get response. Please try again.');
+      
+      // Fallback response
+      const fallbackResponse = {
+        id: Date.now() + 1,
+        text: getAIResponse(currentMessage),
+        sender: 'bot',
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, fallbackResponse]);
+    } finally {
       setIsTyping(false);
-    }, 1500);
+      setIsSearching(false);
+    }
   };
 
   const getAIResponse = (message) => {
@@ -146,11 +196,18 @@ const ChatBot = () => {
                   className="p-3 rounded-2xl rounded-bl-none"
                   style={{ backgroundColor: 'white', border: `1px solid ${colors.platinum}` }}
                 >
-                  <div className="flex gap-1">
-                    <span className="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: colors.mainYellow, animationDelay: '0ms' }}></span>
-                    <span className="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: colors.mainYellow, animationDelay: '150ms' }}></span>
-                    <span className="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: colors.mainYellow, animationDelay: '300ms' }}></span>
-                  </div>
+                  {isSearching ? (
+                    <div className="flex items-center gap-2">
+                      <FaSearch className="animate-pulse" style={{ color: colors.mainYellow }} />
+                      <span className="text-sm" style={{ color: colors.jet }}>Searching the web...</span>
+                    </div>
+                  ) : (
+                    <div className="flex gap-1">
+                      <span className="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: colors.mainYellow, animationDelay: '0ms' }}></span>
+                      <span className="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: colors.mainYellow, animationDelay: '150ms' }}></span>
+                      <span className="w-2 h-2 rounded-full animate-bounce" style={{ backgroundColor: colors.mainYellow, animationDelay: '300ms' }}></span>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

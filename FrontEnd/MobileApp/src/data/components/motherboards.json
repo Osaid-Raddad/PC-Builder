@@ -15,7 +15,13 @@
       "m2Slots": 4,
       "sataSlots": 6,
       "price": 429,
-      "image": "/images/motherboards/asus-rog-z790-e.jpg"
+      "image": "/images/motherboards/asus-rog-z790-e.jpg",
+      "detailImages": [
+        "/images/motherboards/asus-rog-z790-e.jpg",
+        "/images/motherboards/asus-rog-z790-e.jpg",
+        "/images/motherboards/asus-rog-z790-e.jpg",
+        "/images/motherboards/asus-rog-z790-e.jpg"
+      ]
     },
     {
       "id": 2,
