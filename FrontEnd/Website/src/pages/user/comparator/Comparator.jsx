@@ -7,7 +7,7 @@ import colors from '../../../config/colors';
 import { FiArrowLeft } from 'react-icons/fi';
 import { MdCompareArrows } from 'react-icons/md';
 import { BsCpuFill } from 'react-icons/bs';
-import { FaMicrochip, FaMemory, FaHdd, FaBolt, FaBox, FaFan, FaDesktop, FaTools, FaNetworkWired, FaKeyboard } from 'react-icons/fa';
+import { FaMicrochip, FaMemory, FaHdd, FaBolt, FaBox, FaFan, FaDesktop, FaTools, FaNetworkWired, FaKeyboard, FaTrophy, FaCheckCircle } from 'react-icons/fa';
 import { GiVideoCamera } from 'react-icons/gi';
 
 const Comparator = () => {
@@ -50,6 +50,169 @@ const Comparator = () => {
   };
 
   const specKeys = getAllSpecKeys();
+
+  // Function to determine the best component
+  const getBestComponent = () => {
+    if (compareList.length === 0) return null;
+
+    const scores = compareList.map(product => {
+      let score = 0;
+      let reasons = [];
+
+      // Category-specific scoring logic
+      if (category === 'cpu') {
+        // CPU scoring: cores, threads, clock speed, cache
+        const cores = parseFloat(product.cores) || 0;
+        const threads = parseFloat(product.threads) || 0;
+        const baseClock = parseFloat(product.baseClock) || parseFloat(product.baseClockSpeed) || 0;
+        const boostClock = parseFloat(product.boostClock) || parseFloat(product.boostClockSpeed) || 0;
+        const cache = parseFloat(product.cache) || parseFloat(product.l3Cache) || 0;
+        const tdp = parseFloat(product.tdp) || 100;
+
+        score += cores * 10;
+        score += threads * 5;
+        score += baseClock * 2;
+        score += boostClock * 3;
+        score += cache * 1;
+        score -= tdp * 0.05; // Lower TDP is better for efficiency
+
+        if (cores >= 8) reasons.push(`High core count (${cores} cores)`);
+        if (boostClock >= 5.0) reasons.push(`Excellent boost clock (${boostClock} GHz)`);
+        if (cache >= 32) reasons.push(`Large cache (${cache} MB)`);
+
+      } else if (category === 'gpu') {
+        // GPU scoring: memory, core clock, memory speed, CUDA cores
+        const memory = parseFloat(product.memory) || parseFloat(product.vram) || 0;
+        const coreClock = parseFloat(product.coreClock) || parseFloat(product.boostClock) || 0;
+        const memorySpeed = parseFloat(product.memorySpeed) || 0;
+        const cudaCores = parseFloat(product.cudaCores) || parseFloat(product.streamProcessors) || 0;
+
+        score += memory * 15;
+        score += coreClock * 5;
+        score += memorySpeed * 0.5;
+        score += cudaCores * 0.01;
+
+        if (memory >= 12) reasons.push(`High VRAM (${memory} GB)`);
+        if (coreClock >= 2000) reasons.push(`High core clock (${coreClock} MHz)`);
+        if (cudaCores >= 5000) reasons.push(`Many CUDA cores (${cudaCores})`);
+
+      } else if (category === 'memory') {
+        // Memory scoring: capacity, speed, latency
+        const capacity = parseFloat(product.capacity) || parseFloat(product.size) || 0;
+        const speed = parseFloat(product.speed) || parseFloat(product.frequency) || 0;
+        const latency = parseFloat(product.latency) || parseFloat(product.casLatency) || 20;
+
+        score += capacity * 10;
+        score += speed * 0.05;
+        score -= latency * 2; // Lower latency is better
+
+        if (capacity >= 32) reasons.push(`High capacity (${capacity} GB)`);
+        if (speed >= 3600) reasons.push(`Fast speed (${speed} MHz)`);
+        if (latency <= 16) reasons.push(`Low latency (CL${latency})`);
+
+      } else if (category === 'storage') {
+        // Storage scoring: capacity, read/write speed, type
+        const capacity = parseFloat(product.capacity) || 0;
+        const readSpeed = parseFloat(product.readSpeed) || parseFloat(product.read) || 0;
+        const writeSpeed = parseFloat(product.writeSpeed) || parseFloat(product.write) || 0;
+        const type = product.type || product.interface || '';
+
+        score += capacity * 0.5;
+        score += readSpeed * 0.01;
+        score += writeSpeed * 0.01;
+        if (type.toLowerCase().includes('nvme') || type.toLowerCase().includes('m.2')) score += 50;
+        if (type.toLowerCase().includes('pcie 4.0') || type.toLowerCase().includes('gen4')) score += 30;
+
+        if (capacity >= 1000) reasons.push(`Large capacity (${capacity} GB)`);
+        if (readSpeed >= 5000) reasons.push(`Fast read speed (${readSpeed} MB/s)`);
+        if (type.toLowerCase().includes('nvme')) reasons.push(`NVMe interface`);
+
+      } else if (category === 'psu') {
+        // PSU scoring: wattage, efficiency rating
+        const wattage = parseFloat(product.wattage) || parseFloat(product.power) || 0;
+        const efficiency = product.efficiency || product.rating || '';
+
+        score += wattage * 0.5;
+        if (efficiency.includes('80+ Titanium')) score += 100;
+        else if (efficiency.includes('80+ Platinum')) score += 80;
+        else if (efficiency.includes('80+ Gold')) score += 60;
+        else if (efficiency.includes('80+ Silver')) score += 40;
+        else if (efficiency.includes('80+ Bronze')) score += 20;
+
+        if (wattage >= 750) reasons.push(`High wattage (${wattage}W)`);
+        if (efficiency.includes('80+ Gold') || efficiency.includes('80+ Platinum') || efficiency.includes('80+ Titanium')) {
+          reasons.push(`Excellent efficiency (${efficiency})`);
+        }
+
+      } else if (category === 'motherboard') {
+        // Motherboard scoring: chipset, features, RAM slots
+        const ramSlots = parseFloat(product.ramSlots) || parseFloat(product.memorySlots) || 0;
+        const maxMemory = parseFloat(product.maxMemory) || 0;
+        const m2Slots = parseFloat(product.m2Slots) || 0;
+        const formFactor = product.formFactor || '';
+
+        score += ramSlots * 10;
+        score += maxMemory * 0.1;
+        score += m2Slots * 15;
+        if (formFactor === 'ATX') score += 20;
+
+        if (ramSlots >= 4) reasons.push(`${ramSlots} RAM slots`);
+        if (m2Slots >= 2) reasons.push(`${m2Slots} M.2 slots`);
+        if (maxMemory >= 128) reasons.push(`Supports up to ${maxMemory}GB RAM`);
+
+      } else if (category === 'monitor') {
+        // Monitor scoring: resolution, refresh rate, response time, size
+        const refreshRate = parseFloat(product.refreshRate) || 0;
+        const responseTime = parseFloat(product.responseTime) || 10;
+        const size = parseFloat(product.size) || parseFloat(product.screenSize) || 0;
+        const resolution = product.resolution || '';
+
+        score += refreshRate * 2;
+        score -= responseTime * 5; // Lower is better
+        score += size * 5;
+        if (resolution.includes('4K') || resolution.includes('3840')) score += 100;
+        else if (resolution.includes('1440') || resolution.includes('2560')) score += 60;
+
+        if (refreshRate >= 144) reasons.push(`High refresh rate (${refreshRate}Hz)`);
+        if (responseTime <= 1) reasons.push(`Fast response time (${responseTime}ms)`);
+        if (resolution.includes('4K')) reasons.push(`4K resolution`);
+
+      } else if (category === 'cpucooler') {
+        // Cooler scoring: TDP, noise level, fan count
+        const tdpRating = parseFloat(product.tdpRating) || parseFloat(product.tdp) || 0;
+        const noiseLevel = parseFloat(product.noiseLevel) || 40;
+        const fanSize = parseFloat(product.fanSize) || 0;
+
+        score += tdpRating * 1;
+        score -= noiseLevel * 2; // Lower is better
+        score += fanSize * 2;
+
+        if (tdpRating >= 200) reasons.push(`High TDP rating (${tdpRating}W)`);
+        if (noiseLevel <= 25) reasons.push(`Quiet operation (${noiseLevel}dBA)`);
+
+      } else {
+        // Generic scoring for other categories
+        // Score based on price (higher features for the price)
+        score += 100; // Base score
+      }
+
+      // Price consideration - value for money
+      const price = parseFloat(product.price) || 1;
+      const valueScore = score / Math.sqrt(price); // Performance per dollar
+
+      return {
+        product,
+        score: valueScore,
+        reasons
+      };
+    });
+
+    // Sort by score and get the best one
+    const sorted = scores.sort((a, b) => b.score - a.score);
+    return sorted[0];
+  };
+
+  const bestComponent = getBestComponent();
 
   return (
     <div className="min-h-screen flex flex-col" style={{ backgroundColor: colors.mainBeige }}>
@@ -275,6 +438,72 @@ const Comparator = () => {
                 </tbody>
               </table>
             </div>
+
+            {/* Best Component Recommendation */}
+            {bestComponent && compareList.length > 1 && (
+              <div 
+                className="p-6 border-t-2"
+                style={{ 
+                  backgroundColor: '#FFF9E6',
+                  borderTopColor: colors.mainYellow
+                }}
+              >
+                <div className="max-w-4xl mx-auto">
+                  <div className="flex items-center justify-center gap-3 mb-4">
+                    <FaTrophy size={32} style={{ color: colors.mainYellow }} />
+                    <h3 className="text-2xl font-bold" style={{ color: colors.mainBlack }}>
+                      Our Recommendation
+                    </h3>
+                  </div>
+                  
+                  <div 
+                    className="bg-white rounded-lg p-6 shadow-md"
+                    style={{ border: `3px solid ${colors.mainYellow}` }}
+                  >
+                    <div className="text-center mb-4">
+                      <p className="text-lg mb-2" style={{ color: colors.jet }}>
+                        Based on our analysis, the best component is:
+                      </p>
+                      <h4 className="text-2xl font-bold" style={{ color: colors.mainYellow }}>
+                        {bestComponent.product.name || `${bestComponent.product.brand} ${bestComponent.product.model}`}
+                      </h4>
+                      <p className="text-3xl font-bold mt-2" style={{ color: colors.mainBlack }}>
+                        ${bestComponent.product.price}
+                      </p>
+                    </div>
+
+                    {bestComponent.reasons && bestComponent.reasons.length > 0 && (
+                      <div className="mt-4">
+                        <p className="font-semibold mb-3 text-center" style={{ color: colors.mainBlack }}>
+                          Why we recommend this:
+                        </p>
+                        <div className="flex flex-wrap gap-2 justify-center">
+                          {bestComponent.reasons.map((reason, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center gap-2 px-4 py-2 rounded-full"
+                              style={{ 
+                                backgroundColor: colors.mainBeige,
+                                border: `1px solid ${colors.platinum}`
+                              }}
+                            >
+                              <FaCheckCircle size={16} style={{ color: colors.mainYellow }} />
+                              <span style={{ color: colors.jet }}>{reason}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    <div className="mt-4 text-center">
+                      <p className="text-sm" style={{ color: colors.jet }}>
+                        This recommendation is based on performance metrics, specifications, and value for money.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Add More Button */}
             {compareList.length < 4 && (
