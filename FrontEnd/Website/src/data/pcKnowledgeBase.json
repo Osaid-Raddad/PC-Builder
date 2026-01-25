@@ -1,0 +1,611 @@
+{
+  "pcBuilds": {
+    "studying": {
+      "budget": {
+        "name": "Student Budget Build",
+        "totalPrice": "$400-$550",
+        "description": "Perfect for studying, online classes, research, and light productivity work",
+        "components": {
+          "cpu": "Intel Core i3-12100 or AMD Ryzen 5 5600G",
+          "gpu": "Integrated Graphics (iGPU)",
+          "motherboard": "B660 or B550 Motherboard",
+          "ram": "16GB DDR4 3200MHz",
+          "storage": "512GB NVMe SSD",
+          "psu": "450W 80+ Bronze",
+          "case": "Budget ATX Case with good airflow",
+          "cpuCooler": "Stock cooler included"
+        },
+        "performance": "Handles Microsoft Office, web browsing, video calls, PDF editing, and light multitasking smoothly"
+      },
+      "midRange": {
+        "name": "Student Pro Build",
+        "totalPrice": "$700-$900",
+        "description": "For students doing programming, data analysis, or heavy research work",
+        "components": {
+          "cpu": "Intel Core i5-13400 or AMD Ryzen 5 5600X",
+          "gpu": "Integrated Graphics or GTX 1650",
+          "motherboard": "B660 or B550 Motherboard",
+          "ram": "32GB DDR4 3600MHz",
+          "storage": "1TB NVMe SSD",
+          "psu": "550W 80+ Bronze",
+          "case": "Mid-tower ATX with cable management",
+          "cpuCooler": "Aftermarket cooler like Hyper 212"
+        },
+        "performance": "Perfect for programming IDEs, virtual machines, data analysis software, and multitasking with many browser tabs"
+      }
+    },
+    "gaming": {
+      "budget": {
+        "name": "1080p Gaming Build",
+        "totalPrice": "$700-$900",
+        "description": "Entry-level gaming at 1080p 60-120fps on medium-high settings",
+        "components": {
+          "cpu": "Intel Core i5-12400F or AMD Ryzen 5 5600",
+          "gpu": "NVIDIA RTX 3060 or AMD RX 6600",
+          "motherboard": "B660 or B550 Motherboard",
+          "ram": "16GB DDR4 3200MHz",
+          "storage": "500GB NVMe SSD + 1TB HDD",
+          "psu": "550W 80+ Bronze",
+          "case": "Mid-tower with good airflow",
+          "cpuCooler": "Stock cooler or budget tower cooler"
+        },
+        "performance": "Plays all modern games at 1080p with 60-120fps on high settings",
+        "games": "Fortnite, Apex Legends, CS2, Valorant, League of Legends - Ultra settings 120+ fps"
+      },
+      "midRange": {
+        "name": "1440p Gaming Build",
+        "totalPrice": "$1200-$1500",
+        "description": "High-quality gaming at 1440p 100-144fps on high-ultra settings",
+        "components": {
+          "cpu": "Intel Core i5-13600K or AMD Ryzen 7 5800X3D",
+          "gpu": "NVIDIA RTX 4060 Ti or AMD RX 6750 XT",
+          "motherboard": "Z690 or X570 Motherboard",
+          "ram": "32GB DDR4 3600MHz",
+          "storage": "1TB NVMe Gen 4 SSD",
+          "psu": "750W 80+ Gold",
+          "case": "Premium mid-tower with RGB",
+          "cpuCooler": "Good tower cooler or 240mm AIO"
+        },
+        "performance": "Excellent 1440p gaming with 100-144fps on ultra settings",
+        "games": "Cyberpunk 2077, Red Dead Redemption 2, Starfield - High/Ultra 80-120fps"
+      },
+      "highEnd": {
+        "name": "4K Gaming Build",
+        "totalPrice": "$2000-$3000",
+        "description": "Top-tier gaming at 4K 60-144fps on ultra settings",
+        "components": {
+          "cpu": "Intel Core i7-14700K or AMD Ryzen 9 7900X",
+          "gpu": "NVIDIA RTX 4080 or AMD RX 7900 XTX",
+          "motherboard": "Z790 or X670E Motherboard",
+          "ram": "32GB DDR5 6000MHz",
+          "storage": "2TB NVMe Gen 4 SSD",
+          "psu": "850W 80+ Gold Modular",
+          "case": "Premium case with excellent cooling",
+          "cpuCooler": "360mm AIO liquid cooler"
+        },
+        "performance": "Ultra settings 4K gaming with ray tracing at 60-120fps",
+        "games": "Any game at 4K Ultra with ray tracing enabled"
+      }
+    },
+    "contentCreation": {
+      "videoEditing": {
+        "name": "Video Editing Build",
+        "totalPrice": "$1500-$2000",
+        "description": "For 4K video editing, color grading, and rendering",
+        "components": {
+          "cpu": "Intel Core i7-13700K or AMD Ryzen 9 7900X",
+          "gpu": "NVIDIA RTX 4060 Ti or RTX 3060 12GB",
+          "motherboard": "Z690 or X670 Motherboard",
+          "ram": "64GB DDR4 3600MHz (4x16GB)",
+          "storage": "1TB NVMe Gen 4 SSD + 2TB SATA SSD",
+          "psu": "750W 80+ Gold",
+          "case": "Mid-tower with good airflow",
+          "cpuCooler": "280mm AIO liquid cooler"
+        },
+        "performance": "Smooth 4K editing in Premiere Pro, DaVinci Resolve. Fast rendering times",
+        "software": "Adobe Premiere Pro, DaVinci Resolve, After Effects"
+      },
+      "3dRendering": {
+        "name": "3D Rendering Workstation",
+        "totalPrice": "$2500-$3500",
+        "description": "For 3D modeling, rendering, and animation work",
+        "components": {
+          "cpu": "AMD Ryzen 9 7950X or Intel Core i9-14900K",
+          "gpu": "NVIDIA RTX 4070 Ti or RTX 4080",
+          "motherboard": "X670E or Z790 Motherboard",
+          "ram": "128GB DDR5 5600MHz (4x32GB)",
+          "storage": "2TB NVMe Gen 4 SSD + 4TB HDD",
+          "psu": "1000W 80+ Gold Modular",
+          "case": "Full tower with excellent cooling",
+          "cpuCooler": "360mm AIO liquid cooler"
+        },
+        "performance": "Fast rendering in Blender, Cinema 4D, Maya. Real-time viewport performance",
+        "software": "Blender, Cinema 4D, Maya, 3ds Max, ZBrush"
+      },
+      "streaming": {
+        "name": "Streaming & Content Creation",
+        "totalPrice": "$1800-$2500",
+        "description": "For live streaming, video editing, and multitasking",
+        "components": {
+          "cpu": "Intel Core i7-13700K or AMD Ryzen 9 7900X",
+          "gpu": "NVIDIA RTX 4070 (NVENC encoder)",
+          "motherboard": "Z690 or X670 Motherboard",
+          "ram": "32GB DDR5 5600MHz",
+          "storage": "2TB NVMe Gen 4 SSD",
+          "psu": "850W 80+ Gold",
+          "case": "Mid-tower with RGB and good cooling",
+          "cpuCooler": "280mm AIO liquid cooler"
+        },
+        "performance": "Stream at 1080p/60fps while gaming on high settings. Edit and export videos quickly",
+        "software": "OBS Studio, Streamlabs, Adobe Creative Cloud"
+      }
+    },
+    "programming": {
+      "webDevelopment": {
+        "name": "Web Development Build",
+        "totalPrice": "$800-$1100",
+        "description": "For web development, coding, and running local servers",
+        "components": {
+          "cpu": "Intel Core i5-13400 or AMD Ryzen 5 5600X",
+          "gpu": "Integrated Graphics or basic GPU",
+          "motherboard": "B660 or B550 Motherboard",
+          "ram": "32GB DDR4 3600MHz",
+          "storage": "1TB NVMe SSD",
+          "psu": "550W 80+ Bronze",
+          "case": "Clean mid-tower case",
+          "cpuCooler": "Stock or budget tower cooler"
+        },
+        "performance": "Runs VS Code, Docker, multiple browsers, Node.js servers smoothly",
+        "software": "VS Code, Docker, Node.js, MongoDB, PostgreSQL"
+      },
+      "machineLearning": {
+        "name": "Machine Learning Build",
+        "totalPrice": "$2000-$3000",
+        "description": "For AI/ML development, training models, and data science",
+        "components": {
+          "cpu": "AMD Ryzen 9 7900X or Intel Core i9-13900K",
+          "gpu": "NVIDIA RTX 4070 Ti or RTX 4080 (CUDA cores)",
+          "motherboard": "X670 or Z790 Motherboard",
+          "ram": "64GB DDR5 5600MHz",
+          "storage": "2TB NVMe Gen 4 SSD",
+          "psu": "850W 80+ Gold",
+          "case": "Mid-tower with good airflow",
+          "cpuCooler": "360mm AIO liquid cooler"
+        },
+        "performance": "Train deep learning models, run TensorFlow/PyTorch, process large datasets",
+        "software": "Python, TensorFlow, PyTorch, Jupyter, CUDA"
+      }
+    },
+    "office": {
+      "basic": {
+        "name": "Office Basic Build",
+        "totalPrice": "$350-$500",
+        "description": "For basic office work, email, and web browsing",
+        "components": {
+          "cpu": "Intel Core i3-12100 or AMD Ryzen 3 4100",
+          "gpu": "Integrated Graphics",
+          "motherboard": "H610 or A520 Motherboard",
+          "ram": "8GB DDR4 3200MHz",
+          "storage": "256GB SSD",
+          "psu": "400W 80+ Bronze",
+          "case": "Compact micro ATX case",
+          "cpuCooler": "Stock cooler"
+        },
+        "performance": "Perfect for Microsoft Office, email, web browsing, video calls",
+        "software": "Microsoft Office, Google Workspace, Zoom"
+      },
+      "professional": {
+        "name": "Office Professional Build",
+        "totalPrice": "$700-$1000",
+        "description": "For heavy office work with multitasking and productivity software",
+        "components": {
+          "cpu": "Intel Core i5-13400 or AMD Ryzen 5 5600G",
+          "gpu": "Integrated Graphics",
+          "motherboard": "B660 or B550 Motherboard",
+          "ram": "32GB DDR4 3600MHz",
+          "storage": "512GB NVMe SSD + 1TB HDD",
+          "psu": "550W 80+ Bronze",
+          "case": "Professional mid-tower case",
+          "cpuCooler": "Stock cooler"
+        },
+        "performance": "Handles Excel with large datasets, multiple Office apps, VPN, remote desktop",
+        "software": "Microsoft Office Suite, SAP, QuickBooks, CRM software"
+      }
+    }
+  },
+  "componentGuides": {
+    "cpu": {
+      "description": "The CPU (Central Processing Unit) is the brain of your computer",
+      "howToChoose": [
+        "Consider your use case: Gaming needs 6-8 cores, content creation needs 8-16 cores",
+        "Intel CPUs: Better for gaming (i5-13600K, i7-14700K). AMD CPUs: Better value and multitasking (Ryzen 5 5600X, Ryzen 9 7900X)",
+        "Check socket compatibility with your motherboard (Intel: LGA1700, AMD: AM5, AM4)",
+        "Higher clock speeds (GHz) = faster single-core performance",
+        "More cores = better multitasking and productivity"
+      ],
+      "budget": "Intel i3-12100 or AMD Ryzen 5 5600G ($100-$150)",
+      "midRange": "Intel i5-13600K or AMD Ryzen 7 5800X3D ($200-$350)",
+      "highEnd": "Intel i9-14900K or AMD Ryzen 9 7950X ($400-$700)",
+      "gaming": "Ryzen 7 5800X3D is best value for gaming. Intel i5-13600K for high refresh rate",
+      "productivity": "AMD Ryzen 9 7950X or Intel i9-13900K for heavy workloads"
+    },
+    "gpu": {
+      "description": "The GPU (Graphics Processing Unit) renders graphics and is crucial for gaming",
+      "howToChoose": [
+        "Match GPU to your monitor resolution: 1080p = RTX 3060/RX 6600, 1440p = RTX 4060 Ti/RX 6750 XT, 4K = RTX 4080/RX 7900 XTX",
+        "NVIDIA: Better ray tracing, DLSS upscaling. AMD: Better value, more VRAM",
+        "Check GPU length fits in your case (usually 300-350mm)",
+        "Ensure PSU has enough wattage (add 150W buffer)",
+        "More VRAM = better for high-res gaming and content creation (8GB minimum, 12GB+ recommended)"
+      ],
+      "budget": "RTX 3050 or RX 6600 ($200-$250) - 1080p gaming",
+      "midRange": "RTX 4060 Ti or RX 6750 XT ($350-$500) - 1440p gaming",
+      "highEnd": "RTX 4080 or RX 7900 XTX ($1000-$1200) - 4K gaming",
+      "contentCreation": "RTX 4070 or higher for CUDA acceleration in Adobe/DaVinci Resolve"
+    },
+    "ram": {
+      "description": "RAM (Memory) temporarily stores data for quick access by the CPU",
+      "howToChoose": [
+        "Gaming: 16GB minimum, 32GB recommended for 2024+",
+        "Content creation: 32GB minimum, 64GB+ for 4K video editing",
+        "Programming: 16GB minimum, 32GB for VMs and containers",
+        "Speed matters: DDR4 3200-3600MHz or DDR5 5600MHz+",
+        "Buy in pairs (2x8GB, 2x16GB) for dual-channel performance",
+        "Check motherboard QVL for compatibility"
+      ],
+      "gaming": "16GB (2x8GB) DDR4 3200MHz or 32GB (2x16GB) DDR4 3600MHz",
+      "contentCreation": "32GB (2x16GB) minimum, 64GB (4x16GB) for professional work",
+      "budget": "16GB DDR4 3200MHz ($40-$60)",
+      "highEnd": "32GB DDR5 6000MHz ($120-$180)"
+    },
+    "storage": {
+      "description": "Storage saves all your files, games, and operating system",
+      "howToChoose": [
+        "SSD (Solid State Drive) for OS and programs - MUCH faster than HDD",
+        "NVMe M.2 SSD: Fastest (3500 MB/s), best for OS and games",
+        "SATA SSD: Good speed (550 MB/s), good value",
+        "HDD (Hard Drive): Slow but cheap bulk storage for files",
+        "Minimum: 500GB NVMe SSD. Recommended: 1TB NVMe + 2TB HDD",
+        "Gen 4 NVMe for fast loading (7000 MB/s) vs Gen 3 (3500 MB/s)"
+      ],
+      "gaming": "500GB-1TB NVMe SSD for games (modern games are 100-150GB each)",
+      "contentCreation": "1TB NVMe Gen 4 for projects + 2-4TB HDD for storage",
+      "budget": "500GB NVMe SSD ($35-$50)",
+      "recommended": "1TB NVMe Gen 4 SSD ($70-$120)"
+    },
+    "motherboard": {
+      "description": "The motherboard connects all components together",
+      "howToChoose": [
+        "Match socket to CPU: Intel LGA1700 (13th/14th gen) or AMD AM5 (Ryzen 7000), AM4 (Ryzen 5000)",
+        "Choose chipset: B660/B760 (Intel budget), Z690/Z790 (Intel OC), B550 (AMD budget), X670 (AMD premium)",
+        "Form factor: ATX (standard), Micro-ATX (smaller), Mini-ITX (compact)",
+        "Check RAM slots (4 is standard), M.2 slots (2+ recommended), PCIe slots",
+        "Ensure BIOS is updated for your CPU generation",
+        "Good VRMs (power delivery) for overclocking"
+      ],
+      "intelBudget": "B660 or B760 Motherboard ($100-$150)",
+      "intelPremium": "Z690 or Z790 Motherboard ($200-$400) - Overclocking support",
+      "amdBudget": "B550 Motherboard ($80-$130)",
+      "amdPremium": "X670E Motherboard ($200-$350) - PCIe 5.0, best features"
+    },
+    "psu": {
+      "description": "The PSU (Power Supply Unit) provides power to all components",
+      "howToChoose": [
+        "Calculate wattage: Add all component power + 150W buffer",
+        "80+ certification: Bronze (budget), Gold (recommended), Platinum (premium)",
+        "Modular: Fully modular (best cable management), semi-modular, non-modular",
+        "Don't cheap out! Bad PSU can damage components",
+        "Brands: Corsair, EVGA, Seasonic, Thermaltake are reliable",
+        "Typical needs: 450-550W (office), 650-750W (gaming), 850W+ (high-end)"
+      ],
+      "budget": "450-550W 80+ Bronze ($40-$60)",
+      "gaming": "650-750W 80+ Gold Semi-Modular ($80-$120)",
+      "highEnd": "850W-1000W 80+ Gold Fully Modular ($130-$200)",
+      "calculation": "RTX 4080 (320W) + i7-13700K (190W) + others (50W) = 560W minimum, recommend 750W PSU"
+    },
+    "case": {
+      "description": "The case houses all components and provides cooling",
+      "howToChoose": [
+        "Form factor matches motherboard: ATX case for ATX board, etc.",
+        "Check GPU clearance (usually need 300-350mm for modern GPUs)",
+        "Airflow: Mesh front panel > solid panel. Include 3-4 fans minimum",
+        "Cable management: Look for PSU shroud, cable routing holes, velcro straps",
+        "Front I/O: USB 3.0, USB-C, audio jacks on front panel",
+        "Personal preference: RGB, tempered glass, aesthetics"
+      ],
+      "budget": "Basic ATX case with airflow ($50-$70)",
+      "midRange": "Mid-tower with mesh front, good cable management ($80-$130)",
+      "premium": "Premium case with RGB, USB-C, excellent build quality ($150-$250)"
+    },
+    "cpuCooler": {
+      "description": "CPU cooler keeps your processor from overheating",
+      "howToChoose": [
+        "Stock coolers: Fine for non-overclocked budget CPUs",
+        "Tower air coolers: Best value, quiet, reliable (Hyper 212, NH-D15)",
+        "AIO liquid coolers: Better cooling, looks cleaner, 240mm/280mm/360mm sizes",
+        "Check CPU TDP and cooler rating: i5 = 120W cooler, i7/i9 = 200W+ cooler",
+        "Ensure cooler height fits in case (usually <165mm for tower coolers)",
+        "Consider noise levels (dB rating)"
+      ],
+      "budget": "Stock cooler or basic tower ($20-$30)",
+      "midRange": "Tower cooler like Hyper 212 or AK400 ($30-$60)",
+      "highEnd": "280mm-360mm AIO liquid cooler ($100-$180)"
+    }
+  },
+  "qaDatabase": [
+    {
+      "category": "studying",
+      "questions": [
+        "What PC do I need for studying?",
+        "Best computer for college student?",
+        "PC for online classes",
+        "Student laptop alternative",
+        "Budget PC for homework"
+      ],
+      "answer": "For studying, I recommend a budget-friendly build with an Intel i3-12100 or AMD Ryzen 5 5600G (with integrated graphics), 16GB RAM, and 512GB SSD. This costs around $400-$550 and handles Microsoft Office, web browsing, video calls, and research perfectly. If you do programming or data analysis, upgrade to 32GB RAM and an i5-13400 ($700-$900 range)."
+    },
+    {
+      "category": "gaming",
+      "questions": [
+        "What PC for gaming?",
+        "Best gaming PC build",
+        "Gaming computer recommendation",
+        "PC for Fortnite/Valorant/CS2",
+        "1080p gaming build"
+      ],
+      "answer": "For 1080p gaming, I recommend: Intel i5-12400F or Ryzen 5 5600 CPU, RTX 3060 or RX 6600 GPU, 16GB DDR4 RAM, 500GB NVMe SSD, and 550W PSU. This costs $700-$900 and runs all modern games at 60-120fps on high settings. For 1440p gaming, upgrade to RTX 4060 Ti and increase budget to $1200-$1500."
+    },
+    {
+      "category": "gaming",
+      "questions": [
+        "4K gaming PC",
+        "Best high-end gaming build",
+        "Gaming PC for Cyberpunk",
+        "Ultra settings gaming",
+        "RTX 4080 build"
+      ],
+      "answer": "For 4K gaming at ultra settings, you need: Intel i7-14700K or AMD Ryzen 9 7900X, RTX 4080 or RX 7900 XTX, 32GB DDR5 6000MHz RAM, 2TB NVMe Gen 4 SSD, 850W Gold PSU, and 360mm AIO cooler. Budget: $2000-$3000. This delivers 60-120fps at 4K with ray tracing enabled in all games."
+    },
+    {
+      "category": "contentCreation",
+      "questions": [
+        "PC for video editing",
+        "Best computer for Premiere Pro",
+        "4K video editing build",
+        "YouTube content creation PC",
+        "DaVinci Resolve workstation"
+      ],
+      "answer": "For video editing, I recommend: Intel i7-13700K or Ryzen 9 7900X (12+ cores), RTX 4060 Ti or 3060 12GB (GPU acceleration), 64GB DDR4 RAM (important!), 1TB NVMe Gen 4 + 2TB SSD storage, 750W Gold PSU, and 280mm AIO cooler. Budget: $1500-$2000. This handles 4K editing smoothly in Premiere Pro and DaVinci Resolve."
+    },
+    {
+      "category": "contentCreation",
+      "questions": [
+        "3D rendering PC",
+        "Blender workstation",
+        "PC for Cinema 4D",
+        "3D modeling computer",
+        "Animation workstation"
+      ],
+      "answer": "For 3D rendering and animation: AMD Ryzen 9 7950X (16 cores) or Intel i9-14900K, RTX 4070 Ti or 4080 (CUDA acceleration), 128GB DDR5 RAM (crucial for large scenes), 2TB NVMe + 4TB HDD, 1000W Gold PSU, 360mm AIO cooler, full tower case. Budget: $2500-$3500. Excellent for Blender, Cinema 4D, Maya, and ZBrush."
+    },
+    {
+      "category": "programming",
+      "questions": [
+        "PC for programming",
+        "Best computer for coding",
+        "Web development build",
+        "Software developer PC",
+        "VS Code Docker machine"
+      ],
+      "answer": "For web development and programming: Intel i5-13400 or Ryzen 5 5600X, 32GB DDR4 RAM (for running Docker/VMs), 1TB NVMe SSD, integrated graphics (or basic GPU), 550W PSU. Budget: $800-$1100. Perfect for VS Code, Docker, multiple browsers, Node.js servers, and databases. The 32GB RAM is key for running containers and VMs."
+    },
+    {
+      "category": "programming",
+      "questions": [
+        "Machine learning PC",
+        "AI development build",
+        "Deep learning workstation",
+        "TensorFlow PC",
+        "Data science computer"
+      ],
+      "answer": "For machine learning and AI development: AMD Ryzen 9 7900X or Intel i9-13900K, RTX 4070 Ti or 4080 (CUDA cores essential for PyTorch/TensorFlow), 64GB DDR5 RAM, 2TB NVMe Gen 4 SSD, 850W Gold PSU. Budget: $2000-$3000. The NVIDIA GPU with CUDA is critical for training deep learning models efficiently."
+    },
+    {
+      "category": "office",
+      "questions": [
+        "PC for office work",
+        "Computer for Microsoft Office",
+        "Basic work PC",
+        "Email and browsing computer",
+        "Budget office build"
+      ],
+      "answer": "For basic office work: Intel i3-12100 or Ryzen 3 4100, integrated graphics, 8-16GB RAM, 256-512GB SSD, 400-450W PSU. Budget: $350-$500. Perfect for Microsoft Office, email, web browsing, and video calls. Very quiet and energy-efficient."
+    },
+    {
+      "category": "components",
+      "questions": [
+        "Which CPU should I buy?",
+        "AMD vs Intel",
+        "Best processor for gaming",
+        "CPU recommendation",
+        "i5 vs Ryzen 5"
+      ],
+      "answer": "CPU choice depends on use case: For GAMING, Intel i5-13600K or Ryzen 7 5800X3D are best value. For PRODUCTIVITY, Ryzen 9 7900X offers more cores. For BUDGET, i3-12100 or Ryzen 5 5600G with integrated graphics. Intel = slightly better gaming fps. AMD = better multitasking and value. Always check motherboard socket compatibility!"
+    },
+    {
+      "category": "components",
+      "questions": [
+        "Which GPU should I buy?",
+        "Best graphics card",
+        "NVIDIA vs AMD GPU",
+        "Graphics card for 1080p",
+        "RTX vs RX"
+      ],
+      "answer": "GPU depends on resolution: 1080p = RTX 3060 or RX 6600 ($200-$300). 1440p = RTX 4060 Ti or RX 6750 XT ($350-$500). 4K = RTX 4080 or RX 7900 XTX ($1000+). NVIDIA pros: Better ray tracing, DLSS, NVENC encoding. AMD pros: More VRAM, better value. For content creation, choose NVIDIA for CUDA acceleration."
+    },
+    {
+      "category": "components",
+      "questions": [
+        "How much RAM do I need?",
+        "8GB vs 16GB vs 32GB",
+        "RAM for gaming",
+        "Memory recommendation",
+        "DDR4 vs DDR5"
+      ],
+      "answer": "RAM requirements: GAMING = 16GB minimum, 32GB recommended for 2024+. VIDEO EDITING = 32-64GB. PROGRAMMING = 16-32GB (32GB if using Docker/VMs). OFFICE = 8-16GB. Speed: DDR4 3200-3600MHz or DDR5 5600MHz+. Always buy in pairs (2x8GB or 2x16GB) for dual-channel. DDR5 is 15-20% faster but more expensive."
+    },
+    {
+      "category": "components",
+      "questions": [
+        "SSD vs HDD",
+        "How much storage?",
+        "NVMe vs SATA",
+        "Best SSD for gaming",
+        "Storage recommendation"
+      ],
+      "answer": "ALWAYS get SSD for OS and main programs! NVMe M.2 SSD is fastest (3500-7000 MB/s) and best for games. Recommendations: BUDGET = 500GB NVMe ($35-$50). GAMING = 1TB NVMe ($70-$120). CONTENT = 1TB NVMe Gen 4 + 2TB HDD ($150). Modern games need 100-150GB each. Gen 4 NVMe (7000 MB/s) vs Gen 3 (3500 MB/s) - Gen 4 for fast loading."
+    },
+    {
+      "category": "components",
+      "questions": [
+        "Which motherboard?",
+        "Motherboard compatibility",
+        "B660 vs Z690",
+        "Motherboard recommendation",
+        "What chipset?"
+      ],
+      "answer": "Motherboard must match CPU socket! INTEL 13th/14th gen = LGA1700 socket. AMD Ryzen 7000 = AM5, Ryzen 5000 = AM4. Chipsets: B660/B760 (Intel budget), Z690/Z790 (Intel + overclocking), B550 (AMD budget), X670 (AMD premium). Key features: 4 RAM slots, 2+ M.2 slots, good VRMs. ATX = standard size, Micro-ATX = smaller."
+    },
+    {
+      "category": "components",
+      "questions": [
+        "What PSU wattage?",
+        "Power supply recommendation",
+        "How many watts?",
+        "PSU calculator",
+        "80+ Bronze vs Gold"
+      ],
+      "answer": "PSU wattage = Total component power + 150W buffer. Examples: Office (350W) = 450W PSU. RTX 3060 gaming (400W) = 550W PSU. RTX 4070 gaming (550W) = 750W PSU. RTX 4080 high-end (650W) = 850W PSU. Get 80+ Gold for efficiency. Modular = better cables. Brands: Corsair, EVGA, Seasonic, Thermaltake. DON'T cheap out on PSU!"
+    },
+    {
+      "category": "components",
+      "questions": [
+        "Do I need a CPU cooler?",
+        "Stock cooler vs aftermarket",
+        "AIO vs air cooler",
+        "Cooling recommendation",
+        "What cooler for i7?"
+      ],
+      "answer": "Stock coolers: OK for i3/i5 or Ryzen 5 non-X CPUs at stock speeds. Aftermarket coolers: REQUIRED for i7/i9, Ryzen 7/9, or overclocking. Tower air cooler ($30-$60) = great value, quiet (Hyper 212, AK400). AIO liquid ($100-$180) = better cooling, cleaner look, 240/280/360mm. Match cooling to CPU TDP: i5 = 120W cooler, i7 = 200W cooler, i9 = 250W+ cooler."
+    },
+    {
+      "category": "compatibility",
+      "questions": [
+        "Is this build compatible?",
+        "Parts compatibility check",
+        "CPU motherboard compatibility",
+        "Does this GPU fit?",
+        "RAM compatibility"
+      ],
+      "answer": "Compatibility checklist: 1) CPU socket matches motherboard (LGA1700, AM5, AM4). 2) RAM type matches (DDR4 or DDR5). 3) GPU fits in case (check length, usually <350mm). 4) PSU has enough watts (use calculator). 5) CPU cooler height fits case (usually <165mm). 6) Motherboard BIOS updated for CPU. Use PCPartPicker.com for automatic compatibility checking!"
+    },
+    {
+      "category": "budget",
+      "questions": [
+        "Budget PC build",
+        "Cheapest gaming PC",
+        "PC under $500",
+        "Best value build",
+        "Budget recommendation"
+      ],
+      "answer": "Budget PC builds: $350-$500 = Office (i3, 8GB RAM, integrated graphics). $700-$900 = 1080p Gaming (i5-12400F, RTX 3060, 16GB RAM). $1200-$1500 = 1440p Gaming (i5-13600K, RTX 4060 Ti, 32GB RAM). Best value tips: Get previous-gen CPUs (Ryzen 5000), buy used GPU (check warranty), wait for sales, prioritize SSD over HDD."
+    },
+    {
+      "category": "general",
+      "questions": [
+        "How to build a PC?",
+        "PC building guide",
+        "First time building",
+        "Is building hard?",
+        "Building steps"
+      ],
+      "answer": "PC building is like adult LEGO! Steps: 1) Install CPU and RAM on motherboard. 2) Install CPU cooler. 3) Install motherboard in case. 4) Install PSU. 5) Install storage (SSD/HDD). 6) Install GPU. 7) Connect all power cables. 8) Connect front panel cables. 9) Turn on and install Windows. Watch YouTube tutorials first! Takes 2-3 hours first time. Not difficult, just be careful and read manuals."
+    },
+    {
+      "category": "general",
+      "questions": [
+        "Pre-built vs custom PC",
+        "Should I buy pre-built?",
+        "Build vs buy",
+        "Pre-built worth it?",
+        "Custom PC advantages"
+      ],
+      "answer": "Custom build PROS: 15-30% cheaper, choose exact parts, better quality components, learning experience, easier upgrades. CONS: Takes time, need research, no warranty on whole system. Pre-built PROS: Convenience, whole-system warranty, no building needed. CONS: 15-30% more expensive, often cheap PSU/RAM, proprietary parts, bloatware. Recommendation: Build custom if budget >$700. Buy pre-built if you want immediate plug-and-play."
+    },
+    {
+      "category": "upgrade",
+      "questions": [
+        "What should I upgrade first?",
+        "PC upgrade priority",
+        "Upgrade GPU or CPU?",
+        "Best upgrade for gaming",
+        "Worth upgrading?"
+      ],
+      "answer": "Upgrade priority for GAMING: 1) GPU (biggest fps increase), 2) SSD (if still on HDD), 3) RAM (if <16GB), 4) CPU (if bottlenecking GPU), 5) Monitor. For PRODUCTIVITY: 1) RAM (if maxing out), 2) Storage/SSD, 3) CPU, 4) GPU. Check if CPU bottlenecks GPU first (search '[your CPU] + [your GPU] bottleneck'). Upgrade GPU if CPU usage <80% while gaming."
+    },
+    {
+      "category": "troubleshooting",
+      "questions": [
+        "PC won't turn on",
+        "No display on monitor",
+        "Computer not booting",
+        "Troubleshooting help",
+        "Build doesn't work"
+      ],
+      "answer": "PC won't turn on checklist: 1) Check PSU switch is ON. 2) Reseat power cables (24-pin, 8-pin CPU, GPU power). 3) Reseat RAM (try one stick in slot 2). 4) Check front panel connectors on motherboard. 5) Remove GPU and try integrated graphics. 6) Check motherboard debug LEDs. 7) Breadboard test (motherboard outside case). If still stuck, one component may be DOA (dead on arrival)."
+    },
+    {
+      "category": "monitor",
+      "questions": [
+        "What monitor should I get?",
+        "Monitor for gaming",
+        "1080p vs 1440p vs 4K",
+        "Monitor recommendation",
+        "Refresh rate"
+      ],
+      "answer": "Monitor guide: BUDGET GAMING = 1080p 144Hz IPS ($150-$200). MID-RANGE = 1440p 144Hz-165Hz IPS ($250-$350). HIGH-END = 1440p 240Hz or 4K 144Hz ($500-$800). Match to your GPU! RTX 3060 = 1080p-1440p. RTX 4060 Ti = 1440p. RTX 4080 = 4K. Panel types: IPS (best colors), VA (best contrast), TN (fastest but bad colors). Get at least 144Hz for gaming!"
+    },
+    {
+      "category": "peripherals",
+      "questions": [
+        "What keyboard and mouse?",
+        "Gaming peripherals",
+        "Mechanical keyboard",
+        "Peripherals recommendation",
+        "Headset recommendation"
+      ],
+      "answer": "Peripherals guide: KEYBOARD: Mechanical ($70-$150) = better feel, customizable, durable. Switches: Red (linear), Brown (tactile), Blue (clicky). MOUSE: Wired gaming mouse ($40-$80) = low latency. Look for 12000+ DPI, good sensor (Logitech, Razer). HEADSET: Wireless gaming headset ($80-$150) or get separate headphones ($100) + mic ($50) for better quality. Don't overspend - focus budget on PC first!"
+    }
+  ],
+  "outOfScopeResponses": [
+    "I'm specifically designed to help with PC building and hardware questions. I can't answer questions about [TOPIC]. However, I can help you choose the perfect PC components for your needs!",
+    "That's outside my expertise area. I specialize in PC hardware, components, and building recommendations. Is there anything PC-related I can help you with?",
+    "I'm focused on helping you build the perfect PC! I don't have information about [TOPIC], but I'd be happy to recommend a PC build for your specific use case.",
+    "Sorry, I only answer questions related to PC hardware, components, and building. Would you like help choosing parts or getting build recommendations instead?"
+  ],
+  "greetings": [
+    "Hi! I'm your PC Building expert. I can help you choose components, recommend complete builds, and answer any hardware questions. What would you like to know?",
+    "Hello! Ready to build your dream PC? Tell me your budget and what you'll use it for (gaming, studying, content creation, etc.), and I'll recommend the perfect build!",
+    "Welcome! I specialize in PC hardware and building advice. Whether you need a budget study PC or a high-end gaming rig, I'm here to help. What's your use case?"
+  ],
+  "quickTips": [
+    "💡 Quick Tip: Always get an SSD instead of HDD for your operating system - it's 10x faster!",
+    "💡 Quick Tip: For gaming, invest more in your GPU than CPU. GPU affects fps more!",
+    "💡 Quick Tip: Buy RAM in pairs (2x8GB instead of 1x16GB) for dual-channel performance boost.",
+    "💡 Quick Tip: Never cheap out on your PSU - a bad one can damage all your components!",
+    "💡 Quick Tip: Check PCPartPicker.com for automatic compatibility checking and price tracking.",
+    "💡 Quick Tip: AMD CPUs offer better value for productivity. Intel is slightly better for pure gaming.",
+    "💡 Quick Tip: Get at least 16GB RAM for gaming in 2024. 32GB for content creation or multitasking.",
+    "💡 Quick Tip: A good CPU cooler can lower temperatures by 20-30°C vs stock coolers!"
+  ]
+}
